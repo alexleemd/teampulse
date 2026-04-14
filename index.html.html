@@ -1,0 +1,3936 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Pulse</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #5f6b85;
+      --line: #dbe2ee;
+      --accent: #2957d6;
+      --accent-soft: #e8efff;
+      --success: #0d7a48;
+      --success-soft: #e7f7ee;
+      --warning: #b06b00;
+      --warning-soft: #fff4df;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --info: #115b9c;
+      --info-soft: #e8f4ff;
+      --shadow: 0 10px 35px rgba(23, 32, 51, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 28px 120px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 3.2vw, 44px);
+      line-height: 1.04;
+    }
+
+    h2, h3 {
+      margin: 0;
+    }
+
+    .subtle,
+    .panel-header p,
+    .section-note,
+    .table-tip,
+    .help-text,
+    .hint {
+      color: var(--muted);
+    }
+
+    .toolbar,
+    .actions,
+    .section-actions,
+    .legend,
+    .badges,
+    .quick-actions,
+    .save-dock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar {
+      justify-content: flex-end;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px 20px 0;
+    }
+
+    .panel-header p {
+      margin: 6px 0 0;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .content.topless {
+      padding-top: 14px;
+    }
+
+    .pill,
+    .badge,
+    .legend-item,
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+    }
+
+    .version-pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: transparent;
+    }
+
+    .save-pill.neutral {
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .save-pill.warning {
+      background: var(--warning-soft);
+      color: var(--warning);
+      border-color: transparent;
+    }
+
+    .save-pill.success {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: transparent;
+    }
+
+    .save-pill.info {
+      background: var(--info-soft);
+      color: var(--info);
+      border-color: transparent;
+    }
+
+    .badge {
+      background: #eef2f8;
+      color: #314667;
+    }
+
+    .badge.success { background: var(--success-soft); color: var(--success); }
+    .badge.warning { background: var(--warning-soft); color: var(--warning); }
+    .badge.danger { background: var(--danger-soft); color: var(--danger); }
+    .badge.info { background: var(--info-soft); color: var(--info); }
+    .badge.neutral { background: #eef2f8; color: #314667; }
+
+    .badge.soft {
+      background: #f2f5fb;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      padding: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .swatch.good { background: #b6ebc9; }
+    .swatch.warn { background: #f7d78f; }
+    .swatch.danger { background: #f5b4af; }
+    .swatch.neutral { background: #d9e1ef; }
+
+    .button,
+    button,
+    input[type="submit"] {
+      appearance: none;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.04s ease, opacity 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .button:hover,
+    button:hover,
+    input[type="submit"]:hover {
+      opacity: 0.96;
+    }
+
+    .button:active,
+    button:active,
+    input[type="submit"]:active {
+      transform: translateY(1px);
+    }
+
+    .button.secondary,
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .button.ghost,
+    button.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent-soft);
+    }
+
+    .button.danger,
+    button.danger {
+      background: var(--danger);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .startup-gate {
+      margin-bottom: 18px;
+    }
+
+    .startup-gate-body {
+      display: grid;
+      gap: 12px;
+    }
+
+    .setup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .stat-tile {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      text-align: left;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      min-height: 150px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .stat-tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(23, 32, 51, 0.10);
+    }
+
+    .stat-tile:focus-visible {
+      outline: 3px solid rgba(41, 87, 214, 0.16);
+      outline-offset: 2px;
+    }
+
+    .stat-tile .stat-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: #eef2ff;
+    }
+
+    .stat-count {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 4px 0 0;
+    }
+
+    .stat-label {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-bar {
+      margin-top: auto;
+      height: 8px;
+      border-radius: 999px;
+      background: #eef2f8;
+      overflow: hidden;
+    }
+
+    .stat-bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    .stat-tone-warning .stat-bar > span { background: var(--warning); }
+    .stat-tone-danger .stat-bar > span { background: var(--danger); }
+    .stat-tone-success .stat-bar > span { background: var(--success); }
+
+
+    .team-health-card {
+      margin-bottom: 18px;
+    }
+
+    .team-health-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .health-ring-card,
+    .health-metrics-card,
+    .plan-mix-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .health-ring-card {
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #fbfdff 0%, #f4f8ff 100%);
+    }
+
+    .health-ring {
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--accent) 0 var(--ring-angle), #e7edf7 var(--ring-angle) 360deg);
+      box-shadow: inset 0 0 0 1px rgba(23, 32, 51, 0.04);
+    }
+
+    .health-ring-inner {
+      width: 154px;
+      height: 154px;
+      border-radius: inherit;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 22px rgba(23, 32, 51, 0.06);
+    }
+
+    .health-ring-inner strong {
+      display: block;
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .health-ring-inner span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .health-summary {
+      display: grid;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .health-summary h3 {
+      font-size: 22px;
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .health-summary p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .health-metrics-card {
+      display: grid;
+      gap: 16px;
+      background: #fbfcff;
+    }
+
+    .health-metric {
+      display: grid;
+      gap: 8px;
+    }
+
+    .health-metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .health-metric-top strong {
+      font-size: 15px;
+    }
+
+    .health-metric-top span,
+    .health-subtext {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .health-progress {
+      height: 12px;
+      border-radius: 999px;
+      background: #ecf1f9;
+      overflow: hidden;
+      border: 1px solid #e4ebf5;
+    }
+
+    .health-progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .health-progress.warning > span { background: var(--warning); }
+    .health-progress.success > span { background: var(--success); }
+    .health-progress.danger > span { background: var(--danger); }
+
+    .plan-mix-card {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .plan-mix-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .plan-mix-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stacked-bar {
+      display: flex;
+      width: 100%;
+      min-height: 18px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eef2f8;
+      border: 1px solid #e4ebf5;
+    }
+
+    .stacked-segment {
+      min-width: 10px;
+    }
+
+    .stacked-segment.not-started { background: #d9e1ef; }
+    .stacked-segment.in-progress { background: #b9d6ff; }
+    .stacked-segment.needs-review { background: #f6d58d; }
+    .stacked-segment.completed { background: #b6ebc9; }
+    .stacked-segment.blocked { background: #f5b4af; }
+
+    .stacked-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+    }
+
+    .stacked-legend .legend-item {
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .stacked-legend .count {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .searchbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.5fr) repeat(2, minmax(180px, 0.75fr));
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    input[type="search"],
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input:not([type]),
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(41, 87, 214, 0.45);
+      box-shadow: 0 0 0 4px rgba(41, 87, 214, 0.08);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+    }
+
+    label span {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+    }
+
+    th,
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #fbfcff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    tbody tr:hover {
+      background: #fbfcff;
+    }
+
+    tbody tr.selected {
+      background: #eef4ff;
+    }
+
+    .namecell {
+      display: grid;
+      gap: 4px;
+    }
+
+    .namecell strong {
+      font-size: 15px;
+    }
+
+    .namesub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .touchpoints {
+      display: grid;
+      gap: 7px;
+      min-width: 200px;
+    }
+
+    .touchpoint-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f8faff;
+      border: 1px solid #edf1f8;
+    }
+
+    .touchpoint-row.overdue {
+      background: var(--warning-soft);
+      border-color: #f2dfb5;
+    }
+
+    .touchpoint-row .tp-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .touchpoint-row .tp-date {
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .quick-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fbff;
+      margin: 8px 0 12px;
+    }
+
+    .quick-filter-bar strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .table-tip {
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .empty-state,
+    .callout {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .empty-state p,
+    .callout p {
+      margin: 0 0 10px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .overlay,
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 23, 38, 0.44);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease;
+      z-index: 40;
+    }
+
+    .overlay.open,
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: min(860px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      margin: 24px auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(14, 23, 38, 0.28);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .modal.tile-modal {
+      width: min(760px, calc(100vw - 32px));
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 20px 20px 0;
+    }
+
+    .modal-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .drawer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(1180px, 72vw);
+      max-width: calc(100vw - 14px);
+      height: 100vh;
+      background: #fff;
+      box-shadow: -16px 0 40px rgba(14, 23, 38, 0.18);
+      transform: translateX(18px);
+      transition: transform 0.16s ease;
+      border-left: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .drawer.rules-drawer {
+      width: min(460px, 94vw);
+    }
+
+    .drawer-overlay.open .drawer {
+      transform: translateX(0);
+    }
+
+    #detailDrawerOverlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    #detailDrawer {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #detailDrawerOverlay .drawer {
+      position: relative;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      width: min(1480px, 86vw);
+      max-width: min(1480px, 86vw);
+      height: min(94vh, 1160px);
+      max-height: calc(100vh - 28px);
+      border-left: none;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(14, 23, 38, 0.28);
+      transform: translateY(16px) scale(0.99);
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    #detailDrawerOverlay.open .drawer {
+      transform: translateY(0) scale(1);
+    }
+
+    .rules-drawer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(460px, 94vw);
+      max-width: calc(100vw - 14px);
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: -16px 0 40px rgba(14, 23, 38, 0.18);
+      transform: translateX(18px);
+      border-left: 1px solid var(--line);
+    }
+
+    .drawer-overlay.open .rules-drawer {
+      transform: translateX(0);
+    }
+
+    .workspace-form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .notes-editor textarea,
+    .notes-textarea {
+      min-height: 220px;
+    }
+
+    .workspace-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-status {
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+
+    .drawer-shell {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-header {
+      padding: 22px 22px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .drawer-header-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .drawer-header h2 {
+      font-size: clamp(24px, 2vw, 34px);
+      line-height: 1.08;
+      margin: 0;
+    }
+
+    .drawer-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .drawer-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 22px 22px 40px;
+      display: grid;
+      gap: 22px;
+      align-content: start;
+      background: #fafcff;
+    }
+
+    .drawer-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(23, 32, 51, 0.04);
+    }
+
+    .drawer-section h3 {
+      font-size: 18px;
+      margin: 0 0 10px;
+    }
+
+    .drawer-hero {
+      background: linear-gradient(135deg, #f2f7ff 0%, #ffffff 100%);
+      border: 1px solid #dce6f8;
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .hero-card,
+    .overview-card,
+    .cadence-card,
+    .text-panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-card .label,
+    .overview-card .label,
+    .cadence-card .label,
+    .text-panel .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      font-weight: 800;
+    }
+
+    .hero-card .value,
+    .overview-card .value,
+    .text-panel .value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .overview-grid,
+    .text-grid,
+    .cadence-grid,
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .overview-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .cadence-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .text-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .text-panel .value.empty,
+    .overview-card .value.empty,
+    .hero-card .value.empty {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .cadence-card {
+      display: grid;
+      gap: 8px;
+    }
+
+    .cadence-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cadence-date {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .cadence-subtext {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #eef2f8;
+      overflow: hidden;
+    }
+
+    .mini-bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--success);
+    }
+
+    .mini-bar.warning > span {
+      background: var(--warning);
+    }
+
+    .mini-bar.danger > span {
+      background: var(--danger);
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #e4eaf5;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 34px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px #eef4ff;
+    }
+
+    .timeline-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .timeline-notes {
+      color: var(--text);
+      background: #fbfcff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+    }
+
+    .input-with-suffix {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding-right: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .input-with-suffix input {
+      border: none;
+      box-shadow: none;
+      padding-right: 6px;
+    }
+
+    .input-with-suffix .suffix {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .toggle-row:first-of-type {
+      border-top: none;
+    }
+
+    .toggle-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .toggle-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 30px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ced8ea;
+      border-radius: 999px;
+      transition: background 0.15s ease;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 4px;
+      top: 4px;
+      background: #fff;
+      border-radius: 999px;
+      transition: transform 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+
+    .switch input:checked + .slider {
+      background: var(--accent);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .status-line {
+      margin-top: 12px;
+      min-height: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status-line.success { color: var(--success); }
+    .status-line.warning { color: var(--warning); }
+    .status-line.error { color: var(--danger); }
+
+    .tile-summary {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .tile-count {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0;
+    }
+
+    .tile-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tile-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .tile-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .tile-meta {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .toast-stack {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: grid;
+      gap: 10px;
+      z-index: 90;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 240px;
+      max-width: 360px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      pointer-events: auto;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast.error { border-left-color: var(--danger); }
+
+    .save-dock {
+      position: fixed;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(23, 32, 51, 0.96);
+      color: #fff;
+      box-shadow: 0 18px 50px rgba(14, 23, 38, 0.32);
+      z-index: 60;
+    }
+
+    .save-dock.nudge {
+      animation: pulseDock 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseDock {
+      0%, 100% { box-shadow: 0 18px 50px rgba(14, 23, 38, 0.32); }
+      50% { box-shadow: 0 20px 54px rgba(176, 107, 0, 0.34); }
+    }
+
+    .save-dock strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .save-dock p {
+      margin: 0;
+      color: rgba(255,255,255,0.82);
+      font-size: 14px;
+    }
+
+    .save-dock .secondary {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    @media (max-width: 1100px) {
+      #detailDrawerOverlay .drawer {
+        width: min(1380px, calc(100vw - 24px));
+        max-width: min(1380px, calc(100vw - 24px));
+      }
+
+      .hero-meta,
+      .overview-grid,
+      .cadence-grid,
+      .text-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        padding: 20px 16px 120px;
+      }
+
+      .topbar,
+      .panel-header,
+      .quick-filter-bar,
+      .drawer-header-top,
+      .save-dock {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar,
+      .section-actions,
+      .save-dock-actions {
+        justify-content: stretch;
+      }
+
+      .toolbar > *,
+      .section-actions > *,
+      .save-dock-actions > * {
+        width: 100%;
+      }
+
+      .searchbar,
+      .form-grid,
+      .hero-meta,
+      .overview-grid,
+      .cadence-grid,
+      .text-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #detailDrawerOverlay {
+        padding: 10px;
+      }
+
+      #detailDrawerOverlay .drawer {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        height: calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
+      }
+
+      .rules-drawer {
+        width: 100vw;
+      }
+
+      .modal,
+      .modal.tile-modal {
+        width: calc(100vw - 20px);
+        margin: 10px auto;
+      }
+
+      .save-dock {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Manager Notebook</p>
+        <div class="title-row">
+          <h1>Team Pulse</h1>
+          <span id="appVersion" class="pill version-pill">v0.12</span>
+          <span id="fileStatePill" class="pill save-pill neutral" title="Create or open a JSON file to start Team Pulse.">No JSON loaded</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="addReportBtn">Add direct report</button>
+        <button id="saveFileBtn" class="secondary">Create JSON</button>
+        <button id="connectDataFileBtn" class="secondary">Open JSON</button>
+        <button id="importIcsBtn" class="secondary">Import .ics</button>
+        <button id="attentionRulesBtn" class="secondary">Attention rules</button>
+      </div>
+    </div>
+
+    <section class="card startup-gate" id="startupGate">
+      <div class="panel-header">
+        <div>
+          <h2>Start with a JSON file</h2>
+          <p>Choose where Team Pulse should keep your data. The first launch stays blank until you create or open a JSON file.</p>
+        </div>
+      </div>
+      <div class="content topless startup-gate-body">
+        <div class="setup-actions">
+          <button id="createJsonFileBtn">Create JSON file</button>
+          <button id="openJsonFileBtn" class="secondary">Open existing JSON</button>
+        </div>
+        <p class="help-text">After you connect a file once, Team Pulse will try to reopen that same file on future launches and can keep a cached copy in this browser.</p>
+      </div>
+    </section>
+
+    <section id="stats" class="grid-cards"></section>
+
+
+    <section class="card team-health-card" id="teamHealthSection">
+      <div class="panel-header">
+        <div>
+          <h2>Team health overview</h2>
+          <p>A higher-level visual scan of overall team cadence and plan mix.</p>
+        </div>
+      </div>
+      <div class="content topless">
+        <div id="teamHealthBody"></div>
+      </div>
+    </section>
+
+    <section class="card" id="reportsSection">
+      <div class="panel-header">
+        <div>
+          <h2>Direct reports</h2>
+          <p>Compact scan view. Click any row to open that person's workspace.</p>
+        </div>
+        <div class="section-actions">
+          <button id="exportCsvBtn" class="secondary">Export CSV</button>
+        </div>
+      </div>
+      <div class="content topless">
+        <div class="searchbar">
+          <input id="searchInput" type="search" placeholder="Search by name, mentor, level, plan, risk, or notes">
+          <select id="planFilter">
+            <option value="">All plan statuses</option>
+          </select>
+          <select id="attentionFilter">
+            <option value="">All attention states</option>
+            <option value="needs-attention">Needs attention only</option>
+            <option value="on-track">On track only</option>
+          </select>
+        </div>
+        <div id="quickFilterBar" class="quick-filter-bar hidden">
+          <div>
+            <strong id="quickFilterTitle"></strong>
+            <p id="quickFilterDescription" class="hint"></p>
+          </div>
+          <button id="clearQuickFilterBtn" class="secondary">Clear tile filter</button>
+        </div>
+        <div class="table-tip">The table is for scanning. The workspace is where you edit details, add notes, and log meetings.</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Level</th>
+              <th>Touchpoints</th>
+              <th>Next 1:1</th>
+              <th>Plan</th>
+              <th>Risk</th>
+              <th>Attention</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody"></tbody>
+        </table>
+      </div>
+      <div id="tableEmpty" class="empty-state hidden">No direct reports match your current filters.</div>
+    </section>
+  </div>
+
+  <div id="saveDock" class="save-dock hidden" role="status" aria-live="polite">
+    <div>
+      <strong id="saveDockTitle">Unsaved changes</strong>
+      <p id="saveDockText">Your latest changes are safe in this browser, but they are not in your JSON file yet.</p>
+    </div>
+    <div class="save-dock-actions">
+      <button id="saveDockBtn">Save JSON</button>
+      <button id="dismissDockBtn" class="secondary">Later</button>
+    </div>
+  </div>
+
+  <input id="icsFileInput" type="file" accept=".ics,text/calendar" class="hidden" multiple>
+
+  <div id="reportModal" class="overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Add direct report</h2>
+          <p>Capture the current profile here. Meetings are logged separately in the workspace.</p>
+        </div>
+        <button id="closeModalBtn" class="secondary">Close</button>
+      </div>
+      <div class="modal-body">
+        <form id="reportForm">
+          <input type="hidden" id="reportId">
+          <div class="form-grid">
+            <label>
+              <span>Name *</span>
+              <input id="name" required>
+            </label>
+            <label>
+              <span>Level</span>
+              <input id="level" placeholder="L4, Senior, etc.">
+            </label>
+            <label>
+              <span>Mentor(s)</span>
+              <input id="mentors" placeholder="Comma-separated if more than one">
+            </label>
+            <label>
+              <span>Hire date</span>
+              <input id="hireDate" type="date">
+            </label>
+            <label>
+              <span>Last promotion / remuneration</span>
+              <input id="lastPromotionDate" type="date">
+            </label>
+            <label>
+              <span>Next planned 1:1</span>
+              <input id="nextOneOnOneDate" type="date">
+            </label>
+            <label>
+              <span>Plan status</span>
+              <select id="planStatus"></select>
+            </label>
+            <label>
+              <span>Risk flag</span>
+              <select id="riskFlag"></select>
+            </label>
+            <label class="full">
+              <span>Development goal summary</span>
+              <textarea id="developmentGoalSummary" placeholder="What are they working toward?"></textarea>
+            </label>
+            <label class="full">
+              <span>Promotion readiness / growth area</span>
+              <textarea id="promotionReadiness" placeholder="Readiness notes, strengths, gaps, growth focus"></textarea>
+            </label>
+            <label class="full">
+              <span>Notes</span>
+              <textarea id="notes" placeholder="Anything else you want to keep track of"></textarea>
+            </label>
+          </div>
+          <div class="actions" style="margin-top:16px;">
+            <button type="submit">Save direct report</button>
+            <button type="button" id="cancelModalBtn" class="secondary">Cancel</button>
+          </div>
+          <div id="modalStatus" class="status-line"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailDrawerOverlay" class="drawer-overlay" aria-hidden="true">
+    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div id="detailDrawer"></div>
+    </aside>
+  </div>
+
+  <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
+    <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle">
+      <div class="drawer-shell">
+        <div class="drawer-header">
+          <div class="drawer-header-top">
+            <div>
+              <h2 id="rulesDrawerTitle">Attention rules</h2>
+              <p>Set what counts as overdue for you, and how often Team Pulse should remind you to save to file.</p>
+            </div>
+            <div class="actions">
+              <button id="closeRulesDrawerBtn" class="secondary">Close</button>
+            </div>
+          </div>
+        </div>
+        <div class="drawer-body">
+          <div class="drawer-section">
+            <h3>Overdue windows</h3>
+            <form id="thresholdForm" class="form-grid">
+              <label>
+                <span>1:1 overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="oneOnOneThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>PDC overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="developmentThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>CV review overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="cvReviewThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>Save reminder every</span>
+                <div class="input-with-suffix">
+                  <input id="saveReminderMinutes" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">mins</span>
+                </div>
+              </label>
+
+              <div class="full">
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Missing mentor counts as attention</strong>
+                    <p>Controls whether "No mentor assigned" appears in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Missing mentor counts as attention">
+                    <input id="missingMentorCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Blocked plan counts as attention</strong>
+                    <p>Controls whether blocked plans appear in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Blocked plan counts as attention">
+                    <input id="blockedPlanCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="actions full" style="margin-top: 4px;">
+                <button type="submit">Save rules</button>
+                <button type="button" id="resetRulesBtn" class="secondary">Reset defaults</button>
+              </div>
+              <div id="thresholdStatus" class="status-line full"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div id="tileModal" class="overlay" aria-hidden="true">
+    <div class="modal tile-modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="tileModalTitle">Summary</h2>
+          <p>Tile summary and quick action.</p>
+        </div>
+        <button id="closeTileModalBtn" class="secondary">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="tile-summary">
+          <p id="tileModalCount" class="tile-count">0</p>
+          <p id="tileModalDescription" class="subtle">No summary yet.</p>
+        </div>
+        <div id="tileModalBody"></div>
+        <div class="actions" style="margin-top:16px;">
+          <button id="tileModalPrimaryBtn">Go</button>
+          <button id="tileModalSecondaryBtn" class="secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const APP_VERSION = 'v0.12';
+    const STORAGE_KEY = 'team-pulse-app-state-v0.12';
+    const META_STORAGE_KEY = 'team-pulse-save-meta-v0.12';
+    const PLAN_STATUSES = ['Not started', 'In progress', 'Blocked', 'Completed', 'Needs review'];
+    const RISK_FLAGS = ['None', 'Watch', 'Needs attention', 'Urgent'];
+    const MEETING_TYPES = ['1:1', 'PDC', 'CV review'];
+    const DEFAULT_THRESHOLDS = {
+      oneOnOneDays: 14,
+      developmentConversationDays: 90,
+      cvReviewDays: 180
+    };
+    const DEFAULT_SETTINGS = {
+      missingMentorCounts: true,
+      blockedPlanCounts: true,
+      saveReminderMinutes: 15
+    };
+    const DEFAULT_STATE = {
+      reports: [],
+      selectedId: null,
+      thresholds: structuredClone(DEFAULT_THRESHOLDS),
+      settings: structuredClone(DEFAULT_SETTINGS)
+    };
+    const DEFAULT_META = {
+      hasUnsavedPortableChanges: false,
+      dirtySince: null,
+      lastPortableSaveAt: null,
+      dockDismissedUntil: null,
+      hasInitializedFileSession: false,
+      lastConnectedFileName: ''
+    };
+    const FILE_HANDLE_DB_NAME = 'team-pulse-file-db-v0.12';
+    const FILE_HANDLE_STORE = 'handles';
+    const FILE_HANDLE_KEY = 'connected-data-file-v0.12';
+
+    let state = loadState();
+    let meta = loadMeta();
+    let connectedDataFileHandle = null;
+    let activeQuickFilter = '';
+    let activeTileKey = '';
+    let pendingIcsImportContext = { preferredReportId: null, statusElementId: '' };
+
+    const toastStackEl = document.getElementById('toastStack');
+    const startupGateEl = document.getElementById('startupGate');
+    const createJsonFileBtn = document.getElementById('createJsonFileBtn');
+    const openJsonFileBtn = document.getElementById('openJsonFileBtn');
+    const statsEl = document.getElementById('stats');
+    const teamHealthSectionEl = document.getElementById('teamHealthSection');
+    const teamHealthBodyEl = document.getElementById('teamHealthBody');
+    const reportsTableBodyEl = document.getElementById('reportsTableBody');
+    const detailDrawerOverlayEl = document.getElementById('detailDrawerOverlay');
+    const detailDrawerEl = document.getElementById('detailDrawer');
+    const rulesDrawerOverlayEl = document.getElementById('rulesDrawerOverlay');
+    const tableEmptyEl = document.getElementById('tableEmpty');
+    const searchInputEl = document.getElementById('searchInput');
+    const planFilterEl = document.getElementById('planFilter');
+    const attentionFilterEl = document.getElementById('attentionFilter');
+    const addReportBtn = document.getElementById('addReportBtn');
+    const saveFileBtn = document.getElementById('saveFileBtn');
+    const connectDataFileBtn = document.getElementById('connectDataFileBtn');
+    const importIcsBtn = document.getElementById('importIcsBtn');
+    const icsFileInputEl = document.getElementById('icsFileInput');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const attentionRulesBtn = document.getElementById('attentionRulesBtn');
+    const appVersionEl = document.getElementById('appVersion');
+    const fileStatePillEl = document.getElementById('fileStatePill');
+    const saveDockEl = document.getElementById('saveDock');
+    const saveDockTitleEl = document.getElementById('saveDockTitle');
+    const saveDockTextEl = document.getElementById('saveDockText');
+    const saveDockBtn = document.getElementById('saveDockBtn');
+    const dismissDockBtn = document.getElementById('dismissDockBtn');
+    const thresholdFormEl = document.getElementById('thresholdForm');
+    const oneOnOneThresholdEl = document.getElementById('oneOnOneThreshold');
+    const developmentThresholdEl = document.getElementById('developmentThreshold');
+    const cvReviewThresholdEl = document.getElementById('cvReviewThreshold');
+    const saveReminderMinutesEl = document.getElementById('saveReminderMinutes');
+    const missingMentorCountsEl = document.getElementById('missingMentorCounts');
+    const blockedPlanCountsEl = document.getElementById('blockedPlanCounts');
+    const thresholdStatusEl = document.getElementById('thresholdStatus');
+    const resetRulesBtn = document.getElementById('resetRulesBtn');
+    const closeRulesDrawerBtn = document.getElementById('closeRulesDrawerBtn');
+    const quickFilterBarEl = document.getElementById('quickFilterBar');
+    const quickFilterTitleEl = document.getElementById('quickFilterTitle');
+    const quickFilterDescriptionEl = document.getElementById('quickFilterDescription');
+    const clearQuickFilterBtn = document.getElementById('clearQuickFilterBtn');
+    const reportsSectionEl = document.getElementById('reportsSection');
+    const tileModalEl = document.getElementById('tileModal');
+    const tileModalTitleEl = document.getElementById('tileModalTitle');
+    const tileModalCountEl = document.getElementById('tileModalCount');
+    const tileModalDescriptionEl = document.getElementById('tileModalDescription');
+    const tileModalBodyEl = document.getElementById('tileModalBody');
+    const closeTileModalBtn = document.getElementById('closeTileModalBtn');
+    const tileModalPrimaryBtn = document.getElementById('tileModalPrimaryBtn');
+    const tileModalSecondaryBtn = document.getElementById('tileModalSecondaryBtn');
+
+    const reportModalEl = document.getElementById('reportModal');
+    const modalTitleEl = document.getElementById('modalTitle');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const reportFormEl = document.getElementById('reportForm');
+    const modalStatusEl = document.getElementById('modalStatus');
+
+    const formEls = {
+      reportId: document.getElementById('reportId'),
+      name: document.getElementById('name'),
+      level: document.getElementById('level'),
+      mentors: document.getElementById('mentors'),
+      hireDate: document.getElementById('hireDate'),
+      lastPromotionDate: document.getElementById('lastPromotionDate'),
+      nextOneOnOneDate: document.getElementById('nextOneOnOneDate'),
+      planStatus: document.getElementById('planStatus'),
+      riskFlag: document.getElementById('riskFlag'),
+      developmentGoalSummary: document.getElementById('developmentGoalSummary'),
+      promotionReadiness: document.getElementById('promotionReadiness'),
+      notes: document.getElementById('notes')
+    };
+
+    populateSelect(formEls.planStatus, PLAN_STATUSES);
+    populateSelect(formEls.riskFlag, RISK_FLAGS);
+    populateSelect(planFilterEl, PLAN_STATUSES, true);
+    renderRuleInputs();
+    appVersionEl.textContent = APP_VERSION;
+
+    addReportBtn.addEventListener('click', () => openModal());
+    createJsonFileBtn.addEventListener('click', savePortableFile);
+    openJsonFileBtn.addEventListener('click', connectDataFile);
+    saveFileBtn.addEventListener('click', savePortableFile);
+    connectDataFileBtn.addEventListener('click', connectDataFile);
+    importIcsBtn.addEventListener('click', () => beginIcsImport(state.selectedId || null, state.selectedId ? 'meetingStatus' : ''));
+    icsFileInputEl.addEventListener('change', handleIcsFileSelection);
+    attentionRulesBtn.addEventListener('click', openRulesDrawer);
+    exportCsvBtn.addEventListener('click', exportCsv);
+    saveDockBtn.addEventListener('click', savePortableFile);
+    dismissDockBtn.addEventListener('click', dismissSaveDock);
+    searchInputEl.addEventListener('input', render);
+    planFilterEl.addEventListener('change', render);
+    attentionFilterEl.addEventListener('change', render);
+    clearQuickFilterBtn.addEventListener('click', clearQuickFilter);
+
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+    reportModalEl.addEventListener('click', (event) => {
+      if (event.target === reportModalEl) closeModal();
+    });
+    reportFormEl.addEventListener('submit', handleReportSubmit);
+
+    closeRulesDrawerBtn.addEventListener('click', closeRulesDrawer);
+    thresholdFormEl.addEventListener('submit', handleThresholdSubmit);
+    resetRulesBtn.addEventListener('click', resetThresholds);
+    rulesDrawerOverlayEl.addEventListener('click', (event) => {
+      if (event.target === rulesDrawerOverlayEl) closeRulesDrawer();
+    });
+
+    closeTileModalBtn.addEventListener('click', closeTileModal);
+    tileModalPrimaryBtn.addEventListener('click', applyActiveTileAction);
+    tileModalSecondaryBtn.addEventListener('click', closeTileModal);
+    tileModalEl.addEventListener('click', (event) => {
+      if (event.target === tileModalEl) closeTileModal();
+    });
+
+    statsEl.addEventListener('click', handleTileClick);
+    detailDrawerOverlayEl.addEventListener('click', (event) => {
+      if (event.target === detailDrawerOverlayEl) clearSelectedReport();
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (reportModalEl.classList.contains('open')) {
+        closeModal();
+        return;
+      }
+      if (rulesDrawerOverlayEl.classList.contains('open')) {
+        closeRulesDrawer();
+        return;
+      }
+      if (tileModalEl.classList.contains('open')) {
+        closeTileModal();
+        return;
+      }
+      if (detailDrawerOverlayEl.classList.contains('open')) {
+        clearSelectedReport();
+      }
+    });
+
+    updateFileUi();
+    render();
+    initializeFileBackedStorage();
+    renderSaveDock();
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.setInterval(renderSaveDock, 30 * 1000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) renderSaveDock();
+    });
+
+    function structuredClone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        const merged = {
+          ...structuredClone(DEFAULT_STATE),
+          ...parsed,
+          thresholds: {
+            ...structuredClone(DEFAULT_THRESHOLDS),
+            ...(parsed.thresholds || {})
+          },
+          settings: {
+            ...structuredClone(DEFAULT_SETTINGS),
+            ...(parsed.settings || {})
+          }
+        };
+        if (!Array.isArray(merged.reports)) merged.reports = [];
+        merged.reports = merged.reports.map(normalizeReport);
+        merged.selectedId = null;
+        const parsedReminder = Number.parseInt(parsed?.settings?.saveReminderMinutes, 10);
+        if (!Number.isFinite(parsedReminder) || parsedReminder < 1 || parsedReminder === 3) {
+          merged.settings.saveReminderMinutes = DEFAULT_SETTINGS.saveReminderMinutes;
+        }
+        return merged;
+      } catch (error) {
+        console.error('Failed to load state', error);
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    function loadMeta() {
+      try {
+        const raw = localStorage.getItem(META_STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_META);
+        return {
+          ...structuredClone(DEFAULT_META),
+          ...JSON.parse(raw)
+        };
+      } catch (error) {
+        console.error('Failed to load metadata', error);
+        return structuredClone(DEFAULT_META);
+      }
+    }
+
+    function persistState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function persistMeta() {
+      localStorage.setItem(META_STORAGE_KEY, JSON.stringify(meta));
+    }
+
+    function saveState(options = {}) {
+      persistState();
+      const markDirty = !(options.skipExternalFile || options.markDirty === false);
+      if (markDirty) {
+        markPortableDirty();
+      } else {
+        updateFileUi();
+        renderSaveDock();
+      }
+    }
+
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function formatClock(date = new Date()) {
+      return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(date);
+    }
+
+    function formatSavedStamp(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const dateLabel = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date);
+      return `${dateLabel} at ${formatClock(date)}`;
+    }
+
+    function stateHasMeaningfulData() {
+      return Array.isArray(state.reports) && state.reports.length > 0;
+    }
+
+    function isFileSessionReady() {
+      return !!meta.hasInitializedFileSession;
+    }
+
+    function ensureFileSessionReady(fileName = '') {
+      let changed = false;
+      if (!meta.hasInitializedFileSession) {
+        meta.hasInitializedFileSession = true;
+        changed = true;
+      }
+      if (fileName && meta.lastConnectedFileName !== fileName) {
+        meta.lastConnectedFileName = fileName;
+        changed = true;
+      }
+      if (changed) persistMeta();
+    }
+
+    function portableComparableState(value) {
+      return {
+        ...structuredClone(value),
+        selectedId: null
+      };
+    }
+
+    function portableStatesMatch(left, right) {
+      return JSON.stringify(portableComparableState(left)) === JSON.stringify(portableComparableState(right));
+    }
+
+    function markPortableDirty(options = {}) {
+      const { quiet = false } = options;
+      if (!meta.hasUnsavedPortableChanges) {
+        meta.dirtySince = nowIso();
+        meta.dockDismissedUntil = null;
+      }
+      meta.hasUnsavedPortableChanges = true;
+      persistMeta();
+      updateFileUi();
+      renderSaveDock();
+      if (!quiet) return;
+    }
+
+    function markPortableClean(savedAt = null) {
+      meta.hasUnsavedPortableChanges = false;
+      meta.dirtySince = null;
+      meta.dockDismissedUntil = null;
+      if (savedAt !== null) meta.lastPortableSaveAt = savedAt;
+      persistMeta();
+      updateFileUi();
+      renderSaveDock();
+    }
+
+    function dismissSaveDock() {
+      const ms = getReminderMs();
+      meta.dockDismissedUntil = new Date(Date.now() + ms).toISOString();
+      persistMeta();
+      renderSaveDock();
+    }
+
+    function getReminderMs() {
+      const minutes = Number.parseInt(state.settings?.saveReminderMinutes, 10);
+      const safeMinutes = Number.isFinite(minutes) && minutes > 0 ? minutes : DEFAULT_SETTINGS.saveReminderMinutes;
+      return safeMinutes * 60 * 1000;
+    }
+
+    function renderSaveDock() {
+      if (!isFileSessionReady() || !meta.hasUnsavedPortableChanges) {
+        saveDockEl.classList.add('hidden');
+        saveDockEl.classList.remove('nudge');
+        return;
+      }
+
+      const dirtySinceMs = meta.dirtySince ? Date.parse(meta.dirtySince) : Date.now();
+      const unsavedForMs = Math.max(0, Date.now() - dirtySinceMs);
+      const reminderDue = unsavedForMs >= getReminderMs();
+      if (!reminderDue) {
+        saveDockEl.classList.add('hidden');
+        saveDockEl.classList.remove('nudge');
+        return;
+      }
+
+      const dismissedUntil = meta.dockDismissedUntil ? Date.parse(meta.dockDismissedUntil) : 0;
+      if (dismissedUntil && Date.now() < dismissedUntil) {
+        saveDockEl.classList.add('hidden');
+        saveDockEl.classList.remove('nudge');
+        return;
+      }
+
+      const dirtyMinutes = Math.max(1, Math.floor(unsavedForMs / 60000));
+      const targetName = connectedDataFileHandle?.name || meta.lastConnectedFileName || 'your JSON file';
+      const fileText = connectedDataFileHandle
+        ? `Your latest changes are in the app, but not yet written to ${targetName}.`
+        : `Your latest changes are in the app, but Team Pulse is currently relying on its cached copy instead of ${targetName}.`;
+
+      saveDockTitleEl.textContent = 'You have not saved the JSON in a while';
+      saveDockTextEl.textContent = `${fileText} It has been about ${dirtyMinutes} minute${dirtyMinutes === 1 ? '' : 's'} since the last JSON save.`;
+      saveDockBtn.textContent = connectedDataFileHandle ? 'Save JSON' : 'Create JSON';
+      saveDockEl.classList.remove('hidden');
+      saveDockEl.classList.add('nudge');
+    }
+
+    function showToast(message, kind = '') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${kind}`.trim();
+      toast.textContent = message;
+      toastStackEl.appendChild(toast);
+      window.setTimeout(() => {
+        toast.remove();
+      }, 4200);
+    }
+
+    function updateFileUi() {
+      const hasConnectedFile = Boolean(connectedDataFileHandle);
+      const directFileSavingSupported = supportsDirectFileSaving();
+      const portableFileLoadingSupported = supportsPortableFileLoading();
+      const fileSessionReady = isFileSessionReady();
+
+      if (!fileSessionReady) {
+        fileStatePillEl.textContent = 'No JSON loaded';
+        fileStatePillEl.className = 'pill save-pill info';
+        fileStatePillEl.title = 'Create or open a JSON file to start Team Pulse.';
+      } else if (!directFileSavingSupported) {
+        fileStatePillEl.textContent = 'Use Edge or Chrome';
+        fileStatePillEl.className = 'pill save-pill warning';
+        fileStatePillEl.title = 'Portable JSON saving works best in Edge or Chrome.';
+      } else if (hasConnectedFile && meta.hasUnsavedPortableChanges) {
+        fileStatePillEl.textContent = 'Unsaved to JSON';
+        fileStatePillEl.className = 'pill save-pill warning';
+        fileStatePillEl.title = `Connected to ${connectedDataFileHandle.name}. Click Save JSON to overwrite it with the latest app data.`;
+      } else if (hasConnectedFile && !meta.hasUnsavedPortableChanges) {
+        fileStatePillEl.textContent = 'Saved to JSON';
+        fileStatePillEl.className = 'pill save-pill success';
+        const stamp = meta.lastPortableSaveAt ? ` Last JSON save: ${formatSavedStamp(meta.lastPortableSaveAt)}.` : '';
+        fileStatePillEl.title = `Connected to ${connectedDataFileHandle.name}.${stamp}`.trim();
+      } else if (meta.hasUnsavedPortableChanges) {
+        fileStatePillEl.textContent = 'Cached copy';
+        fileStatePillEl.className = 'pill save-pill warning';
+        fileStatePillEl.title = 'The app is keeping changes in this browser cache until you save them back to a JSON file.';
+      } else {
+        fileStatePillEl.textContent = 'Cached copy';
+        fileStatePillEl.className = 'pill save-pill neutral';
+        const fileLabel = meta.lastConnectedFileName ? ` Last JSON: ${meta.lastConnectedFileName}.` : '';
+        fileStatePillEl.title = `The app is using the cached copy stored in this browser.${fileLabel}`.trim();
+      }
+
+      addReportBtn.disabled = !fileSessionReady;
+      addReportBtn.title = fileSessionReady ? '' : 'Create or open a JSON file first.';
+      attentionRulesBtn.disabled = !fileSessionReady;
+      attentionRulesBtn.title = fileSessionReady ? '' : 'Create or open a JSON file first.';
+      importIcsBtn.disabled = !fileSessionReady || state.reports.length === 0;
+      importIcsBtn.title = !fileSessionReady
+        ? 'Create or open a JSON file first.'
+        : state.reports.length === 0
+          ? 'Add a direct report before importing .ics files.'
+          : '';
+
+      saveFileBtn.disabled = !directFileSavingSupported;
+      saveFileBtn.textContent = hasConnectedFile ? 'Save JSON' : 'Create JSON';
+      saveFileBtn.title = directFileSavingSupported
+        ? hasConnectedFile
+          ? 'Overwrite the currently connected JSON file with the latest app data.'
+          : 'Choose the folder and filename for your Team Pulse JSON file.'
+        : 'Use Edge or Chrome for portable JSON file saving.';
+
+      connectDataFileBtn.disabled = !portableFileLoadingSupported;
+      connectDataFileBtn.title = portableFileLoadingSupported ? 'Open an existing Team Pulse JSON file.' : 'Use Edge or Chrome to open an existing JSON file.';
+      connectDataFileBtn.textContent = hasConnectedFile ? 'Switch JSON' : 'Open JSON';
+
+      exportCsvBtn.disabled = !fileSessionReady || state.reports.length === 0;
+      exportCsvBtn.title = !fileSessionReady
+        ? 'Create or open a JSON file first.'
+        : state.reports.length === 0
+          ? 'Add a direct report before exporting CSV.'
+          : '';
+    }
+
+    function supportsDirectFileSaving() {
+      return typeof window.showSaveFilePicker === 'function';
+    }
+
+    function supportsPortableFileLoading() {
+      return typeof window.showOpenFilePicker === 'function' || typeof window.showSaveFilePicker === 'function';
+    }
+
+    async function verifyPermission(handle, readWrite = false) {
+      if (!handle) return false;
+      const options = readWrite ? { mode: 'readwrite' } : {};
+      try {
+        if (handle.queryPermission && (await handle.queryPermission(options)) === 'granted') return true;
+        if (handle.requestPermission && (await handle.requestPermission(options)) === 'granted') return true;
+      } catch (error) {
+        console.error('Permission check failed', error);
+      }
+      return false;
+    }
+
+    function openHandleDb() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(FILE_HANDLE_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains(FILE_HANDLE_STORE)) {
+            request.result.createObjectStore(FILE_HANDLE_STORE);
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function getStoredConnectedFileHandle() {
+      const db = await openHandleDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FILE_HANDLE_STORE, 'readonly');
+        const request = tx.objectStore(FILE_HANDLE_STORE).get(FILE_HANDLE_KEY);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function storeConnectedFileHandle(handle) {
+      const db = await openHandleDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FILE_HANDLE_STORE, 'readwrite');
+        tx.objectStore(FILE_HANDLE_STORE).put(handle, FILE_HANDLE_KEY);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function clearStoredConnectedFileHandle() {
+      const db = await openHandleDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FILE_HANDLE_STORE, 'readwrite');
+        tx.objectStore(FILE_HANDLE_STORE).delete(FILE_HANDLE_KEY);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function readTextFromHandle(handle) {
+      const file = await handle.getFile();
+      return await file.text();
+    }
+
+    function normalizeImportedState(parsed) {
+      if (!parsed || !Array.isArray(parsed.reports)) throw new Error('Invalid file');
+      const merged = {
+        ...structuredClone(DEFAULT_STATE),
+        ...parsed,
+        thresholds: {
+          ...structuredClone(DEFAULT_THRESHOLDS),
+          ...(parsed.thresholds || {})
+        },
+        settings: {
+          ...structuredClone(DEFAULT_SETTINGS),
+          ...(parsed.settings || {})
+        }
+      };
+      if (!Array.isArray(merged.reports)) merged.reports = [];
+      merged.reports = merged.reports.map(normalizeReport);
+      const parsedReminder = Number.parseInt(parsed?.settings?.saveReminderMinutes, 10);
+      if (!Number.isFinite(parsedReminder) || parsedReminder < 1 || parsedReminder === 3) {
+        merged.settings.saveReminderMinutes = DEFAULT_SETTINGS.saveReminderMinutes;
+      }
+      merged.selectedId = null;
+      return merged;
+    }
+
+    function parseStateText(text) {
+      return normalizeImportedState(JSON.parse(text));
+    }
+
+    async function loadStateFromHandle(handle) {
+      const text = await readTextFromHandle(handle);
+      if (!text.trim()) return null;
+      return parseStateText(text);
+    }
+
+    async function writeStateToHandle(handle, value) {
+      const writable = await handle.createWritable();
+      await writable.write(JSON.stringify(value, null, 2));
+      await writable.close();
+    }
+
+    async function initializeFileBackedStorage() {
+      try {
+        const storedHandle = await getStoredConnectedFileHandle();
+        if (!storedHandle) return;
+        connectedDataFileHandle = storedHandle;
+        ensureFileSessionReady(storedHandle.name);
+        updateFileUi();
+
+        if (meta.hasUnsavedPortableChanges) {
+          showToast(`Reconnected ${storedHandle.name}. Your newer cached app changes were kept.`, 'warning');
+          return;
+        }
+
+        try {
+          const loadedState = await loadStateFromHandle(storedHandle);
+          if (loadedState) {
+            state = loadedState;
+            saveState({ skipExternalFile: true });
+            markPortableClean();
+            ensureFileSessionReady(storedHandle.name);
+            render();
+            showToast(`Loaded data from ${storedHandle.name}.`, 'success');
+          } else {
+            ensureFileSessionReady(storedHandle.name);
+            showToast(`Connected to ${storedHandle.name}.`, 'success');
+          }
+        } catch (error) {
+          if (error && ['NotAllowedError', 'SecurityError'].includes(error.name)) {
+            showToast(`A previously connected file was found (${storedHandle.name}), but this browser wants you to reconnect before it can read or write it again.`, 'warning');
+          } else if (error && error.name === 'NotFoundError') {
+            connectedDataFileHandle = null;
+            try {
+              await clearStoredConnectedFileHandle();
+            } catch (clearError) {
+              console.error('Failed to clear missing file handle', clearError);
+            }
+            updateFileUi();
+            showToast('The previously connected JSON file could not be found.', 'error');
+          } else {
+            console.error('Failed to initialize connected data file', error);
+            showToast('Could not reopen the previously connected JSON file automatically.', 'error');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to restore file connection', error);
+      }
+    }
+
+    async function requestSaveFileHandle() {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'team-pulse.json',
+        types: [{
+          description: 'Tracker data',
+          accept: { 'application/json': ['.json'] }
+        }]
+      });
+      if (!handle) return null;
+      const ok = await verifyPermission(handle, true);
+      if (!ok) {
+        showToast('Read and write permission was not granted for that save file.', 'error');
+        return null;
+      }
+      connectedDataFileHandle = handle;
+      await storeConnectedFileHandle(handle);
+      updateFileUi();
+      return handle;
+    }
+
+    async function savePortableFile() {
+      if (!supportsDirectFileSaving()) {
+        showToast('Portable JSON saving is best supported in Edge or Chrome.', 'error');
+        return false;
+      }
+
+      try {
+        let createdNewFile = false;
+        let handle = connectedDataFileHandle;
+        if (!handle) {
+          handle = await requestSaveFileHandle();
+          if (!handle) return false;
+          createdNewFile = true;
+        } else {
+          const ok = await verifyPermission(handle, true);
+          if (!ok) {
+            showToast(`Write permission is missing for ${handle.name}. Use Create JSON or Switch JSON to choose a file again.`, 'error');
+            return false;
+          }
+        }
+
+        await writeStateToHandle(handle, state);
+        ensureFileSessionReady(handle.name);
+        const savedAt = nowIso();
+        markPortableClean(savedAt);
+        showToast(`${createdNewFile ? 'Created' : 'Saved'} ${handle.name} at ${formatClock(new Date(savedAt))}. Future Save JSON clicks overwrite this same file.`, 'success');
+        render();
+        return true;
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          showToast('JSON creation or save was canceled. Your latest app changes are still being kept in this browser.', 'warning');
+          return false;
+        }
+        if (error && error.name === 'NotFoundError') {
+          connectedDataFileHandle = null;
+          try {
+            await clearStoredConnectedFileHandle();
+          } catch (clearError) {
+            console.error('Failed to clear missing file handle', clearError);
+          }
+          updateFileUi();
+          showToast('The connected JSON file could not be found. Save again to choose a new location.', 'error');
+          return false;
+        }
+        console.error('Failed to save portable file', error);
+        showToast('Could not write the JSON file. Your latest changes are still in this browser cache.', 'error');
+        return false;
+      }
+    }
+
+    async function connectDataFile() {
+      if (!supportsPortableFileLoading()) {
+        showToast('Opening an existing JSON file is best supported in Edge or Chrome.', 'error');
+        return false;
+      }
+
+      try {
+        let handle = null;
+        if (typeof window.showOpenFilePicker === 'function') {
+          const handles = await window.showOpenFilePicker({
+            multiple: false,
+            types: [{
+              description: 'Tracker data',
+              accept: { 'application/json': ['.json'] }
+            }]
+          });
+          handle = handles?.[0] || null;
+        } else if (typeof window.showSaveFilePicker === 'function') {
+          handle = await window.showSaveFilePicker({
+            suggestedName: 'team-pulse.json',
+            types: [{
+              description: 'Tracker data',
+              accept: { 'application/json': ['.json'] }
+            }]
+          });
+        }
+
+        if (!handle) return false;
+
+        const ok = await verifyPermission(handle, true);
+        if (!ok) {
+          showToast('Read and write permission was not granted for that JSON file.', 'error');
+          return false;
+        }
+
+        let loadedState = null;
+        try {
+          const currentFileText = await readTextFromHandle(handle);
+          if (currentFileText.trim()) loadedState = parseStateText(currentFileText);
+        } catch (error) {
+          console.error('Could not read selected file before connecting', error);
+          showToast('That file could not be read as Team Pulse data.', 'error');
+          return false;
+        }
+
+        connectedDataFileHandle = handle;
+        await storeConnectedFileHandle(handle);
+        ensureFileSessionReady(handle.name);
+        updateFileUi();
+
+        if (loadedState) {
+          const shouldLoad = (!stateHasMeaningfulData() && !meta.hasUnsavedPortableChanges)
+            ? true
+            : window.confirm(`${handle.name} already contains Team Pulse data. Click OK to load that file into the app. Click Cancel to keep what is currently on screen and just connect this file.`);
+
+          if (shouldLoad) {
+            state = loadedState;
+            saveState({ skipExternalFile: true });
+            markPortableClean();
+            ensureFileSessionReady(handle.name);
+            render();
+            showToast(`Loaded data from ${handle.name}.`, 'success');
+          } else {
+            if (!portableStatesMatch(state, loadedState)) {
+              markPortableDirty({ quiet: true });
+            } else {
+              markPortableClean();
+            }
+            ensureFileSessionReady(handle.name);
+            showToast(`Connected ${handle.name}. The app kept what was already on screen.`, 'success');
+          }
+        } else {
+          if (stateHasMeaningfulData()) {
+            markPortableDirty({ quiet: true });
+          } else {
+            markPortableClean();
+          }
+          ensureFileSessionReady(handle.name);
+          render();
+          showToast(`Connected blank file ${handle.name}.`, 'success');
+        }
+
+        return true;
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          showToast('No JSON file was chosen. Current changes are still being kept in this browser.', 'warning');
+          return false;
+        }
+        console.error('Failed to connect a data file', error);
+        showToast('Could not open that JSON file. You can still keep using the browser cache after you connect a file once.', 'error');
+        return false;
+      }
+    }
+
+    function handleBeforeUnload(event) {
+      if (!meta.hasUnsavedPortableChanges) return;
+      event.preventDefault();
+      event.returnValue = '';
+    }
+
+    function populateSelect(el, values, includeBlank = false) {
+      const current = el.value;
+      el.innerHTML = '';
+      if (includeBlank) {
+        const blank = document.createElement('option');
+        blank.value = '';
+        blank.textContent = 'All';
+        el.appendChild(blank);
+      }
+      values.forEach((value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        el.appendChild(option);
+      });
+      if (current) el.value = current;
+    }
+
+    function uid(prefix = 'id') {
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function canonicalMeetingType(type) {
+      const value = String(type || '').trim();
+      if (!value) return '';
+      if (value === 'Development conversation' || value === 'Personal development conversation' || value === 'PDC') return 'PDC';
+      return value;
+    }
+
+    function normalizeReport(report) {
+      const safeReport = { ...(report || {}) };
+      safeReport.meetings = Array.isArray(safeReport.meetings)
+        ? safeReport.meetings.map((meeting) => ({
+            ...meeting,
+            meetingType: canonicalMeetingType(meeting.meetingType) || '1:1'
+          }))
+        : [];
+      safeReport.planStatus = PLAN_STATUSES.includes(safeReport.planStatus) ? safeReport.planStatus : PLAN_STATUSES[0];
+      safeReport.riskFlag = RISK_FLAGS.includes(safeReport.riskFlag) ? safeReport.riskFlag : RISK_FLAGS[0];
+      safeReport.hireDate = safeReport.hireDate || '';
+      safeReport.lastPromotionDate = safeReport.lastPromotionDate || '';
+      return safeReport;
+    }
+
+    function getReportById(id) {
+      return state.reports.find((report) => report.id === id) || null;
+    }
+
+    function selectReport(id) {
+      closeModal();
+      state.selectedId = id;
+      saveState({ skipExternalFile: true });
+      render();
+    }
+
+    function clearSelectedReport() {
+      state.selectedId = null;
+      saveState({ skipExternalFile: true });
+      render();
+    }
+
+    function openRulesDrawer() {
+      renderRuleInputs();
+      rulesDrawerOverlayEl.classList.add('open');
+      rulesDrawerOverlayEl.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeRulesDrawer() {
+      rulesDrawerOverlayEl.classList.remove('open');
+      rulesDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+    }
+
+    function renderRuleInputs() {
+      oneOnOneThresholdEl.value = state.thresholds.oneOnOneDays;
+      developmentThresholdEl.value = state.thresholds.developmentConversationDays;
+      cvReviewThresholdEl.value = state.thresholds.cvReviewDays;
+      saveReminderMinutesEl.value = state.settings.saveReminderMinutes;
+      missingMentorCountsEl.checked = !!state.settings.missingMentorCounts;
+      blockedPlanCountsEl.checked = !!state.settings.blockedPlanCounts;
+    }
+
+    function parsePositiveInteger(label, value) {
+      const parsed = Number.parseInt(value, 10);
+      if (!Number.isFinite(parsed) || parsed < 1) {
+        throw new Error(`${label} must be at least 1.`);
+      }
+      return parsed;
+    }
+
+    function handleThresholdSubmit(event) {
+      event.preventDefault();
+      try {
+        state.thresholds = {
+          oneOnOneDays: parsePositiveInteger('1:1 overdue rule', oneOnOneThresholdEl.value),
+          developmentConversationDays: parsePositiveInteger('PDC overdue rule', developmentThresholdEl.value),
+          cvReviewDays: parsePositiveInteger('CV review overdue rule', cvReviewThresholdEl.value)
+        };
+        state.settings = {
+          ...state.settings,
+          saveReminderMinutes: parsePositiveInteger('Save reminder interval', saveReminderMinutesEl.value),
+          missingMentorCounts: !!missingMentorCountsEl.checked,
+          blockedPlanCounts: !!blockedPlanCountsEl.checked
+        };
+        saveState();
+        render();
+        setStatus(thresholdStatusEl, 'Attention rules saved in the app.', 'success');
+        showToast('Attention rules updated.', 'success');
+      } catch (error) {
+        setStatus(thresholdStatusEl, error.message || 'Check the rule values and try again.', 'error');
+      }
+    }
+
+    function resetThresholds() {
+      state.thresholds = structuredClone(DEFAULT_THRESHOLDS);
+      state.settings = structuredClone(DEFAULT_SETTINGS);
+      saveState();
+      render();
+      renderRuleInputs();
+      setStatus(thresholdStatusEl, 'Attention rules reset to defaults.', 'success');
+      showToast('Attention rules reset to defaults.', 'success');
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'Not logged';
+      const date = new Date(`${dateString}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return 'Not logged';
+      return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+    }
+
+    function formatShortDate(dateString) {
+      if (!dateString) return 'Not logged';
+      const date = new Date(`${dateString}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return 'Not logged';
+      return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date);
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return '-';
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return '-';
+      return new Intl.DateTimeFormat(undefined, {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+      }).format(date);
+    }
+
+    function dateDiffInDays(dateString) {
+      if (!dateString) return null;
+      const date = new Date(`${dateString}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return Math.floor((today - date) / 86400000);
+    }
+
+    function variantForPlan(status) {
+      return {
+        'Completed': 'success',
+        'Blocked': 'danger',
+        'Needs review': 'warning',
+        'In progress': 'info'
+      }[status] || 'neutral';
+    }
+
+    function variantForRisk(flag) {
+      return {
+        'Urgent': 'danger',
+        'Needs attention': 'warning',
+        'Watch': 'info'
+      }[flag] || 'neutral';
+    }
+
+    function badge(label, variant = 'neutral') {
+      return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
+    }
+
+    function getMeetings(report, type) {
+      return (report.meetings || []).filter((meeting) => canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(type));
+    }
+
+    function latestMeetingDate(report, type) {
+      const meetings = getMeetings(report, type);
+      if (!meetings.length) return null;
+      const sorted = [...meetings].sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)));
+      return sorted[0].meetingDate;
+    }
+
+    function isMeetingOverdue(report, type, thresholdDays) {
+      const age = dateDiffInDays(latestMeetingDate(report, type));
+      return age === null || age > thresholdDays;
+    }
+
+    function computeAttention(report) {
+      const issues = [];
+      if (state.settings.missingMentorCounts && !report.mentors?.trim()) issues.push('No mentor assigned');
+      if (isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays)) issues.push('1:1 overdue');
+      if (isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays)) issues.push('PDC overdue');
+      if (isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays)) issues.push('CV review overdue');
+      if (state.settings.blockedPlanCounts && report.planStatus === 'Blocked') issues.push('Plan is blocked');
+      if (report.riskFlag === 'Needs attention' || report.riskFlag === 'Urgent') issues.push(`Risk flagged: ${report.riskFlag}`);
+      return issues;
+    }
+
+    function meetingTone(report, type, threshold) {
+      const age = dateDiffInDays(latestMeetingDate(report, type));
+      if (age === null) return 'danger';
+      if (age > threshold) return 'warning';
+      return 'success';
+    }
+
+    function attentionTone(issue) {
+      if (issue.includes('blocked') || issue.includes('Urgent')) return 'danger';
+      if (issue.includes('Risk flagged')) return 'warning';
+      return 'warning';
+    }
+
+    function getQuickFilterMeta(filterKey) {
+      switch (filterKey) {
+        case 'oneOnOneOverdue':
+          return {
+            title: 'Showing 1:1s overdue',
+            description: `Last 1:1 is older than ${state.thresholds.oneOnOneDays} days or has not been logged yet.`
+          };
+        case 'developmentOverdue':
+          return {
+            title: 'Showing PDCs overdue',
+            description: `Last PDC is older than ${state.thresholds.developmentConversationDays} days or has not been logged yet.`
+          };
+        case 'cvReviewOverdue':
+          return {
+            title: 'Showing CV reviews overdue',
+            description: `Last CV review is older than ${state.thresholds.cvReviewDays} days or has not been logged yet.`
+          };
+        case 'blockedPlans':
+          return {
+            title: 'Showing blocked plans',
+            description: 'These direct reports are currently marked as Blocked.'
+          };
+        case 'noMentor':
+          return {
+            title: 'Showing missing mentors',
+            description: 'These direct reports do not currently have a mentor assigned.'
+          };
+        default:
+          return null;
+      }
+    }
+
+    function reportMatchesQuickFilter(report) {
+      switch (activeQuickFilter) {
+        case 'oneOnOneOverdue':
+          return isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays);
+        case 'developmentOverdue':
+          return isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays);
+        case 'cvReviewOverdue':
+          return isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays);
+        case 'blockedPlans':
+          return report.planStatus === 'Blocked';
+        case 'noMentor':
+          return !report.mentors?.trim();
+        default:
+          return true;
+      }
+    }
+
+    function clearQuickFilter() {
+      activeQuickFilter = '';
+      saveState({ skipExternalFile: true });
+      render();
+    }
+
+    function renderQuickFilterBar() {
+      const metaForFilter = getQuickFilterMeta(activeQuickFilter);
+      if (!metaForFilter) {
+        quickFilterBarEl.classList.add('hidden');
+        quickFilterTitleEl.textContent = '';
+        quickFilterDescriptionEl.textContent = '';
+        return;
+      }
+      quickFilterTitleEl.textContent = metaForFilter.title;
+      quickFilterDescriptionEl.textContent = metaForFilter.description;
+      quickFilterBarEl.classList.remove('hidden');
+    }
+
+    function getFilteredReports() {
+      const term = searchInputEl.value.trim().toLowerCase();
+      const plan = planFilterEl.value;
+      const attentionFilter = attentionFilterEl.value;
+
+      return [...state.reports]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter((report) => {
+          const attention = computeAttention(report);
+          const blob = [
+            report.name,
+            report.level,
+            report.mentors,
+            report.hireDate,
+            report.lastPromotionDate,
+            report.planStatus,
+            report.riskFlag,
+            report.developmentGoalSummary,
+            report.promotionReadiness,
+            report.notes,
+            attention.join(' ')
+          ].join(' ').toLowerCase();
+
+          if (term && !blob.includes(term)) return false;
+          if (plan && report.planStatus !== plan) return false;
+          if (attentionFilter === 'needs-attention' && attention.length === 0) return false;
+          if (attentionFilter === 'on-track' && attention.length > 0) return false;
+          if (!reportMatchesQuickFilter(report)) return false;
+          return true;
+        });
+    }
+
+    function scrollToReports() {
+      reportsSectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function bindSelectReportLinks() {
+      document.querySelectorAll('[data-select-report]').forEach((el) => {
+        if (el.dataset.bound === '1') return;
+        el.dataset.bound = '1';
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          closeTileModal();
+          selectReport(el.getAttribute('data-select-report'));
+        });
+      });
+    }
+
+    function render() {
+      const fileSessionReady = isFileSessionReady();
+      startupGateEl.classList.toggle('hidden', fileSessionReady);
+      statsEl.classList.toggle('hidden', !fileSessionReady);
+      teamHealthSectionEl.classList.toggle('hidden', !fileSessionReady);
+      reportsSectionEl.classList.toggle('hidden', !fileSessionReady);
+
+      renderRuleInputs();
+      updateFileUi();
+      renderSaveDock();
+
+      if (!fileSessionReady) {
+        renderDetailDrawer();
+        return;
+      }
+
+      renderQuickFilterBar();
+      renderStats();
+      renderTeamHealth();
+      renderTable();
+      renderDetailDrawer();
+    }
+
+    function renderStats() {
+      const reports = state.reports;
+      const total = reports.length || 1;
+      const oneOnOneOverdue = reports.filter((report) => isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays)).length;
+      const pdcOverdue = reports.filter((report) => isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays)).length;
+      const cvOverdue = reports.filter((report) => isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays)).length;
+
+      const stats = [
+        { key: 'directReports', label: 'Direct reports', value: reports.length, icon: '👥', tone: reports.length ? 'success' : 'neutral' },
+        { key: 'oneOnOneOverdue', label: '1:1s overdue', value: oneOnOneOverdue, icon: '🗓️', tone: oneOnOneOverdue ? 'warning' : 'success' },
+        { key: 'developmentOverdue', label: 'PDCs overdue', value: pdcOverdue, icon: '🌱', tone: pdcOverdue ? 'warning' : 'success' },
+        { key: 'cvReviewOverdue', label: 'CV reviews overdue', value: cvOverdue, icon: '📄', tone: cvOverdue ? 'warning' : 'success' }
+      ];
+
+      statsEl.innerHTML = stats.map((stat) => {
+        const barPct = stat.key === 'directReports'
+          ? (reports.length ? 100 : 0)
+          : Math.min(100, Math.round((stat.value / total) * 100));
+        return `
+          <button type="button" class="stat-tile card stat-tone-${escapeHtml(stat.tone)}" data-tile="${escapeHtml(stat.key)}" aria-label="${escapeHtml(`${stat.label}: ${stat.value}`)}">
+            <div class="stat-top">
+              <div>
+                <div class="stat-count">${stat.value}</div>
+                <div class="stat-label">${escapeHtml(stat.label)}</div>
+              </div>
+              <div class="stat-icon" aria-hidden="true">${escapeHtml(stat.icon)}</div>
+            </div>
+            <div class="stat-bar"><span style="width:${barPct}%"></span></div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function teamPct(value, total) {
+      if (!total) return 0;
+      return Math.round((value / total) * 100);
+    }
+
+    function healthProgressRow(label, count, total, thresholdLabel) {
+      const pct = teamPct(count, total);
+      const tone = pct >= 80 ? 'success' : pct >= 55 ? 'warning' : 'danger';
+      return `
+        <div class="health-metric">
+          <div class="health-metric-top">
+            <strong>${escapeHtml(label)}</strong>
+            <span>${count}/${total} on cadence</span>
+          </div>
+          <div class="health-progress ${tone}"><span style="width:${pct}%"></span></div>
+          <div class="health-subtext">${pct}% on cadence · ${escapeHtml(thresholdLabel)}</div>
+        </div>
+      `;
+    }
+
+    function planMixSegmentClass(status) {
+      return {
+        'Not started': 'not-started',
+        'In progress': 'in-progress',
+        'Needs review': 'needs-review',
+        'Completed': 'completed',
+        'Blocked': 'blocked'
+      }[status] || 'not-started';
+    }
+
+    function renderTeamHealth() {
+      if (!state.reports.length) {
+        teamHealthBodyEl.innerHTML = '<div class="empty-state"><p>No direct reports yet.</p><button id="teamHealthEmptyAddBtn">Add your first direct report</button></div>';
+        document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => openModal());
+        return;
+      }
+
+      const reports = [...state.reports].sort((a, b) => a.name.localeCompare(b.name));
+      const total = reports.length;
+      const onTrackCount = reports.filter((report) => computeAttention(report).length === 0).length;
+      const attentionCount = total - onTrackCount;
+      const onTrackPct = teamPct(onTrackCount, total);
+      const oneOnOneOnCadence = reports.filter((report) => !isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays)).length;
+      const pdcOnCadence = reports.filter((report) => !isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays)).length;
+      const cvOnCadence = reports.filter((report) => !isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays)).length;
+      const planMix = PLAN_STATUSES.map((status) => ({
+        status,
+        count: reports.filter((report) => (report.planStatus || PLAN_STATUSES[0]) === status).length
+      }));
+      const planLegend = planMix.map((item) => `
+        <span class="legend-item"><span class="swatch ${item.status === 'Completed' ? 'good' : item.status === 'Needs review' ? 'warn' : item.status === 'Blocked' ? 'danger' : 'neutral'}"></span>${escapeHtml(item.status)} <span class="count">${item.count}</span></span>
+      `).join('');
+      const planBar = planMix.map((item) => {
+        const width = item.count === 0 ? 0 : Math.max(8, Math.round((item.count / total) * 100));
+        return `<span class="stacked-segment ${planMixSegmentClass(item.status)}" style="width:${width}%" title="${escapeHtml(`${item.status}: ${item.count}`)}"></span>`;
+      }).join('');
+
+      teamHealthBodyEl.innerHTML = `
+        <div class="team-health-grid">
+          <div class="health-ring-card">
+            <div class="health-ring" style="--ring-angle:${Math.max(0, Math.min(360, Math.round((onTrackPct / 100) * 360)))}deg;">
+              <div class="health-ring-inner">
+                <div>
+                  <strong>${onTrackPct}%</strong>
+                  <span>On track</span>
+                </div>
+              </div>
+            </div>
+            <div class="health-summary">
+              <h3>${onTrackCount} of ${total} on track</h3>
+              <p>${attentionCount} ${attentionCount === 1 ? 'person currently has' : 'people currently have'} at least one attention item.</p>
+              <div class="badges">
+                ${badge('On track', 'success')}
+                ${badge(`${attentionCount} need attention`, attentionCount ? 'warning' : 'neutral')}
+              </div>
+            </div>
+          </div>
+          <div class="health-metrics-card">
+            ${healthProgressRow('1:1 cadence', oneOnOneOnCadence, total, `${state.thresholds.oneOnOneDays} day rule`)}
+            ${healthProgressRow('PDC cadence', pdcOnCadence, total, `${state.thresholds.developmentConversationDays} day rule`)}
+            ${healthProgressRow('CV review cadence', cvOnCadence, total, `${state.thresholds.cvReviewDays} day rule`)}
+          </div>
+        </div>
+        <div class="plan-mix-card">
+          <div class="plan-mix-head">
+            <div>
+              <h3>Plan mix</h3>
+              <p>Overall distribution of personal development plan status across the team.</p>
+            </div>
+          </div>
+          <div class="stacked-bar" aria-hidden="true">${planBar}</div>
+          <div class="stacked-legend">${planLegend}</div>
+        </div>
+      `;
+    }
+
+    function touchpointRow(label, date, overdue) {
+      return `
+        <div class="touchpoint-row ${overdue ? 'overdue' : ''}">
+          <span class="tp-label">${escapeHtml(label)}</span>
+          <span class="tp-date">${escapeHtml(formatShortDate(date))}</span>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const reports = getFilteredReports();
+      if (state.reports.length === 0) {
+        reportsTableBodyEl.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <p>You have not added any direct reports yet.</p>
+                <button id="emptyAddBtn">Add your first direct report</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        tableEmptyEl.classList.add('hidden');
+        document.getElementById('emptyAddBtn')?.addEventListener('click', () => openModal());
+        return;
+      }
+
+      reportsTableBodyEl.innerHTML = reports.map((report) => {
+        const attention = computeAttention(report);
+        const isSelected = report.id === state.selectedId;
+        const attentionHtml = attention.length
+          ? attention.map((issue) => badge(issue, attentionTone(issue))).join('')
+          : badge('On track', 'success');
+
+        return `
+          <tr data-report-row="${escapeHtml(report.id)}" class="${isSelected ? 'selected' : ''}">
+            <td>
+              <div class="namecell">
+                <strong>${escapeHtml(report.name)}</strong>
+                <span class="namesub">${escapeHtml(report.mentors?.trim() ? `Mentor: ${report.mentors}` : 'No mentor assigned')}</span>
+              </div>
+            </td>
+            <td>${escapeHtml(report.level || '-')}</td>
+            <td>
+              <div class="touchpoints">
+                ${touchpointRow('1:1', latestMeetingDate(report, '1:1'), isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays))}
+                ${touchpointRow('PDC', latestMeetingDate(report, 'PDC'), isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays))}
+                ${touchpointRow('CV', latestMeetingDate(report, 'CV review'), isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays))}
+              </div>
+            </td>
+            <td>${escapeHtml(report.nextOneOnOneDate ? formatDate(report.nextOneOnOneDate) : '-')}</td>
+            <td>${badge(report.planStatus, variantForPlan(report.planStatus))}</td>
+            <td>${badge(report.riskFlag, variantForRisk(report.riskFlag))}</td>
+            <td><div class="badges">${attentionHtml}</div></td>
+          </tr>
+        `;
+      }).join('');
+
+      tableEmptyEl.classList.toggle('hidden', reports.length > 0);
+      if (reports.length === 0) {
+        tableEmptyEl.innerHTML = 'No direct reports match your current filters.';
+        tableEmptyEl.classList.remove('hidden');
+      }
+
+      document.querySelectorAll('[data-report-row]').forEach((row) => {
+        row.addEventListener('click', () => selectReport(row.getAttribute('data-report-row')));
+      });
+    }
+
+    function progressWidth(age, threshold) {
+      if (age === null) return 100;
+      return Math.max(8, Math.min(100, Math.round((age / Math.max(threshold, 1)) * 100)));
+    }
+
+    function cadenceCard(report, type, threshold) {
+      const lastDate = latestMeetingDate(report, type);
+      const age = dateDiffInDays(lastDate);
+      const overdue = age === null || age > threshold;
+      const tone = age === null ? 'danger' : overdue ? 'warning' : 'success';
+      const statusLabel = age === null ? 'Not logged yet' : `${age} day${age === 1 ? '' : 's'} ago`;
+      return `
+        <div class="cadence-card">
+          <div class="cadence-top">
+            <span class="label">${escapeHtml(type)}</span>
+            ${badge(overdue ? 'Follow up' : 'On cadence', tone)}
+          </div>
+          <div class="cadence-date">${escapeHtml(formatShortDate(lastDate))}</div>
+          <div class="mini-bar ${age === null ? 'danger' : overdue ? 'warning' : ''}"><span style="width:${progressWidth(age, threshold)}%"></span></div>
+          <div class="cadence-subtext">${escapeHtml(statusLabel)} · rule ${threshold}d</div>
+        </div>
+      `;
+    }
+
+    function valueOrEmpty(text, emptyText = '-') {
+      const value = text?.trim ? text.trim() : text;
+      if (!value) return `<span class="value empty">${escapeHtml(emptyText)}</span>`;
+      return `<span class="value">${escapeHtml(value)}</span>`;
+    }
+
+    function focusMeetingPreset(type) {
+      const meetingTypeEl = document.getElementById('meetingType');
+      const meetingDateEl = document.getElementById('meetingDate');
+      if (!meetingTypeEl || !meetingDateEl) return;
+      meetingTypeEl.value = type;
+      meetingDateEl.focus();
+      document.getElementById('meetingSection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+
+    function renderDetailDrawer() {
+      const report = getReportById(state.selectedId);
+      if (!report) {
+        detailDrawerOverlayEl.classList.remove('open');
+        detailDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+        detailDrawerEl.innerHTML = '';
+        return;
+      }
+
+      detailDrawerOverlayEl.classList.add('open');
+      detailDrawerOverlayEl.setAttribute('aria-hidden', 'false');
+
+      const attention = computeAttention(report);
+
+      detailDrawerEl.innerHTML = `
+        <div class="drawer-shell">
+          <div class="drawer-header">
+            <div class="drawer-header-top">
+              <div>
+                <h2 id="drawerTitle">${escapeHtml(report.name)}</h2>
+                <p>${escapeHtml(report.level || 'No level set')} · ${escapeHtml(report.mentors?.trim() ? report.mentors : 'No mentor assigned')}</p>
+                <div id="detailHeaderStatus" class="status-line header-status"></div>
+              </div>
+              <div class="actions">
+                <button id="closeDetailDrawerBtn" class="secondary" type="button">Close</button>
+                <button id="saveDetailChangesHeaderBtn" type="submit" form="detailEditorForm">Save changes</button>
+                <button id="deleteSelectedBtn" class="danger" type="button">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-body" id="detailDrawerBody">
+            <div class="drawer-hero">
+              <div class="badges">
+                ${badge(report.planStatus, variantForPlan(report.planStatus))}
+                ${badge(report.riskFlag, variantForRisk(report.riskFlag))}
+                ${attention.length ? attention.map((issue) => badge(issue, attentionTone(issue))).join('') : badge('On track', 'success')}
+              </div>
+              <div class="hero-meta">
+                <div class="hero-card">
+                  <span class="label">Mentor(s)</span>
+                  ${valueOrEmpty(report.mentors, 'No mentor assigned')}
+                </div>
+                <div class="hero-card">
+                  <span class="label">Hire date</span>
+                  ${valueOrEmpty(report.hireDate ? formatDate(report.hireDate) : '', 'Not set')}
+                </div>
+                <div class="hero-card">
+                  <span class="label">Last promotion</span>
+                  ${valueOrEmpty(report.lastPromotionDate ? formatDate(report.lastPromotionDate) : '', 'Not set')}
+                </div>
+                <div class="hero-card">
+                  <span class="label">Next planned 1:1</span>
+                  ${valueOrEmpty(report.nextOneOnOneDate ? formatDate(report.nextOneOnOneDate) : '', '-')}
+                </div>
+                <div class="hero-card">
+                  <span class="label">Last updated</span>
+                  ${valueOrEmpty(formatDateTime(report.updatedAt), '-')}
+                </div>
+                <div class="hero-card">
+                  <span class="label">Workspace focus</span>
+                  ${valueOrEmpty(attention.length ? attention[0] : 'On track', 'On track')}
+                </div>
+              </div>
+              <div class="quick-actions">
+                <button type="button" class="secondary" data-preset-meeting="1:1">Log 1:1</button>
+                <button type="button" class="secondary" data-preset-meeting="PDC">Log PDC</button>
+                <button type="button" class="secondary" data-preset-meeting="CV review">Log CV review</button>
+                <button type="button" class="secondary" id="importIcsForReportBtn">Import .ics</button>
+                <button type="button" class="secondary" id="jumpToNotesBtn">Jump to notes</button>
+              </div>
+            </div>
+
+            <div class="drawer-section">
+              <h3>Cadence snapshot</h3>
+              <p class="section-note">This is the at-a-glance activity view. Use it to spot missed touchpoints quickly.</p>
+              <div class="cadence-grid">
+                ${cadenceCard(report, '1:1', state.thresholds.oneOnOneDays)}
+                ${cadenceCard(report, 'PDC', state.thresholds.developmentConversationDays)}
+                ${cadenceCard(report, 'CV review', state.thresholds.cvReviewDays)}
+              </div>
+            </div>
+
+            <form id="detailEditorForm" class="workspace-form-grid">
+              <div class="drawer-section">
+                <h3>Profile</h3>
+                <div class="form-grid">
+                  <label>
+                    <span>Name *</span>
+                    <input id="detailName" value="${escapeHtml(report.name)}" required>
+                  </label>
+                  <label>
+                    <span>Level</span>
+                    <input id="detailLevel" value="${escapeHtml(report.level || '')}" placeholder="L4, Senior, etc.">
+                  </label>
+                  <label>
+                    <span>Mentor(s)</span>
+                    <input id="detailMentors" value="${escapeHtml(report.mentors || '')}" placeholder="Comma-separated if more than one">
+                  </label>
+                  <label>
+                    <span>Hire date</span>
+                    <input id="detailHireDate" type="date" value="${escapeHtml(report.hireDate || '')}">
+                  </label>
+                  <label>
+                    <span>Last promotion / remuneration</span>
+                    <input id="detailLastPromotionDate" type="date" value="${escapeHtml(report.lastPromotionDate || '')}">
+                  </label>
+                  <label>
+                    <span>Next planned 1:1</span>
+                    <input id="detailNextOneOnOneDate" type="date" value="${escapeHtml(report.nextOneOnOneDate || '')}">
+                  </label>
+                  <label>
+                    <span>Plan status</span>
+                    <select id="detailPlanStatus">${PLAN_STATUSES.map((status) => `<option value="${escapeHtml(status)}" ${status === report.planStatus ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}</select>
+                  </label>
+                  <label>
+                    <span>Risk flag</span>
+                    <select id="detailRiskFlag">${RISK_FLAGS.map((status) => `<option value="${escapeHtml(status)}" ${status === report.riskFlag ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}</select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="drawer-section">
+                <h3>Development focus</h3>
+                <div class="text-grid">
+                  <label class="text-panel">
+                    <span class="label">Development goal summary</span>
+                    <textarea id="detailDevelopmentGoalSummary" placeholder="What are they working toward?">${escapeHtml(report.developmentGoalSummary || '')}</textarea>
+                  </label>
+                  <label class="text-panel">
+                    <span class="label">Promotion readiness / growth area</span>
+                    <textarea id="detailPromotionReadiness" placeholder="Readiness notes, strengths, gaps, growth focus">${escapeHtml(report.promotionReadiness || '')}</textarea>
+                  </label>
+                </div>
+              </div>
+
+              <div class="drawer-section" id="meetingSection">
+                <h3>Log or import a meeting</h3>
+                <p class="section-note">Log it manually here, or import an .ics calendar file to create the meeting automatically.</p>
+                <div class="form-grid">
+                  <label>
+                    <span>Meeting type</span>
+                    <select id="meetingType">${MEETING_TYPES.map((type) => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('')}</select>
+                  </label>
+                  <label>
+                    <span>Meeting date</span>
+                    <input id="meetingDate" type="date" required>
+                  </label>
+                  <label class="full">
+                    <span>Notes</span>
+                    <textarea id="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+                  </label>
+                </div>
+                <div class="actions" style="margin-top:14px;">
+                  <button type="button" id="saveMeetingBtn">Save meeting</button>
+                  <button type="button" id="meetingImportIcsBtn" class="secondary">Import .ics</button>
+                </div>
+                <div id="meetingStatus" class="status-line"></div>
+              </div>
+
+              <div class="drawer-section" id="notesSection">
+                <h3>Notes</h3>
+                <label class="notes-editor">
+                  <span>Manager notes</span>
+                  <textarea id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(report.notes || '')}</textarea>
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('closeDetailDrawerBtn').addEventListener('click', clearSelectedReport);
+      document.getElementById('deleteSelectedBtn').addEventListener('click', () => deleteReport(report.id));
+      document.getElementById('detailEditorForm').addEventListener('submit', (event) => saveWorkspaceChanges(event, report.id));
+      document.getElementById('saveMeetingBtn')?.addEventListener('click', (event) => addMeeting(event, report.id));
+      document.getElementById('meetingImportIcsBtn')?.addEventListener('click', () => beginIcsImport(report.id, 'meetingStatus'));
+      document.getElementById('importIcsForReportBtn')?.addEventListener('click', () => beginIcsImport(report.id, 'meetingStatus'));
+      document.getElementById('jumpToNotesBtn')?.addEventListener('click', () => {
+        document.getElementById('notesSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('detailNotes')?.focus();
+      });
+      document.querySelectorAll('[data-preset-meeting]').forEach((button) => {
+        button.addEventListener('click', () => focusMeetingPreset(button.getAttribute('data-preset-meeting')));
+      });
+      const meetingDateEl = document.getElementById('meetingDate');
+      if (meetingDateEl && !meetingDateEl.value) meetingDateEl.value = new Date().toISOString().slice(0, 10);
+    }
+
+    function clearTableFiltersForTileAction() {
+      searchInputEl.value = '';
+      planFilterEl.value = '';
+      attentionFilterEl.value = '';
+    }
+
+    function getTileReports(tileKey) {
+      const sorted = [...state.reports].sort((a, b) => a.name.localeCompare(b.name));
+      switch (tileKey) {
+        case 'directReports':
+          return sorted;
+        case 'oneOnOneOverdue':
+          return sorted.filter((report) => isMeetingOverdue(report, '1:1', state.thresholds.oneOnOneDays));
+        case 'developmentOverdue':
+          return sorted.filter((report) => isMeetingOverdue(report, 'PDC', state.thresholds.developmentConversationDays));
+        case 'cvReviewOverdue':
+          return sorted.filter((report) => isMeetingOverdue(report, 'CV review', state.thresholds.cvReviewDays));
+        case 'blockedPlans':
+          return sorted.filter((report) => report.planStatus === 'Blocked');
+        case 'noMentor':
+          return sorted.filter((report) => !report.mentors?.trim());
+        default:
+          return [];
+      }
+    }
+
+    function getTileContext(tileKey) {
+      const reports = getTileReports(tileKey);
+      switch (tileKey) {
+        case 'directReports':
+          return {
+            title: 'Direct reports',
+            count: state.reports.length,
+            description: `You currently have ${state.reports.length} direct report${state.reports.length === 1 ? '' : 's'} in Team Pulse.`,
+            actionLabel: 'Go to direct reports',
+            items: reports.map((report) => ({
+              report,
+              meta: `${report.level || 'Level not set'} · ${report.planStatus || 'No plan status'}`
+            }))
+          };
+        case 'oneOnOneOverdue':
+          return {
+            title: '1:1s overdue',
+            count: reports.length,
+            description: `These direct reports have no logged 1:1 within the last ${state.thresholds.oneOnOneDays} days.`,
+            actionLabel: 'Show overdue 1:1s',
+            items: reports.map((report) => ({
+              report,
+              meta: `Last 1:1: ${formatDate(latestMeetingDate(report, '1:1'))}`
+            }))
+          };
+        case 'developmentOverdue':
+          return {
+            title: 'PDCs overdue',
+            count: reports.length,
+            description: `These direct reports have no logged PDC within the last ${state.thresholds.developmentConversationDays} days.`,
+            actionLabel: 'Show overdue PDCs',
+            items: reports.map((report) => ({
+              report,
+              meta: `Last PDC: ${formatDate(latestMeetingDate(report, 'PDC'))}`
+            }))
+          };
+        case 'cvReviewOverdue':
+          return {
+            title: 'CV reviews overdue',
+            count: reports.length,
+            description: `These direct reports have no logged CV review within the last ${state.thresholds.cvReviewDays} days.`,
+            actionLabel: 'Show overdue CV reviews',
+            items: reports.map((report) => ({
+              report,
+              meta: `Last CV review: ${formatDate(latestMeetingDate(report, 'CV review'))}`
+            }))
+          };
+        case 'blockedPlans':
+          return {
+            title: 'Blocked plans',
+            count: reports.length,
+            description: 'These direct reports are currently marked as Blocked.',
+            actionLabel: 'Show blocked plans',
+            items: reports.map((report) => ({
+              report,
+              meta: `Risk: ${report.riskFlag || 'None'} · Mentor: ${report.mentors || 'None assigned'}`
+            }))
+          };
+        case 'noMentor':
+          return {
+            title: 'No mentor assigned',
+            count: reports.length,
+            description: 'These direct reports do not have a mentor assigned yet.',
+            actionLabel: 'Show missing mentors',
+            items: reports.map((report) => ({
+              report,
+              meta: `Plan: ${report.planStatus || 'Not started'} · Level: ${report.level || 'Not set'}`
+            }))
+          };
+        default:
+          return {
+            title: 'Summary',
+            count: 0,
+            description: 'No summary available.',
+            actionLabel: 'Go',
+            items: []
+          };
+      }
+    }
+
+    function openTileModal(tileKey) {
+      activeTileKey = tileKey;
+      const context = getTileContext(tileKey);
+      tileModalTitleEl.textContent = context.title;
+      tileModalCountEl.textContent = String(context.count);
+      tileModalDescriptionEl.textContent = context.description;
+      tileModalPrimaryBtn.textContent = context.actionLabel;
+
+      if (!context.items.length) {
+        tileModalBodyEl.innerHTML = '<div class="callout">No direct reports currently match this tile.</div>';
+      } else {
+        const visibleItems = context.items.slice(0, 10);
+        const remaining = context.items.length - visibleItems.length;
+        tileModalBodyEl.innerHTML = `
+          <div class="tile-list">
+            ${visibleItems.map((item) => `
+              <article class="tile-item">
+                <div class="tile-item-top">
+                  <button type="button" class="inline-link" data-select-report="${escapeHtml(item.report.id)}">${escapeHtml(item.report.name)}</button>
+                  <div class="badges">
+                    ${badge(item.report.planStatus, variantForPlan(item.report.planStatus))}
+                    ${badge(item.report.riskFlag, variantForRisk(item.report.riskFlag))}
+                  </div>
+                </div>
+                <div class="tile-meta">${escapeHtml(item.meta)}</div>
+              </article>
+            `).join('')}
+            ${remaining > 0 ? `<div class="callout">And ${remaining} more.</div>` : ''}
+          </div>
+        `;
+        bindSelectReportLinks();
+      }
+
+      tileModalEl.classList.add('open');
+      tileModalEl.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeTileModal() {
+      activeTileKey = '';
+      tileModalEl.classList.remove('open');
+      tileModalEl.setAttribute('aria-hidden', 'true');
+    }
+
+    function applyActiveTileAction() {
+      if (!activeTileKey) {
+        closeTileModal();
+        return;
+      }
+
+      clearTableFiltersForTileAction();
+      state.selectedId = null;
+      activeQuickFilter = '';
+
+      switch (activeTileKey) {
+        case 'oneOnOneOverdue':
+          activeQuickFilter = 'oneOnOneOverdue';
+          break;
+        case 'developmentOverdue':
+          activeQuickFilter = 'developmentOverdue';
+          break;
+        case 'cvReviewOverdue':
+          activeQuickFilter = 'cvReviewOverdue';
+          break;
+        case 'blockedPlans':
+          activeQuickFilter = 'blockedPlans';
+          break;
+        case 'noMentor':
+          activeQuickFilter = 'noMentor';
+          break;
+        default:
+          activeQuickFilter = '';
+          break;
+      }
+
+      saveState({ skipExternalFile: true });
+      closeTileModal();
+      render();
+      scrollToReports();
+    }
+
+    function handleTileClick(event) {
+      const tile = event.target.closest('[data-tile]');
+      if (!tile) return;
+      openTileModal(tile.getAttribute('data-tile'));
+    }
+
+
+    function saveWorkspaceChanges(event, reportId) {
+      event.preventDefault();
+      const statusEl = document.getElementById('detailHeaderStatus');
+      const name = document.getElementById('detailName')?.value.trim() || '';
+      if (!name) {
+        setStatus(statusEl, 'Name is required.', 'error');
+        return;
+      }
+
+      const scrollTop = document.getElementById('detailDrawerBody')?.scrollTop || 0;
+      state.reports = state.reports.map((item) => {
+        if (item.id !== reportId) return item;
+        return {
+          ...item,
+          name,
+          level: document.getElementById('detailLevel')?.value.trim() || '',
+          mentors: document.getElementById('detailMentors')?.value.trim() || '',
+          hireDate: document.getElementById('detailHireDate')?.value || '',
+          lastPromotionDate: document.getElementById('detailLastPromotionDate')?.value || '',
+          nextOneOnOneDate: document.getElementById('detailNextOneOnOneDate')?.value || '',
+          planStatus: PLAN_STATUSES.includes(document.getElementById('detailPlanStatus')?.value) ? document.getElementById('detailPlanStatus').value : PLAN_STATUSES[0],
+          riskFlag: RISK_FLAGS.includes(document.getElementById('detailRiskFlag')?.value) ? document.getElementById('detailRiskFlag').value : RISK_FLAGS[0],
+          developmentGoalSummary: document.getElementById('detailDevelopmentGoalSummary')?.value.trim() || '',
+          promotionReadiness: document.getElementById('detailPromotionReadiness')?.value.trim() || '',
+          notes: document.getElementById('detailNotes')?.value.trim() || '',
+          updatedAt: nowIso()
+        };
+      });
+      saveState();
+      render();
+      const refreshedBody = document.getElementById('detailDrawerBody');
+      if (refreshedBody) refreshedBody.scrollTop = scrollTop;
+      setStatus(document.getElementById('detailHeaderStatus'), 'Saved in the app.', 'success');
+      showToast('Direct report saved in the app.', 'success');
+    }
+
+    function openModal(report = null) {
+      clearSelectedReport();
+      modalStatus('');
+      if (report) {
+        modalTitleEl.textContent = 'Edit direct report';
+        formEls.reportId.value = report.id;
+        formEls.name.value = report.name || '';
+        formEls.level.value = report.level || '';
+        formEls.mentors.value = report.mentors || '';
+        formEls.hireDate.value = report.hireDate || '';
+        formEls.lastPromotionDate.value = report.lastPromotionDate || '';
+        formEls.nextOneOnOneDate.value = report.nextOneOnOneDate || '';
+        formEls.planStatus.value = report.planStatus || PLAN_STATUSES[0];
+        formEls.riskFlag.value = report.riskFlag || RISK_FLAGS[0];
+        formEls.developmentGoalSummary.value = report.developmentGoalSummary || '';
+        formEls.promotionReadiness.value = report.promotionReadiness || '';
+        formEls.notes.value = report.notes || '';
+      } else {
+        modalTitleEl.textContent = 'Add direct report';
+        reportFormEl.reset();
+        formEls.reportId.value = '';
+        formEls.hireDate.value = '';
+        formEls.lastPromotionDate.value = '';
+        formEls.planStatus.value = PLAN_STATUSES[0];
+        formEls.riskFlag.value = RISK_FLAGS[0];
+      }
+      reportModalEl.classList.add('open');
+      reportModalEl.setAttribute('aria-hidden', 'false');
+      formEls.name.focus();
+    }
+
+    function closeModal() {
+      reportModalEl.classList.remove('open');
+      reportModalEl.setAttribute('aria-hidden', 'true');
+    }
+
+    function modalStatus(message, kind = '') {
+      modalStatusEl.textContent = message;
+      modalStatusEl.className = `status-line ${kind}`.trim();
+    }
+
+    async function handleReportSubmit(event) {
+      event.preventDefault();
+      const name = formEls.name.value.trim();
+      if (!name) {
+        modalStatus('Name is required.', 'error');
+        return;
+      }
+
+      const existingId = formEls.reportId.value || null;
+      const existingReport = existingId ? getReportById(existingId) : null;
+      const payload = {
+        id: existingId || uid('report'),
+        name,
+        level: formEls.level.value.trim(),
+        mentors: formEls.mentors.value.trim(),
+        hireDate: formEls.hireDate.value || '',
+        lastPromotionDate: formEls.lastPromotionDate.value || '',
+        nextOneOnOneDate: formEls.nextOneOnOneDate.value,
+        planStatus: PLAN_STATUSES.includes(formEls.planStatus.value) ? formEls.planStatus.value : PLAN_STATUSES[0],
+        riskFlag: RISK_FLAGS.includes(formEls.riskFlag.value) ? formEls.riskFlag.value : RISK_FLAGS[0],
+        developmentGoalSummary: formEls.developmentGoalSummary.value.trim(),
+        promotionReadiness: formEls.promotionReadiness.value.trim(),
+        notes: formEls.notes.value.trim(),
+        meetings: existingReport?.meetings || [],
+        createdAt: existingReport?.createdAt || nowIso(),
+        updatedAt: nowIso()
+      };
+
+      if (existingId) {
+        state.reports = state.reports.map((report) => report.id === existingId ? payload : report);
+      } else {
+        state.reports.push(payload);
+      }
+      state.selectedId = payload.id;
+      saveState();
+      render();
+      modalStatus('Saved in the app.', 'success');
+      closeModal();
+      showToast(`${payload.name} was saved in the app.`, 'success');
+    }
+
+    function deleteReport(reportId) {
+      const report = getReportById(reportId);
+      if (!report) return;
+      const ok = window.confirm(`Delete ${report.name}? This also deletes their meeting history.`);
+      if (!ok) return;
+      state.reports = state.reports.filter((item) => item.id !== reportId);
+      if (state.selectedId === reportId) state.selectedId = null;
+      saveState();
+      render();
+      showToast(`${report.name} was deleted.`, 'success');
+    }
+
+    async function addMeeting(event, reportId) {
+      event.preventDefault();
+      const meetingType = canonicalMeetingType(document.getElementById('meetingType').value);
+      const meetingDate = document.getElementById('meetingDate').value;
+      const meetingNotes = document.getElementById('meetingNotes').value.trim();
+      const statusEl = document.getElementById('meetingStatus');
+
+      if (!MEETING_TYPES.includes(meetingType)) {
+        setStatus(statusEl, 'Meeting type is required.', 'error');
+        return;
+      }
+      if (!meetingDate) {
+        setStatus(statusEl, 'Meeting date is required.', 'error');
+        return;
+      }
+
+      state.reports = state.reports.map((report) => {
+        if (report.id !== reportId) return report;
+        const meetings = Array.isArray(report.meetings) ? [...report.meetings] : [];
+        meetings.push({
+          id: uid('meeting'),
+          meetingType: canonicalMeetingType(meetingType),
+          meetingDate,
+          notes: meetingNotes,
+          createdAt: nowIso()
+        });
+        return { ...report, meetings, updatedAt: nowIso() };
+      });
+
+      saveState();
+      render();
+      setStatus(document.getElementById('meetingStatus'), 'Meeting logged.', 'success');
+      document.getElementById('meetingDate').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('meetingNotes').value = '';
+      showToast('Meeting logged in Team Pulse.', 'success');
+    }
+
+    function deleteMeeting(reportId, meetingId) {
+      const report = getReportById(reportId);
+      if (!report) return;
+      const ok = window.confirm('Delete this meeting entry?');
+      if (!ok) return;
+
+      state.reports = state.reports.map((item) => {
+        if (item.id !== reportId) return item;
+        return {
+          ...item,
+          meetings: (item.meetings || []).filter((meeting) => meeting.id !== meetingId),
+          updatedAt: nowIso()
+        };
+      });
+      saveState();
+      render();
+      showToast('Meeting deleted.', 'success');
+    }
+
+
+
+    function beginIcsImport(preferredReportId = null, statusElementId = '') {
+      pendingIcsImportContext = { preferredReportId, statusElementId };
+      if (!icsFileInputEl) return;
+      icsFileInputEl.value = '';
+      icsFileInputEl.click();
+    }
+
+    async function handleIcsFileSelection(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+      await importIcsFiles(files, pendingIcsImportContext.preferredReportId, pendingIcsImportContext.statusElementId);
+      event.target.value = '';
+      pendingIcsImportContext = { preferredReportId: null, statusElementId: '' };
+    }
+
+    function normalizeSearchText(value) {
+      return String(value || '')
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function unescapeIcsText(value) {
+      return String(value || '')
+        .replace(/\\n/gi, '\n')
+        .replace(/\\,/g, ',')
+        .replace(/\\;/g, ';')
+        .replace(/\\\\/g, '\\');
+    }
+
+    function parseIcsDate(value) {
+      const clean = String(value || '').trim();
+      if (!clean) return '';
+      const match = clean.match(/^(\d{4})(\d{2})(\d{2})/);
+      if (!match) return '';
+      return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+
+    function parseIcsEvents(text) {
+      const unfolded = String(text || '')
+        .replace(/\r\n[ \t]/g, '')
+        .replace(/\n[ \t]/g, '')
+        .replace(/\r/g, '\n');
+      const chunks = unfolded.split('BEGIN:VEVENT').slice(1);
+      return chunks.map((chunk) => {
+        const body = chunk.split('END:VEVENT')[0] || '';
+        const lines = body.split('\n').map((line) => line.trim()).filter(Boolean);
+        const data = { raw: body };
+        lines.forEach((line) => {
+          const idx = line.indexOf(':');
+          if (idx === -1) return;
+          const key = line.slice(0, idx).split(';')[0].toUpperCase();
+          const value = line.slice(idx + 1);
+          if (!data[key]) data[key] = [];
+          data[key].push(value);
+        });
+        return {
+          summary: unescapeIcsText(data.SUMMARY?.[0] || ''),
+          description: unescapeIcsText(data.DESCRIPTION?.[0] || data['X-ALT-DESC']?.[0] || ''),
+          startDate: parseIcsDate(data.DTSTART?.[0] || ''),
+          rawText: unescapeIcsText(body)
+        };
+      }).filter((event) => event.summary || event.description || event.startDate);
+    }
+
+    function detectIcsMeetingType(event) {
+      const haystack = `${event.summary} ${event.description} ${event.rawText}`.toLowerCase();
+      if (/\b(pdc|personal development conversation|development conversation)\b/.test(haystack)) return 'PDC';
+      if (/\bcv review\b/.test(haystack)) return 'CV review';
+      if (/\b1[:\- ]?1\b|\bone on one\b/.test(haystack)) return '1:1';
+      return '1:1';
+    }
+
+    function scoreReportNameInText(report, normalizedText) {
+      const normalizedName = normalizeSearchText(report.name);
+      if (!normalizedName || !normalizedText) return 0;
+      let score = 0;
+      if (normalizedText.includes(normalizedName)) score += 200;
+      const tokens = normalizedName.split(' ').filter(Boolean);
+      let matchedTokens = 0;
+      tokens.forEach((token) => {
+        if (token.length > 1 && normalizedText.includes(token)) matchedTokens += 1;
+      });
+      score += matchedTokens * 20;
+      if (tokens.length && matchedTokens === tokens.length) score += 40;
+      return score;
+    }
+
+    function resolveIcsTargetReport(event, preferredReportId = null) {
+      if (preferredReportId) return getReportById(preferredReportId);
+      if (state.reports.length === 1) return state.reports[0];
+      const normalizedText = normalizeSearchText(`${event.summary} ${event.description} ${event.rawText}`);
+      const ranked = state.reports
+        .map((report) => ({ report, score: scoreReportNameInText(report, normalizedText) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+      if (!ranked.length) return null;
+      if (ranked.length === 1) return ranked[0].report;
+      if (ranked[0].score >= ranked[1].score + 40) return ranked[0].report;
+      return null;
+    }
+
+    function meetingAlreadyExists(report, meetingType, meetingDate, notes) {
+      const normalizedNotes = (notes || '').trim();
+      return (report.meetings || []).some((meeting) => {
+        return canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(meetingType)
+          && String(meeting.meetingDate || '') === String(meetingDate || '')
+          && String(meeting.notes || '').trim() === normalizedNotes;
+      });
+    }
+
+    async function importIcsFiles(files, preferredReportId = null, statusElementId = '') {
+      if (!state.reports.length) {
+        showToast('Add a direct report before importing calendar files.', 'warning');
+        const statusEl = statusElementId ? document.getElementById(statusElementId) : null;
+        if (statusEl) setStatus(statusEl, 'Add a direct report before importing calendar files.', 'error');
+        return;
+      }
+
+      let importedCount = 0;
+      let skippedCount = 0;
+      let unmatchedCount = 0;
+      let firstMatchedReportId = null;
+      const updatedReports = state.reports.map((report) => ({ ...report, meetings: [...(report.meetings || [])] }));
+
+      function localReportById(id) {
+        return updatedReports.find((report) => report.id === id) || null;
+      }
+
+      for (const file of files) {
+        const text = await file.text();
+        const events = parseIcsEvents(text);
+        if (!events.length) {
+          skippedCount += 1;
+          continue;
+        }
+
+        for (const event of events) {
+          const target = resolveIcsTargetReport(event, preferredReportId);
+          if (!target) {
+            unmatchedCount += 1;
+            continue;
+          }
+          const report = localReportById(target.id);
+          if (!report) {
+            unmatchedCount += 1;
+            continue;
+          }
+          const meetingType = detectIcsMeetingType(event);
+          const meetingDate = event.startDate || todayStamp();
+          const notes = [event.summary, event.description].filter(Boolean).join('\n\n').trim();
+          if (meetingAlreadyExists(report, meetingType, meetingDate, notes)) {
+            skippedCount += 1;
+            continue;
+          }
+          report.meetings.push({
+            id: uid('meeting'),
+            meetingType,
+            meetingDate,
+            notes,
+            createdAt: nowIso()
+          });
+          report.updatedAt = nowIso();
+          importedCount += 1;
+          if (!firstMatchedReportId) firstMatchedReportId = report.id;
+        }
+      }
+
+      if (importedCount > 0) {
+        state.reports = updatedReports;
+        if (preferredReportId) {
+          state.selectedId = preferredReportId;
+        } else if (firstMatchedReportId) {
+          state.selectedId = firstMatchedReportId;
+        }
+        saveState();
+        render();
+      }
+
+      const statusEl = statusElementId ? document.getElementById(statusElementId) : null;
+      if (importedCount > 0) {
+        const message = `Imported ${importedCount} meeting${importedCount === 1 ? '' : 's'} from .ics file${files.length === 1 ? '' : 's'}.`;
+        showToast(message, 'success');
+        if (statusEl) setStatus(statusEl, message, 'success');
+      } else if (unmatchedCount > 0) {
+        const message = preferredReportId
+          ? 'No new meetings were imported from that .ics file.'
+          : 'No meetings were imported. Open a direct report first or use clearer meeting titles in the .ics file.';
+        showToast(message, 'warning');
+        if (statusEl) setStatus(statusEl, message, 'error');
+      } else {
+        const message = 'No new meetings were imported from that .ics file.';
+        showToast(message, 'warning');
+        if (statusEl) setStatus(statusEl, message, 'error');
+      }
+    }
+
+    function setStatus(el, message, kind = '') {
+      el.textContent = message;
+      el.className = `status-line ${kind}`.trim();
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? '');
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function todayStamp() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function exportCsv() {
+      const rows = state.reports
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((report) => ({
+          name: report.name,
+          level: report.level || '',
+          mentors: report.mentors || '',
+          hire_date: report.hireDate || '',
+          last_promotion_date: report.lastPromotionDate || '',
+          last_one_on_one: latestMeetingDate(report, '1:1') || '',
+          last_pdc: latestMeetingDate(report, 'PDC') || '',
+          last_cv_review: latestMeetingDate(report, 'CV review') || '',
+          next_planned_one_on_one: report.nextOneOnOneDate || '',
+          plan_status: report.planStatus || '',
+          risk_flag: report.riskFlag || '',
+          development_goal_summary: report.developmentGoalSummary || '',
+          promotion_readiness: report.promotionReadiness || '',
+          notes: report.notes || '',
+          attention_items: computeAttention(report).join('; ')
+        }));
+
+      const headers = rows.length ? Object.keys(rows[0]) : [
+        'name', 'level', 'mentors', 'hire_date', 'last_promotion_date', 'last_one_on_one', 'last_pdc', 'last_cv_review',
+        'next_planned_one_on_one', 'plan_status', 'risk_flag', 'development_goal_summary', 'promotion_readiness', 'notes', 'attention_items'
+      ];
+      const csv = [headers.join(',')].concat(rows.map((row) => headers.map((header) => csvCell(row[header] || '')).join(','))).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      downloadBlob(blob, `team-pulse-${todayStamp()}.csv`);
+      showToast('CSV exported.', 'success');
+    }
+  </script>
+</body>
+</html>
