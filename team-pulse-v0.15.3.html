@@ -1,0 +1,5322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Pulse</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #5f6b85;
+      --line: #dbe2ee;
+      --accent: #2957d6;
+      --accent-soft: #e8efff;
+      --success: #0d7a48;
+      --success-soft: #e7f7ee;
+      --warning: #b06b00;
+      --warning-soft: #fff4df;
+      --danger: #b42318;
+      --danger-soft: #ffebe9;
+      --info: #115b9c;
+      --info-soft: #e8f4ff;
+      --shadow: 0 10px 35px rgba(23, 32, 51, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 28px 120px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 3.2vw, 44px);
+      line-height: 1.04;
+    }
+
+    h2, h3 {
+      margin: 0;
+    }
+
+    .subtle,
+    .panel-header p,
+    .section-note,
+    .table-tip,
+    .help-text,
+    .hint {
+      color: var(--muted);
+    }
+
+    .toolbar,
+    .actions,
+    .section-actions,
+    .legend,
+    .badges,
+    .quick-actions,
+    .save-dock-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar {
+      justify-content: flex-end;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px 20px 0;
+    }
+
+    .panel-header p {
+      margin: 6px 0 0;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .content.topless {
+      padding-top: 14px;
+    }
+
+    .pill,
+    .badge,
+    .legend-item,
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+    }
+
+    .version-pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: transparent;
+    }
+
+    .save-pill.neutral {
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .save-pill.warning {
+      background: var(--warning-soft);
+      color: var(--warning);
+      border-color: transparent;
+    }
+
+    .save-pill.success {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: transparent;
+    }
+
+    .save-pill.info {
+      background: var(--info-soft);
+      color: var(--info);
+      border-color: transparent;
+    }
+
+    .badge {
+      background: #eef2f8;
+      color: #314667;
+    }
+
+    .badge.success { background: var(--success-soft); color: var(--success); }
+    .badge.warning { background: var(--warning-soft); color: var(--warning); }
+    .badge.danger { background: var(--danger-soft); color: var(--danger); }
+    .badge.info { background: var(--info-soft); color: var(--info); }
+    .badge.neutral { background: #eef2f8; color: #314667; }
+
+    .badge.soft {
+      background: #f2f5fb;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      padding: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .swatch.good { background: #b6ebc9; }
+    .swatch.warn { background: #f7d78f; }
+    .swatch.danger { background: #f5b4af; }
+    .swatch.neutral { background: #d9e1ef; }
+
+    .button,
+    button,
+    input[type="submit"] {
+      appearance: none;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.04s ease, opacity 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .button:hover,
+    button:hover,
+    input[type="submit"]:hover {
+      opacity: 0.96;
+    }
+
+    .button:active,
+    button:active,
+    input[type="submit"]:active {
+      transform: translateY(1px);
+    }
+
+    .button.secondary,
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .button.ghost,
+    button.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent-soft);
+    }
+
+    .button.danger,
+    button.danger {
+      background: var(--danger);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .startup-gate {
+      margin-bottom: 18px;
+    }
+
+    .startup-gate-body {
+      display: grid;
+      gap: 12px;
+    }
+
+    .setup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .stat-tile {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      text-align: left;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      min-height: 150px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .stat-tile:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(23, 32, 51, 0.10);
+    }
+
+    .stat-tile:focus-visible {
+      outline: 3px solid rgba(41, 87, 214, 0.16);
+      outline-offset: 2px;
+    }
+
+    .stat-tile .stat-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: #eef2ff;
+    }
+
+    .stat-count {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 4px 0 0;
+    }
+
+    .stat-label {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-bar {
+      margin-top: auto;
+      height: 8px;
+      border-radius: 999px;
+      background: #eef2f8;
+      overflow: hidden;
+    }
+
+    .stat-bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    .stat-tone-warning .stat-bar > span { background: var(--warning); }
+    .stat-tone-danger .stat-bar > span { background: var(--danger); }
+    .stat-tone-success .stat-bar > span { background: var(--success); }
+
+
+    .team-health-card {
+      margin-bottom: 18px;
+    }
+
+    .team-health-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .health-ring-card,
+    .health-metrics-card,
+    .plan-mix-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .health-ring-card {
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #fbfdff 0%, #f4f8ff 100%);
+    }
+
+    .health-ring {
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--accent) 0 var(--ring-angle), #e7edf7 var(--ring-angle) 360deg);
+      box-shadow: inset 0 0 0 1px rgba(23, 32, 51, 0.04);
+    }
+
+    .health-ring-inner {
+      width: 154px;
+      height: 154px;
+      border-radius: inherit;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 22px rgba(23, 32, 51, 0.06);
+    }
+
+    .health-ring-inner strong {
+      display: block;
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .health-ring-inner span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .health-summary {
+      display: grid;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .health-summary h3 {
+      font-size: 22px;
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .health-summary p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .health-metrics-card {
+      display: grid;
+      gap: 16px;
+      background: #fbfcff;
+    }
+
+    .health-metric {
+      display: grid;
+      gap: 8px;
+    }
+
+    .health-metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .health-metric-top strong {
+      font-size: 15px;
+    }
+
+    .health-metric-top span,
+    .health-subtext {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .health-progress {
+      height: 12px;
+      border-radius: 999px;
+      background: #ecf1f9;
+      overflow: hidden;
+      border: 1px solid #e4ebf5;
+    }
+
+    .health-progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .health-progress.warning > span { background: var(--warning); }
+    .health-progress.success > span { background: var(--success); }
+    .health-progress.danger > span { background: var(--danger); }
+
+    .plan-mix-card {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .plan-mix-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .plan-mix-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stacked-bar {
+      display: flex;
+      width: 100%;
+      min-height: 18px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eef2f8;
+      border: 1px solid #e4ebf5;
+    }
+
+    .stacked-segment {
+      min-width: 10px;
+    }
+
+    .stacked-segment.not-started { background: #d9e1ef; }
+    .stacked-segment.in-progress { background: #b9d6ff; }
+    .stacked-segment.needs-review { background: #f6d58d; }
+    .stacked-segment.completed { background: #b6ebc9; }
+    .stacked-segment.blocked { background: #f5b4af; }
+
+    .stacked-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+    }
+
+    .stacked-legend .legend-item {
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .stacked-legend .count {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .searchbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.5fr) repeat(2, minmax(180px, 0.75fr));
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    input[type="search"],
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input:not([type]),
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(41, 87, 214, 0.45);
+      box-shadow: 0 0 0 4px rgba(41, 87, 214, 0.08);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+    }
+
+    label span {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+    }
+
+    th,
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #fbfcff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    tbody tr:hover {
+      background: #fbfcff;
+    }
+
+    tbody tr.selected {
+      background: #eef4ff;
+    }
+
+    .namecell {
+      display: grid;
+      gap: 4px;
+    }
+
+    .namecell strong {
+      font-size: 15px;
+    }
+
+    .namesub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .touchpoints {
+      display: grid;
+      gap: 7px;
+      min-width: 200px;
+    }
+
+    .touchpoint-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f8faff;
+      border: 1px solid #edf1f8;
+    }
+
+    .touchpoint-row.overdue {
+      background: var(--warning-soft);
+      border-color: #f2dfb5;
+    }
+
+    .touchpoint-row .tp-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .touchpoint-row .tp-date {
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .quick-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fbff;
+      margin: 8px 0 12px;
+    }
+
+    .quick-filter-bar strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .table-tip {
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .empty-state,
+    .callout {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .empty-state p,
+    .callout p {
+      margin: 0 0 10px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    body.overlay-open {
+      overflow: hidden;
+    }
+
+    .overlay,
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 23, 38, 0.44);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease;
+    }
+
+    .drawer-overlay {
+      z-index: 40;
+    }
+
+    .overlay {
+      z-index: 70;
+    }
+
+    #meetingModal {
+      z-index: 90;
+    }
+
+    .overlay.open,
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: min(860px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      margin: 24px auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(14, 23, 38, 0.28);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .modal.tile-modal {
+      width: min(760px, calc(100vw - 32px));
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 20px 20px 0;
+    }
+
+    .modal-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .drawer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(1180px, 72vw);
+      max-width: calc(100vw - 14px);
+      height: 100vh;
+      background: #fff;
+      box-shadow: -16px 0 40px rgba(14, 23, 38, 0.18);
+      transform: translateX(18px);
+      transition: transform 0.16s ease;
+      border-left: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .drawer.rules-drawer {
+      width: min(460px, 94vw);
+    }
+
+    .drawer-overlay.open .drawer {
+      transform: translateX(0);
+    }
+
+    #detailDrawerOverlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    #detailDrawer {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+    }
+
+    #detailDrawerOverlay .drawer {
+      position: relative;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      width: min(1560px, 90vw);
+      max-width: min(1560px, 90vw);
+      height: min(94vh, 1180px);
+      max-height: calc(100vh - 24px);
+      border-left: none;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(14, 23, 38, 0.28);
+      transform: translateY(16px) scale(0.99);
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #detailDrawerOverlay.open .drawer {
+      transform: translateY(0) scale(1);
+    }
+
+    .rules-drawer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(460px, 94vw);
+      max-width: calc(100vw - 14px);
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: -16px 0 40px rgba(14, 23, 38, 0.18);
+      transform: translateX(18px);
+      border-left: 1px solid var(--line);
+    }
+
+    .drawer-overlay.open .rules-drawer {
+      transform: translateX(0);
+    }
+
+    .workspace-form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .notes-editor textarea,
+    .notes-textarea {
+      min-height: 220px;
+    }
+
+    .drawer-section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .drawer-section-head h3 {
+      margin-bottom: 4px;
+    }
+
+    .custom-fields-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .custom-field-empty {
+      color: var(--muted);
+      font-size: 14px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fafcff;
+    }
+
+    .custom-field-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .custom-field-row .secondary {
+      white-space: nowrap;
+    }
+
+    .workspace-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-status {
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+
+    .drawer-shell {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-header {
+      padding: 22px 22px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .drawer-header-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .drawer-header h2 {
+      font-size: clamp(24px, 2vw, 34px);
+      line-height: 1.08;
+      margin: 0;
+    }
+
+    .drawer-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .drawer-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 22px 22px 40px;
+      display: grid;
+      gap: 22px;
+      align-content: start;
+      background: #fafcff;
+    }
+
+    .drawer-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(23, 32, 51, 0.04);
+    }
+
+    .drawer-section h3 {
+      font-size: 18px;
+      margin: 0 0 10px;
+    }
+
+    .drawer-hero {
+      background: linear-gradient(135deg, #f2f7ff 0%, #ffffff 100%);
+      border: 1px solid #dce6f8;
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .hero-card,
+    .overview-card,
+    .cadence-card,
+    .text-panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-card .label,
+    .overview-card .label,
+    .cadence-card .label,
+    .text-panel .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      font-weight: 800;
+    }
+
+    .hero-card .value,
+    .overview-card .value,
+    .text-panel .value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .overview-grid,
+    .text-grid,
+    .cadence-grid,
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .overview-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .cadence-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .text-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .text-panel .value.empty,
+    .overview-card .value.empty,
+    .hero-card .value.empty {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .cadence-card {
+      display: grid;
+      gap: 8px;
+    }
+
+    .cadence-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cadence-date {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .cadence-subtext {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #eef2f8;
+      overflow: hidden;
+    }
+
+    .mini-bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--success);
+    }
+
+    .mini-bar.warning > span {
+      background: var(--warning);
+    }
+
+    .mini-bar.danger > span {
+      background: var(--danger);
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #e4eaf5;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 34px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px #eef4ff;
+    }
+
+    .timeline-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .timeline-notes {
+      color: var(--text);
+      background: #fbfcff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+    }
+
+    .input-with-suffix {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding-right: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .input-with-suffix input {
+      border: none;
+      box-shadow: none;
+      padding-right: 6px;
+    }
+
+    .input-with-suffix .suffix {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .toggle-row:first-of-type {
+      border-top: none;
+    }
+
+    .toggle-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .toggle-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 30px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ced8ea;
+      border-radius: 999px;
+      transition: background 0.15s ease;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 4px;
+      top: 4px;
+      background: #fff;
+      border-radius: 999px;
+      transition: transform 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+
+    .switch input:checked + .slider {
+      background: var(--accent);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .status-line {
+      margin-top: 12px;
+      min-height: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status-line.success { color: var(--success); }
+    .status-line.warning { color: var(--warning); }
+    .status-line.error { color: var(--danger); }
+
+    .tile-summary {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .tile-count {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0;
+    }
+
+    .tile-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tile-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .tile-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .tile-meta {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .toast-stack {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: grid;
+      gap: 10px;
+      z-index: 90;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 240px;
+      max-width: 360px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      pointer-events: auto;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast.error { border-left-color: var(--danger); }
+
+    .save-dock {
+      position: fixed;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(23, 32, 51, 0.96);
+      color: #fff;
+      box-shadow: 0 18px 50px rgba(14, 23, 38, 0.32);
+      z-index: 60;
+    }
+
+    .save-dock.nudge {
+      animation: pulseDock 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseDock {
+      0%, 100% { box-shadow: 0 18px 50px rgba(14, 23, 38, 0.32); }
+      50% { box-shadow: 0 20px 54px rgba(176, 107, 0, 0.34); }
+    }
+
+    .save-dock strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .save-dock p {
+      margin: 0;
+      color: rgba(255,255,255,0.82);
+      font-size: 14px;
+    }
+
+    .save-dock .secondary {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+
+.modal.meeting-modal {
+  width: min(760px, calc(100vw - 32px));
+}
+
+.hero-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.detail-subhead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.detail-level {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.detail-supporting-meta {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.workspace-focus-panel {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(23, 32, 51, 0.05);
+}
+
+.workspace-focus-panel .label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+}
+
+.workspace-focus-panel strong {
+  font-size: 24px;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.workspace-focus-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.workspace-focus-panel.good {
+  border-color: #d9ebdd;
+  background: #f5fcf6;
+}
+
+.workspace-focus-panel.attention {
+  border-color: #f4dfb0;
+  background: #fff9ed;
+}
+
+.workspace-focus-panel.urgent {
+  border-color: #f2c6c6;
+  background: #fff4f4;
+}
+
+.development-focus-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.development-field {
+  display: grid;
+  gap: 8px;
+}
+
+.development-field span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+}
+
+.development-field textarea {
+  min-height: 148px;
+}
+
+.meeting-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.meeting-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.meeting-item-subtle {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+    @media (max-width: 1100px) {
+      #detailDrawerOverlay .drawer {
+        width: min(1380px, calc(100vw - 24px));
+        max-width: min(1380px, calc(100vw - 24px));
+      }
+
+      .hero-meta,
+      .hero-cards,
+      .overview-grid,
+      .cadence-grid,
+      .text-grid,
+      .development-focus-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        padding: 20px 16px 120px;
+      }
+
+      .topbar,
+      .panel-header,
+      .quick-filter-bar,
+      .drawer-header-top,
+      .save-dock {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar,
+      .section-actions,
+      .save-dock-actions {
+        justify-content: stretch;
+      }
+
+      .toolbar > *,
+      .section-actions > *,
+      .save-dock-actions > * {
+        width: 100%;
+      }
+
+      .searchbar,
+      .form-grid,
+      .hero-meta,
+      .hero-cards,
+      .overview-grid,
+      .cadence-grid,
+      .text-grid,
+      .development-focus-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #detailDrawerOverlay {
+        padding: 10px;
+      }
+
+      #detailDrawerOverlay .drawer {
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+        height: calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
+      }
+
+      .rules-drawer {
+        width: 100vw;
+      }
+
+      .modal,
+      .modal.tile-modal {
+        width: calc(100vw - 20px);
+        margin: 10px auto;
+      }
+
+      .custom-field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .save-dock {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+  
+    .meeting-history {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .meeting-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .meeting-item-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .meeting-item-head button {
+      margin-left: auto;
+    }
+
+    .meeting-date {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meeting-notes {
+      margin: 0;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    .tile-link-row {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .tile-link-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .health-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .health-item {
+      display: grid;
+      gap: 4px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .health-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    body.stable-mode .section-note,
+    body.stable-mode .table-tip,
+    body.stable-mode .drawer-header p,
+    body.stable-mode .help-text,
+    body.stable-mode .toggle-copy p,
+    body.stable-mode .panel-header p {
+      display: none;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <p class="eyebrow">Manager Notebook</p>
+        <div class="title-row">
+          <h1>Team Pulse</h1>
+          <span id="appVersion" class="pill version-pill">v0.15.3</span>
+          <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="saveFileBtn" class="secondary">Choose folder</button>
+        <button id="connectDataFileBtn" class="secondary">Import JSON</button>
+        <button id="importIcsBtn" class="secondary">Import .ics</button>
+        <button id="attentionRulesBtn" class="secondary">Settings</button>
+      </div>
+    </div>
+
+    <section class="card startup-gate" id="startupGate">
+      <div class="panel-header">
+        <div>
+          <h2>Start with a Team Pulse folder</h2>
+          <p>Choose where Team Pulse should keep team-pulse.json, rolling backups, exports, and SCHEMA.md. Team Pulse stays blank until you connect a folder.</p>
+        </div>
+      </div>
+      <div class="content topless startup-gate-body">
+        <div class="setup-actions">
+          <button id="createJsonFileBtn">Choose Team Pulse folder</button>
+          <button id="openJsonFileBtn" class="secondary">Import existing JSON</button>
+        </div>
+        <p class="help-text">After you connect a folder once, Team Pulse will remember it in this browser and try to reopen it automatically when permission is available.</p>
+      </div>
+    </section>
+
+    <section id="stats" class="grid-cards"></section>
+
+
+    <section class="card team-health-card" id="teamHealthSection">
+      <div class="panel-header">
+        <div>
+          <h2>Team health overview</h2>
+          <p>A higher-level visual scan of overall team cadence and PDC status mix.</p>
+        </div>
+      </div>
+      <div class="content topless">
+        <div id="teamHealthBody"></div>
+      </div>
+    </section>
+
+    <section class="card" id="reportsSection">
+      <div class="panel-header">
+        <div>
+          <h2>Direct reports</h2>
+          <p>Compact scan view. Click any row to open that person's workspace.</p>
+        </div>
+        <div class="section-actions">
+          <button id="addReportBtn">Add direct report</button>
+          <button id="exportCsvBtn" class="secondary">Export files</button>
+        </div>
+      </div>
+      <div class="content topless">
+        <div class="searchbar">
+          <input id="searchInput" type="search" placeholder="Search by name, mentor, level, PDC status, support level, or notes">
+          <select id="planFilter">
+            <option value="">All PDC statuses</option>
+          </select>
+          <select id="attentionFilter">
+            <option value="">All attention states</option>
+            <option value="needs-attention">Needs attention only</option>
+            <option value="on-track">On track only</option>
+          </select>
+        </div>
+        <div id="quickFilterBar" class="quick-filter-bar hidden">
+          <div>
+            <strong id="quickFilterTitle"></strong>
+            <p id="quickFilterDescription" class="hint"></p>
+          </div>
+          <button id="clearQuickFilterBtn" class="secondary">Clear tile filter</button>
+        </div>
+        <div class="table-tip">The table is for scanning. The workspace is where you edit details, add notes, and log meetings.</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Level</th>
+              <th>Touchpoints</th>
+              <th>Next 1:1</th>
+              <th>PDC status</th>
+              <th>Support</th>
+              <th>Attention</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody"></tbody>
+        </table>
+      </div>
+      <div id="tableEmpty" class="empty-state hidden">No direct reports match your current filters.</div>
+    </section>
+  </div>
+
+  <div id="saveDock" class="save-dock hidden" role="status" aria-live="polite">
+    <div>
+      <strong id="saveDockTitle">Unsaved changes</strong>
+      <p id="saveDockText">Your latest changes are safe in this browser, but they are not in your JSON file yet.</p>
+    </div>
+    <div class="save-dock-actions">
+      <button id="saveDockBtn">Save to JSON</button>
+      <button id="dismissDockBtn" class="secondary">Later</button>
+    </div>
+  </div>
+
+  <input id="icsFileInput" type="file" accept=".ics,text/calendar" class="hidden" multiple>
+
+  <div id="reportModal" class="overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Add direct report</h2>
+          <p>Capture the current profile here. Meetings are logged separately in the workspace.</p>
+        </div>
+        <button id="closeModalBtn" class="secondary">Close</button>
+      </div>
+      <div class="modal-body">
+        <form id="reportForm">
+          <input type="hidden" id="reportId" name="reportId">
+          <div class="form-grid">
+            <label>
+              <span>Name *</span>
+              <input id="name" name="name" required>
+            </label>
+            <label>
+              <span>Level</span>
+              <input id="level" name="level" placeholder="L4, Senior, etc.">
+            </label>
+            <label>
+              <span>Mentor(s)</span>
+              <input id="mentors" name="mentors" placeholder="Comma-separated if more than one">
+            </label>
+            <label>
+              <span>Hire date</span>
+              <input id="hireDate" name="hireDate" type="date">
+            </label>
+            <label>
+              <span>Last promotion / remuneration</span>
+              <input id="lastPromotionDate" name="lastPromotionDate" type="date">
+            </label>
+            <label>
+              <span>Next planned 1:1</span>
+              <input id="nextOneOnOneDate" name="nextOneOnOneDate" type="date">
+            </label>
+            <label>
+              <span>PDC status</span>
+              <select id="planStatus" name="pdcStatus"></select>
+            </label>
+            <label>
+              <span>Support level</span>
+              <select id="riskFlag" name="supportLevel"></select>
+            </label>
+            <label class="full">
+              <span>Development goal summary</span>
+              <textarea id="developmentGoalSummary" name="developmentGoalSummary" placeholder="What are they working toward?"></textarea>
+            </label>
+            <label class="full">
+              <span>Promotion readiness / growth area</span>
+              <textarea id="promotionReadiness" name="promotionReadiness" placeholder="Readiness notes, strengths, gaps, growth focus"></textarea>
+            </label>
+            <label class="full">
+              <span>Notes</span>
+              <textarea id="notes" name="notes" placeholder="Anything else you want to keep track of"></textarea>
+            </label>
+          </div>
+          <div class="actions" style="margin-top:16px;">
+            <button type="submit">Save direct report</button>
+            <button type="button" id="cancelModalBtn" class="secondary">Cancel</button>
+          </div>
+          <div id="modalStatus" class="status-line"></div>
+        </form>
+      </div>
+    </div>
+
+</div>
+
+<div id="meetingModal" class="overlay" aria-hidden="true">
+  <div class="modal meeting-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="meetingModalTitle">Log meeting</h2>
+        <p id="meetingModalSubtitle">Log or import a meeting for this direct report.</p>
+      </div>
+      <button id="closeMeetingModalBtn" class="secondary">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="meetingForm">
+        <input type="hidden" id="meetingReportId" name="meetingReportId">
+        <input type="hidden" id="editingMeetingId" name="editingMeetingId">
+        <input type="hidden" id="meetingSource" name="meetingSource" value="manual">
+        <input type="hidden" id="meetingExternalUid" name="meetingExternalUid" value="">
+        <div class="form-grid">
+          <label>
+            <span>Meeting type</span>
+            <select id="meetingType" name="meetingType">
+                <option value="1:1">1:1</option>
+                <option value="PDC">PDC</option>
+                <option value="CV review">CV review</option>
+            </select>
+          </label>
+          <label>
+            <span>Meeting date</span>
+            <input id="meetingDate" name="meetingDate" type="date" required>
+          </label>
+          <label class="full">
+            <span>Notes</span>
+            <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+          </label>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveMeetingBtn">Save meeting</button>
+          <button type="button" id="meetingImportIcsBtn" class="secondary">Import .ics</button>
+          <button type="button" id="cancelMeetingModalBtn" class="secondary">Cancel</button>
+        </div>
+        <div id="meetingStatus" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="detailDrawerOverlay" class="drawer-overlay" aria-hidden="true">
+    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div id="detailDrawer"></div>
+    </aside>
+  </div>
+
+  <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
+    <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle">
+      <div class="drawer-shell">
+        <div class="drawer-header">
+          <div class="drawer-header-top">
+            <div>
+              <h2 id="rulesDrawerTitle">Settings</h2>
+              <p>Manage overdue rules, durability, exports, backups, and Stable mode.</p>
+            </div>
+            <div class="actions">
+              <button id="closeRulesDrawerBtn" class="secondary">Close</button>
+            </div>
+          </div>
+        </div>
+        <div class="drawer-body">
+          <div class="drawer-section">
+            <h3>Overdue windows</h3>
+            <form id="thresholdForm" class="form-grid">
+              <label>
+                <span>1:1 overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="oneOnOneThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>PDC overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="developmentThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>CV review overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="cvReviewThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label class="hidden">
+                <span>Save reminder every</span>
+                <div class="input-with-suffix">
+                  <input id="saveReminderMinutes" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">mins</span>
+                </div>
+              </label>
+
+              <div class="full">
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Missing mentor counts as attention</strong>
+                    <p>Controls whether "No mentor assigned" appears in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Missing mentor counts as attention">
+                    <input id="missingMentorCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Blocked PDC status counts as attention</strong>
+                    <p>Controls whether blocked PDC statuses appear in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Blocked PDC status counts as attention">
+                    <input id="blockedPlanCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="actions full" style="margin-top: 4px;">
+                <button type="submit">Save rules</button>
+                <button type="button" id="resetRulesBtn" class="secondary">Reset defaults</button>
+              </div>
+              <div id="thresholdStatus" class="status-line full"></div>
+            </form>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-section-head">
+              <div>
+                <h3>Data health</h3>
+                <p class="section-note">Verify saves, backups, exports, and schema status in one place.</p>
+              </div>
+            </div>
+            <div id="dataHealthPanel"></div>
+            <div class="actions" style="margin-top: 14px;">
+              <button type="button" id="exportNowBtn">Export now</button>
+              <button type="button" class="secondary" id="downloadArchiveBtn">Download full archive</button>
+              <button type="button" class="secondary" id="restoreBackupBtn">Restore latest backup</button>
+            </div>
+            <div id="dataHealthStatus" class="status-line"></div>
+          </div>
+          <div class="drawer-section">
+            <h3>Stable mode</h3>
+            <div class="toggle-row">
+              <div class="toggle-copy">
+                <strong>Keep the interface calm</strong>
+                <p>Hides most helper copy so Team Pulse feels finished and steady.</p>
+              </div>
+              <label class="switch" aria-label="Stable mode">
+                <input id="stableModeToggle" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div id="tileModal" class="overlay" aria-hidden="true">
+    <div class="modal tile-modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="tileModalTitle">Summary</h2>
+          <p>Tile summary and quick action.</p>
+        </div>
+        <button id="closeTileModalBtn" class="secondary">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="tile-summary">
+          <p id="tileModalCount" class="tile-count">0</p>
+          <p id="tileModalDescription" class="subtle">No summary yet.</p>
+        </div>
+        <div id="tileModalBody"></div>
+        <div class="actions" style="margin-top:16px;">
+          <button id="tileModalPrimaryBtn">Go</button>
+          <button id="tileModalSecondaryBtn" class="secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+const APP_VERSION = 'v0.15.3';
+const CURRENT_SCHEMA_VERSION = 2;
+const AUTOSAVE_DEBOUNCE_MS = 160;
+const TOAST_TIMEOUT_MS = 2000;
+const UI_STATE_KEY = 'team-pulse-ui-state';
+const CACHED_DOC_KEY = 'team-pulse-cached-doc';
+const HANDLE_DB_NAME = 'team-pulse-file-db';
+const HANDLE_STORE = 'handles';
+const FOLDER_HANDLE_KEY = 'connected-data-folder';
+const MAIN_JSON_NAME = 'team-pulse.json';
+const BACKUP_JSON_NAME = 'team-pulse.backup.json';
+const DAILY_JSON_NAME = 'team-pulse.daily.json';
+const MONTHLY_JSON_NAME = 'team-pulse.monthly.json';
+const SCHEMA_DOC_NAME = 'SCHEMA.md';
+
+const PDC_STATUSES = ['Not started', 'In progress', 'Blocked', 'Completed', 'Needs review'];
+const SUPPORT_LEVELS = ['Good', 'Monitor', 'Support needed', 'Urgent'];
+const MEETING_TYPES = ['1:1', 'PDC', 'CV review'];
+const DEFAULT_THRESHOLDS = Object.freeze({
+  oneOnOneDays: 14,
+  pdcDays: 90,
+  cvReviewDays: 180
+});
+const DEFAULT_SETTINGS = Object.freeze({
+  thresholds: { ...DEFAULT_THRESHOLDS },
+  missingMentorCounts: true,
+  blockedPdcCounts: true,
+  lastExportDate: '',
+  stableMode: false,
+  saveReminderMinutes: 15,
+  latestExportFiles: []
+});
+const DEFAULT_UI = Object.freeze({
+  selectedId: null,
+  activeQuickFilter: '',
+  activeTileKey: '',
+  searchTerm: '',
+  planFilter: '',
+  attentionFilter: '',
+  startupHasConnectedFolder: false,
+  creatingReport: false
+});
+
+const SCHEMA_MODEL = Object.freeze({
+  version: CURRENT_SCHEMA_VERSION,
+  fields: {
+    root: [
+      ['schemaVersion', 'number', 'Document schema version.'],
+      ['appVersion', 'string', 'Team Pulse app version that wrote the file.'],
+      ['createdAt', 'string (ISO 8601 UTC)', 'Creation timestamp for the durable document.'],
+      ['savedAt', 'string (ISO 8601 UTC)', 'Last save timestamp for the durable document.'],
+      ['idCounters', 'object', 'Monotonic counters for human-readable IDs.'],
+      ['people', 'array<Person>', 'Base person records created once and never rewritten.'],
+      ['events', 'array<Event>', 'Append-only event log.'],
+      ['settings', 'object', 'Manager-specific rules and durability settings.']
+    ],
+    person: [
+      ['id', 'string', 'Stable human-readable person ID such as p_001.'],
+      ['name', 'string', 'Direct report name.'],
+      ['level', 'string', 'Career level or title shorthand.'],
+      ['mentors', 'string', 'Mentor names as free text.'],
+      ['hireDate', 'string (YYYY-MM-DD)', 'Hire date.'],
+      ['lastPromotionDate', 'string (YYYY-MM-DD)', 'Last promotion or remuneration date.'],
+      ['nextOneOnOneDate', 'string (YYYY-MM-DD)', 'Next planned 1:1 date.'],
+      ['pdcStatus', 'string', 'Current personal development conversation status.'],
+      ['supportLevel', 'string', 'Current support level.'],
+      ['developmentGoalSummary', 'string', 'Current growth focus summary.'],
+      ['promotionReadiness', 'string', 'Promotion readiness and growth-area notes.'],
+      ['notes', 'string', 'Initial manager notes snapshot.'],
+      ['customFields', 'array<CustomField>', 'Additional user-defined fields.'],
+      ['createdAt', 'string (ISO 8601 UTC)', 'Creation timestamp.'],
+      ['legacyId', 'string', 'Optional legacy ID retained after migration.']
+    ],
+    customField: [
+      ['id', 'string', 'Stable human-readable field ID such as cf_001.'],
+      ['label', 'string', 'User-defined field label.'],
+      ['value', 'string', 'User-defined field value.']
+    ],
+    settings: [
+      ['thresholds.oneOnOneDays', 'number', 'Days after which a 1:1 is overdue.'],
+      ['thresholds.pdcDays', 'number', 'Days after which a PDC is overdue.'],
+      ['thresholds.cvReviewDays', 'number', 'Days after which a CV review is overdue.'],
+      ['missingMentorCounts', 'boolean', 'Whether missing mentors count toward attention.'],
+      ['blockedPdcCounts', 'boolean', 'Whether blocked PDC status counts toward attention.'],
+      ['lastExportDate', 'string (ISO 8601 UTC)', 'Timestamp of the latest quarterly plain-format export.'],
+      ['stableMode', 'boolean', 'Whether Stable mode is enabled.'],
+      ['latestExportFiles', 'array<string>', 'Most recent export filenames.']
+    ]
+  },
+  eventTypes: [
+    ['person_created', 'Records a new person being created.'],
+    ['person_updated', 'Records profile changes for an existing person.'],
+    ['note_added', 'Records a new notes snapshot for a person.'],
+    ['meeting_logged', 'Records a meeting touchpoint.'],
+    ['meeting_deleted', 'Records deletion of a previously logged meeting.'],
+    ['person_archived', 'Records archival/deletion of a person.']
+  ],
+  migrations: [
+    ['v0 -> v2', 'Legacy flat app state and pre-schema JSON migrate into the durable event-backed document.'],
+    ['v1 -> v2', 'Schema v1 wrapped state migrates into the durable event-backed document.']
+  ]
+});
+
+const FORMATTERS = {
+  shortDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
+  longDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+  dateTime: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
+  monthDay: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
+  clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' })
+};
+
+const app = {
+  doc: null,
+  folderHandle: null,
+  ui: loadUiState(),
+  projections: { reports: [], reportMap: new Map(), metrics: new Map() },
+  folderName: '',
+  connectedFolderReady: false,
+  lastSaveAt: '',
+  lastSaveReason: '',
+  lastSaveError: '',
+  saveInFlight: false,
+  saveQueued: false,
+  saveTimer: null,
+  loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
+  lastMigrationApplied: '',
+  exportReminderVisible: false,
+  fileStats: {
+    mainSavedAt: '',
+    backupSavedAt: '',
+    dailySavedAt: '',
+    monthlySavedAt: '',
+    schemaWrittenAt: '',
+    folderLabel: ''
+  }
+};
+
+const MIGRATIONS = Object.freeze({
+  1: migrateV1ToV2
+});
+
+const toastStackEl = document.getElementById('toastStack');
+const startupGateEl = document.getElementById('startupGate');
+const createJsonFileBtn = document.getElementById('createJsonFileBtn');
+const openJsonFileBtn = document.getElementById('openJsonFileBtn');
+const statsEl = document.getElementById('stats');
+const teamHealthSectionEl = document.getElementById('teamHealthSection');
+const teamHealthBodyEl = document.getElementById('teamHealthBody');
+const reportsTableBodyEl = document.getElementById('reportsTableBody');
+const detailDrawerOverlayEl = document.getElementById('detailDrawerOverlay');
+const detailDrawerEl = document.getElementById('detailDrawer');
+const rulesDrawerOverlayEl = document.getElementById('rulesDrawerOverlay');
+const tableEmptyEl = document.getElementById('tableEmpty');
+const searchInputEl = document.getElementById('searchInput');
+const planFilterEl = document.getElementById('planFilter');
+const attentionFilterEl = document.getElementById('attentionFilter');
+const addReportBtn = document.getElementById('addReportBtn');
+const saveFileBtn = document.getElementById('saveFileBtn');
+const connectDataFileBtn = document.getElementById('connectDataFileBtn');
+const importIcsBtn = document.getElementById('importIcsBtn');
+const icsFileInputEl = document.getElementById('icsFileInput');
+const exportCsvBtn = document.getElementById('exportCsvBtn');
+const attentionRulesBtn = document.getElementById('attentionRulesBtn');
+const appVersionEl = document.getElementById('appVersion');
+const fileStatePillEl = document.getElementById('fileStatePill');
+const saveDockEl = document.getElementById('saveDock');
+const saveDockTitleEl = document.getElementById('saveDockTitle');
+const saveDockTextEl = document.getElementById('saveDockText');
+const saveDockBtn = document.getElementById('saveDockBtn');
+const dismissDockBtn = document.getElementById('dismissDockBtn');
+const thresholdFormEl = document.getElementById('thresholdForm');
+const oneOnOneThresholdEl = document.getElementById('oneOnOneThreshold');
+const developmentThresholdEl = document.getElementById('developmentThreshold');
+const cvReviewThresholdEl = document.getElementById('cvReviewThreshold');
+const saveReminderMinutesEl = document.getElementById('saveReminderMinutes');
+const missingMentorCountsEl = document.getElementById('missingMentorCounts');
+const blockedPlanCountsEl = document.getElementById('blockedPlanCounts');
+const thresholdStatusEl = document.getElementById('thresholdStatus');
+const resetRulesBtn = document.getElementById('resetRulesBtn');
+const closeRulesDrawerBtn = document.getElementById('closeRulesDrawerBtn');
+const quickFilterBarEl = document.getElementById('quickFilterBar');
+const quickFilterTitleEl = document.getElementById('quickFilterTitle');
+const quickFilterDescriptionEl = document.getElementById('quickFilterDescription');
+const clearQuickFilterBtn = document.getElementById('clearQuickFilterBtn');
+const reportsSectionEl = document.getElementById('reportsSection');
+const tileModalEl = document.getElementById('tileModal');
+const tileModalTitleEl = document.getElementById('tileModalTitle');
+const tileModalCountEl = document.getElementById('tileModalCount');
+const tileModalDescriptionEl = document.getElementById('tileModalDescription');
+const tileModalBodyEl = document.getElementById('tileModalBody');
+const closeTileModalBtn = document.getElementById('closeTileModalBtn');
+const tileModalPrimaryBtn = document.getElementById('tileModalPrimaryBtn');
+const tileModalSecondaryBtn = document.getElementById('tileModalSecondaryBtn');
+const reportModalEl = document.getElementById('reportModal');
+const modalTitleEl = document.getElementById('modalTitle');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const cancelModalBtn = document.getElementById('cancelModalBtn');
+const reportFormEl = document.getElementById('reportForm');
+const modalStatusEl = document.getElementById('modalStatus');
+
+const meetingModalEl = document.getElementById('meetingModal');
+const meetingModalTitleEl = document.getElementById('meetingModalTitle');
+const meetingModalSubtitleEl = document.getElementById('meetingModalSubtitle');
+const closeMeetingModalBtn = document.getElementById('closeMeetingModalBtn');
+const cancelMeetingModalBtn = document.getElementById('cancelMeetingModalBtn');
+const meetingFormEl = document.getElementById('meetingForm');
+const meetingStatusEl = document.getElementById('meetingStatus');
+const meetingImportIcsBtn = document.getElementById('meetingImportIcsBtn');
+
+const formEls = {
+  reportId: document.getElementById('reportId'),
+  name: document.getElementById('name'),
+  level: document.getElementById('level'),
+  mentors: document.getElementById('mentors'),
+  hireDate: document.getElementById('hireDate'),
+  lastPromotionDate: document.getElementById('lastPromotionDate'),
+  nextOneOnOneDate: document.getElementById('nextOneOnOneDate'),
+  pdcStatus: document.getElementById('planStatus'),
+  supportLevel: document.getElementById('riskFlag'),
+  developmentGoalSummary: document.getElementById('developmentGoalSummary'),
+  promotionReadiness: document.getElementById('promotionReadiness'),
+  notes: document.getElementById('notes')
+};
+
+let pendingIcsImportContext = { preferredReportId: null, statusElementId: '', closeMeetingModalOnSuccess: false };
+let overlayMousedownTarget = null;
+let rulesOverlayMousedownTarget = null;
+let tileOverlayMousedownTarget = null;
+let reportOverlayMousedownTarget = null;
+let tableSearchDebounce = null;
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function todayStamp() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function monthStamp(value = nowIso()) {
+  return String(value).slice(0, 7);
+}
+
+function loadUiState() {
+  try {
+    const raw = localStorage.getItem(UI_STATE_KEY);
+    if (!raw) return { ...DEFAULT_UI };
+    const parsed = JSON.parse(raw);
+    return {
+      ...DEFAULT_UI,
+      ...parsed,
+      selectedId: null,
+      activeQuickFilter: '',
+      activeTileKey: ''
+    };
+  } catch (error) {
+    console.error('Failed to load UI state', error);
+    return { ...DEFAULT_UI };
+  }
+}
+
+function persistUiState() {
+  const payload = {
+    searchTerm: app.ui.searchTerm,
+    planFilter: app.ui.planFilter,
+    attentionFilter: app.ui.attentionFilter,
+    startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder
+  };
+  localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+}
+
+function cacheDocSnapshot() {
+  try {
+    if (!app.doc) return;
+    localStorage.setItem(CACHED_DOC_KEY, JSON.stringify(app.doc));
+  } catch (error) {
+    console.error('Failed to cache doc snapshot', error);
+  }
+}
+
+function supportsDirectoryAccess() {
+  return typeof window.showDirectoryPicker === 'function';
+}
+
+function supportsJsonOpen() {
+  return typeof window.showOpenFilePicker === 'function';
+}
+
+function deepCopy(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function escapeHtml(value) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => map[ch]);
+}
+
+function normalizeText(value) {
+  return String(value ?? '').trim();
+}
+
+function normalizeDate(value) {
+  const text = normalizeText(value);
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : '';
+}
+
+function formatDate(dateString) {
+  const text = normalizeDate(dateString);
+  if (!text) return 'Not logged';
+  const date = new Date(`${text}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? 'Not logged' : FORMATTERS.longDate.format(date);
+}
+
+function formatShortDate(dateString) {
+  const text = normalizeDate(dateString);
+  if (!text) return '';
+  const date = new Date(`${text}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? '' : FORMATTERS.shortDate.format(date);
+}
+
+function formatDateOrFallback(dateString, fallback = 'Not logged') {
+  return formatShortDate(dateString) || fallback;
+}
+
+function formatDateTime(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '-' : FORMATTERS.dateTime.format(date);
+}
+
+function formatClock(date = new Date()) {
+  return FORMATTERS.clock.format(date);
+}
+
+function formatSavedStamp(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${FORMATTERS.monthDay.format(date)} at ${formatClock(date)}`;
+}
+
+function formatManualSaveLabel(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `Saved ${formatClock(date)}`;
+}
+
+function dateDiffInDays(dateString) {
+  const text = normalizeDate(dateString);
+  if (!text) return null;
+  const date = new Date(`${text}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.floor((today - date) / 86400000);
+}
+
+function daysSinceIso(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const now = new Date();
+  return Math.floor((now - date) / 86400000);
+}
+
+function csvCell(value) {
+  const text = String(value ?? '');
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function valueOrEmpty(value, fallback = '-') {
+  return value ? `<strong>${escapeHtml(value)}</strong>` : `<span class="subtle">${escapeHtml(fallback)}</span>`;
+}
+
+function normalizePdcStatus(value) {
+  const map = {
+    'Plan status': PDC_STATUSES[0],
+    'Development conversation': 'PDC',
+    'Personal development conversation': 'PDC'
+  };
+  const normalized = map[normalizeText(value)] || normalizeText(value);
+  return PDC_STATUSES.includes(normalized) ? normalized : PDC_STATUSES[0];
+}
+
+function normalizeSupportLevel(value) {
+  const legacyMap = {
+    'None': 'Good',
+    'Watch': 'Monitor',
+    'Needs attention': 'Support needed',
+    'At risk': 'Support needed',
+    'Critical': 'Urgent'
+  };
+  const normalized = legacyMap[normalizeText(value)] || normalizeText(value);
+  return SUPPORT_LEVELS.includes(normalized) ? normalized : SUPPORT_LEVELS[0];
+}
+
+function canonicalMeetingType(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) return '1:1';
+  if (/^1[:\- ]?1$/i.test(normalized) || /one on one/i.test(normalized)) return '1:1';
+  if (/^(pdc|personal development conversation|development conversation)$/i.test(normalized)) return 'PDC';
+  if (/^cv review$/i.test(normalized)) return 'CV review';
+  return MEETING_TYPES.includes(normalized) ? normalized : '1:1';
+}
+
+function normalizeCustomField(field, fallbackId = '') {
+  const safe = field && typeof field === 'object' ? field : {};
+  return {
+    id: normalizeText(safe.id) || fallbackId,
+    label: normalizeText(safe.label || safe.key),
+    value: normalizeText(safe.value)
+  };
+}
+
+function populateSelect(el, values, includeBlank = false, blankLabel = 'All') {
+  const current = el.value;
+  el.innerHTML = '';
+  if (includeBlank) {
+    const blank = document.createElement('option');
+    blank.value = '';
+    blank.textContent = blankLabel;
+    el.appendChild(blank);
+  }
+  values.forEach((value) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    el.appendChild(option);
+  });
+  if (current) el.value = current;
+}
+
+function parsePositiveInteger(label, value) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed < 1) throw new Error(`${label} must be at least 1.`);
+  return parsed;
+}
+
+function safePositiveInteger(value, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function makeEmptyDoc() {
+  const stamp = nowIso();
+  return {
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    appVersion: APP_VERSION,
+    createdAt: stamp,
+    savedAt: stamp,
+    idCounters: {
+      person: 0,
+      event: 0,
+      customField: 0,
+      meeting: 0,
+      note: 0
+    },
+    people: [],
+    events: [],
+    settings: deepCopy(DEFAULT_SETTINGS)
+  };
+}
+
+function normalizeSettings(rawSettings = {}) {
+  const thresholds = rawSettings.thresholds || {};
+  const merged = {
+    ...deepCopy(DEFAULT_SETTINGS),
+    ...(rawSettings || {}),
+    thresholds: {
+      ...deepCopy(DEFAULT_THRESHOLDS),
+      ...(thresholds || {})
+    }
+  };
+  merged.thresholds.oneOnOneDays = safePositiveInteger(merged.thresholds.oneOnOneDays, DEFAULT_THRESHOLDS.oneOnOneDays);
+  merged.thresholds.pdcDays = safePositiveInteger(merged.thresholds.pdcDays || merged.thresholds.developmentConversationDays, DEFAULT_THRESHOLDS.pdcDays);
+  merged.thresholds.cvReviewDays = safePositiveInteger(merged.thresholds.cvReviewDays, DEFAULT_THRESHOLDS.cvReviewDays);
+  merged.missingMentorCounts = !!merged.missingMentorCounts;
+  merged.blockedPdcCounts = rawSettings.blockedPdcCounts === undefined
+    ? rawSettings.blockedPlanCounts === undefined ? DEFAULT_SETTINGS.blockedPdcCounts : !!rawSettings.blockedPlanCounts
+    : !!rawSettings.blockedPdcCounts;
+  merged.stableMode = !!merged.stableMode;
+  merged.lastExportDate = normalizeText(merged.lastExportDate);
+  merged.latestExportFiles = Array.isArray(merged.latestExportFiles) ? merged.latestExportFiles.map((value) => normalizeText(value)).filter(Boolean) : [];
+  merged.saveReminderMinutes = safePositiveInteger(merged.saveReminderMinutes, DEFAULT_SETTINGS.saveReminderMinutes);
+  return merged;
+}
+
+function maxIdFromList(ids, prefix) {
+  const prefixText = `${prefix}_`;
+  return ids.reduce((max, id) => {
+    const text = normalizeText(id);
+    if (!text.startsWith(prefixText)) return max;
+    const suffix = Number.parseInt(text.slice(prefixText.length), 10);
+    if (!Number.isFinite(suffix)) return max;
+    return Math.max(max, suffix);
+  }, 0);
+}
+
+function syncIdCounters(doc) {
+  const peopleIds = (doc.people || []).map((item) => item.id);
+  const eventIds = (doc.events || []).map((item) => item.id);
+  const customFieldIds = (doc.people || []).flatMap((person) => (person.customFields || []).map((field) => field.id));
+  const meetingIds = (doc.events || []).filter((event) => event.type === 'meeting_logged').map((event) => event.meetingId);
+  const noteIds = (doc.events || []).filter((event) => event.type === 'note_added').map((event) => event.noteId);
+  doc.idCounters = {
+    person: Math.max(doc.idCounters?.person || 0, maxIdFromList(peopleIds, 'p')),
+    event: Math.max(doc.idCounters?.event || 0, maxIdFromList(eventIds, 'evt')),
+    customField: Math.max(doc.idCounters?.customField || 0, maxIdFromList(customFieldIds, 'cf')),
+    meeting: Math.max(doc.idCounters?.meeting || 0, maxIdFromList(meetingIds, 'mtg')),
+    note: Math.max(doc.idCounters?.note || 0, maxIdFromList(noteIds, 'note'))
+  };
+  return doc;
+}
+
+function normalizePersonRecord(person = {}) {
+  const createdAt = normalizeText(person.createdAt) || nowIso();
+  return {
+    id: normalizeText(person.id),
+    name: normalizeText(person.name),
+    level: normalizeText(person.level),
+    mentors: normalizeText(person.mentors),
+    hireDate: normalizeDate(person.hireDate),
+    lastPromotionDate: normalizeDate(person.lastPromotionDate),
+    nextOneOnOneDate: normalizeDate(person.nextOneOnOneDate),
+    pdcStatus: normalizePdcStatus(person.pdcStatus || person.planStatus),
+    supportLevel: normalizeSupportLevel(person.supportLevel || person.riskFlag),
+    developmentGoalSummary: normalizeText(person.developmentGoalSummary),
+    promotionReadiness: normalizeText(person.promotionReadiness),
+    notes: normalizeText(person.notes),
+    customFields: Array.isArray(person.customFields)
+      ? person.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.label || field.value)
+      : [],
+    createdAt,
+    legacyId: normalizeText(person.legacyId)
+  };
+}
+
+function normalizeEventRecord(event = {}) {
+  const safe = event && typeof event === 'object' ? event : {};
+  const base = {
+    id: normalizeText(safe.id),
+    type: normalizeText(safe.type),
+    personId: normalizeText(safe.personId),
+    createdAt: normalizeText(safe.createdAt) || nowIso()
+  };
+  if (base.type === 'person_created') {
+    return {
+      ...base,
+      snapshot: normalizePersonRecord(safe.snapshot || safe.person || {})
+    };
+  }
+  if (base.type === 'person_updated') {
+    return {
+      ...base,
+      changes: normalizePersonChanges(safe.changes || {})
+    };
+  }
+  if (base.type === 'note_added') {
+    return {
+      ...base,
+      noteId: normalizeText(safe.noteId),
+      noteDate: normalizeDate(safe.noteDate) || todayStamp(),
+      noteText: normalizeText(safe.noteText || safe.note),
+      source: normalizeText(safe.source || 'workspace') || 'workspace'
+    };
+  }
+  if (base.type === 'meeting_logged') {
+    return {
+      ...base,
+      meetingId: normalizeText(safe.meetingId),
+      meetingType: canonicalMeetingType(safe.meetingType),
+      meetingDate: normalizeDate(safe.meetingDate) || todayStamp(),
+      durationMinutes: Number.isFinite(Number(safe.durationMinutes)) ? Number(safe.durationMinutes) : null,
+      notes: normalizeText(safe.notes),
+      source: normalizeText(safe.source || 'manual') || 'manual',
+      externalUid: normalizeText(safe.externalUid)
+    };
+  }
+  if (base.type === 'meeting_deleted') {
+    return {
+      ...base,
+      meetingId: normalizeText(safe.meetingId)
+    };
+  }
+  if (base.type === 'person_archived') {
+    return { ...base };
+  }
+  return { ...base };
+}
+
+function normalizePersonChanges(changes = {}) {
+  const normalized = {};
+  if ('name' in changes) normalized.name = normalizeText(changes.name);
+  if ('level' in changes) normalized.level = normalizeText(changes.level);
+  if ('mentors' in changes) normalized.mentors = normalizeText(changes.mentors);
+  if ('hireDate' in changes) normalized.hireDate = normalizeDate(changes.hireDate);
+  if ('lastPromotionDate' in changes) normalized.lastPromotionDate = normalizeDate(changes.lastPromotionDate);
+  if ('nextOneOnOneDate' in changes) normalized.nextOneOnOneDate = normalizeDate(changes.nextOneOnOneDate);
+  if ('pdcStatus' in changes || 'planStatus' in changes) normalized.pdcStatus = normalizePdcStatus(changes.pdcStatus || changes.planStatus);
+  if ('supportLevel' in changes || 'riskFlag' in changes) normalized.supportLevel = normalizeSupportLevel(changes.supportLevel || changes.riskFlag);
+  if ('developmentGoalSummary' in changes) normalized.developmentGoalSummary = normalizeText(changes.developmentGoalSummary);
+  if ('promotionReadiness' in changes) normalized.promotionReadiness = normalizeText(changes.promotionReadiness);
+  if ('notes' in changes) normalized.notes = normalizeText(changes.notes);
+  if ('customFields' in changes) {
+    normalized.customFields = Array.isArray(changes.customFields)
+      ? changes.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.id || field.label || field.value)
+      : [];
+  }
+  return normalized;
+}
+
+function ensureDocShape(doc) {
+  const safe = doc && typeof doc === 'object' ? deepCopy(doc) : makeEmptyDoc();
+  safe.schemaVersion = Number(safe.schemaVersion) || CURRENT_SCHEMA_VERSION;
+  safe.appVersion = normalizeText(safe.appVersion) || APP_VERSION;
+  safe.createdAt = normalizeText(safe.createdAt) || nowIso();
+  safe.savedAt = normalizeText(safe.savedAt) || safe.createdAt;
+  safe.people = Array.isArray(safe.people) ? safe.people.map((person) => normalizePersonRecord(person)).filter((person) => person.id) : [];
+  safe.events = Array.isArray(safe.events) ? safe.events.map((event) => normalizeEventRecord(event)).filter((event) => event.id && event.type) : [];
+  safe.settings = normalizeSettings(safe.settings || {});
+  safe.idCounters = safe.idCounters && typeof safe.idCounters === 'object' ? safe.idCounters : {};
+  return syncIdCounters(safe);
+}
+
+function nextId(kind) {
+  if (!app.doc) throw new Error('No Team Pulse document is loaded.');
+  const map = {
+    person: ['person', 'p'],
+    event: ['event', 'evt'],
+    customField: ['customField', 'cf'],
+    meeting: ['meeting', 'mtg'],
+    note: ['note', 'note']
+  };
+  const [counterKey, prefix] = map[kind] || [kind, String(kind || 'id').slice(0, 3)];
+  if (!app.doc.idCounters[counterKey]) app.doc.idCounters[counterKey] = 0;
+  app.doc.idCounters[counterKey] += 1;
+  return `${prefix}_${String(app.doc.idCounters[counterKey]).padStart(3, '0')}`;
+}
+
+function readLegacyState(rawState) {
+  const safe = rawState && typeof rawState === 'object' ? rawState : {};
+  const reports = Array.isArray(safe.reports) ? safe.reports : [];
+  const settings = normalizeSettings({
+    thresholds: {
+      oneOnOneDays: safe.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays,
+      pdcDays: safe.thresholds?.developmentConversationDays || safe.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays,
+      cvReviewDays: safe.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays
+    },
+    missingMentorCounts: safe.settings?.missingMentorCounts,
+    blockedPdcCounts: safe.settings?.blockedPdcCounts,
+    blockedPlanCounts: safe.settings?.blockedPlanCounts,
+    lastExportDate: safe.settings?.lastExportDate,
+    stableMode: safe.settings?.stableMode,
+    saveReminderMinutes: safe.settings?.saveReminderMinutes
+  });
+  return { reports, settings };
+}
+
+function migrateLegacyStateToV2(rawState) {
+  const stamp = nowIso();
+  const { reports, settings } = readLegacyState(rawState);
+  const doc = makeEmptyDoc();
+  doc.createdAt = stamp;
+  doc.savedAt = stamp;
+  doc.settings = settings;
+
+  reports.forEach((legacyReport) => {
+    const personId = nextDocId(doc, 'person');
+    const personCreatedAt = normalizeText(legacyReport.createdAt) || stamp;
+    const basePerson = normalizePersonRecord({
+      id: personId,
+      name: legacyReport.name,
+      level: legacyReport.level,
+      mentors: legacyReport.mentors,
+      hireDate: legacyReport.hireDate,
+      lastPromotionDate: legacyReport.lastPromotionDate,
+      nextOneOnOneDate: legacyReport.nextOneOnOneDate,
+      pdcStatus: legacyReport.pdcStatus || legacyReport.planStatus,
+      supportLevel: legacyReport.supportLevel || legacyReport.riskFlag,
+      developmentGoalSummary: legacyReport.developmentGoalSummary,
+      promotionReadiness: legacyReport.promotionReadiness,
+      notes: legacyReport.notes,
+      customFields: Array.isArray(legacyReport.customFields)
+        ? legacyReport.customFields.map((field) => ({
+            id: nextDocId(doc, 'customField'),
+            label: field.label || field.key,
+            value: field.value
+          }))
+        : [],
+      createdAt: personCreatedAt,
+      legacyId: normalizeText(legacyReport.id)
+    });
+    doc.people.push(basePerson);
+    doc.events.push({
+      id: nextDocId(doc, 'event'),
+      type: 'person_created',
+      personId,
+      snapshot: deepCopy(basePerson),
+      createdAt: personCreatedAt
+    });
+    if (basePerson.notes) {
+      doc.events.push({
+        id: nextDocId(doc, 'event'),
+        type: 'note_added',
+        personId,
+        noteId: nextDocId(doc, 'note'),
+        noteDate: basePerson.hireDate || todayStamp(),
+        noteText: basePerson.notes,
+        source: 'migration',
+        createdAt: personCreatedAt
+      });
+    }
+    const meetings = Array.isArray(legacyReport.meetings) ? legacyReport.meetings : [];
+    meetings.forEach((meeting) => {
+      doc.events.push({
+        id: nextDocId(doc, 'event'),
+        type: 'meeting_logged',
+        personId,
+        meetingId: nextDocId(doc, 'meeting'),
+        meetingType: canonicalMeetingType(meeting.meetingType),
+        meetingDate: normalizeDate(meeting.meetingDate) || todayStamp(),
+        durationMinutes: Number.isFinite(Number(meeting.durationMinutes)) ? Number(meeting.durationMinutes) : null,
+        notes: normalizeText(meeting.notes),
+        source: meeting.externalUid ? 'ics' : (normalizeText(meeting.source) || 'migration'),
+        externalUid: normalizeText(meeting.externalUid),
+        createdAt: normalizeText(meeting.createdAt) || personCreatedAt
+      });
+    });
+  });
+
+  return syncIdCounters(doc);
+}
+
+function nextDocId(doc, kind) {
+  const map = {
+    person: ['person', 'p'],
+    event: ['event', 'evt'],
+    customField: ['customField', 'cf'],
+    meeting: ['meeting', 'mtg'],
+    note: ['note', 'note']
+  };
+  const [counterKey, prefix] = map[kind];
+  if (!doc.idCounters[counterKey]) doc.idCounters[counterKey] = 0;
+  doc.idCounters[counterKey] += 1;
+  return `${prefix}_${String(doc.idCounters[counterKey]).padStart(3, '0')}`;
+}
+
+function migrateV1ToV2(docV1) {
+  const safeDoc = docV1 && typeof docV1 === 'object' ? docV1 : {};
+  const sourceState = safeDoc.state || safeDoc.data || {};
+  const migrated = migrateLegacyStateToV2(sourceState);
+  migrated.createdAt = normalizeText(safeDoc.createdAt) || migrated.createdAt;
+  migrated.savedAt = normalizeText(safeDoc.savedAt) || migrated.savedAt;
+  return migrated;
+}
+
+function parsePortableJsonText(text) {
+  const parsed = JSON.parse(text);
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error('This file is not valid Team Pulse JSON.');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(parsed, 'schemaVersion')) {
+    return {
+      doc: migrateLegacyStateToV2(parsed),
+      migratedFromVersion: 0,
+      lastMigrationApplied: 'v0-to-v2'
+    };
+  }
+
+  const schemaVersion = Number(parsed.schemaVersion);
+  if (!Number.isInteger(schemaVersion) || schemaVersion < 1) {
+    throw new Error('This JSON file uses an unsupported Team Pulse schema version.');
+  }
+  if (schemaVersion > CURRENT_SCHEMA_VERSION) {
+    throw new Error(`This JSON file uses schema version ${schemaVersion}, which is newer than ${APP_VERSION} supports.`);
+  }
+
+  let working = deepCopy(parsed);
+  let lastMigrationApplied = '';
+  let currentVersion = schemaVersion;
+  while (currentVersion < CURRENT_SCHEMA_VERSION) {
+    const migrate = MIGRATIONS[currentVersion];
+    if (typeof migrate !== 'function') {
+      throw new Error(`Missing migration for schema v${currentVersion} to v${currentVersion + 1}.`);
+    }
+    working = migrate(working);
+    lastMigrationApplied = `v${currentVersion}-to-v${currentVersion + 1}`;
+    currentVersion += 1;
+  }
+
+  return {
+    doc: ensureDocShape(working),
+    migratedFromVersion: schemaVersion,
+    lastMigrationApplied
+  };
+}
+
+function projectDoc(doc) {
+  const workingDoc = ensureDocShape(doc);
+  const reportMap = new Map();
+
+  workingDoc.people.forEach((person) => {
+    reportMap.set(person.id, {
+      ...deepCopy(person),
+      meetings: [],
+      notesHistory: [],
+      archived: false,
+      updatedAt: person.createdAt,
+      _meetingUidSet: new Set()
+    });
+  });
+
+  workingDoc.events.forEach((event) => {
+    const type = event.type;
+    if (type === 'person_created') {
+      if (!reportMap.has(event.personId)) {
+        reportMap.set(event.personId, {
+          ...deepCopy(event.snapshot || {}),
+          id: event.personId,
+          meetings: [],
+          notesHistory: [],
+          archived: false,
+          updatedAt: event.createdAt,
+          _meetingUidSet: new Set()
+        });
+      }
+      return;
+    }
+
+    const report = reportMap.get(event.personId);
+    if (!report) return;
+
+    if (type === 'person_updated') {
+      Object.assign(report, deepCopy(event.changes || {}));
+      report.updatedAt = event.createdAt;
+      return;
+    }
+
+    if (type === 'note_added') {
+      report.notes = normalizeText(event.noteText);
+      report.notesHistory.push({
+        noteId: event.noteId,
+        noteDate: event.noteDate,
+        noteText: normalizeText(event.noteText),
+        source: event.source || 'workspace',
+        createdAt: event.createdAt
+      });
+      report.updatedAt = event.createdAt;
+      return;
+    }
+
+    if (type === 'meeting_logged') {
+      const meeting = {
+        id: event.meetingId,
+        eventId: event.id,
+        meetingType: canonicalMeetingType(event.meetingType),
+        meetingDate: normalizeDate(event.meetingDate) || todayStamp(),
+        durationMinutes: event.durationMinutes,
+        notes: normalizeText(event.notes),
+        source: normalizeText(event.source) || 'manual',
+        externalUid: normalizeText(event.externalUid),
+        createdAt: event.createdAt
+      };
+      if (meeting.externalUid) report._meetingUidSet.add(meeting.externalUid);
+      report.meetings.push(meeting);
+      report.updatedAt = event.createdAt;
+      return;
+    }
+
+    if (type === 'meeting_deleted') {
+      report.meetings = report.meetings.filter((meeting) => meeting.id !== event.meetingId);
+      report.updatedAt = event.createdAt;
+      return;
+    }
+
+    if (type === 'person_archived') {
+      report.archived = true;
+      report.updatedAt = event.createdAt;
+    }
+  });
+
+  const reports = [...reportMap.values()]
+    .filter((report) => !report.archived)
+    .map((report) => {
+      const meetings = [...report.meetings].sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)) || String(b.createdAt).localeCompare(String(a.createdAt)));
+      const notesHistory = [...report.notesHistory].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+      return {
+        ...report,
+        customFields: Array.isArray(report.customFields) ? report.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.id || field.label || field.value) : [],
+        meetings,
+        notesHistory,
+        pdcStatus: normalizePdcStatus(report.pdcStatus),
+        supportLevel: normalizeSupportLevel(report.supportLevel)
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const metrics = new Map();
+  reports.forEach((report) => {
+    metrics.set(report.id, buildReportMetrics(report, workingDoc.settings));
+  });
+
+  return { reports, reportMap: new Map(reports.map((report) => [report.id, report])), metrics };
+}
+
+function applyProjectedState() {
+  app.projections = projectDoc(app.doc || makeEmptyDoc());
+  if (app.ui.selectedId && !app.projections.reportMap.has(app.ui.selectedId)) {
+    app.ui.selectedId = null;
+  }
+  persistUiState();
+  document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
+}
+
+function getReports() {
+  return app.projections.reports;
+}
+
+function getReportById(id) {
+  return app.projections.reportMap.get(id) || null;
+}
+
+function getMetrics(id) {
+  return app.projections.metrics.get(id) || {
+    lastOneOnOne: '',
+    lastPdc: '',
+    lastCvReview: '',
+    oneOnOneOverdue: false,
+    pdcOverdue: false,
+    cvReviewOverdue: false,
+    attention: []
+  };
+}
+
+function latestMeetingDate(report, type) {
+  return report.meetings.find((meeting) => canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(type))?.meetingDate || '';
+}
+
+function isMissingTouchpointOverdue(report, lastDate, thresholdDays) {
+  if (lastDate) {
+    const age = dateDiffInDays(lastDate);
+    return age === null ? true : age > thresholdDays;
+  }
+  if (report.hireDate) {
+    const hireAge = dateDiffInDays(report.hireDate);
+    return hireAge === null ? true : hireAge > thresholdDays;
+  }
+  return true;
+}
+
+function buildReportMetrics(report, settings) {
+  const lastOneOnOne = latestMeetingDate(report, '1:1');
+  const lastPdc = latestMeetingDate(report, 'PDC');
+  const lastCvReview = latestMeetingDate(report, 'CV review');
+  const oneOnOneOverdue = isMissingTouchpointOverdue(report, lastOneOnOne, settings.thresholds.oneOnOneDays);
+  const pdcOverdue = isMissingTouchpointOverdue(report, lastPdc, settings.thresholds.pdcDays);
+  const cvReviewOverdue = isMissingTouchpointOverdue(report, lastCvReview, settings.thresholds.cvReviewDays);
+
+  const attention = [];
+  if (settings.missingMentorCounts && !report.mentors) attention.push('No mentor assigned');
+  if (oneOnOneOverdue) attention.push('1:1 overdue');
+  if (pdcOverdue) attention.push('PDC overdue');
+  if (cvReviewOverdue) attention.push('CV review overdue');
+  if (settings.blockedPdcCounts && report.pdcStatus === 'Blocked') attention.push('PDC status is blocked');
+  if (report.supportLevel === 'Support needed' || report.supportLevel === 'Urgent') attention.push(`Support level: ${report.supportLevel}`);
+
+  return {
+    lastOneOnOne,
+    lastPdc,
+    lastCvReview,
+    oneOnOneOverdue,
+    pdcOverdue,
+    cvReviewOverdue,
+    attention
+  };
+}
+
+function teamPct(value, total) {
+  if (!total) return 0;
+  return Math.round((value / total) * 100);
+}
+
+function variantForPdcStatus(status) {
+  return {
+    'Completed': 'success',
+    'Blocked': 'danger',
+    'Needs review': 'warning',
+    'In progress': 'info'
+  }[status] || 'neutral';
+}
+
+function variantForSupport(flag) {
+  return {
+    'Good': 'success',
+    'Monitor': 'info',
+    'Support needed': 'warning',
+    'Urgent': 'danger'
+  }[flag] || 'neutral';
+}
+
+function badge(label, variant = 'neutral') {
+  return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
+}
+
+function attentionTone(issue) {
+  if (issue.includes('blocked') || issue.includes('Urgent')) return 'danger';
+  if (issue.includes('Support level')) return 'warning';
+  return 'warning';
+}
+
+function showToast(message, kind = '') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${kind}`.trim();
+  toast.textContent = message;
+  toastStackEl.appendChild(toast);
+  window.setTimeout(() => toast.remove(), TOAST_TIMEOUT_MS);
+}
+
+function syncBodyOverlayLock() {
+  const locked = reportModalEl.classList.contains('open')
+    || meetingModalEl.classList.contains('open')
+    || detailDrawerOverlayEl.classList.contains('open')
+    || rulesDrawerOverlayEl.classList.contains('open')
+    || tileModalEl.classList.contains('open');
+  document.body.classList.toggle('overlay-open', locked);
+}
+
+function openHandleDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(HANDLE_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      if (!request.result.objectStoreNames.contains(HANDLE_STORE)) {
+        request.result.createObjectStore(HANDLE_STORE);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error('Could not open IndexedDB.'));
+  });
+}
+
+async function storeFolderHandle(handle) {
+  const db = await openHandleDb();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(HANDLE_STORE, 'readwrite');
+    tx.objectStore(HANDLE_STORE).put(handle, FOLDER_HANDLE_KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error || new Error('Could not store folder handle.'));
+    tx.onabort = () => reject(tx.error || new Error('Could not store folder handle.'));
+  });
+  db.close();
+}
+
+async function getStoredFolderHandle() {
+  const db = await openHandleDb();
+  const handle = await new Promise((resolve, reject) => {
+    const tx = db.transaction(HANDLE_STORE, 'readonly');
+    const request = tx.objectStore(HANDLE_STORE).get(FOLDER_HANDLE_KEY);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error || new Error('Could not read stored folder handle.'));
+  });
+  db.close();
+  return handle;
+}
+
+async function clearStoredFolderHandle() {
+  const db = await openHandleDb();
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(HANDLE_STORE, 'readwrite');
+    tx.objectStore(HANDLE_STORE).delete(FOLDER_HANDLE_KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error || new Error('Could not clear stored folder handle.'));
+    tx.onabort = () => reject(tx.error || new Error('Could not clear stored folder handle.'));
+  });
+  db.close();
+}
+
+async function verifyPermission(handle, readWrite = false) {
+  if (!handle) return false;
+  const options = readWrite ? { mode: 'readwrite' } : {};
+  try {
+    if (handle.queryPermission && (await handle.queryPermission(options)) === 'granted') return true;
+    if (handle.requestPermission && (await handle.requestPermission(options)) === 'granted') return true;
+  } catch (error) {
+    console.error('Permission check failed', error);
+  }
+  return false;
+}
+
+async function getFileHandleFromFolder(folderHandle, fileName, create = false) {
+  try {
+    return await folderHandle.getFileHandle(fileName, { create });
+  } catch (error) {
+    if (error && error.name === 'NotFoundError' && !create) return null;
+    throw error;
+  }
+}
+
+async function readTextFromHandle(fileHandle) {
+  const file = await fileHandle.getFile();
+  return file.text();
+}
+
+async function writeValueToHandle(fileHandle, value) {
+  const writable = await fileHandle.createWritable();
+  await writable.write(value);
+  await writable.close();
+}
+
+async function readFolderFileText(fileName) {
+  if (!app.folderHandle) return '';
+  const handle = await getFileHandleFromFolder(app.folderHandle, fileName, false);
+  if (!handle) return '';
+  return readTextFromHandle(handle);
+}
+
+async function writeFolderFileText(fileName, text) {
+  if (!app.folderHandle) throw new Error('No Team Pulse folder is connected.');
+  const handle = await getFileHandleFromFolder(app.folderHandle, fileName, true);
+  await writeValueToHandle(handle, text);
+}
+
+async function parseSavedAtFromFolderFile(fileName) {
+  try {
+    const text = await readFolderFileText(fileName);
+    if (!text) return '';
+    if (fileName.toLowerCase().endsWith('.md')) return nowIso();
+    const parsed = JSON.parse(text);
+    return normalizeText(parsed.savedAt) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+async function connectFolderHandle(handle, options = {}) {
+  const { initialDoc = null, showSuccessToast = true } = options;
+  if (!handle) return false;
+  const permitted = await verifyPermission(handle, true);
+  if (!permitted) {
+    showToast('Read and write permission was not granted for that folder.', 'error');
+    return false;
+  }
+
+  app.folderHandle = handle;
+  app.folderName = handle.name || '';
+  app.fileStats.folderLabel = handle.name || '';
+  await storeFolderHandle(handle);
+
+  if (initialDoc) {
+    app.doc = ensureDocShape(initialDoc);
+    await persistDocToFolder({ reason: 'import' });
+    app.connectedFolderReady = true;
+    app.ui.startupHasConnectedFolder = true;
+    persistUiState();
+    applyProjectedState();
+    render();
+    if (showSuccessToast) showToast(`Connected folder ${handle.name} and saved Team Pulse there.`, 'success');
+    return true;
+  }
+
+  const loaded = await loadDocFromConnectedFolder({ createIfMissing: true, showSuccessToast });
+  return loaded;
+}
+
+async function chooseFolderAndConnect(options = {}) {
+  if (!supportsDirectoryAccess()) {
+    showToast('Choosing a Team Pulse folder works best in Edge or Chrome.', 'error');
+    return false;
+  }
+  try {
+    const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    return connectFolderHandle(handle, options);
+  } catch (error) {
+    if (error && error.name === 'AbortError') return false;
+    console.error('Failed to choose folder', error);
+    showToast(error?.message || 'Could not connect that folder.', 'error');
+    return false;
+  }
+}
+
+async function loadDocFromConnectedFolder(options = {}) {
+  const { createIfMissing = false, showSuccessToast = true } = options;
+  if (!app.folderHandle) return false;
+
+  const mainHandle = await getFileHandleFromFolder(app.folderHandle, MAIN_JSON_NAME, false);
+  if (!mainHandle) {
+    if (!createIfMissing) return false;
+    app.doc = makeEmptyDoc();
+    applyProjectedState();
+    await persistDocToFolder({ reason: 'init' });
+    app.connectedFolderReady = true;
+    app.ui.startupHasConnectedFolder = true;
+    persistUiState();
+    render();
+    if (showSuccessToast) showToast(`Created ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
+    return true;
+  }
+
+  let text = '';
+  try {
+    text = await readTextFromHandle(mainHandle);
+  } catch (error) {
+    console.error('Failed to read main Team Pulse JSON', error);
+    showToast('Could not read team-pulse.json from that folder.', 'error');
+    return false;
+  }
+
+  if (!text.trim()) {
+    app.doc = makeEmptyDoc();
+    applyProjectedState();
+    await persistDocToFolder({ reason: 'init' });
+    app.connectedFolderReady = true;
+    app.ui.startupHasConnectedFolder = true;
+    persistUiState();
+    render();
+    if (showSuccessToast) showToast(`Created a new ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
+    return true;
+  }
+
+  try {
+    const parsed = parsePortableJsonText(text);
+    app.doc = ensureDocShape(parsed.doc);
+    app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+    app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+    app.connectedFolderReady = true;
+    app.ui.startupHasConnectedFolder = true;
+    persistUiState();
+    applyProjectedState();
+    cacheDocSnapshot();
+    if (parsed.lastMigrationApplied) {
+      await persistDocToFolder({ reason: 'migration' });
+    } else {
+      app.lastSaveAt = app.doc.savedAt;
+      await refreshFileStats();
+    }
+    render();
+    if (showSuccessToast) {
+      showToast(parsed.lastMigrationApplied
+        ? `Loaded and upgraded ${MAIN_JSON_NAME} to schema v${CURRENT_SCHEMA_VERSION}.`
+        : `Loaded ${MAIN_JSON_NAME} from ${app.folderHandle.name}.`, 'success');
+    }
+    return true;
+  } catch (error) {
+    console.error('Failed to parse main Team Pulse JSON', error);
+    const recovered = await maybeRecoverFromBackup(error);
+    if (recovered) return true;
+    showToast(error?.message || 'That Team Pulse JSON could not be loaded.', 'error');
+    return false;
+  }
+}
+
+async function maybeRecoverFromBackup(parseError) {
+  try {
+    const backupText = await readFolderFileText(BACKUP_JSON_NAME);
+    if (!backupText.trim()) return false;
+    const parsed = parsePortableJsonText(backupText);
+    const shouldRestore = window.confirm(`team-pulse.json could not be loaded. Restore ${BACKUP_JSON_NAME} instead?`);
+    if (!shouldRestore) return false;
+    app.doc = ensureDocShape(parsed.doc);
+    app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+    app.lastMigrationApplied = parsed.lastMigrationApplied || 'backup-restore';
+    await persistDocToFolder({ reason: 'restore' });
+    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.`, 'success');
+    return true;
+  } catch (error) {
+    console.error('Backup restore failed', parseError, error);
+    return false;
+  }
+}
+
+async function restoreLatestBackup() {
+  if (!app.folderHandle) {
+    showToast('Choose a Team Pulse folder first.', 'error');
+    return false;
+  }
+  try {
+    const backupText = await readFolderFileText(BACKUP_JSON_NAME);
+    if (!backupText.trim()) {
+      showToast('No latest backup file exists yet.', 'warning');
+      return false;
+    }
+    const parsed = parsePortableJsonText(backupText);
+    if (!window.confirm(`Restore ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}? This replaces the current main file.`)) {
+      return false;
+    }
+    app.doc = ensureDocShape(parsed.doc);
+    applyProjectedState();
+    await persistDocToFolder({ reason: 'restore' });
+    render();
+    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.`, 'success');
+    return true;
+  } catch (error) {
+    console.error('Failed to restore backup', error);
+    showToast(error?.message || 'Could not restore the latest backup.', 'error');
+    return false;
+  }
+}
+
+function scheduleAutosave() {
+  if (!app.folderHandle || !app.connectedFolderReady) return;
+  app.saveQueued = true;
+  updateFileUi();
+  window.clearTimeout(app.saveTimer);
+  app.saveTimer = window.setTimeout(() => {
+    flushAutosaveQueue();
+  }, AUTOSAVE_DEBOUNCE_MS);
+}
+
+async function flushAutosaveQueue(force = false) {
+  if (!app.folderHandle || !app.connectedFolderReady) return false;
+  if (!app.saveQueued && !force) return true;
+  if (app.saveInFlight) {
+    app.saveQueued = true;
+    return true;
+  }
+  app.saveInFlight = true;
+  updateFileUi();
+  try {
+    await persistDocToFolder({ reason: force ? 'manual' : 'autosave' });
+    app.saveQueued = false;
+    app.lastSaveError = '';
+    updateFileUi();
+    return true;
+  } catch (error) {
+    app.lastSaveError = error?.message || 'Could not save Team Pulse.';
+    app.saveQueued = true;
+    updateFileUi();
+    showToast(app.lastSaveError, 'error');
+    return false;
+  } finally {
+    app.saveInFlight = false;
+    updateFileUi();
+  }
+}
+
+function buildDocForSave() {
+  const doc = ensureDocShape(app.doc || makeEmptyDoc());
+  doc.schemaVersion = CURRENT_SCHEMA_VERSION;
+  doc.appVersion = APP_VERSION;
+  doc.savedAt = nowIso();
+  return syncIdCounters(doc);
+}
+
+function generateSchemaMarkdown() {
+  const lines = [];
+  lines.push(`# Team Pulse schema`);
+  lines.push('');
+  lines.push(`Current schema version: ${CURRENT_SCHEMA_VERSION}`);
+  lines.push(`Generated by Team Pulse ${APP_VERSION}`);
+  lines.push('');
+  Object.entries(SCHEMA_MODEL.fields).forEach(([section, fields]) => {
+    lines.push(`## ${section}`);
+    lines.push('');
+    lines.push('| Field | Type | Description |');
+    lines.push('| --- | --- | --- |');
+    fields.forEach(([name, type, description]) => {
+      lines.push(`| ${name} | ${type} | ${description} |`);
+    });
+    lines.push('');
+  });
+  lines.push('## Event types');
+  lines.push('');
+  SCHEMA_MODEL.eventTypes.forEach(([name, description]) => lines.push(`- **${name}** — ${description}`));
+  lines.push('');
+  lines.push('## Migration history');
+  lines.push('');
+  SCHEMA_MODEL.migrations.forEach(([name, description]) => lines.push(`- **${name}** — ${description}`));
+  lines.push('');
+  return lines.join('\n');
+}
+
+function readSavedAtFromJsonText(text) {
+  try {
+    const parsed = JSON.parse(text);
+    return normalizeText(parsed.savedAt) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+async function persistDocToFolder(options = {}) {
+  const { reason = 'autosave' } = options;
+  if (!app.folderHandle) throw new Error('Choose a Team Pulse folder first.');
+  const doc = buildDocForSave();
+  app.doc = doc;
+  applyProjectedState();
+
+  const previousMainText = await readFolderFileText(MAIN_JSON_NAME);
+  const previousSavedAt = readSavedAtFromJsonText(previousMainText);
+  const newText = JSON.stringify(doc, null, 2);
+  const schemaText = generateSchemaMarkdown();
+
+  await writeFolderFileText(MAIN_JSON_NAME, newText);
+  if (previousMainText.trim()) {
+    await writeFolderFileText(BACKUP_JSON_NAME, previousMainText);
+  }
+
+  const today = todayStamp();
+  const thisMonth = monthStamp();
+  const dailySavedAt = await parseSavedAtFromFolderFile(DAILY_JSON_NAME);
+  const monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
+  if (!dailySavedAt || normalizeText(dailySavedAt).slice(0, 10) !== today) {
+    await writeFolderFileText(DAILY_JSON_NAME, newText);
+  }
+  if (!monthlySavedAt || monthStamp(monthlySavedAt) !== thisMonth) {
+    await writeFolderFileText(MONTHLY_JSON_NAME, newText);
+  }
+  await writeFolderFileText(SCHEMA_DOC_NAME, schemaText);
+
+  app.lastSaveAt = doc.savedAt;
+  app.lastSaveReason = reason;
+  app.fileStats.mainSavedAt = doc.savedAt;
+  app.fileStats.backupSavedAt = previousSavedAt;
+  app.fileStats.schemaWrittenAt = doc.savedAt;
+  cacheDocSnapshot();
+  await refreshFileStats();
+  if (reason === 'manual') {
+    showToast(`Saved ${MAIN_JSON_NAME} at ${formatClock(new Date(doc.savedAt))}.`, 'success');
+  }
+}
+
+async function refreshFileStats() {
+  app.fileStats.mainSavedAt = await parseSavedAtFromFolderFile(MAIN_JSON_NAME);
+  app.fileStats.backupSavedAt = await parseSavedAtFromFolderFile(BACKUP_JSON_NAME);
+  app.fileStats.dailySavedAt = await parseSavedAtFromFolderFile(DAILY_JSON_NAME);
+  app.fileStats.monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
+  app.fileStats.schemaWrittenAt = app.fileStats.mainSavedAt || app.lastSaveAt || '';
+  app.fileStats.folderLabel = app.folderName || app.folderHandle?.name || '';
+}
+
+
+function buildMeetingsCsv() {
+  const rows = ['date,type,person,duration,notes,source,created_at'];
+  const meetings = [];
+  getReports().forEach((report) => {
+    (report.meetings || []).forEach((meeting) => {
+      meetings.push({ ...meeting, personName: report.name });
+    });
+  });
+  meetings.sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  meetings.forEach((meeting) => {
+    rows.push([
+      csvCell(meeting.meetingDate || ''),
+      csvCell(meeting.meetingType || ''),
+      csvCell(meeting.personName || ''),
+      csvCell(meeting.durationMinutes ?? ''),
+      csvCell(meeting.notes || ''),
+      csvCell(meeting.source || ''),
+      csvCell(meeting.createdAt || '')
+    ].join(','));
+  });
+  return rows.join('\n');
+}
+
+function buildPeopleCsv() {
+  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','pdc_status','support_level','development_goal_summary','promotion_readiness','notes','additional_fields'];
+  const rows = [headers.join(',')];
+  [...getReports()].sort((a, b) => a.name.localeCompare(b.name)).forEach((report) => {
+    rows.push([
+      csvCell(report.name),
+      csvCell(report.level || ''),
+      csvCell(report.mentors || ''),
+      csvCell(report.hireDate || ''),
+      csvCell(report.lastPromotionDate || ''),
+      csvCell(report.nextOneOnOneDate || ''),
+      csvCell(report.pdcStatus || ''),
+      csvCell(report.supportLevel || ''),
+      csvCell(report.developmentGoalSummary || ''),
+      csvCell(report.promotionReadiness || ''),
+      csvCell(report.notes || ''),
+      csvCell((report.customFields || []).map((field) => `${field.label}: ${field.value}`).join(' | '))
+    ].join(','));
+  });
+  return rows.join('\n');
+}
+
+function buildNotesMarkdown() {
+  const lines = ['# Team Pulse notes', ''];
+  getReports().forEach((report) => {
+    lines.push(`## ${report.name}`);
+    lines.push('');
+    if (!report.notesHistory.length && !report.notes && !report.meetings.some((meeting) => meeting.notes)) {
+      lines.push('_No notes yet._');
+      lines.push('');
+      return;
+    }
+    if (report.notesHistory.length || report.notes) {
+      lines.push('### Manager notes');
+      lines.push('');
+      if (report.notesHistory.length) {
+        report.notesHistory.forEach((note) => {
+          lines.push(`- ${note.noteDate || ''} — ${note.noteText || ''}`);
+        });
+      } else if (report.notes) {
+        lines.push(`- ${report.notes}`);
+      }
+      lines.push('');
+    }
+    const meetingNotes = report.meetings.filter((meeting) => meeting.notes);
+    if (meetingNotes.length) {
+      lines.push('### Meeting notes');
+      lines.push('');
+      meetingNotes.forEach((meeting) => {
+        lines.push(`- ${meeting.meetingDate} — ${meeting.meetingType}: ${meeting.notes}`);
+      });
+      lines.push('');
+    }
+  });
+  return lines.join('\n');
+}
+
+function quarterlyExportDue() {
+  const last = normalizeText(app.doc?.settings?.lastExportDate);
+  if (!last) return true;
+  const days = daysSinceIso(last);
+  return days === null ? true : days >= 90;
+}
+
+async function exportPlainFiles(options = {}) {
+  const { silent = false } = options;
+  if (!app.folderHandle || !app.doc) {
+    if (!silent) showToast('Choose a Team Pulse folder first.', 'error');
+    return false;
+  }
+  try {
+    const stamp = todayStamp();
+    const meetingsName = `export_${stamp}_meetings.csv`;
+    const peopleName = `export_${stamp}_people.csv`;
+    const notesName = `export_${stamp}_notes.md`;
+    await writeFolderFileText(meetingsName, buildMeetingsCsv());
+    await writeFolderFileText(peopleName, buildPeopleCsv());
+    await writeFolderFileText(notesName, buildNotesMarkdown());
+    app.doc.settings.lastExportDate = nowIso();
+    app.doc.settings.latestExportFiles = [meetingsName, peopleName, notesName];
+    await persistDocToFolder({ reason: 'autosave' });
+    renderSettingsPanel();
+    renderExportReminderBanner();
+    if (!silent) showToast('Quarterly export files written to your Team Pulse folder.', 'success');
+    return true;
+  } catch (error) {
+    console.error('Failed to export plain files', error);
+    if (!silent) showToast(error?.message || 'Could not write the export files.', 'error');
+    return false;
+  }
+}
+
+function crc32(bytes) {
+  let table = crc32.table;
+  if (!table) {
+    table = crc32.table = new Uint32Array(256);
+    for (let i = 0; i < 256; i += 1) {
+      let c = i;
+      for (let j = 0; j < 8; j += 1) {
+        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      }
+      table[i] = c >>> 0;
+    }
+  }
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i += 1) {
+    crc = table[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function dosDateTime(date = new Date()) {
+  const year = Math.max(1980, date.getFullYear());
+  const dosTime = ((date.getHours() & 0x1F) << 11) | ((date.getMinutes() & 0x3F) << 5) | Math.floor(date.getSeconds() / 2);
+  const dosDate = (((year - 1980) & 0x7F) << 9) | (((date.getMonth() + 1) & 0x0F) << 5) | (date.getDate() & 0x1F);
+  return { dosTime, dosDate };
+}
+
+function uint16LE(value) {
+  const out = new Uint8Array(2);
+  new DataView(out.buffer).setUint16(0, value, true);
+  return out;
+}
+
+function uint32LE(value) {
+  const out = new Uint8Array(4);
+  new DataView(out.buffer).setUint32(0, value >>> 0, true);
+  return out;
+}
+
+function createZipBlob(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+  files.forEach((file) => {
+    const nameBytes = encoder.encode(file.name);
+    const dataBytes = typeof file.bytes === 'string' ? encoder.encode(file.bytes) : file.bytes;
+    const crc = crc32(dataBytes);
+    const { dosTime, dosDate } = dosDateTime(file.date || new Date());
+
+    const localHeader = new Uint8Array([
+      ...uint32LE(0x04034b50),
+      ...uint16LE(20),
+      ...uint16LE(0),
+      ...uint16LE(0),
+      ...uint16LE(dosTime),
+      ...uint16LE(dosDate),
+      ...uint32LE(crc),
+      ...uint32LE(dataBytes.length),
+      ...uint32LE(dataBytes.length),
+      ...uint16LE(nameBytes.length),
+      ...uint16LE(0)
+    ]);
+    localParts.push(localHeader, nameBytes, dataBytes);
+
+    const centralHeader = new Uint8Array([
+      ...uint32LE(0x02014b50),
+      ...uint16LE(20),
+      ...uint16LE(20),
+      ...uint16LE(0),
+      ...uint16LE(0),
+      ...uint16LE(dosTime),
+      ...uint16LE(dosDate),
+      ...uint32LE(crc),
+      ...uint32LE(dataBytes.length),
+      ...uint32LE(dataBytes.length),
+      ...uint16LE(nameBytes.length),
+      ...uint16LE(0),
+      ...uint16LE(0),
+      ...uint16LE(0),
+      ...uint16LE(0),
+      ...uint32LE(0),
+      ...uint32LE(offset)
+    ]);
+    centralParts.push(centralHeader, nameBytes);
+    offset += localHeader.length + nameBytes.length + dataBytes.length;
+  });
+
+  const centralSize = centralParts.reduce((sum, part) => sum + part.length, 0);
+  const endRecord = new Uint8Array([
+    ...uint32LE(0x06054b50),
+    ...uint16LE(0),
+    ...uint16LE(0),
+    ...uint16LE(files.length),
+    ...uint16LE(files.length),
+    ...uint32LE(centralSize),
+    ...uint32LE(offset),
+    ...uint16LE(0)
+  ]);
+
+  return new Blob([...localParts, ...centralParts, endRecord], { type: 'application/zip' });
+}
+
+async function buildArchiveFiles() {
+  const files = [];
+  const mainText = JSON.stringify(buildDocForSave(), null, 2);
+  files.push({ name: MAIN_JSON_NAME, bytes: mainText });
+  const backupText = await readFolderFileText(BACKUP_JSON_NAME);
+  if (backupText.trim()) files.push({ name: BACKUP_JSON_NAME, bytes: backupText });
+  const dailyText = await readFolderFileText(DAILY_JSON_NAME);
+  if (dailyText.trim()) files.push({ name: DAILY_JSON_NAME, bytes: dailyText });
+  const monthlyText = await readFolderFileText(MONTHLY_JSON_NAME);
+  if (monthlyText.trim()) files.push({ name: MONTHLY_JSON_NAME, bytes: monthlyText });
+  files.push({ name: SCHEMA_DOC_NAME, bytes: generateSchemaMarkdown() });
+  files.push({ name: `export_${todayStamp()}_meetings.csv`, bytes: buildMeetingsCsv() });
+  files.push({ name: `export_${todayStamp()}_people.csv`, bytes: buildPeopleCsv() });
+  files.push({ name: `export_${todayStamp()}_notes.md`, bytes: buildNotesMarkdown() });
+  return files;
+}
+
+async function downloadFullArchive() {
+  if (!app.folderHandle || !app.doc) {
+    showToast('Choose a Team Pulse folder first.', 'error');
+    return false;
+  }
+  try {
+    await flushAutosaveQueue(true);
+    const files = await buildArchiveFiles();
+    const filename = `teampulse_archive_${todayStamp()}.zip`;
+    const blob = createZipBlob(files);
+    await writeFolderFileText(filename, await blob.arrayBuffer());
+    downloadBlob(blob, filename);
+    showToast('Full archive created and downloaded.', 'success');
+    return true;
+  } catch (error) {
+    console.error('Failed to build archive', error);
+    showToast(error?.message || 'Could not build the full archive.', 'error');
+    return false;
+  }
+}
+
+function updateFileUi() {
+  const connected = !!app.folderHandle && app.connectedFolderReady;
+  saveDockEl.classList.add('hidden');
+  saveDockEl.classList.remove('nudge');
+
+  if (!connected) {
+    fileStatePillEl.textContent = 'No folder connected';
+    fileStatePillEl.className = 'pill save-pill neutral';
+    fileStatePillEl.title = 'Choose a Team Pulse folder to begin.';
+  } else if (app.saveInFlight) {
+    fileStatePillEl.textContent = 'Saving…';
+    fileStatePillEl.className = 'pill save-pill info';
+    fileStatePillEl.title = `Writing to ${MAIN_JSON_NAME} in ${app.folderName || 'your Team Pulse folder'}.`;
+  } else if (app.lastSaveError) {
+    fileStatePillEl.textContent = 'Save failed';
+    fileStatePillEl.className = 'pill save-pill danger';
+    fileStatePillEl.title = app.lastSaveError;
+  } else if (app.saveQueued) {
+    fileStatePillEl.textContent = 'Pending save';
+    fileStatePillEl.className = 'pill save-pill warning';
+    fileStatePillEl.title = 'A file save is queued.';
+  } else {
+    const manualSaveLabel = app.lastSaveReason === 'manual' ? formatManualSaveLabel(app.lastSaveAt) : '';
+    fileStatePillEl.textContent = manualSaveLabel || 'Autosaved';
+    fileStatePillEl.className = 'pill save-pill success';
+    fileStatePillEl.title = app.lastSaveAt
+      ? `Last save: ${formatSavedStamp(app.lastSaveAt)} in ${app.folderName || 'your Team Pulse folder'}.`
+      : `Connected to ${app.folderName || 'your Team Pulse folder'}.`;
+  }
+
+  addReportBtn.disabled = !connected;
+  attentionRulesBtn.disabled = !connected;
+  importIcsBtn.disabled = !connected || getReports().length === 0;
+  exportCsvBtn.disabled = !connected || getReports().length === 0;
+
+  saveFileBtn.disabled = !supportsDirectoryAccess();
+  saveFileBtn.textContent = connected ? 'Save now' : 'Choose folder';
+  saveFileBtn.title = connected
+    ? 'Write the durable Team Pulse files to the connected folder now.'
+    : 'Choose the folder where Team Pulse should keep its files.';
+
+  connectDataFileBtn.disabled = !supportsJsonOpen();
+  connectDataFileBtn.textContent = 'Import JSON';
+  connectDataFileBtn.title = 'Import an older Team Pulse JSON file and migrate it into the durable folder layout.';
+
+  exportCsvBtn.textContent = 'Export files';
+  exportCsvBtn.title = 'Write meetings.csv, people.csv, and notes.md to the Team Pulse folder.';
+}
+
+function setStatus(el, message, kind = '') {
+  if (!el) return;
+  el.textContent = message;
+  el.className = `status-line ${kind}`.trim();
+}
+
+function ensureConnectedOrToast() {
+  if (app.folderHandle && app.connectedFolderReady && app.doc) return true;
+  showToast('Choose a Team Pulse folder first.', 'warning');
+  return false;
+}
+
+function renderExportReminderBanner() {
+  let mount = document.getElementById('exportReminderMount');
+  if (!mount) {
+    mount = document.createElement('div');
+    mount.id = 'exportReminderMount';
+    startupGateEl.insertAdjacentElement('afterend', mount);
+  }
+  mount.innerHTML = '';
+  if (!app.folderHandle || !app.connectedFolderReady || !quarterlyExportDue()) return;
+  const wrapper = document.createElement('section');
+  wrapper.className = 'card callout';
+  wrapper.innerHTML = `
+    <div class="content" style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div>
+        <strong>Time for a backup export</strong>
+        <p>It has been more than 90 days since the last plain-format export.</p>
+      </div>
+      <div class="actions">
+        <button type="button" id="bannerExportNowBtn">Export now</button>
+      </div>
+    </div>
+  `;
+  mount.appendChild(wrapper);
+  document.getElementById('bannerExportNowBtn')?.addEventListener('click', () => exportPlainFiles());
+}
+
+function renderRuleInputs() {
+  const settings = app.doc?.settings || normalizeSettings({});
+  oneOnOneThresholdEl.value = settings.thresholds.oneOnOneDays;
+  developmentThresholdEl.value = settings.thresholds.pdcDays;
+  cvReviewThresholdEl.value = settings.thresholds.cvReviewDays;
+  saveReminderMinutesEl.value = settings.saveReminderMinutes || DEFAULT_SETTINGS.saveReminderMinutes;
+  missingMentorCountsEl.checked = !!settings.missingMentorCounts;
+  blockedPlanCountsEl.checked = !!settings.blockedPdcCounts;
+}
+
+function renderSettingsPanel() {
+  const healthPanelEl = document.getElementById('dataHealthPanel');
+  const stableModeToggleEl = document.getElementById('stableModeToggle');
+  if (!healthPanelEl) return;
+  if (stableModeToggleEl) stableModeToggleEl.checked = !!app.doc?.settings?.stableMode;
+
+  const eventDates = (app.doc?.events || []).map((event) => event.createdAt).filter(Boolean).sort();
+  const firstEvent = eventDates[0] || '';
+  const lastEvent = eventDates[eventDates.length - 1] || '';
+  const daysSinceExport = app.doc?.settings?.lastExportDate ? daysSinceIso(app.doc.settings.lastExportDate) : null;
+  const folderLabel = app.fileStats.folderLabel || app.folderName || 'Not available';
+
+  healthPanelEl.innerHTML = `
+    <div class="health-grid">
+      <div class="health-item"><strong>Schema</strong><span>File v${app.loadedSchemaVersion || CURRENT_SCHEMA_VERSION} · App v${CURRENT_SCHEMA_VERSION}</span></div>
+      <div class="health-item"><strong>Last migration</strong><span>${escapeHtml(app.lastMigrationApplied || 'None')}</span></div>
+      <div class="health-item"><strong>Folder</strong><span>${escapeHtml(folderLabel)}/${MAIN_JSON_NAME}</span></div>
+      <div class="health-item"><strong>Last save</strong><span>${escapeHtml(formatDateTime(app.fileStats.mainSavedAt || app.lastSaveAt))}</span></div>
+      <div class="health-item"><strong>Latest backup</strong><span>${escapeHtml(formatDateTime(app.fileStats.backupSavedAt) || '-')}</span></div>
+      <div class="health-item"><strong>Daily backup</strong><span>${escapeHtml(formatDateTime(app.fileStats.dailySavedAt) || '-')}</span></div>
+      <div class="health-item"><strong>Monthly backup</strong><span>${escapeHtml(formatDateTime(app.fileStats.monthlySavedAt) || '-')}</span></div>
+      <div class="health-item"><strong>Schema doc</strong><span>${escapeHtml(app.fileStats.schemaWrittenAt ? 'Up to date' : 'Will be written on save')}</span></div>
+      <div class="health-item"><strong>Event count</strong><span>${app.doc?.events?.length || 0}</span></div>
+      <div class="health-item"><strong>Event range</strong><span>${escapeHtml(firstEvent ? `${formatDateTime(firstEvent)} → ${formatDateTime(lastEvent)}` : 'No events yet')}</span></div>
+      <div class="health-item"><strong>Last export</strong><span>${escapeHtml(app.doc?.settings?.lastExportDate ? formatDateTime(app.doc.settings.lastExportDate) : 'Never')}</span></div>
+      <div class="health-item"><strong>Days since export</strong><span>${daysSinceExport === null ? '—' : daysSinceExport}</span></div>
+    </div>
+  `;
+}
+
+function openRulesDrawer() {
+  renderRuleInputs();
+  renderSettingsPanel();
+  rulesDrawerOverlayEl.classList.add('open');
+  rulesDrawerOverlayEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+}
+
+function closeRulesDrawer() {
+  rulesDrawerOverlayEl.classList.remove('open');
+  rulesDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+  syncBodyOverlayLock();
+}
+
+function openModal() {
+  if (!ensureConnectedOrToast()) return;
+  closeModal();
+  app.ui.creatingReport = true;
+  app.ui.selectedId = null;
+  renderTable();
+  renderDetailDrawer();
+  persistUiState();
+}
+
+function closeModal() {
+  reportModalEl.classList.remove('open');
+  reportModalEl.setAttribute('aria-hidden', 'true');
+  syncBodyOverlayLock();
+}
+
+function selectReport(id) {
+  closeModal();
+  app.ui.creatingReport = false;
+  app.ui.selectedId = id;
+  renderTable();
+  renderDetailDrawer();
+  persistUiState();
+}
+
+function clearSelectedReport() {
+  closeMeetingModal();
+  closeModal();
+  app.ui.creatingReport = false;
+  app.ui.selectedId = null;
+  renderTable();
+  renderDetailDrawer();
+  persistUiState();
+}
+
+function variantForPlan(status) { return variantForPdcStatus(status); }
+function variantForRisk(flag) { return variantForSupport(flag); }
+
+function progressWidth(age, threshold) {
+  if (age === null) return 100;
+  return Math.max(8, Math.min(100, Math.round((age / Math.max(threshold, 1)) * 100)));
+}
+
+function meetingTone(report, type, thresholdDays) {
+  const lastDate = getMetrics(report.id)[type === '1:1' ? 'lastOneOnOne' : type === 'PDC' ? 'lastPdc' : 'lastCvReview'];
+  const age = lastDate ? dateDiffInDays(lastDate) : report.hireDate ? dateDiffInDays(report.hireDate) : null;
+  if (age === null) return 'danger';
+  if (age > thresholdDays) return 'warning';
+  return 'success';
+}
+
+function cadenceCard(report, type, thresholdDays) {
+  const metrics = getMetrics(report.id);
+  const lastDate = type === '1:1' ? metrics.lastOneOnOne : type === 'PDC' ? metrics.lastPdc : metrics.lastCvReview;
+  const overdue = type === '1:1' ? metrics.oneOnOneOverdue : type === 'PDC' ? metrics.pdcOverdue : metrics.cvReviewOverdue;
+  const age = lastDate ? dateDiffInDays(lastDate) : report.hireDate ? dateDiffInDays(report.hireDate) : null;
+  return `
+    <div class="cadence-card ${overdue ? 'is-overdue' : ''}">
+      <div class="cadence-card-head">
+        <strong>${escapeHtml(type)}</strong>
+        ${badge(overdue ? 'Overdue' : 'On cadence', overdue ? 'warning' : 'success')}
+      </div>
+      <div class="cadence-date">${escapeHtml(formatDate(lastDate || report.hireDate || ''))}</div>
+      <div class="cadence-progress ${meetingTone(report, type, thresholdDays)}"><span style="width:${progressWidth(age, thresholdDays)}%"></span></div>
+      <div class="health-subtext">${lastDate ? `${age ?? '—'} days since last ${type}` : report.hireDate ? `${age ?? '—'} days since hire` : `No ${type} logged yet`} · ${thresholdDays}-day rule</div>
+    </div>
+  `;
+}
+
+function renderCustomFieldsMarkup(fields = []) {
+  if (!fields.length) {
+    return '<div class="subtle">No additional fields yet.</div>';
+  }
+  return fields.map((safeField) => `
+    <div class="custom-field-row" data-custom-field="${escapeHtml(safeField.id)}">
+      <label>
+        <span>Label</span>
+        <input data-custom-field-label value="${escapeHtml(safeField.label)}" placeholder="Field label">
+      </label>
+      <label>
+        <span>Value</span>
+        <input data-custom-field-value value="${escapeHtml(safeField.value)}" placeholder="Field value">
+      </label>
+      <button type="button" class="secondary" data-remove-custom-field="${escapeHtml(safeField.id)}">Remove</button>
+    </div>
+  `).join('');
+}
+
+function renderStats() {
+  const reports = getReports();
+  const total = reports.length || 1;
+  const oneOnOneOverdue = reports.filter((report) => getMetrics(report.id).oneOnOneOverdue).length;
+  const pdcOverdue = reports.filter((report) => getMetrics(report.id).pdcOverdue).length;
+  const cvReviewOverdue = reports.filter((report) => getMetrics(report.id).cvReviewOverdue).length;
+
+  const stats = [
+    { key: 'directReports', label: 'Direct reports', value: reports.length, icon: '👥', tone: reports.length ? 'success' : 'neutral' },
+    { key: 'oneOnOneOverdue', label: '1:1s overdue', value: oneOnOneOverdue, icon: '🗓️', tone: oneOnOneOverdue ? 'warning' : 'success' },
+    { key: 'pdcOverdue', label: 'PDCs overdue', value: pdcOverdue, icon: '🌱', tone: pdcOverdue ? 'warning' : 'success' },
+    { key: 'cvReviewOverdue', label: 'CV reviews overdue', value: cvReviewOverdue, icon: '📄', tone: cvReviewOverdue ? 'warning' : 'success' }
+  ];
+
+  statsEl.innerHTML = stats.map((stat) => {
+    const barPct = stat.key === 'directReports' ? (reports.length ? 100 : 0) : Math.min(100, Math.round((stat.value / total) * 100));
+    return `
+      <button type="button" class="stat-tile card stat-tone-${escapeHtml(stat.tone)}" data-tile="${escapeHtml(stat.key)}" aria-label="${escapeHtml(`${stat.label}: ${stat.value}`)}">
+        <div class="stat-top">
+          <div>
+            <div class="stat-count">${stat.value}</div>
+            <div class="stat-label">${escapeHtml(stat.label)}</div>
+          </div>
+          <div class="stat-icon" aria-hidden="true">${escapeHtml(stat.icon)}</div>
+        </div>
+        <div class="stat-bar"><span style="width:${barPct}%"></span></div>
+      </button>
+    `;
+  }).join('');
+}
+
+function healthProgressRow(label, count, total, thresholdLabel) {
+  const pct = teamPct(count, total);
+  const tone = pct >= 80 ? 'success' : pct >= 55 ? 'warning' : 'danger';
+  return `
+    <div class="health-metric">
+      <div class="health-metric-top">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${count}/${total} on cadence</span>
+      </div>
+      <div class="health-progress ${tone}"><span style="width:${pct}%"></span></div>
+      <div class="health-subtext">${pct}% on cadence · ${escapeHtml(thresholdLabel)}</div>
+    </div>
+  `;
+}
+
+function planMixSegmentClass(status) {
+  return {
+    'Not started': 'not-started',
+    'In progress': 'in-progress',
+    'Needs review': 'needs-review',
+    'Completed': 'completed',
+    'Blocked': 'blocked'
+  }[status] || 'not-started';
+}
+
+function renderTeamHealth() {
+  const reports = getReports();
+  if (!reports.length) {
+    teamHealthBodyEl.innerHTML = '<div class="empty-state"><p>No direct reports yet.</p><button id="teamHealthEmptyAddBtn">Add your first direct report</button></div>';
+    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => openModal());
+    return;
+  }
+
+  const total = reports.length;
+  const onTrackCount = reports.filter((report) => getMetrics(report.id).attention.length === 0).length;
+  const attentionCount = total - onTrackCount;
+  const onTrackPct = teamPct(onTrackCount, total);
+  const oneOnOneOnCadence = reports.filter((report) => !getMetrics(report.id).oneOnOneOverdue).length;
+  const pdcOnCadence = reports.filter((report) => !getMetrics(report.id).pdcOverdue).length;
+  const cvOnCadence = reports.filter((report) => !getMetrics(report.id).cvReviewOverdue).length;
+  const planMix = PDC_STATUSES.map((status) => ({ status, count: reports.filter((report) => report.pdcStatus === status).length }));
+  const planLegend = planMix.map((item) => `
+    <span class="legend-item"><span class="swatch ${item.status === 'Completed' ? 'good' : item.status === 'Needs review' ? 'warn' : item.status === 'Blocked' ? 'danger' : 'neutral'}"></span>${escapeHtml(item.status)} <span class="count">${item.count}</span></span>
+  `).join('');
+  const planBar = planMix.map((item) => {
+    const width = item.count === 0 ? 0 : Math.max(8, Math.round((item.count / total) * 100));
+    return `<span class="stacked-segment ${planMixSegmentClass(item.status)}" style="width:${width}%" title="${escapeHtml(`${item.status}: ${item.count}`)}"></span>`;
+  }).join('');
+
+  teamHealthBodyEl.innerHTML = `
+    <div class="team-health-grid">
+      <div class="health-ring-card">
+        <div class="health-ring" style="--ring-angle:${Math.max(0, Math.min(360, Math.round((onTrackPct / 100) * 360)))}deg;">
+          <div class="health-ring-inner">
+            <div>
+              <strong>${onTrackPct}%</strong>
+              <span>On track</span>
+            </div>
+          </div>
+        </div>
+        <div class="health-summary">
+          <h3>${onTrackCount} of ${total} on track</h3>
+          <p>${attentionCount} ${attentionCount === 1 ? 'person currently has' : 'people currently have'} at least one attention item.</p>
+          <div class="badges">
+            ${badge('On track', 'success')}
+            ${badge(`${attentionCount} need attention`, attentionCount ? 'warning' : 'neutral')}
+          </div>
+        </div>
+      </div>
+      <div class="health-metrics-card">
+        ${healthProgressRow('1:1 cadence', oneOnOneOnCadence, total, `${app.doc.settings.thresholds.oneOnOneDays} day rule`)}
+        ${healthProgressRow('PDC cadence', pdcOnCadence, total, `${app.doc.settings.thresholds.pdcDays} day rule`)}
+        ${healthProgressRow('CV review cadence', cvOnCadence, total, `${app.doc.settings.thresholds.cvReviewDays} day rule`)}
+      </div>
+    </div>
+    <div class="plan-mix-card">
+      <div class="plan-mix-head">
+        <div>
+          <h3>PDC status mix</h3>
+          <p>Overall distribution of PDC status across the team.</p>
+        </div>
+      </div>
+      <div class="stacked-bar" aria-hidden="true">${planBar}</div>
+      <div class="stacked-legend">${planLegend}</div>
+    </div>
+  `;
+}
+
+function touchpointRow(label, date, overdue) {
+  return `
+    <div class="touchpoint-row ${overdue ? 'overdue' : ''}">
+      <span class="tp-label">${escapeHtml(label)}</span>
+      <span class="tp-date">${escapeHtml(formatDateOrFallback(date))}</span>
+    </div>
+  `;
+}
+
+function getQuickFilterMeta(filterKey) {
+  switch (filterKey) {
+    case 'oneOnOneOverdue':
+      return { title: 'Showing 1:1s overdue', description: `Last 1:1 is older than ${app.doc.settings.thresholds.oneOnOneDays} days or has not been logged yet.` };
+    case 'pdcOverdue':
+      return { title: 'Showing PDCs overdue', description: `Last PDC is older than ${app.doc.settings.thresholds.pdcDays} days or has not been logged yet.` };
+    case 'cvReviewOverdue':
+      return { title: 'Showing CV reviews overdue', description: `Last CV review is older than ${app.doc.settings.thresholds.cvReviewDays} days or has not been logged yet.` };
+    default:
+      return null;
+  }
+}
+
+function reportMatchesQuickFilter(report) {
+  const metrics = getMetrics(report.id);
+  switch (app.ui.activeQuickFilter) {
+    case 'oneOnOneOverdue': return metrics.oneOnOneOverdue;
+    case 'pdcOverdue': return metrics.pdcOverdue;
+    case 'cvReviewOverdue': return metrics.cvReviewOverdue;
+    default: return true;
+  }
+}
+
+function renderQuickFilterBar() {
+  const meta = getQuickFilterMeta(app.ui.activeQuickFilter);
+  if (!meta) {
+    quickFilterBarEl.classList.add('hidden');
+    quickFilterTitleEl.textContent = '';
+    quickFilterDescriptionEl.textContent = '';
+    return;
+  }
+  quickFilterTitleEl.textContent = meta.title;
+  quickFilterDescriptionEl.textContent = meta.description;
+  quickFilterBarEl.classList.remove('hidden');
+}
+
+function getFilteredReports() {
+  const term = normalizeText(app.ui.searchTerm).toLowerCase();
+  const plan = normalizeText(app.ui.planFilter);
+  const attentionFilter = normalizeText(app.ui.attentionFilter);
+  return getReports().filter((report) => {
+    const metrics = getMetrics(report.id);
+    const blob = [
+      report.name,
+      report.level,
+      report.mentors,
+      report.hireDate,
+      report.lastPromotionDate,
+      report.pdcStatus,
+      report.supportLevel,
+      report.developmentGoalSummary,
+      report.promotionReadiness,
+      report.notes,
+      (report.customFields || []).map((field) => `${field.label} ${field.value}`).join(' '),
+      metrics.attention.join(' ')
+    ].join(' ').toLowerCase();
+    if (term && !blob.includes(term)) return false;
+    if (plan && report.pdcStatus !== plan) return false;
+    if (attentionFilter === 'needs-attention' && metrics.attention.length === 0) return false;
+    if (attentionFilter === 'on-track' && metrics.attention.length > 0) return false;
+    if (!reportMatchesQuickFilter(report)) return false;
+    return true;
+  });
+}
+
+function scrollToReports() {
+  reportsSectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderTable() {
+  const allReports = getReports();
+  const reports = getFilteredReports();
+  if (!allReports.length) {
+    reportsTableBodyEl.innerHTML = `
+      <tr>
+        <td colspan="7">
+          <div class="empty-state">
+            <p>You have not added any direct reports yet.</p>
+            <button id="emptyAddBtn">Add your first direct report</button>
+          </div>
+        </td>
+      </tr>
+    `;
+    tableEmptyEl.classList.add('hidden');
+    document.getElementById('emptyAddBtn')?.addEventListener('click', () => openModal());
+    return;
+  }
+
+  reportsTableBodyEl.innerHTML = reports.map((report) => {
+    const metrics = getMetrics(report.id);
+    const attentionHtml = metrics.attention.length ? metrics.attention.map((issue) => badge(issue, attentionTone(issue))).join('') : badge('On track', 'success');
+    const isSelected = report.id === app.ui.selectedId;
+    return `
+      <tr data-report-row="${escapeHtml(report.id)}" class="${isSelected ? 'selected' : ''}">
+        <td>
+          <div class="namecell">
+            <strong>${escapeHtml(report.name)}</strong>
+            <span class="namesub">${escapeHtml(report.mentors ? `Mentor: ${report.mentors}` : 'No mentor assigned')}</span>
+          </div>
+        </td>
+        <td>${escapeHtml(report.level || '-')}</td>
+        <td>
+          <div class="touchpoints">
+            ${touchpointRow('1:1', metrics.lastOneOnOne, metrics.oneOnOneOverdue)}
+            ${touchpointRow('PDC', metrics.lastPdc, metrics.pdcOverdue)}
+            ${touchpointRow('CV', metrics.lastCvReview, metrics.cvReviewOverdue)}
+          </div>
+        </td>
+        <td>${escapeHtml(report.nextOneOnOneDate ? formatDate(report.nextOneOnOneDate) : '-')}</td>
+        <td>${badge(report.pdcStatus, variantForPdcStatus(report.pdcStatus))}</td>
+        <td>${badge(report.supportLevel, variantForSupport(report.supportLevel))}</td>
+        <td><div class="badges">${attentionHtml}</div></td>
+      </tr>
+    `;
+  }).join('');
+
+  tableEmptyEl.classList.toggle('hidden', reports.length > 0);
+  if (!reports.length) {
+    tableEmptyEl.textContent = 'No direct reports match your current filters.';
+    tableEmptyEl.classList.remove('hidden');
+  }
+}
+
+
+function renderMeetingHistory(report) {
+  if (!report.meetings.length) {
+    return '<p class="section-note">No meetings logged yet.</p>';
+  }
+  return `
+    <ul class="meeting-history">
+      ${report.meetings.map((meeting) => `
+        <li class="meeting-item">
+          <div class="meeting-item-head">
+            <div class="meeting-item-meta">
+              ${badge(meeting.meetingType, 'info')}
+              <span class="meeting-date">${escapeHtml(formatDate(meeting.meetingDate))}</span>
+              <span class="meeting-item-subtle">${escapeHtml(meeting.source === 'ics' ? 'Imported from .ics' : 'Logged in Team Pulse')}</span>
+            </div>
+            <div class="meeting-item-actions">
+              <button type="button" class="secondary" data-edit-meeting="${escapeHtml(meeting.id)}">Edit</button>
+              <button type="button" class="secondary" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
+            </div>
+          </div>
+          ${meeting.notes ? `<p class="meeting-notes">${escapeHtml(meeting.notes)}</p>` : '<p class="section-note">No meeting notes.</p>'}
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+
+function makeDraftReport() {
+  return {
+    id: '',
+    name: '',
+    level: '',
+    mentors: '',
+    hireDate: '',
+    lastPromotionDate: '',
+    nextOneOnOneDate: '',
+    pdcStatus: PDC_STATUSES[0],
+    supportLevel: SUPPORT_LEVELS[0],
+    developmentGoalSummary: '',
+    promotionReadiness: '',
+    notes: '',
+    meetings: [],
+    customFields: []
+  };
+}
+
+function renderDetailDrawer() {
+  const isCreating = !!app.ui.creatingReport;
+  const report = isCreating ? makeDraftReport() : (app.ui.selectedId ? getReportById(app.ui.selectedId) : null);
+  if (!report) {
+    detailDrawerOverlayEl.classList.remove('open');
+    detailDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+    detailDrawerEl.innerHTML = '';
+    syncBodyOverlayLock();
+    return;
+  }
+
+  const metrics = isCreating
+    ? { lastOneOnOne: '', lastPdc: '', lastCvReview: '', attention: [] }
+    : getMetrics(report.id);
+  const attention = metrics.attention || [];
+  const focusTone = isCreating
+    ? 'attention'
+    : attention.some((item) => /urgent/i.test(item))
+      ? 'urgent'
+      : attention.length
+        ? 'attention'
+        : 'good';
+  const focusValue = isCreating ? 'Complete profile' : (attention.length ? attention[0] : 'On track');
+  const focusDetail = isCreating
+    ? 'Save this direct report first. After that, meetings and cadence tracking will appear here.'
+    : attention.length
+      ? attention.join(' · ')
+      : 'Recent touchpoints and profile fields look on track.';
+
+  detailDrawerOverlayEl.classList.add('open');
+  detailDrawerOverlayEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+
+  detailDrawerEl.innerHTML = `
+    <div class="drawer-shell">
+      <div class="drawer-header">
+        <div class="drawer-header-top">
+          <div>
+            <h2 id="drawerTitle">${escapeHtml(isCreating ? 'New direct report' : report.name)}</h2>
+            <div class="detail-subhead">
+              <span class="detail-level">${escapeHtml(isCreating ? 'Fill in the profile below' : (report.level || 'Level not set'))}</span>
+              <span class="detail-supporting-meta">${escapeHtml(isCreating ? 'This direct report has not been saved yet.' : (report.mentors || 'No mentor assigned'))}</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="secondary" id="closeDetailDrawerBtn">Close</button>
+            <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
+            ${isCreating ? '' : '<button type="button" class="secondary" id="deleteSelectedBtn">Delete</button>'}
+          </div>
+        </div>
+      </div>
+      <div class="drawer-body" id="detailDrawerBody">
+        <div class="drawer-hero">
+          <div class="hero-cards">
+            <div class="hero-card"><span class="label">Hire date</span>${valueOrEmpty(report.hireDate ? formatDate(report.hireDate) : '', '-')}</div>
+            <div class="hero-card"><span class="label">Last promotion</span>${valueOrEmpty(report.lastPromotionDate ? formatDate(report.lastPromotionDate) : '', '-')}</div>
+            <div class="hero-card"><span class="label">Last PDC</span>${valueOrEmpty(formatDateOrFallback(metrics.lastPdc, '-'), '-')}</div>
+            <div class="hero-card"><span class="label">Last 1:1</span>${valueOrEmpty(formatDateOrFallback(metrics.lastOneOnOne, '-'), '-')}</div>
+            <div class="hero-card"><span class="label">Last CV review</span>${valueOrEmpty(formatDateOrFallback(metrics.lastCvReview, '-'), '-')}</div>
+          </div>
+          <div class="workspace-focus-panel ${focusTone}">
+            <span class="label">Workspace focus</span>
+            <strong>${escapeHtml(focusValue)}</strong>
+            <p>${escapeHtml(focusDetail)}</p>
+          </div>
+        </div>
+
+        ${isCreating ? '' : `
+        <div class="drawer-section">
+          <h3>Cadence snapshot</h3>
+          <p class="section-note">Use this to spot missed touchpoints quickly.</p>
+          <div class="cadence-grid">
+            ${cadenceCard(report, '1:1', app.doc.settings.thresholds.oneOnOneDays)}
+            ${cadenceCard(report, 'PDC', app.doc.settings.thresholds.pdcDays)}
+            ${cadenceCard(report, 'CV review', app.doc.settings.thresholds.cvReviewDays)}
+          </div>
+        </div>`}
+
+        <form id="detailEditorForm" class="workspace-form-grid">
+          <div class="drawer-section">
+            <h3>Profile</h3>
+            <div class="form-grid">
+              <label><span>Name *</span><input name="name" value="${escapeHtml(report.name)}" required></label>
+              <label><span>Level</span><input name="level" value="${escapeHtml(report.level || '')}" placeholder="L4, Senior, etc."></label>
+              <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(report.mentors || '')}" placeholder="Comma-separated if more than one"></label>
+              <label><span>Hire date</span><input name="hireDate" type="date" value="${escapeHtml(report.hireDate || '')}"></label>
+              <label><span>Last promotion / remuneration</span><input name="lastPromotionDate" type="date" value="${escapeHtml(report.lastPromotionDate || '')}"></label>
+              <label><span>Next planned 1:1</span><input name="nextOneOnOneDate" type="date" value="${escapeHtml(report.nextOneOnOneDate || '')}"></label>
+              <label><span>PDC status</span><select name="pdcStatus">${PDC_STATUSES.map((status) => `<option value="${escapeHtml(status)}" ${status === report.pdcStatus ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}</select></label>
+              <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === report.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
+            </div>
+          </div>
+
+          <div class="drawer-section">
+            <h3>Development focus</h3>
+            <div class="development-focus-grid">
+              <label class="development-field">
+                <span>Development goal summary</span>
+                <textarea name="developmentGoalSummary" placeholder="What are they working toward?">${escapeHtml(report.developmentGoalSummary || '')}</textarea>
+              </label>
+              <label class="development-field">
+                <span>Promotion readiness / growth area</span>
+                <textarea name="promotionReadiness" placeholder="Readiness notes, strengths, gaps, growth focus">${escapeHtml(report.promotionReadiness || '')}</textarea>
+              </label>
+            </div>
+          </div>
+
+          ${isCreating ? `
+          <div class="drawer-section" id="meetingHistorySection">
+            <div class="drawer-section-head">
+              <div>
+                <h3>Meetings</h3>
+                <p class="section-note">Save this direct report first, then use Log meeting from this workspace.</p>
+              </div>
+            </div>
+            <p class="section-note">Meeting history becomes available after the direct report has been created.</p>
+          </div>` : `
+          <div class="drawer-section" id="meetingHistorySection">
+            <div class="drawer-section-head">
+              <div>
+                <h3>Meetings</h3>
+                <p class="section-note">Log a new meeting or update an existing one from the history below.</p>
+              </div>
+              <button type="button" id="openMeetingModalBtn">Log meeting</button>
+            </div>
+            ${renderMeetingHistory(report)}
+          </div>`}
+
+          <div class="drawer-section" id="notesSection">
+            <h3>Notes</h3>
+            <label class="notes-editor">
+              <span>Manager notes</span>
+              <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(report.notes || '')}</textarea>
+            </label>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', clearSelectedReport);
+  document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => deleteReport(report.id));
+  document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
+    document.getElementById('detailEditorForm')?.requestSubmit();
+  });
+  document.getElementById('detailEditorForm')?.addEventListener('submit', (event) => saveWorkspaceChanges(event, isCreating ? '' : report.id));
+  if (!isCreating) {
+    document.getElementById('openMeetingModalBtn')?.addEventListener('click', () => openMeetingModal(report.id));
+    document.querySelectorAll('[data-edit-meeting]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const meetingId = button.getAttribute('data-edit-meeting');
+        const meeting = getReportById(report.id)?.meetings.find((item) => item.id === meetingId);
+        if (meeting) openMeetingModal(report.id, { meeting });
+      });
+    });
+    document.querySelectorAll('[data-delete-meeting]').forEach((button) => {
+      button.addEventListener('click', () => deleteMeeting(report.id, button.getAttribute('data-delete-meeting')));
+    });
+  }
+
+  if (isCreating) {
+    document.querySelector('#detailEditorForm [name="name"]')?.focus();
+  }
+}
+
+function getTileReports(tileKey) {
+  switch (tileKey) {
+    case 'directReports': return getReports();
+    case 'oneOnOneOverdue': return getReports().filter((report) => getMetrics(report.id).oneOnOneOverdue);
+    case 'pdcOverdue': return getReports().filter((report) => getMetrics(report.id).pdcOverdue);
+    case 'cvReviewOverdue': return getReports().filter((report) => getMetrics(report.id).cvReviewOverdue);
+    default: return [];
+  }
+}
+
+function getTileContext(tileKey) {
+  const reports = getTileReports(tileKey);
+  switch (tileKey) {
+    case 'directReports':
+      return {
+        title: 'Direct reports',
+        count: getReports().length,
+        description: `You currently have ${getReports().length} direct report${getReports().length === 1 ? '' : 's'} in Team Pulse.`,
+        actionLabel: 'Go to direct reports',
+        items: reports.map((report) => ({ report, meta: `${report.level || 'Level not set'} · ${report.pdcStatus || 'No PDC status'}` }))
+      };
+    case 'oneOnOneOverdue':
+      return {
+        title: '1:1s overdue',
+        count: reports.length,
+        description: `These direct reports have no logged 1:1 within the last ${app.doc.settings.thresholds.oneOnOneDays} days.`,
+        actionLabel: 'Show overdue 1:1s',
+        items: reports.map((report) => ({ report, meta: `Last 1:1: ${formatDate(getMetrics(report.id).lastOneOnOne)}` }))
+      };
+    case 'pdcOverdue':
+      return {
+        title: 'PDCs overdue',
+        count: reports.length,
+        description: `These direct reports have no logged PDC within the last ${app.doc.settings.thresholds.pdcDays} days.`,
+        actionLabel: 'Show overdue PDCs',
+        items: reports.map((report) => ({ report, meta: `Last PDC: ${formatDate(getMetrics(report.id).lastPdc)}` }))
+      };
+    case 'cvReviewOverdue':
+      return {
+        title: 'CV reviews overdue',
+        count: reports.length,
+        description: `These direct reports have no logged CV review within the last ${app.doc.settings.thresholds.cvReviewDays} days.`,
+        actionLabel: 'Show overdue CV reviews',
+        items: reports.map((report) => ({ report, meta: `Last CV review: ${formatDate(getMetrics(report.id).lastCvReview)}` }))
+      };
+    default:
+      return null;
+  }
+}
+
+function openTileModal(tileKey) {
+  const context = getTileContext(tileKey);
+  if (!context) return;
+  app.ui.activeTileKey = tileKey;
+  tileModalTitleEl.textContent = context.title;
+  tileModalCountEl.textContent = context.count;
+  tileModalDescriptionEl.textContent = context.description;
+  tileModalBodyEl.innerHTML = context.items.length
+    ? `<div class="list-panel">${context.items.map((item) => `
+      <button type="button" class="tile-link-row" data-select-report="${escapeHtml(item.report.id)}">
+        <strong>${escapeHtml(item.report.name)}</strong>
+        <span>${escapeHtml(item.meta)}</span>
+      </button>
+    `).join('')}</div>`
+    : '<p class="subtle">No people match this tile right now.</p>';
+  tileModalPrimaryBtn.textContent = context.actionLabel;
+  tileModalEl.classList.add('open');
+  tileModalEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+}
+
+function closeTileModal() {
+  app.ui.activeTileKey = '';
+  tileModalEl.classList.remove('open');
+  tileModalEl.setAttribute('aria-hidden', 'true');
+  syncBodyOverlayLock();
+}
+
+function applyActiveTileAction() {
+  const tileKey = app.ui.activeTileKey;
+  closeTileModal();
+  app.ui.activeQuickFilter = '';
+  searchInputEl.value = '';
+  planFilterEl.value = '';
+  attentionFilterEl.value = '';
+  app.ui.searchTerm = '';
+  app.ui.planFilter = '';
+  app.ui.attentionFilter = '';
+  if (tileKey === 'directReports') {
+    persistUiState();
+    scrollToReports();
+    renderQuickFilterBar();
+    renderTable();
+    return;
+  }
+  app.ui.activeQuickFilter = tileKey;
+  persistUiState();
+  renderQuickFilterBar();
+  renderTable();
+  scrollToReports();
+}
+
+function render() {
+  const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
+  startupGateEl.classList.toggle('hidden', ready);
+  statsEl.classList.toggle('hidden', !ready);
+  teamHealthSectionEl.classList.toggle('hidden', !ready);
+  reportsSectionEl.classList.toggle('hidden', !ready);
+  updateFileUi();
+  renderRuleInputs();
+  renderSettingsPanel();
+  renderExportReminderBanner();
+  if (!ready) {
+    renderDetailDrawer();
+    return;
+  }
+  renderQuickFilterBar();
+  renderStats();
+  renderTeamHealth();
+  renderTable();
+  renderDetailDrawer();
+}
+
+function buildReportPayloadFromForm(formData, existingReport = null) {
+  const customFieldContainer = document.getElementById('detailCustomFieldsList');
+  const customFields = customFieldContainer
+    ? collectWorkspaceCustomFields(existingReport?.customFields || [])
+    : deepCopy(existingReport?.customFields || []);
+  return {
+    name: normalizeText(formData.get('name')),
+    level: normalizeText(formData.get('level')),
+    mentors: normalizeText(formData.get('mentors')),
+    hireDate: normalizeDate(formData.get('hireDate')),
+    lastPromotionDate: normalizeDate(formData.get('lastPromotionDate')),
+    nextOneOnOneDate: normalizeDate(formData.get('nextOneOnOneDate')),
+    pdcStatus: normalizePdcStatus(formData.get('pdcStatus')),
+    supportLevel: normalizeSupportLevel(formData.get('supportLevel')),
+    developmentGoalSummary: normalizeText(formData.get('developmentGoalSummary')),
+    promotionReadiness: normalizeText(formData.get('promotionReadiness')),
+    notes: normalizeText(formData.get('notes')),
+    customFields
+  };
+}
+
+function collectWorkspaceCustomFields(existingFields = []) {
+  return [...document.querySelectorAll('#detailCustomFieldsList [data-custom-field]')]
+    .map((row, index) => {
+      const id = row.getAttribute('data-custom-field') || existingFields[index]?.id || nextId('customField');
+      return normalizeCustomField({
+        id,
+        label: row.querySelector('[data-custom-field-label]')?.value,
+        value: row.querySelector('[data-custom-field-value]')?.value
+      }, id);
+    })
+    .filter((field) => field.label || field.value);
+}
+
+function appendEvent(event) {
+  app.doc.events.push(normalizeEventRecord(event));
+}
+
+async function createReport(payload, options = {}) {
+  const createdAt = nowIso();
+  const personId = nextId('person');
+  const normalizedPayload = normalizePersonRecord({ id: personId, ...payload, createdAt });
+  app.doc.people.push(normalizedPayload);
+  appendEvent({ id: nextId('event'), type: 'person_created', personId, snapshot: normalizedPayload, createdAt });
+  if (normalizedPayload.notes) {
+    appendEvent({
+      id: nextId('event'),
+      type: 'note_added',
+      personId,
+      noteId: nextId('note'),
+      noteDate: todayStamp(),
+      noteText: normalizedPayload.notes,
+      source: 'workspace',
+      createdAt
+    });
+  }
+  applyProjectedState();
+  if (!options.skipRender) render();
+  scheduleAutosave();
+  showToast(`Added ${normalizedPayload.name}.`, 'success');
+  return personId;
+}
+
+async function updateReport(reportId, payload, options = {}) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  const createdAt = nowIso();
+  const changes = {};
+  ['name','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','pdcStatus','supportLevel','developmentGoalSummary','promotionReadiness','customFields'].forEach((key) => {
+    const nextValue = key === 'customFields' ? JSON.stringify(payload[key] || []) : String(payload[key] || '');
+    const prevValue = key === 'customFields' ? JSON.stringify(report[key] || []) : String(report[key] || '');
+    if (nextValue !== prevValue) changes[key] = payload[key];
+  });
+  if (Object.keys(changes).length) {
+    appendEvent({ id: nextId('event'), type: 'person_updated', personId: reportId, changes, createdAt });
+  }
+  if (payload.notes !== String(report.notes || '')) {
+    appendEvent({ id: nextId('event'), type: 'note_added', personId: reportId, noteId: nextId('note'), noteDate: todayStamp(), noteText: payload.notes, source: 'workspace', createdAt });
+  }
+  applyProjectedState();
+  render();
+  scheduleAutosave();
+  if (!options.silentToast) showToast('Direct report updated.', 'success');
+  return true;
+}
+
+async function deleteReport(reportId) {
+  const report = getReportById(reportId);
+  if (!report) return;
+  if (!window.confirm(`Delete ${report.name} from Team Pulse?`)) return;
+  appendEvent({ id: nextId('event'), type: 'person_archived', personId: reportId, createdAt: nowIso() });
+  app.ui.selectedId = null;
+  applyProjectedState();
+  render();
+  scheduleAutosave();
+  showToast(`${report.name} was removed.`, 'success');
+}
+
+async function saveWorkspaceChanges(event, reportId) {
+  event.preventDefault();
+  const formEl = event.currentTarget;
+  const isCreating = !!app.ui.creatingReport;
+  const report = isCreating ? null : getReportById(reportId);
+  if (!isCreating && !report) return;
+  const formData = new FormData(formEl);
+  const payload = buildReportPayloadFromForm(formData, report);
+  if (!payload.name) {
+    showToast('Name is required.', 'error');
+    return;
+  }
+  if (isCreating) {
+    const personId = await createReport(payload, { skipRender: true });
+    selectReport(personId);
+    return;
+  }
+  await updateReport(reportId, payload, { silentToast: true });
+  clearSelectedReport();
+}
+
+async function handleReportSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(reportFormEl);
+  const payload = buildReportPayloadFromForm(formData, null);
+  if (!payload.name) {
+    setStatus(modalStatusEl, 'Name is required.', 'error');
+    return;
+  }
+  const personId = await createReport(payload);
+  setStatus(modalStatusEl, 'Direct report added.', 'success');
+  closeModal();
+  selectReport(personId);
+}
+
+
+function meetingExistsForReport(report, meetingType, meetingDate, notes, externalUid = '', excludeMeetingId = '') {
+  if (externalUid && report.meetings.some((meeting) => meeting.id !== excludeMeetingId && meeting.externalUid && meeting.externalUid === externalUid)) return true;
+  const normalizedNotes = normalizeText(notes);
+  return report.meetings.some((meeting) => meeting.id !== excludeMeetingId
+    && canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(meetingType)
+    && normalizeDate(meeting.meetingDate) === normalizeDate(meetingDate)
+    && normalizeText(meeting.notes) === normalizedNotes);
+}
+
+function openMeetingModal(reportId, options = {}) {
+  const report = getReportById(reportId);
+  if (!report) return;
+  const meeting = options.meeting || null;
+  meetingFormEl.reset();
+  document.getElementById('meetingReportId').value = reportId;
+  document.getElementById('editingMeetingId').value = meeting?.id || '';
+  document.getElementById('meetingSource').value = meeting?.source || 'manual';
+  document.getElementById('meetingExternalUid').value = meeting?.externalUid || '';
+  document.getElementById('meetingType').value = canonicalMeetingType(options.presetType || meeting?.meetingType || MEETING_TYPES[0]);
+  document.getElementById('meetingDate').value = normalizeDate(meeting?.meetingDate) || todayStamp();
+  document.getElementById('meetingNotes').value = meeting?.notes || '';
+  document.getElementById('saveMeetingBtn').textContent = meeting ? 'Save changes' : 'Save meeting';
+  meetingModalTitleEl.textContent = meeting ? 'Edit meeting' : 'Log meeting';
+  meetingModalSubtitleEl.textContent = meeting
+    ? `Update the meeting record for ${report.name}.`
+    : `Log or import a meeting for ${report.name}.`;
+  meetingImportIcsBtn.classList.toggle('hidden', !!meeting);
+  setStatus(meetingStatusEl, '');
+  meetingModalEl.classList.add('open');
+  meetingModalEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  document.getElementById('meetingDate')?.focus();
+}
+
+function closeMeetingModal() {
+  meetingModalEl.classList.remove('open');
+  meetingModalEl.setAttribute('aria-hidden', 'true');
+  setStatus(meetingStatusEl, '');
+  syncBodyOverlayLock();
+}
+
+function buildMeetingPayloadFromForm(formData) {
+  return {
+    meetingType: canonicalMeetingType(formData.get('meetingType')),
+    meetingDate: normalizeDate(formData.get('meetingDate')),
+    notes: normalizeText(formData.get('meetingNotes')),
+    source: normalizeText(formData.get('meetingSource') || 'manual') || 'manual',
+    externalUid: normalizeText(formData.get('meetingExternalUid')),
+    durationMinutes: null
+  };
+}
+
+async function addMeeting(reportId, meetingInput = null, options = {}) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  const payload = meetingInput || buildMeetingPayloadFromForm(new FormData(meetingFormEl));
+  const statusEl = options.statusEl || meetingStatusEl;
+  if (!payload.meetingDate) {
+    setStatus(statusEl, 'Meeting date is required.', 'error');
+    return false;
+  }
+  if (meetingExistsForReport(report, payload.meetingType, payload.meetingDate, payload.notes, payload.externalUid, options.excludeMeetingId || '')) {
+    setStatus(statusEl, 'That meeting is already logged.', 'warning');
+    return false;
+  }
+  appendEvent({
+    id: nextId('event'),
+    type: 'meeting_logged',
+    personId: reportId,
+    meetingId: options.meetingId || nextId('meeting'),
+    meetingType: payload.meetingType,
+    meetingDate: payload.meetingDate,
+    durationMinutes: payload.durationMinutes ?? null,
+    notes: payload.notes || '',
+    source: payload.source || 'manual',
+    externalUid: payload.externalUid || '',
+    createdAt: nowIso()
+  });
+  applyProjectedState();
+  render();
+  scheduleAutosave();
+  setStatus(statusEl, options.successMessage || 'Meeting logged.', 'success');
+  showToast(options.successMessage || 'Meeting logged.', 'success');
+  return true;
+}
+
+async function updateMeeting(reportId, meetingId, meetingInput = null) {
+  const report = getReportById(reportId);
+  const existingMeeting = report?.meetings.find((meeting) => meeting.id === meetingId);
+  if (!report || !existingMeeting) return false;
+  const payload = meetingInput || buildMeetingPayloadFromForm(new FormData(meetingFormEl));
+  payload.source = payload.source || existingMeeting.source || 'manual';
+  payload.externalUid = payload.externalUid || existingMeeting.externalUid || '';
+
+  if (!payload.meetingDate) {
+    setStatus(meetingStatusEl, 'Meeting date is required.', 'error');
+    return false;
+  }
+  if (meetingExistsForReport(report, payload.meetingType, payload.meetingDate, payload.notes, payload.externalUid, meetingId)) {
+    setStatus(meetingStatusEl, 'That meeting is already logged.', 'warning');
+    return false;
+  }
+
+  appendEvent({ id: nextId('event'), type: 'meeting_deleted', personId: reportId, meetingId, createdAt: nowIso() });
+  appendEvent({
+    id: nextId('event'),
+    type: 'meeting_logged',
+    personId: reportId,
+    meetingId,
+    meetingType: payload.meetingType,
+    meetingDate: payload.meetingDate,
+    durationMinutes: payload.durationMinutes ?? null,
+    notes: payload.notes || '',
+    source: payload.source || 'manual',
+    externalUid: payload.externalUid || '',
+    createdAt: nowIso()
+  });
+  applyProjectedState();
+  render();
+  scheduleAutosave();
+  setStatus(meetingStatusEl, 'Meeting updated.', 'success');
+  showToast('Meeting updated.', 'success');
+  return true;
+}
+
+async function handleMeetingSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(meetingFormEl);
+  const reportId = normalizeText(formData.get('meetingReportId'));
+  const editingMeetingId = normalizeText(formData.get('editingMeetingId'));
+  if (!reportId) {
+    showToast('Open a direct report before logging a meeting.', 'warning');
+    return;
+  }
+  const success = editingMeetingId
+    ? await updateMeeting(reportId, editingMeetingId, buildMeetingPayloadFromForm(formData))
+    : await addMeeting(reportId, buildMeetingPayloadFromForm(formData));
+  if (success) closeMeetingModal();
+}
+
+async function deleteMeeting(reportId, meetingId) {
+  const report = getReportById(reportId);
+  const meeting = report?.meetings.find((item) => item.id === meetingId);
+  if (!report || !meeting) return;
+  const label = `${meeting.meetingType} on ${formatDate(meeting.meetingDate)}`;
+  if (!window.confirm(`Are you sure you want to delete ${label}?`)) return;
+  appendEvent({ id: nextId('event'), type: 'meeting_deleted', personId: reportId, meetingId, createdAt: nowIso() });
+  applyProjectedState();
+  render();
+  scheduleAutosave();
+  showToast('Meeting deleted.', 'success');
+}
+
+function focusMeetingPreset(type) {
+  if (!app.ui.selectedId) return;
+  openMeetingModal(app.ui.selectedId, { presetType: type });
+}
+
+function bindWorkspaceCustomFieldControls() {
+  document.getElementById('addCustomFieldBtn')?.addEventListener('click', () => {
+    const listEl = document.getElementById('detailCustomFieldsList');
+    if (!listEl) return;
+    const fieldId = nextId('customField');
+    const row = document.createElement('div');
+    row.className = 'custom-field-row';
+    row.setAttribute('data-custom-field', fieldId);
+    row.innerHTML = `
+      <label><span>Label</span><input data-custom-field-label placeholder="Field label"></label>
+      <label><span>Value</span><input data-custom-field-value placeholder="Field value"></label>
+      <button type="button" class="secondary" data-remove-custom-field="${escapeHtml(fieldId)}">Remove</button>
+    `;
+    listEl.appendChild(row);
+  });
+  document.querySelectorAll('[data-remove-custom-field]').forEach((button) => {
+    button.addEventListener('click', () => {
+      button.closest('[data-custom-field]')?.remove();
+    });
+  });
+  document.querySelectorAll('[data-delete-meeting]').forEach((button) => {
+    button.addEventListener('click', () => deleteMeeting(app.ui.selectedId, button.getAttribute('data-delete-meeting')));
+  });
+}
+
+function unescapeIcsText(value) {
+  return String(value || '')
+    .replace(/\\n/gi, '\n')
+    .replace(/\\,/g, ',')
+    .replace(/\\;/g, ';')
+    .replace(/\\\\/g, '\\');
+}
+
+function parseIcsDate(value) {
+  const text = normalizeText(value);
+  if (!text) return '';
+  if (/^\d{8}$/.test(text)) {
+    return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
+  }
+  if (/^\d{8}T\d{6}Z?$/.test(text)) {
+    return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
+  }
+  return '';
+}
+
+function parseIcsDurationMinutes(start, end) {
+  const startText = normalizeText(start);
+  const endText = normalizeText(end);
+  if (!startText || !endText) return null;
+  const startDate = new Date(startText.replace(/^([0-9]{8})T([0-9]{6})Z?$/, '$1T$2Z'));
+  const endDate = new Date(endText.replace(/^([0-9]{8})T([0-9]{6})Z?$/, '$1T$2Z'));
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return null;
+  const diff = Math.round((endDate - startDate) / 60000);
+  return diff > 0 ? diff : null;
+}
+
+function parseIcsEvents(text) {
+  const unfolded = String(text || '').replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '').replace(/\r/g, '\n');
+  const chunks = unfolded.split('BEGIN:VEVENT').slice(1);
+  return chunks.map((chunk) => {
+    const body = chunk.split('END:VEVENT')[0] || '';
+    const lines = body.split('\n').map((line) => line.trim()).filter(Boolean);
+    const data = { raw: body };
+    lines.forEach((line) => {
+      const idx = line.indexOf(':');
+      if (idx === -1) return;
+      const key = line.slice(0, idx).split(';')[0].toUpperCase();
+      const value = line.slice(idx + 1);
+      if (!data[key]) data[key] = [];
+      data[key].push(value);
+    });
+    return {
+      uid: normalizeText(data.UID?.[0]),
+      summary: unescapeIcsText(data.SUMMARY?.[0] || ''),
+      description: unescapeIcsText(data.DESCRIPTION?.[0] || data['X-ALT-DESC']?.[0] || ''),
+      startDate: parseIcsDate(data.DTSTART?.[0] || ''),
+      durationMinutes: parseIcsDurationMinutes(data.DTSTART?.[0] || '', data.DTEND?.[0] || ''),
+      rawText: unescapeIcsText(body)
+    };
+  }).filter((event) => event.summary || event.description || event.startDate || event.uid);
+}
+
+function detectIcsMeetingType(event) {
+  const haystack = `${event.summary} ${event.description} ${event.rawText}`.toLowerCase();
+  if (/\b(pdc|personal development conversation|development conversation)\b/.test(haystack)) return 'PDC';
+  if (/\bcv review\b/.test(haystack)) return 'CV review';
+  if (/\b1[:\- ]?1\b|\bone on one\b/.test(haystack)) return '1:1';
+  return '1:1';
+}
+
+function scoreReportNameInText(report, normalizedText) {
+  const normalizedName = normalizeSearchText(report.name);
+  if (!normalizedName || !normalizedText) return 0;
+  let score = 0;
+  if (normalizedText.includes(normalizedName)) score += 200;
+  const tokens = normalizedName.split(' ').filter(Boolean);
+  let matchedTokens = 0;
+  tokens.forEach((token) => {
+    if (token.length > 1 && normalizedText.includes(token)) matchedTokens += 1;
+  });
+  score += matchedTokens * 20;
+  if (tokens.length && matchedTokens === tokens.length) score += 40;
+  return score;
+}
+
+function normalizeSearchText(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function resolveIcsTargetReport(event, preferredReportId = null) {
+  if (preferredReportId) return getReportById(preferredReportId);
+  const reports = getReports();
+  if (reports.length === 1) return reports[0];
+  const normalizedText = normalizeSearchText(`${event.summary} ${event.description} ${event.rawText}`);
+  const ranked = reports
+    .map((report) => ({ report, score: scoreReportNameInText(report, normalizedText) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+  if (!ranked.length) return null;
+  if (ranked.length === 1) return ranked[0].report;
+  if (ranked[0].score >= ranked[1].score + 40) return ranked[0].report;
+  return null;
+}
+
+function beginIcsImport(preferredReportId = null, statusElementId = '', options = {}) {
+  if (!ensureConnectedOrToast()) return;
+  pendingIcsImportContext = { preferredReportId, statusElementId, closeMeetingModalOnSuccess: !!options.closeMeetingModalOnSuccess };
+  icsFileInputEl.value = '';
+  icsFileInputEl.click();
+}
+
+async function importIcsFiles(files, preferredReportId = null, statusElementId = '', options = {}) {
+  if (!getReports().length) {
+    showToast('Add a direct report before importing calendar files.', 'warning');
+    return;
+  }
+  let importedCount = 0;
+  let skippedCount = 0;
+  let unmatchedCount = 0;
+  let firstMatchedReportId = null;
+
+  for (const file of files) {
+    const text = await file.text();
+    const events = parseIcsEvents(text);
+    if (!events.length) {
+      skippedCount += 1;
+      continue;
+    }
+    for (const event of events) {
+      const target = resolveIcsTargetReport(event, preferredReportId);
+      if (!target) {
+        unmatchedCount += 1;
+        continue;
+      }
+      const meetingType = detectIcsMeetingType(event);
+      const meetingDate = event.startDate || todayStamp();
+      const notes = [event.summary, event.description].filter(Boolean).join('\n\n').trim();
+      const currentTarget = getReportById(target.id);
+      if (!currentTarget || meetingExistsForReport(currentTarget, meetingType, meetingDate, notes, event.uid)) {
+        skippedCount += 1;
+        continue;
+      }
+      appendEvent({
+        id: nextId('event'),
+        type: 'meeting_logged',
+        personId: target.id,
+        meetingId: nextId('meeting'),
+        meetingType,
+        meetingDate,
+        durationMinutes: event.durationMinutes,
+        notes,
+        source: 'ics',
+        externalUid: event.uid,
+        createdAt: nowIso()
+      });
+      importedCount += 1;
+      if (!firstMatchedReportId) firstMatchedReportId = target.id;
+    }
+  }
+
+  if (importedCount > 0) {
+    applyProjectedState();
+    if (preferredReportId) {
+      app.ui.selectedId = preferredReportId;
+    } else if (firstMatchedReportId) {
+      app.ui.selectedId = firstMatchedReportId;
+    }
+    render();
+    scheduleAutosave();
+  }
+
+  const statusEl = statusElementId ? document.getElementById(statusElementId) : null;
+  if (importedCount > 0 && options.closeMeetingModalOnSuccess && meetingModalEl.classList.contains('open')) {
+    closeMeetingModal();
+  }
+  if (importedCount > 0) {
+    const message = `Imported ${importedCount} meeting${importedCount === 1 ? '' : 's'} from .ics file${files.length === 1 ? '' : 's'}.`;
+    showToast(message, 'success');
+    setStatus(statusEl, message, 'success');
+  } else if (unmatchedCount > 0) {
+    const message = preferredReportId
+      ? 'No new meetings were imported from that .ics file.'
+      : 'No meetings were imported. Open a direct report first or use clearer meeting titles in the .ics file.';
+    showToast(message, 'warning');
+    setStatus(statusEl, message, 'error');
+  } else {
+    const message = skippedCount ? 'No new meetings were imported from that .ics file.' : 'No meetings were imported.';
+    showToast(message, skippedCount ? 'warning' : 'error');
+    setStatus(statusEl, message, skippedCount ? 'warning' : 'error');
+  }
+}
+
+async function handleIcsFileSelection(event) {
+  const files = [...(event.target.files || [])];
+  if (!files.length) return;
+  await importIcsFiles(files, pendingIcsImportContext.preferredReportId, pendingIcsImportContext.statusElementId, { closeMeetingModalOnSuccess: pendingIcsImportContext.closeMeetingModalOnSuccess });
+  pendingIcsImportContext = { preferredReportId: null, statusElementId: '', closeMeetingModalOnSuccess: false };
+}
+
+async function importLegacyJsonFlow() {
+  if (!supportsJsonOpen()) {
+    showToast('Importing a JSON file works best in Edge or Chrome.', 'error');
+    return false;
+  }
+  try {
+    const handles = await window.showOpenFilePicker({
+      multiple: false,
+      types: [{ description: 'Team Pulse JSON', accept: { 'application/json': ['.json'] } }]
+    });
+    const handle = handles?.[0] || null;
+    if (!handle) return false;
+    const permitted = await verifyPermission(handle, false);
+    if (!permitted) {
+      showToast('Read permission was not granted for that JSON file.', 'error');
+      return false;
+    }
+    const text = await readTextFromHandle(handle);
+    const parsed = parsePortableJsonText(text);
+    const shouldReplace = !app.doc || !getReports().length || window.confirm('Importing this JSON will replace the Team Pulse data currently on screen. Continue?');
+    if (!shouldReplace) return false;
+    if (app.folderHandle) {
+      app.doc = ensureDocShape(parsed.doc);
+      app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+      app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+      applyProjectedState();
+      await persistDocToFolder({ reason: 'import' });
+      render();
+      showToast(`Imported and saved ${handle.name} into ${app.folderName || 'your Team Pulse folder'}.`, 'success');
+      return true;
+    }
+    const connected = await chooseFolderAndConnect({ initialDoc: parsed.doc, showSuccessToast: false });
+    if (connected) {
+      app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+      app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+      render();
+      showToast(`Imported ${handle.name} and saved it into ${app.folderName || 'your Team Pulse folder'}.`, 'success');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    if (error && error.name === 'AbortError') return false;
+    console.error('Failed to import JSON', error);
+    showToast(error?.message || 'Could not import that Team Pulse JSON file.', 'error');
+    return false;
+  }
+}
+
+function handleTileClick(event) {
+  const tile = event.target.closest('[data-tile]');
+  if (!tile) return;
+  openTileModal(tile.getAttribute('data-tile'));
+}
+
+function bindStaticEvents() {
+  populateSelect(formEls.pdcStatus, PDC_STATUSES);
+  populateSelect(formEls.supportLevel, SUPPORT_LEVELS);
+  populateSelect(planFilterEl, PDC_STATUSES, true, 'All PDC statuses');
+  appVersionEl.textContent = APP_VERSION;
+  searchInputEl.value = app.ui.searchTerm;
+  planFilterEl.value = app.ui.planFilter;
+  attentionFilterEl.value = app.ui.attentionFilter;
+
+  addReportBtn.addEventListener('click', openModal);
+  createJsonFileBtn.addEventListener('click', () => chooseFolderAndConnect());
+  openJsonFileBtn.addEventListener('click', importLegacyJsonFlow);
+  saveFileBtn.addEventListener('click', () => {
+    if (app.folderHandle && app.connectedFolderReady) {
+      flushAutosaveQueue(true);
+    } else {
+      chooseFolderAndConnect();
+    }
+  });
+  connectDataFileBtn.addEventListener('click', importLegacyJsonFlow);
+  importIcsBtn.addEventListener('click', () => beginIcsImport(app.ui.selectedId || null, app.ui.selectedId ? 'meetingStatus' : ''));
+  icsFileInputEl.addEventListener('change', handleIcsFileSelection);
+  attentionRulesBtn.addEventListener('click', openRulesDrawer);
+  exportCsvBtn.addEventListener('click', () => exportPlainFiles());
+  saveDockBtn.addEventListener('click', () => flushAutosaveQueue(true));
+  dismissDockBtn.addEventListener('click', () => saveDockEl.classList.add('hidden'));
+
+  searchInputEl.addEventListener('input', () => {
+    app.ui.searchTerm = searchInputEl.value;
+    persistUiState();
+    window.clearTimeout(tableSearchDebounce);
+    tableSearchDebounce = window.setTimeout(() => {
+      renderQuickFilterBar();
+      renderTable();
+    }, 150);
+  });
+  planFilterEl.addEventListener('change', () => {
+    app.ui.planFilter = planFilterEl.value;
+    persistUiState();
+    renderTable();
+  });
+  attentionFilterEl.addEventListener('change', () => {
+    app.ui.attentionFilter = attentionFilterEl.value;
+    persistUiState();
+    renderTable();
+  });
+  clearQuickFilterBtn.addEventListener('click', () => {
+    app.ui.activeQuickFilter = '';
+    persistUiState();
+    renderQuickFilterBar();
+    renderTable();
+  });
+
+  closeModalBtn.addEventListener('click', closeModal);
+  cancelModalBtn.addEventListener('click', closeModal);
+  reportFormEl.addEventListener('submit', handleReportSubmit);
+
+  closeMeetingModalBtn.addEventListener('click', closeMeetingModal);
+  cancelMeetingModalBtn.addEventListener('click', closeMeetingModal);
+  meetingFormEl.addEventListener('submit', handleMeetingSubmit);
+  meetingImportIcsBtn.addEventListener('click', () => {
+    const reportId = normalizeText(document.getElementById('meetingReportId')?.value) || app.ui.selectedId;
+    if (!reportId) {
+      showToast('Open a direct report before importing a meeting.', 'warning');
+      return;
+    }
+    beginIcsImport(reportId, 'meetingStatus', { closeMeetingModalOnSuccess: true });
+  });
+
+  closeRulesDrawerBtn.addEventListener('click', closeRulesDrawer);
+  thresholdFormEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      app.doc.settings.thresholds = {
+        oneOnOneDays: parsePositiveInteger('1:1 overdue rule', oneOnOneThresholdEl.value),
+        pdcDays: parsePositiveInteger('PDC overdue rule', developmentThresholdEl.value),
+        cvReviewDays: parsePositiveInteger('CV review overdue rule', cvReviewThresholdEl.value)
+      };
+      app.doc.settings.missingMentorCounts = !!missingMentorCountsEl.checked;
+      app.doc.settings.blockedPdcCounts = !!blockedPlanCountsEl.checked;
+      app.doc.settings.saveReminderMinutes = parsePositiveInteger('Save reminder interval', saveReminderMinutesEl.value);
+      applyProjectedState();
+      render();
+      scheduleAutosave();
+      setStatus(thresholdStatusEl, 'Settings saved.', 'success');
+      showToast('Settings updated.', 'success');
+    } catch (error) {
+      setStatus(thresholdStatusEl, error.message || 'Check the settings and try again.', 'error');
+    }
+  });
+  resetRulesBtn.addEventListener('click', () => {
+    if (!app.doc) return;
+    app.doc.settings = normalizeSettings({});
+    applyProjectedState();
+    render();
+    scheduleAutosave();
+    setStatus(thresholdStatusEl, 'Settings reset to defaults.', 'success');
+    showToast('Settings reset to defaults.', 'success');
+  });
+
+  closeTileModalBtn.addEventListener('click', closeTileModal);
+  tileModalPrimaryBtn.addEventListener('click', applyActiveTileAction);
+  tileModalSecondaryBtn.addEventListener('click', closeTileModal);
+  statsEl.addEventListener('click', handleTileClick);
+  reportsTableBodyEl.addEventListener('click', (event) => {
+    const row = event.target.closest('[data-report-row]');
+    if (row) {
+      selectReport(row.getAttribute('data-report-row'));
+    }
+  });
+  tileModalBodyEl.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-select-report]');
+    if (!button) return;
+    closeTileModal();
+    selectReport(button.getAttribute('data-select-report'));
+  });
+
+  document.addEventListener('click', (event) => {
+    const exportBtn = event.target.closest('#exportNowBtn');
+    if (exportBtn) exportPlainFiles();
+    const archiveBtn = event.target.closest('#downloadArchiveBtn');
+    if (archiveBtn) downloadFullArchive();
+    const restoreBtn = event.target.closest('#restoreBackupBtn');
+    if (restoreBtn) restoreLatestBackup();
+  });
+  document.addEventListener('change', (event) => {
+    if (event.target && event.target.id === 'stableModeToggle') {
+      if (!app.doc) return;
+      app.doc.settings.stableMode = !!event.target.checked;
+      document.body.classList.toggle('stable-mode', !!app.doc.settings.stableMode);
+      scheduleAutosave();
+      render();
+    }
+  });
+
+  window.addEventListener('beforeunload', (event) => {
+    if (!app.saveQueued && !app.saveInFlight && !app.lastSaveError) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+}
+
+async function initializeFolderRestore() {
+  if (!supportsDirectoryAccess()) {
+    updateFileUi();
+    render();
+    return;
+  }
+  try {
+    const storedHandle = await getStoredFolderHandle();
+    if (!storedHandle) {
+      render();
+      return;
+    }
+    const permitted = await verifyPermission(storedHandle, true);
+    if (!permitted) {
+      render();
+      return;
+    }
+    await connectFolderHandle(storedHandle, { showSuccessToast: false });
+  } catch (error) {
+    console.error('Failed to restore stored Team Pulse folder', error);
+    render();
+  }
+}
+
+bindStaticEvents();
+applyProjectedState();
+updateFileUi();
+render();
+initializeFolderRestore();
+
+</script>
+</body>
+</html>
