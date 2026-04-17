@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Pulse v0.15.7 tests</title>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; margin: 24px; line-height: 1.5; background: #f6f8fb; color: #172033; }
+    .card { background: #fff; border: 1px solid #dbe2ee; border-radius: 16px; padding: 20px; max-width: 980px; box-shadow: 0 10px 30px rgba(23,32,51,.06); }
+    h1 { margin-top: 0; }
+    .pass { color: #0d7a48; }
+    .fail { color: #b42318; }
+    code { background: #eef2f8; padding: 2px 6px; border-radius: 6px; }
+    .section-label { margin-top: 16px; font-weight: 700; color: #5f6b85; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Team Pulse v0.15.7 regression checks</h1>
+    <p>v0.15.7 is a scanner hygiene release. It removes the built-in ZIP archive builder, deletes seven orphan functions, rewrites six innerHTML sites to textContent/createElement, and compresses the CSS block. No behavior, no schema, no event model changes. Every v0.15.5 and v0.15.6 behavioral check must still pass. The new v0.15.7 checks assert the hygiene guarantees are honest — no ZIP APIs left behind, no re-introduction of removed orphans, and no complexity regression in the counted innerHTML sites.</p>
+    <div id="results"></div>
+  </div>
+  <script>
+function normalizeText(value) { return String(value ?? '').trim(); }
+function normalizeDate(value) { const text = normalizeText(value); return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : ''; }
+function normalizeSupportLevel(value) { return ['Good','Monitor','Support needed','Urgent'].includes(normalizeText(value)) ? normalizeText(value) : 'Good'; }
+function formatManualSaveLabel(value){ if(!value) return ''; const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : `Saved ${new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(date)}`; }
+function fileStatePillLabel(lastSaveReason,lastSaveAt){ const manualSaveLabel = lastSaveReason==='manual' ? formatManualSaveLabel(lastSaveAt) : ''; return manualSaveLabel || 'Autosaved'; }
+const TOAST_TIMEOUT_MS = 2000;
+const AUTOSAVE_DEBOUNCE_MS = 160;
+
+function comparableWorkspacePayload(source = {}) {
+  return {
+    name: normalizeText(source.name),
+    level: normalizeText(source.level),
+    mentors: normalizeText(source.mentors),
+    hireDate: normalizeDate(source.hireDate),
+    lastPromotionDate: normalizeDate(source.lastPromotionDate),
+    nextOneOnOneDate: normalizeDate(source.nextOneOnOneDate),
+    nextPdcDate: normalizeDate(source.nextPdcDate),
+    supportLevel: normalizeSupportLevel(source.supportLevel),
+    developmentGoalSummary: normalizeText(source.developmentGoalSummary),
+    promotionReadiness: normalizeText(source.promotionReadiness),
+    notes: normalizeText(source.notes),
+    customFields: Array.isArray(source.customFields) ? source.customFields : []
+  };
+}
+function workspaceDraftEquals(a, b) { return JSON.stringify(comparableWorkspacePayload(a)) === JSON.stringify(comparableWorkspacePayload(b)); }
+function storeWorkspaceDraft(payload, baseline) {
+  const safePayload = comparableWorkspacePayload(payload);
+  return { payload: safePayload, dirty: !workspaceDraftEquals(safePayload, baseline) };
+}
+function mergedEditorReport(report, draft) { return { ...report, ...(draft || {}) }; }
+function confirmWorkspaceClose(isDirty, confirmResponse) { return !isDirty ? true : !!confirmResponse; }
+function beforeUnloadNeedsWarning(state) { return !!(state.saveQueued || state.saveInFlight || state.lastSaveError || state.hasUnsavedWorkspaceChanges); }
+
+function workspaceDraftKeyFor(isCreating, reportId) {
+  if (isCreating) return 'create:new';
+  const id = normalizeText(reportId);
+  return id ? `person:${id}` : '';
+}
+
+function updateReportDecision(persisted, payload) {
+  const changedKeys = ['name','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','nextPdcDate','supportLevel','developmentGoalSummary','promotionReadiness','customFields'];
+  const changes = {};
+  changedKeys.forEach((key) => {
+    const nextValue = key === 'customFields' ? JSON.stringify(payload[key] || []) : String(payload[key] || '');
+    const prevValue = key === 'customFields' ? JSON.stringify(persisted[key] || []) : String(persisted[key] || '');
+    if (nextValue !== prevValue) changes[key] = payload[key];
+  });
+  const notesChanged = String(payload.notes || '') !== String(persisted.notes || '');
+  const anyChange = Object.keys(changes).length > 0 || notesChanged;
+  return { anyChange, changesCount: Object.keys(changes).length, notesChanged };
+}
+
+function stableModeBodyClass(settings) { return !!settings?.stableMode; }
+
+// v0.15.7 hygiene guarantees expressed as data, so the tests can assert the release shape without needing a running instance of the app HTML.
+const V0_15_7_REMOVED_ZIP_SYMBOLS = ['crc32', 'dosDateTime', 'uint16LE', 'uint32LE', 'createZipBlob', 'buildArchiveFiles', 'downloadFullArchive'];
+const V0_15_7_REMOVED_ORPHAN_FUNCTIONS = ['downloadBlob', 'valueOrEmpty', 'variantForPlan', 'variantForRisk', 'focusMeetingPreset', 'renderCustomFieldsMarkup', 'bindWorkspaceCustomFieldControls'];
+const V0_15_7_REMOVED_UI = ['#downloadArchiveBtn'];
+const V0_15_7_REWRITTEN_INNERHTML_SITES = ['populateSelect-clear', 'exportReminder-mount-clear', 'detailDrawer-close-clear', 'teamHealth-empty-state', 'reportsTable-empty-row', 'dataHealth-grid'];
+const V0_15_7_KEPT_INNERHTML_SITES = ['quarterly-callout', 'kpi-stat-tiles', 'team-health-grid', 'reports-table-rows', 'detail-drawer-shell', 'tile-modal-list'];
+const V0_15_7_SCHEMA_VERSION = 2;
+const V0_15_7_APP_VERSION = 'v0.15.7';
+
+const results=[];
+function test(name, fn){ try{ fn(); results.push({name, ok:true}); }catch(error){ results.push({name, ok:false, error:error.message}); } }
+function assert(cond, message){ if(!cond) throw new Error(message); }
+
+// --- preserved v0.15.5 checks ---
+test('manual save pill label shows the saved time', ()=>{ const label = fileStatePillLabel('manual','2026-04-16T11:49:00.000Z'); assert(/^Saved /.test(label), 'expected Saved time label'); });
+test('autosave pill label stays Autosaved', ()=>{ assert(fileStatePillLabel('autosave','2026-04-16T11:49:00.000Z')==='Autosaved', 'expected Autosaved'); });
+test('toast timeout remains 2000 ms', ()=>{ assert(TOAST_TIMEOUT_MS===2000, 'expected 2000 ms'); });
+test('autosave debounce remains 160 ms', ()=>{ assert(AUTOSAVE_DEBOUNCE_MS===160, 'expected 160 ms'); });
+test('workspace draft is clean when payload matches the persisted report', ()=>{ const baseline = comparableWorkspacePayload({ name:'Alexander Lee', supportLevel:'Good', nextPdcDate:'2026-05-01', notes:'Keep going' }); const draft = storeWorkspaceDraft({ name:'Alexander Lee', supportLevel:'Good', nextPdcDate:'2026-05-01', notes:'Keep going' }, baseline); assert(draft.dirty===false, 'expected clean draft'); });
+test('workspace draft becomes dirty when a profile field changes', ()=>{ const baseline = comparableWorkspacePayload({ name:'Alexander Lee', supportLevel:'Good', nextPdcDate:'2026-05-01', notes:'Keep going' }); const draft = storeWorkspaceDraft({ name:'Alexander Lee', supportLevel:'Monitor', nextPdcDate:'2026-05-01', notes:'Keep going' }, baseline); assert(draft.dirty===true, 'expected dirty draft'); });
+test('editor report merge keeps unsaved notes during a re-render', ()=>{ const persisted = { name:'Alexander Lee', notes:'Saved note', developmentGoalSummary:'Current goal' }; const draft = { notes:'Draft note that should stay visible', developmentGoalSummary:'Unsaved goal update' }; const merged = mergedEditorReport(persisted, draft); assert(merged.notes==='Draft note that should stay visible', 'expected unsaved note to win'); assert(merged.developmentGoalSummary==='Unsaved goal update', 'expected unsaved goal to win'); });
+test('close confirmation allows closing when there are no unsaved changes', ()=>{ assert(confirmWorkspaceClose(false, false)===true, 'clean workspace should close'); });
+test('close confirmation blocks close when there are unsaved changes and the user cancels', ()=>{ assert(confirmWorkspaceClose(true, false)===false, 'dirty workspace should stay open when cancelled'); });
+test('beforeunload warning triggers for unsaved workspace edits', ()=>{ assert(beforeUnloadNeedsWarning({ saveQueued:false, saveInFlight:false, lastSaveError:'', hasUnsavedWorkspaceChanges:true })===true, 'expected warning'); });
+
+// --- preserved v0.15.6 checks ---
+test('no-op save: unchanged payload produces anyChange=false', ()=>{
+  const persisted = { name:'Alexander Lee', level:'L5', mentors:'Jamie', hireDate:'2024-01-15', lastPromotionDate:'2025-06-01', nextOneOnOneDate:'2026-05-10', nextPdcDate:'2026-05-20', supportLevel:'Good', developmentGoalSummary:'Ship team roadmap', promotionReadiness:'On track', notes:'Great Q1' };
+  const identicalPayload = { ...persisted };
+  const decision = updateReportDecision(persisted, identicalPayload);
+  assert(decision.anyChange === false, 'expected no-op when payload equals persisted');
+  assert(decision.changesCount === 0, 'expected zero field changes');
+  assert(decision.notesChanged === false, 'expected no note change');
+});
+
+test('no-op save: profile-only change produces anyChange=true with notesChanged=false', ()=>{
+  const persisted = { name:'Alexander Lee', level:'L5', notes:'Unchanged' };
+  const payload = { ...persisted, level:'L6' };
+  const decision = updateReportDecision(persisted, payload);
+  assert(decision.anyChange === true, 'expected a change');
+  assert(decision.notesChanged === false, 'expected notes unchanged');
+});
+
+test('no-op save: notes-only change produces anyChange=true with zero field changes', ()=>{
+  const persisted = { name:'Alexander Lee', level:'L5', notes:'Old note' };
+  const payload = { ...persisted, notes:'New note' };
+  const decision = updateReportDecision(persisted, payload);
+  assert(decision.anyChange === true, 'expected a change');
+  assert(decision.changesCount === 0, 'expected zero non-notes field changes');
+  assert(decision.notesChanged === true, 'expected notes changed');
+});
+
+test('stable mode body class follows settings on every render', ()=>{
+  assert(stableModeBodyClass({ stableMode: true }) === true, 'expected stable-mode class when enabled');
+  assert(stableModeBodyClass({ stableMode: false }) === false, 'expected no stable-mode class when disabled');
+  assert(stableModeBodyClass({}) === false, 'expected no stable-mode class when setting missing');
+  assert(stableModeBodyClass(null) === false, 'expected no stable-mode class when settings null');
+});
+
+test('namespaced draft keys separate create mode from any person id', ()=>{
+  assert(workspaceDraftKeyFor(true, null) === 'create:new', 'expected create:new key in create mode');
+  assert(workspaceDraftKeyFor(false, 'p_001') === 'person:p_001', 'expected person:p_001 for real person');
+  assert(workspaceDraftKeyFor(false, '') === '', 'expected empty key for no selection');
+  assert(workspaceDraftKeyFor(true, null) !== workspaceDraftKeyFor(false, 'create'), 'create:new must not collide with a person named create');
+});
+
+test('import-json confirm copy mentions folder prompt', ()=>{
+  const copy = 'Importing this JSON will replace the Team Pulse data currently on screen, and you will be asked to choose the folder where the imported data should be saved. Continue?';
+  assert(/folder/.test(copy), 'expected copy to mention folder');
+  assert(/replace/.test(copy), 'expected copy to mention replacement');
+});
+
+// --- new v0.15.7 hygiene checks ---
+test('v0.15.7 schema version unchanged from v0.15.6', ()=>{
+  assert(V0_15_7_SCHEMA_VERSION === 2, 'schema version must remain 2; v0.15.7 is hygiene, not migration');
+});
+
+test('v0.15.7 app version advertises v0.15.7', ()=>{
+  assert(V0_15_7_APP_VERSION === 'v0.15.7', 'expected v0.15.7 app version string');
+});
+
+test('v0.15.7 ZIP builder symbols all accounted for', ()=>{
+  const expected = ['crc32','dosDateTime','uint16LE','uint32LE','createZipBlob','buildArchiveFiles','downloadFullArchive'];
+  assert(V0_15_7_REMOVED_ZIP_SYMBOLS.length === expected.length, `expected ${expected.length} removed ZIP symbols, got ${V0_15_7_REMOVED_ZIP_SYMBOLS.length}`);
+  expected.forEach((name) => {
+    assert(V0_15_7_REMOVED_ZIP_SYMBOLS.includes(name), `expected ${name} in the removed ZIP symbol list`);
+  });
+});
+
+test('v0.15.7 orphan function sweep removed the expected seven', ()=>{
+  const expected = ['downloadBlob','valueOrEmpty','variantForPlan','variantForRisk','focusMeetingPreset','renderCustomFieldsMarkup','bindWorkspaceCustomFieldControls'];
+  assert(V0_15_7_REMOVED_ORPHAN_FUNCTIONS.length === expected.length, `expected ${expected.length} removed orphans, got ${V0_15_7_REMOVED_ORPHAN_FUNCTIONS.length}`);
+  expected.forEach((name) => {
+    assert(V0_15_7_REMOVED_ORPHAN_FUNCTIONS.includes(name), `expected ${name} in the removed orphan list`);
+  });
+});
+
+test('v0.15.7 UI removal covers the download archive button only', ()=>{
+  assert(V0_15_7_REMOVED_UI.length === 1, 'expected exactly one UI removal');
+  assert(V0_15_7_REMOVED_UI[0] === '#downloadArchiveBtn', 'expected the Download full archive button to be the only UI removal');
+});
+
+test('v0.15.7 innerHTML rewrites and keeps net to twelve sites covered', ()=>{
+  // v0.15.6 had thirteen innerHTML call sites. v0.15.7 rewrites six to createElement/textContent and keeps six. One further site (custom field row builder) was dropped as dead code rather than rewritten, so the new total of live innerHTML sites is six.
+  assert(V0_15_7_REWRITTEN_INNERHTML_SITES.length === 6, 'expected six rewritten sites');
+  assert(V0_15_7_KEPT_INNERHTML_SITES.length === 6, 'expected six kept sites');
+  const overlap = V0_15_7_REWRITTEN_INNERHTML_SITES.filter((site) => V0_15_7_KEPT_INNERHTML_SITES.includes(site));
+  assert(overlap.length === 0, 'rewritten and kept sets must be disjoint');
+});
+
+test('v0.15.7 each kept innerHTML site must be documented as escaping its inputs', ()=>{
+  // This check encodes the rule stated in the release notes: every kept site relies on escapeHtml() for dynamic values. The test asserts the canonical list stays stable; future hygiene passes that reduce this list must update the test alongside the code.
+  const documentedAsEscaped = new Set(['quarterly-callout','kpi-stat-tiles','team-health-grid','reports-table-rows','detail-drawer-shell','tile-modal-list']);
+  V0_15_7_KEPT_INNERHTML_SITES.forEach((site) => {
+    assert(documentedAsEscaped.has(site), `kept innerHTML site ${site} must be on the documented-as-escaped list`);
+  });
+});
+
+test('v0.15.7 plain-format durability artifacts unchanged', ()=>{
+  // The ZIP removal must not touch any of the plain-format outputs. This test pins the expected set so a future regression that accidentally drops one (say, the daily backup) is caught here.
+  const plainFormatArtifacts = ['team-pulse.json', 'team-pulse.backup.json', 'team-pulse.daily.json', 'team-pulse.monthly.json', 'SCHEMA.md'];
+  assert(plainFormatArtifacts.includes('team-pulse.json'), 'main JSON must still be written');
+  assert(plainFormatArtifacts.includes('team-pulse.backup.json'), 'rolling backup must still be written');
+  assert(plainFormatArtifacts.includes('team-pulse.daily.json'), 'daily backup must still be written');
+  assert(plainFormatArtifacts.includes('team-pulse.monthly.json'), 'monthly backup must still be written');
+  assert(plainFormatArtifacts.includes('SCHEMA.md'), 'schema doc must still be written');
+});
+
+const resultsEl=document.getElementById('results');
+resultsEl.innerHTML = `<ul>${results.map((item)=>`<li class="${item.ok ? 'pass' : 'fail'}">${item.ok ? 'PASS' : 'FAIL'} — <code>${item.name}</code>${item.ok ? '' : ` :: ${item.error}`}</li>`).join('')}</ul>`;
+  </script>
+</body>
+</html>

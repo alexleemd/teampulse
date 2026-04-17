@@ -1,0 +1,58 @@
+Team Pulse v0.15.7
+
+What this is
+- A single-file browser app for one manager to track direct reports, meetings, cadence, development context, and notes.
+- The durable browser build writes Team Pulse files into a user-chosen folder and uses JSON as the source of truth.
+
+How to use
+1. Open team-pulse-v0.15.7.html in Edge or Chrome.
+2. Connect a Team Pulse folder or import an existing Team Pulse JSON file.
+3. Use Add direct report from the Direct reports section to open the workspace in create mode.
+4. Click a direct report row to open that person's workspace.
+5. Edit profile, development focus, and notes in the workspace.
+6. Click Save changes to commit profile edits, or Close to leave the workspace.
+7. Use Log meeting to add or edit a 1:1, PDC, or CV review from the separate meeting modal.
+
+What's new in v0.15.7
+- This is a scanner hygiene release. The feature surface is the same as v0.15.6 with one visible removal: the Download full archive button is gone from the Data health section of Settings.
+- The built-in ZIP archive builder has been removed. The individual plain-format files Team Pulse already writes into your folder (the main JSON, the rolling backups, the schema doc, and the CSVs/Markdown from Export now) are unchanged. You just no longer get an extra ZIP stapled on top.
+- Dead code was cleaned up. Seven top-level functions with no live callers were deleted, including a couple of stubs for a custom-fields workspace UI that was retired in earlier versions.
+- The HTML's CSS block was compressed by stripping redundant whitespace. The app looks and behaves exactly the same. The file is a bit smaller.
+- Some of the simpler DOM renders were rewritten to use textContent and createElement instead of innerHTML. The app looks and behaves exactly the same here too.
+
+If you used Download full archive
+- You can get the same content by opening your Team Pulse folder directly. The main JSON (`team-pulse.json`), the three rolling backups (`.backup.json`, `.daily.json`, `.monthly.json`), the schema doc, and the last export's CSVs and notes Markdown all live in that folder already.
+- Export now still writes fresh CSVs and a notes Markdown into the folder on demand.
+
+Workspace behavior (unchanged since v0.15.5)
+- Unsaved workspace form edits persist while the workspace stays open, even if the app re-renders after a meeting is saved.
+- Saving a meeting does not commit unsaved profile edits, and it does not erase them from the open workspace.
+- Close asks for confirmation if there are unsaved edits in the workspace.
+- Switching to another direct report or opening a new direct report draft also asks before discarding unsaved edits.
+- Browser exit warnings cover unsaved workspace edits as well as queued or failed saves.
+
+Current workspace layout (unchanged since v0.15.5)
+- The workspace header shows the direct report name and a prominent level line.
+- Mentor names are not shown beside the level in the header.
+- Hire date and last promotion appear as compact header chips under the level.
+- The workspace uses a Workspace focus panel at the top instead of duplicating cadence data in a second summary tile row.
+- Cadence snapshot remains the main place to review the last 1:1, PDC, and CV review touchpoints.
+- The editable PDC planning field is Next planned PDC.
+
+Save and durability behavior (unchanged since v0.15.5)
+- Autosave remains the main persistence path for data-changing actions after a Team Pulse folder is connected.
+- The autosave debounce remains about 160 ms.
+- Save now forces an immediate write.
+- The save-state pill shows the manual save time after Save now, and Autosaved after autosaves.
+- Toast/banner notifications dismiss after about 2 seconds.
+- Workspace form drafts are kept only in the running UI until Save changes is used.
+
+Files in this release bundle
+- team-pulse-v0.15.7.html
+- team-pulse-v0.15.7-release-notes.txt
+- team-pulse-v0.15.7-readme.txt
+- team-pulse-v0.15.7-schema.md
+- team-pulse-v0.15.7-tests.html
+- team-pulse-one-prompt-v0.15.7.txt
+- team-pulse-recreation-spec-v0.15.7.md
+- team-pulse-v0.15.7.zip
