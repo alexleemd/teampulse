@@ -13,6 +13,90 @@
     html,body{margin:0;padding:0}
     body{font-family:Figtree,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
     button,input,select,textarea{font:inherit}
+    /* === App shell (3-pane Lattice-style) =================================== */
+    .app-shell{display:grid;grid-template-columns:64px 320px 1fr;grid-template-rows:100vh;height:100vh;overflow:hidden}
+    .app-shell.no-middle{grid-template-columns:64px 1fr}
+    .app-shell.shell-loading{grid-template-columns:1fr;overflow:auto}
+    /* Icon rail */
+    .nav-rail{background:#0f172a;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;border-right:1px solid #1e293b;position:relative;z-index:2}
+    .nav-rail-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#8a5cff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;margin-bottom:10px;letter-spacing:-0.02em}
+    .nav-rail-btn{appearance:none;border:none;background:transparent;color:#94a3b8;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s ease,color 0.15s ease;position:relative}
+    .nav-rail-btn:hover,.nav-rail-btn:focus-visible{background:#1e293b;color:#e2e8f0;outline:none}
+    .nav-rail-btn:disabled{opacity:0.35;cursor:not-allowed;background:transparent;color:#64748b}
+    .nav-rail-btn:disabled:hover{background:transparent}
+    .nav-rail-btn.active{background:#2957d6;color:#fff}
+    .nav-rail-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .nav-rail-btn[data-badge]::after{content:attr(data-badge);position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--warning);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;pointer-events:none}
+    .nav-rail-spacer{flex:1}
+    .nav-rail-btn .nav-rail-tooltip{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:#0f172a;color:#fff;font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s ease;box-shadow:0 6px 20px rgba(0,0,0,0.25);z-index:10}
+    .nav-rail-btn:hover .nav-rail-tooltip,.nav-rail-btn:focus-visible .nav-rail-tooltip{opacity:1}
+    /* Middle column (list pane) */
+    .list-pane{background:#fafbfd;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .list-pane-head{padding:18px 18px 10px;border-bottom:1px solid var(--line);background:#fff;display:grid;gap:6px;flex:none}
+    .list-pane-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+    .list-pane-head h2{font-size:20px;font-weight:800;margin:0;letter-spacing:-0.01em}
+    .list-pane-head p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .list-pane-tools{padding:12px 14px 8px;display:grid;gap:8px;flex:none}
+    .list-pane-tools input[type="search"],.list-pane-tools select{padding:9px 12px;font-size:13px;border-radius:10px}
+    .list-pane-body{flex:1 1 auto;overflow-y:auto;padding:6px 10px 16px}
+    .list-pane-body::-webkit-scrollbar{width:8px}
+    .list-pane-body::-webkit-scrollbar-thumb{background:#d8dfec;border-radius:4px}
+    .list-nav-group{margin-top:10px}
+    .list-nav-group-label{padding:8px 12px 4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+    .list-nav-item{appearance:none;width:100%;text-align:left;background:transparent;border:none;padding:10px 12px;display:flex;align-items:center;gap:10px;border-radius:10px;cursor:pointer;color:var(--text);font-size:14px;font-weight:600;transition:background 0.12s ease}
+    .list-nav-item:hover,.list-nav-item:focus-visible{background:#eef2f8;outline:none}
+    .list-nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
+    .list-nav-item .list-nav-icon{width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .list-nav-item .list-nav-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);background:#eef2f8;border-radius:999px;padding:2px 8px;line-height:1.5}
+    .list-nav-item.active .list-nav-count{background:#fff;color:var(--accent)}
+    /* Report list cards in middle column */
+    .report-card{appearance:none;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:6px;cursor:pointer;transition:background 0.12s ease,border-color 0.12s ease,box-shadow 0.12s ease;margin-bottom:8px}
+    .report-card:hover,.report-card:focus-visible{border-color:#c2cde0;background:#fff;outline:none;box-shadow:0 2px 6px rgba(23,32,51,0.04)}
+    .report-card.active{background:var(--accent-soft);border-color:rgba(41,87,214,0.25);box-shadow:0 0 0 1px rgba(41,87,214,0.1)}
+    .report-card-top{display:flex;align-items:center;gap:10px}
+    .report-card-name{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+    .report-card-support{width:10px;height:10px;border-radius:999px;flex:none}
+    .report-card-support[data-fill="green"]{background:var(--sat-green)}
+    .report-card-support[data-fill="blue"]{background:var(--sat-blue)}
+    .report-card-support[data-fill="amber"]{background:var(--sat-amber)}
+    .report-card-support[data-fill="red"]{background:var(--sat-red)}
+    .report-card-support[data-fill="grey"]{background:var(--sat-grey)}
+    .report-card-meta{font-size:12px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .report-card-meta .pip{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:0.4}
+    .report-card-attention{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+    .report-card-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:2px 6px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
+    .report-card-chip[data-tone="danger"]{background:var(--danger-soft);color:var(--danger)}
+    .report-card-chip[data-tone="info"]{background:var(--info-soft);color:var(--info)}
+    /* Right pane (content) */
+    .content-pane{overflow-y:auto;overflow-x:hidden;background:var(--bg);min-width:0;position:relative}
+    .content-pane-inner{max-width:1200px;margin:0 auto;padding:24px 28px 60px}
+    .content-pane-inner.wide{max-width:none;padding:0}
+    .content-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+    .content-header-title h1{font-size:28px;font-weight:800;margin:0;letter-spacing:-0.02em}
+    .content-header-title p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .content-header-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .content-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 48px);padding:40px;text-align:center;color:var(--muted);gap:12px}
+    .content-empty-icon{width:64px;height:64px;border-radius:50%;background:#eef2f8;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+    .content-empty-icon svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .content-empty h3{color:var(--text);font-size:18px;font-weight:700}
+    .content-empty p{max-width:380px;margin:0;font-size:14px}
+    /* Mobile / narrow: collapse to stacked (list hidden, tab bar at top) */
+    @media (max-width:900px){.app-shell{grid-template-columns:1fr !important;grid-template-rows:auto 1fr;height:100vh;overflow:hidden}
+    .app-shell[data-pane="list"] .nav-rail-mobile{display:flex}
+    .nav-rail{flex-direction:row;width:100%;height:56px;padding:0 10px;justify-content:flex-start;gap:4px;border-right:none;border-bottom:1px solid #1e293b}
+    .nav-rail-logo{margin-bottom:0;margin-right:8px}
+    .nav-rail-spacer{display:none}
+    .nav-rail-btn .nav-rail-tooltip{display:none}
+    .list-pane,.content-pane{display:none}
+    .app-shell[data-mobile-pane="list"] .list-pane{display:flex}
+    .app-shell[data-mobile-pane="content"] .content-pane{display:block}
+    .content-pane-inner{padding:16px}
+    .content-header{flex-direction:column;align-items:stretch}
+    .mobile-back-btn{display:inline-flex !important}
+    }
+    .mobile-back-btn{display:none;appearance:none;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;align-items:center;gap:6px;margin-bottom:12px}
+    .mobile-back-btn:hover{background:#f5f7fb}
+    /* Old layout classes kept for backward compat inside the new panes */
     .page{max-width:1400px;margin:0 auto;padding:28px 28px 120px}
     .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
     .eyebrow{margin:0 0 6px;color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em}
@@ -87,43 +171,78 @@
     .team-health-tab{appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);padding:9px 14px;font-size:14px;font-weight:700;border-radius:999px;cursor:pointer;transition:background 0.15s ease,color 0.15s ease,border-color 0.15s ease}
     .team-health-tab:hover{background:#f2f5fb;color:var(--text)}
     .team-health-tab.active{background:var(--accent-soft);color:var(--accent);border-color:transparent}
-    #teamHealthBody > .tenure-river-card:first-child,#teamHealthBody > .recent-themes-card:first-child,#teamHealthBody > .pdc-mix-card:first-child,#teamHealthBody > .cadence-tab:first-child{margin-top:0}
-    /* Cadence tab: person cards + cadence bars */
-    .cadence-tab{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
-    .glyph-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:12px;margin:0}
-    .glyph-cell{appearance:none;background:#fbfcff;border:1px solid var(--line);padding:10px 8px;cursor:pointer;border-radius:14px;display:grid;gap:6px;justify-items:center;min-width:0;text-align:center;transition:border-color 0.15s ease,background 0.15s ease,transform 0.12s ease}
-    .glyph-cell svg{width:28px;height:auto;display:block}
-    .glyph-cell:hover,.glyph-cell:focus-visible{background:#eef4ff;border-color:#cfd9ec;outline:none;transform:translateY(-1px)}
-    .glyph-name{max-width:100%;font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .glyph-meta{max-width:100%;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .glyph-summary{margin:0;color:var(--muted);font-size:13px;font-weight:600}
-    .glyph-attention-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    .glyph-attention-row .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
-    .attention-person-chip{appearance:none;border:1px solid #f1d6a3;background:#fff7ec;color:var(--text);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
-    .attention-person-chip span{color:var(--muted);font-weight:600}
-    .attention-person-chip:hover,.attention-person-chip:focus-visible{background:#fff3e2;border-color:#dfc18a;outline:none}
-    .cadence-bars{display:grid;gap:14px;margin-top:4px}
+    #teamHealthBody > .tenure-river-card:first-child,#teamHealthBody > .recent-themes-card:first-child,#teamHealthBody > .overview-tab:first-child{margin-top:0}
+    /* Overview tab: dashboard sections */
+    .overview-tab{display:grid;gap:14px}
+    .overview-section{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
+    .overview-section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 12px}
+    .overview-section-head h3{margin:0;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+    .overview-section-head .overview-section-note{color:var(--muted);font-size:12px;font-weight:600}
+    /* Health score hero */
+    .health-score{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;padding:20px 22px}
+    .health-score-dial{position:relative;width:120px;height:120px}
+    .health-score-dial svg{width:100%;height:100%;display:block;transform:rotate(-90deg)}
+    .health-score-dial-value{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+    .health-score-dial-value strong{display:block;font-size:34px;font-weight:800;line-height:1;color:var(--text)}
+    .health-score-dial-value span{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.08em}
+    .health-score-body{display:grid;gap:6px}
+    .health-score-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+    .health-score-headline{font-size:20px;font-weight:800;color:var(--text);line-height:1.25;margin:0}
+    .health-score-headline[data-tone="success"]{color:var(--success)}
+    .health-score-headline[data-tone="warning"]{color:var(--warning)}
+    .health-score-headline[data-tone="danger"]{color:var(--danger)}
+    .health-score-sub{color:var(--muted);font-size:13px;margin:0;font-weight:600}
+    /* Cadence bars */
+    .cadence-bars{display:grid;gap:14px}
     .health-metric{display:grid;gap:8px}
     .health-metric-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
     .health-metric-top strong{font-size:15px}
     .health-metric-top span,.health-subtext{color:var(--muted);font-size:13px}
-    .health-progress{height:12px;border-radius:999px;background:#ecf1f9;overflow:hidden;border:1px solid #e4ebf5}
-    .health-progress > span{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent)}
+    .health-progress{height:10px;border-radius:999px;background:#ecf1f9;overflow:hidden;border:1px solid #e4ebf5}
+    .health-progress > span{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width 0.4s ease}
     .health-progress.warning > span{background:var(--warning)}
     .health-progress.success > span{background:var(--success)}
     .health-progress.danger > span{background:var(--danger)}
-    /* PDC Mix tab: donut chart */
-    .pdc-mix-card{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
-    .pdc-mix-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-    .pdc-mix-head p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .donut-wrap{display:grid;place-items:center;padding:8px 0}
-    .donut-svg{width:220px;height:220px;display:block}
-    .donut-segment{cursor:pointer;transition:stroke-width 0.12s ease,opacity 0.12s ease;transform-origin:120px 120px}
-    .donut-segment:hover{stroke-width:28;opacity:0.9}
+    /* Attention breakdown */
+    .attention-breakdown-empty{color:var(--muted);font-size:13px;margin:0}
+    .attention-breakdown-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .attention-breakdown-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+    .attention-breakdown-count{font-size:17px;font-weight:800;color:var(--text);min-width:20px;text-align:right}
+    .attention-breakdown-meter{height:8px;border-radius:999px;background:#ecf1f9;overflow:hidden;border:1px solid #e4ebf5;position:relative}
+    .attention-breakdown-meter > span{display:block;height:100%;width:0;border-radius:inherit;background:var(--warning);transition:width 0.4s ease}
+    .attention-breakdown-meter[data-tone="danger"] > span{background:var(--danger)}
+    .attention-breakdown-meter[data-tone="warning"] > span{background:var(--warning)}
+    .attention-breakdown-meter[data-tone="info"] > span{background:var(--info)}
+    .attention-breakdown-label{font-size:13px;font-weight:700;color:var(--text)}
+    /* Support level distribution */
+    .support-strip{display:flex;height:28px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#f5f7fb}
+    .support-strip-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;transition:filter 0.12s ease;min-width:0}
+    .support-strip-seg[data-empty="true"]{display:none}
+    .support-strip-seg[data-fill="green"]{background:var(--sat-green)}
+    .support-strip-seg[data-fill="blue"]{background:var(--sat-blue)}
+    .support-strip-seg[data-fill="amber"]{background:var(--sat-amber)}
+    .support-strip-seg[data-fill="red"]{background:var(--sat-red)}
+    .support-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+    .support-legend-item{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text)}
+    .support-legend-item[data-dim="true"]{color:var(--muted)}
+    .support-legend-item .swatch{width:10px;height:10px;border-radius:3px;flex:none}
+    .support-legend-item .swatch[data-fill="green"]{background:var(--sat-green)}
+    .support-legend-item .swatch[data-fill="blue"]{background:var(--sat-blue)}
+    .support-legend-item .swatch[data-fill="amber"]{background:var(--sat-amber)}
+    .support-legend-item .swatch[data-fill="red"]{background:var(--sat-red)}
+    .support-legend-item .count{color:var(--muted);font-weight:700;margin-left:2px}
+    /* Upcoming list */
+    .upcoming-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+    .upcoming-row{appearance:none;background:transparent;border:none;width:100%;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;transition:background 0.12s ease}
+    .upcoming-row:hover,.upcoming-row:focus-visible{background:#f5f7fb;outline:none}
+    .upcoming-row-kind{font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);min-width:40px}
+    .upcoming-row-name{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .upcoming-row-when{font-size:12px;font-weight:700;color:var(--muted)}
+    .upcoming-row-when[data-tone="danger"]{color:var(--danger)}
+    .upcoming-row-when[data-tone="warning"]{color:var(--warning)}
+    .upcoming-row-when[data-tone="success"]{color:var(--success)}
+    .upcoming-empty{color:var(--muted);font-size:13px;margin:0}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .stacked-legend{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
-    .stacked-legend .legend-item{gap:8px;font-weight:700;font-size:13px}
-    .stacked-legend .count{color:var(--muted);font-weight:600}
     .searchbar{display:grid;grid-template-columns:minmax(240px,1.5fr) repeat(2,minmax(180px,0.75fr));gap:12px;align-items:center;margin-bottom:12px}
     input[type="search"],input[type="text"],input[type="number"],input[type="date"],input:not([type]),select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;color:var(--text);outline:none;transition:border-color 0.15s ease,box-shadow 0.15s ease}
     input:focus,select:focus,textarea:focus{border-color:rgba(41,87,214,0.45);box-shadow:0 0 0 4px rgba(41,87,214,0.08)}
@@ -186,13 +305,19 @@
     .modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 20px 0}
     .modal-header p{margin:6px 0 0;color:var(--muted);font-size:14px}
     .modal-body{padding:20px}
+    /* Rules drawer (settings) still slides in from right */
     .drawer{position:absolute;right:0;top:0;bottom:0;width:min(1180px,72vw);max-width:calc(100vw - 14px);height:100vh;background:#fff;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);transition:transform 0.16s ease;border-left:1px solid var(--line);overflow:hidden}
     .drawer.rules-drawer{width:min(460px,94vw)}
     .drawer-overlay.open .drawer{transform:translateX(0)}
-    #detailDrawerOverlay{display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
-    #detailDrawer{height:100%;min-height:0;display:flex;flex:1 1 auto;flex-direction:column}
-    #detailDrawerOverlay .drawer{position:relative;right:auto;top:auto;bottom:auto;width:min(1560px,90vw);max-width:min(1560px,90vw);height:min(94vh,1180px);max-height:calc(100vh - 24px);border-left:none;border-radius:22px;box-shadow:0 24px 70px rgba(14,23,38,0.28);transform:translateY(16px) scale(0.99);overflow:hidden;margin:0 auto;display:flex;flex-direction:column}
-    #detailDrawerOverlay.open .drawer{transform:translateY(0) scale(1)}
+    /* Detail drawer: now inline in the content pane, not modal.
+       When the drawer is active, the content pane goes full-bleed (no padding, no max-width)
+       and the drawer manages its own internal scrolling. */
+    #detailDrawer{display:flex;flex-direction:column;min-height:0;background:#fff;overflow:hidden;flex:1 1 auto}
+    #detailDrawer[hidden]{display:none !important}
+    .content-pane.drawer-active{overflow:hidden}
+    .content-pane.drawer-active .content-pane-inner{padding:0;max-width:none;height:100vh;display:flex;flex-direction:column}
+    .content-pane.drawer-active #contentHeader{display:none}
+    .content-pane.drawer-active #detailDrawer{flex:1 1 auto;min-height:0}
     .rules-drawer{position:absolute;right:0;top:0;bottom:0;width:min(460px,94vw);max-width:calc(100vw - 14px);height:100vh;border-radius:0;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);border-left:1px solid var(--line)}
     .drawer-overlay.open .rules-drawer{transform:translateX(0)}
     .workspace-form-grid{display:grid;gap:14px}
@@ -515,7 +640,7 @@
     .tile-link-row strong{color:inherit}
     .tile-link-row:hover{background:#fbfcff;border-color:#cfd9ec}
 
-    @media (max-width:1100px){#detailDrawerOverlay .drawer{width:min(1380px,calc(100vw - 24px));max-width:min(1380px,calc(100vw - 24px))}
+    @media (max-width:1100px){
     .hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
     @media (max-width:860px){.page{padding:20px 16px 120px}
@@ -531,8 +656,6 @@
     .tenure-river-head,.tenure-river-foot{flex-direction:column;align-items:stretch}
     .drawer-hero-actions,.pulse-strip-head{flex-direction:column;align-items:stretch}
     .vacation-row{grid-template-columns:1fr}
-    #detailDrawerOverlay{padding:10px}
-    #detailDrawerOverlay .drawer{width:calc(100vw - 16px);max-width:calc(100vw - 16px);height:calc(100vh - 16px);max-height:calc(100vh - 16px)}
     .rules-drawer{width:100vw}
     .modal,.modal.tile-modal{width:calc(100vw - 20px);margin:10px auto}
     .custom-field-row{grid-template-columns:1fr}
@@ -559,110 +682,139 @@
 <body>
   <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
 
-  <div class="page">
-    <div class="topbar">
-      <div>
-        <p class="eyebrow">Manager Notebook</p>
-        <div class="title-row">
-          <h1>Team Pulse</h1>
-          <span id="appVersion" class="pill version-pill">v0.33.0</span>
-          <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
-        </div>
-      </div>
-      <div class="toolbar">
-        <details class="toolbar-menu" id="dataMenu">
-          <summary class="toolbar-menu-trigger">Data</summary>
-          <div class="toolbar-menu-popover" role="menu" aria-label="Data actions">
-            <button id="saveFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Choose folder</button>
-            <button id="connectDataFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import JSON</button>
-            <button id="importIcsBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import .ics</button>
-            <button id="exportCsvBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Export files</button>
+  <div class="app-shell" id="appShell" data-main-view="teamHealth" data-mobile-pane="content">
+
+    <!-- LEFT RAIL — app-level nav -->
+    <nav class="nav-rail" aria-label="Main navigation">
+      <div class="nav-rail-logo" title="Team Pulse">TP</div>
+      <button type="button" class="nav-rail-btn active" data-main-nav="teamHealth" aria-label="Team Health" aria-pressed="true">
+        <svg viewBox="0 0 24 24"><path d="M3 12h3l2-5 4 10 2-5h7"/></svg>
+        <span class="nav-rail-tooltip">Team Health</span>
+      </button>
+      <button type="button" class="nav-rail-btn" data-main-nav="reports" aria-label="Direct Reports" aria-pressed="false">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
+        <span class="nav-rail-tooltip">Direct Reports</span>
+      </button>
+      <div class="nav-rail-spacer"></div>
+      <button type="button" class="nav-rail-btn" data-main-nav="settings" aria-label="Settings" aria-pressed="false">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
+        <span class="nav-rail-tooltip">Settings</span>
+      </button>
+    </nav>
+
+    <!-- MIDDLE COLUMN — view-specific list -->
+    <aside class="list-pane" id="listPane" aria-label="Section list">
+      <div id="listPaneContent"></div>
+    </aside>
+
+    <!-- RIGHT COLUMN — active content -->
+    <main class="content-pane" id="contentPane" role="main">
+      <div class="content-pane-inner" id="contentPaneInner">
+
+        <!-- Startup gate (folder selection) -->
+        <section class="card startup-gate" id="startupGate">
+          <div class="panel-header">
+            <div>
+              <h2>Choose a Team Pulse Folder</h2>
+              <p>Choose where Team Pulse should write team-pulse.json, rolling backups, exports, and SCHEMA.md. Team Pulse stays blank until you connect a folder.</p>
+            </div>
           </div>
-        </details>
-        <button id="attentionRulesBtn" class="secondary">Settings</button>
-      </div>
-    </div>
-
-    <section class="card startup-gate" id="startupGate">
-      <div class="panel-header">
-        <div>
-          <h2>Choose a Team Pulse Folder</h2>
-          <p>Choose where Team Pulse should write team-pulse.json, rolling backups, exports, and SCHEMA.md. Team Pulse stays blank until you connect a folder.</p>
-        </div>
-      </div>
-      <div class="content topless startup-gate-body">
-        <div class="setup-actions">
-          <button id="createJsonFileBtn">Choose Team Pulse folder</button>
-          <button id="openJsonFileBtn" class="secondary">Import existing JSON</button>
-        </div>
-        <p class="help-text">After you connect a folder once, Team Pulse will remember it in this browser and offer it again next time.</p>
-      </div>
-    </section>
-
-    <section class="card team-health-card" id="teamHealthSection">
-      <div class="panel-header team-health-header">
-        <div>
-          <h2>Team Health</h2>
-          <p>Quick scan before you open a direct report workspace.</p>
-        </div>
-        <div id="kpiStrip" class="kpi-strip team-health-summary" aria-label="Team health summary"></div>
-      </div>
-      <div class="team-health-tabbar" id="teamHealthTabBar" role="tablist" aria-label="Team Health sections"></div>
-      <div class="content topless">
-        <div id="teamHealthBody" role="tabpanel"></div>
-      </div>
-    </section>
-
-    <section class="card" id="reportsSection">
-      <div class="panel-header">
-        <div>
-          <h2>Direct Reports</h2>
-          <p>Attention first, then next touchpoints. Click any row to open that person's notes.</p>
-        </div>
-        <div class="section-actions">
-          <button id="addReportBtn">Add direct report</button>
-        </div>
-      </div>
-      <div class="content topless">
-        <div class="searchbar">
-          <input id="searchInput" type="search" placeholder="Search by name, mentor, status, next touchpoint, or notes">
-          <select id="planFilter">
-            <option value="">All PDC statuses</option>
-          </select>
-          <select id="attentionFilter">
-            <option value="">All attention states</option>
-            <option value="needs-attention">Needs attention only</option>
-            <option value="on-track">On track only</option>
-            <option value="open-followups">Open follow-ups</option>
-            <option value="on-vacation">On vacation</option>
-          </select>
-        </div>
-        <div id="quickFilterBar" class="quick-filter-bar hidden">
-          <div>
-            <strong id="quickFilterTitle"></strong>
-            <p id="quickFilterDescription" class="hint"></p>
+          <div class="content topless startup-gate-body">
+            <div class="setup-actions">
+              <button id="createJsonFileBtn">Choose Team Pulse folder</button>
+              <button id="openJsonFileBtn" class="secondary">Import existing JSON</button>
+            </div>
+            <p class="help-text">After you connect a folder once, Team Pulse will remember it in this browser and offer it again next time.</p>
           </div>
-          <button id="clearQuickFilterBtn" class="secondary">Clear quick filter</button>
+        </section>
+
+        <!-- Content header (view title + folder pill) -->
+        <div class="content-header" id="contentHeader" hidden>
+          <button type="button" class="mobile-back-btn" id="mobileBackBtn" aria-label="Back to list">← Back</button>
+          <div class="content-header-title">
+            <h1 id="contentHeaderTitle">Team Health</h1>
+            <p id="contentHeaderSubtitle"></p>
+          </div>
+          <div class="content-header-meta">
+            <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+            <details class="toolbar-menu" id="dataMenu">
+              <summary class="toolbar-menu-trigger">Data</summary>
+              <div class="toolbar-menu-popover" role="menu" aria-label="Data actions">
+                <button id="saveFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Choose folder</button>
+                <button id="connectDataFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import JSON</button>
+                <button id="importIcsBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import .ics</button>
+                <button id="exportCsvBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Export files</button>
+              </div>
+            </details>
+          </div>
         </div>
-        <div class="table-tip">Sorted by attention first, then the nearest touchpoint.</div>
+
+        <!-- Hidden: Team Health section -->
+        <section class="card team-health-card" id="teamHealthSection" hidden>
+          <!-- Tab bar moved to list pane; kept hidden for legacy click handlers. -->
+          <div class="team-health-tabbar hidden" id="teamHealthTabBar" role="tablist" aria-label="Team Health sections" style="display:none"></div>
+          <div class="content topless">
+            <div id="teamHealthBody" role="tabpanel"></div>
+          </div>
+        </section>
+
+        <!-- Hidden: Reports section (empty-state when no report selected) -->
+        <section id="reportsSection" hidden>
+          <div class="content-empty" style="min-height:60vh">
+            <div class="content-empty-icon">
+              <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
+            </div>
+            <h3 id="reportsEmptyHeadline">Pick a direct report</h3>
+            <p id="reportsEmptyBody">Select someone from the list on the left to open their workspace — profile, meetings, and PDC summary all in one place.</p>
+            <div class="actions" style="justify-content:center;margin-top:8px">
+              <button id="addReportBtn">+ Add direct report</button>
+            </div>
+          </div>
+          <div id="quickFilterBar" class="quick-filter-bar hidden">
+            <div>
+              <strong id="quickFilterTitle"></strong>
+              <p id="quickFilterDescription" class="hint"></p>
+            </div>
+            <button id="clearQuickFilterBtn" class="secondary">Clear quick filter</button>
+          </div>
+          <div id="tableEmpty" class="empty-state hidden">No direct reports yet. Add one to get started.</div>
+          <!-- Hidden searchbar + table (still here for legacy handlers; list pane has its own) -->
+          <div class="hidden">
+            <input id="searchInput" type="search" placeholder="Search">
+            <select id="planFilter"><option value="">All PDC statuses</option></select>
+            <select id="attentionFilter">
+              <option value="">All attention states</option>
+              <option value="needs-attention">Needs attention only</option>
+              <option value="on-track">On track only</option>
+              <option value="open-followups">Open follow-ups</option>
+              <option value="on-vacation">On vacation</option>
+            </select>
+            <table><tbody id="reportsTableBody"></tbody></table>
+          </div>
+        </section>
+
+        <!-- Detail drawer (now inline, not modal) -->
+        <div id="detailDrawer" hidden></div>
+
+        <!-- Settings view content -->
+        <section class="card" id="settingsSection" hidden>
+          <div class="panel-header">
+            <div>
+              <h2 id="settingsSectionTitle">Settings</h2>
+              <p id="settingsSectionSubtitle">Choose a settings category from the list.</p>
+            </div>
+          </div>
+          <div class="content" id="settingsSectionBody"></div>
+        </section>
+
+        <!-- Legacy container for renderStats; hidden always, keeps old code paths alive -->
+        <div id="kpiStrip" class="hidden" aria-hidden="true"></div>
+
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Touchpoints</th>
-              <th>Next</th>
-              <th>Support</th>
-              <th>Open follow-ups</th>
-            </tr>
-          </thead>
-          <tbody id="reportsTableBody"></tbody>
-        </table>
-      </div>
-      <div id="tableEmpty" class="empty-state hidden">No direct reports match your current filters.</div>
-    </section>
+    </main>
+
   </div>
+<!-- end .app-shell -->
 
   <div id="saveDock" class="save-dock hidden" role="status" aria-live="polite">
     <div>
@@ -751,11 +903,8 @@
   </div>
 </div>
 
-<div id="detailDrawerOverlay" class="drawer-overlay" aria-hidden="true">
-    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-      <div id="detailDrawer"></div>
-    </aside>
-  </div>
+<!-- Detail drawer overlay: legacy stub only. The real #detailDrawer now lives inline in the content pane. -->
+<div id="detailDrawerOverlay" class="hidden" aria-hidden="true" style="display:none !important"></div>
 
   <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
     <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle">
@@ -897,7 +1046,7 @@
   </div>
 
   <script>
-const APP_VERSION = 'v0.33.0';
+const APP_VERSION = 'v0.35.0';
 const CURRENT_SCHEMA_VERSION = 7;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -982,13 +1131,15 @@ const DEFAULT_UI = Object.freeze({
   vacationEditMode: false,
   cadenceEditMode: false,
   teamTenureMode: 'tenure',
-  teamHealthTab: 'cadence'
+  teamHealthTab: 'overview',
+  mainView: 'teamHealth'
 });
 
-const TEAM_HEALTH_TABS = Object.freeze(['cadence', 'pdc-mix', 'insights']);
+const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'settings']);
+
+const TEAM_HEALTH_TABS = Object.freeze(['overview', 'insights']);
 const TEAM_HEALTH_TAB_LABELS = Object.freeze({
-  'cadence': 'Cadence',
-  'pdc-mix': 'PDC Mix',
+  'overview': 'Overview',
   'insights': 'Insights'
 });
 const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary']);
@@ -1135,7 +1286,7 @@ function loadUiState() {
     const raw = localStorage.getItem(UI_STATE_KEY);
     if (!raw) return { ...DEFAULT_UI };
     const parsed = JSON.parse(raw);
-    return {
+    const merged = {
       ...DEFAULT_UI,
       ...parsed,
       selectedId: null,
@@ -1143,6 +1294,8 @@ function loadUiState() {
       activeTileKey: '',
       activeThemeFilter: ''
     };
+    if (!MAIN_VIEWS.includes(merged.mainView)) merged.mainView = 'teamHealth';
+    return merged;
   } catch (error) {
     console.error('Failed to load UI state', error);
     return { ...DEFAULT_UI };
@@ -1157,6 +1310,7 @@ function persistUiState() {
     detailDrawerTab: DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile',
     teamTenureMode: app.ui.teamTenureMode === 'promotion' ? 'promotion' : 'tenure',
     teamHealthTab: currentTeamHealthTab(),
+    mainView: MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth',
     startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
@@ -2680,7 +2834,6 @@ function undoLastDestructiveAction() {
 function syncBodyOverlayLock() {
   const locked = startupPromptOverlayEl.classList.contains('open')
     || meetingModalEl.classList.contains('open')
-    || detailDrawerOverlayEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || tileModalEl.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
@@ -3265,7 +3418,7 @@ function updateFileUi() {
   }
 
   addReportBtn.disabled = !connected;
-  attentionRulesBtn.disabled = !connected;
+  if (attentionRulesBtn) attentionRulesBtn.disabled = !connected;
   importIcsBtn.disabled = !connected || getReports().length === 0;
   exportCsvBtn.disabled = !connected || getReports().length === 0;
 
@@ -3386,8 +3539,8 @@ function openCreateWorkspace(options = {}) {
   app.ui.selectedId = null;
   app.ui.detailDrawerTab = 'profile';
   app.ui.profileEditMode = true;
-  renderTable();
-  renderDetailDrawer();
+  app.ui.mainView = 'reports';
+  render();
   persistUiState();
   return true;
 }
@@ -3404,12 +3557,9 @@ function selectReport(id, options = {}) {
   app.ui.profileEditMode = false;
   app.ui.vacationEditMode = false;
   app.ui.cadenceEditMode = false;
-  if (options.fullRender) {
-    render();
-  } else {
-    renderTable();
-    renderDetailDrawer();
-  }
+  // Selecting a report implies we're on the Reports view.
+  app.ui.mainView = 'reports';
+  render();
   persistUiState();
   return true;
 }
@@ -3423,8 +3573,7 @@ function clearSelectedReport(options = {}) {
   app.ui.profileEditMode = false;
   app.ui.vacationEditMode = false;
   app.ui.cadenceEditMode = false;
-  renderTable();
-  renderDetailDrawer();
+  render();
   persistUiState();
   return true;
 }
@@ -3660,7 +3809,9 @@ function reportMatchesQuickFilter(report) {
 }
 
 function scrollToReports() {
-  reportsSectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // In the 3-pane shell, the content pane is the scroll container.
+  const contentPane = document.getElementById('contentPane');
+  if (contentPane) contentPane.scrollTop = 0;
 }
 
 function renderTable() {
@@ -4603,8 +4754,7 @@ function renderDetailDrawer() {
     : (persistedReport ? { ...persistedReport, ...(draftPayload || {}) } : null);
   const report = isCreating ? editorReport : persistedReport;
   if (!editorReport || !report) {
-    detailDrawerOverlayEl.classList.remove('open');
-    detailDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+    detailDrawerEl.setAttribute('hidden', '');
     detailDrawerEl.replaceChildren();
     syncBodyOverlayLock();
     return;
@@ -4620,8 +4770,7 @@ function renderDetailDrawer() {
     : (editorReport.level || 'Level not set');
   const profileInEditMode = isCreating || !!app.ui.profileEditMode;
 
-  detailDrawerOverlayEl.classList.add('open');
-  detailDrawerOverlayEl.setAttribute('aria-hidden', 'false');
+  detailDrawerEl.removeAttribute('hidden');
   syncBodyOverlayLock();
 
   // Preserve scroll position across re-renders when we're rendering the same report & tab
@@ -5022,23 +5171,243 @@ function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
   document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
+
+  // Startup gate takes over the content pane when no folder is connected.
   startupGateEl.classList.toggle('hidden', ready);
-  statsEl.classList.toggle('hidden', !ready);
-  teamHealthSectionEl.classList.toggle('hidden', !ready);
-  reportsSectionEl.classList.toggle('hidden', !ready);
+  const appShellEl = document.getElementById('appShell');
+  const contentHeaderEl = document.getElementById('contentHeader');
+  const listPaneEl = document.getElementById('listPane');
+  if (appShellEl) appShellEl.classList.toggle('no-middle', !ready);
+  if (listPaneEl) listPaneEl.style.display = ready ? '' : 'none';
+  if (contentHeaderEl) contentHeaderEl.hidden = !ready;
+  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => { btn.disabled = !ready; });
+
+  // Legacy stats strip (KPI pills) stays hidden — the middle column carries attention counts now.
+  statsEl.classList.add('hidden');
+
   updateFileUi();
   renderRuleInputs();
   renderSettingsPanel();
   renderExportReminderBanner();
+
   if (!ready) {
+    // Hide all main-view sections; only startup gate shows.
+    teamHealthSectionEl.setAttribute('hidden', '');
+    reportsSectionEl.setAttribute('hidden', '');
+    const settingsSectionEl = document.getElementById('settingsSection');
+    if (settingsSectionEl) settingsSectionEl.setAttribute('hidden', '');
     renderDetailDrawer();
     return;
   }
+
+  // Ready: route to the active main view.
+  const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
+  if (appShellEl) {
+    appShellEl.setAttribute('data-main-view', mainView);
+    // On mobile: if no report selected on Reports view, show list pane.
+    // On Team Health & Settings, default to content (the right pane is the primary view).
+    if (mainView === 'reports' && !app.ui.selectedId && !app.ui.creatingReport) {
+      appShellEl.setAttribute('data-mobile-pane', 'list');
+    }
+  }
+
+  // Sync nav-rail button states.
+  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => {
+    const isActive = btn.getAttribute('data-main-nav') === mainView;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  // Update content header title.
+  const headerTitleEl = document.getElementById('contentHeaderTitle');
+  const headerSubEl = document.getElementById('contentHeaderSubtitle');
+  const reportCount = getReports().length;
+  const reportLabel = reportCount === 1 ? 'direct report' : 'direct reports';
+  if (mainView === 'teamHealth') {
+    if (headerTitleEl) headerTitleEl.textContent = 'Team Health';
+    if (headerSubEl) headerSubEl.textContent = `${reportCount} ${reportLabel} · quick scan before opening a workspace`;
+  } else if (mainView === 'reports') {
+    const sel = app.ui.selectedId ? getReportById(app.ui.selectedId) : null;
+    if (headerTitleEl) headerTitleEl.textContent = sel ? sel.name : (app.ui.creatingReport ? 'New direct report' : 'Direct Reports');
+    if (headerSubEl) headerSubEl.textContent = sel ? (sel.level || 'Workspace') : (app.ui.creatingReport ? 'Fill in the profile' : `${reportCount} ${reportLabel} · pick one on the left`);
+  } else if (mainView === 'settings') {
+    if (headerTitleEl) headerTitleEl.textContent = 'Settings';
+    if (headerSubEl) headerSubEl.textContent = 'Overdue rules, data health, exports, backups.';
+  }
+
+  // Toggle content-pane sections based on active view.
+  const showTeamHealth = mainView === 'teamHealth';
+  const showReports = mainView === 'reports';
+  const showSettings = mainView === 'settings';
+  teamHealthSectionEl.toggleAttribute('hidden', !showTeamHealth);
+  reportsSectionEl.toggleAttribute('hidden', !showReports || !!app.ui.selectedId || app.ui.creatingReport);
+  const settingsSectionEl = document.getElementById('settingsSection');
+  if (settingsSectionEl) settingsSectionEl.toggleAttribute('hidden', !showSettings);
+
+  // Detail drawer only renders content when on Reports view with a selection.
+  const drawerVisible = showReports && (!!app.ui.selectedId || app.ui.creatingReport);
+  if (!showReports) {
+    detailDrawerEl.setAttribute('hidden', '');
+    detailDrawerEl.replaceChildren();
+  }
+  const contentPaneEl = document.getElementById('contentPane');
+  if (contentPaneEl) contentPaneEl.classList.toggle('drawer-active', drawerVisible);
+
+  // Render middle column (list pane).
+  renderListPane();
+
+  // Always render sections that compute data; the hidden attribute handles visibility.
   renderQuickFilterBar();
   renderStats();
   renderTeamHealth();
   renderTable();
   renderDetailDrawer();
+  renderSettingsView();
+}
+
+function renderSettingsView() {
+  const settingsSectionEl = document.getElementById('settingsSection');
+  if (!settingsSectionEl || settingsSectionEl.hasAttribute('hidden')) return;
+  const body = document.getElementById('settingsSectionBody');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="tile-link-row" data-settings-open="rules"><strong>Overdue rules & data health</strong><span>Thresholds, toggles, exports, backups, and Stable mode.</span></div>
+    <p class="help-text" style="margin-top:12px">Click the card above to open the full settings panel.</p>
+  `;
+}
+
+// Middle column (list pane) renderer.
+function renderListPane() {
+  const mount = document.getElementById('listPaneContent');
+  if (!mount) return;
+  const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
+  if (!ready) { mount.innerHTML = ''; return; }
+  const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
+  if (mainView === 'teamHealth') mount.innerHTML = renderListPaneTeamHealth();
+  else if (mainView === 'reports') mount.innerHTML = renderListPaneReports();
+  else if (mainView === 'settings') mount.innerHTML = renderListPaneSettings();
+}
+
+function renderListPaneTeamHealth() {
+  const reports = getReports();
+  const count = reports.length;
+  const label = count === 1 ? 'direct report' : 'direct reports';
+  const attentionCount = reports.filter((r) => {
+    const m = getMetrics(r.id);
+    return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
+  }).length;
+  const subtext = count === 0
+    ? 'Add someone to get started.'
+    : (attentionCount === 0 ? 'All on track.' : `${attentionCount} need attention`);
+  const currentTab = currentTeamHealthTab();
+  const tabsMarkup = TEAM_HEALTH_TABS.map((tab) => {
+    const isActive = tab === currentTab;
+    return `<button type="button" class="list-nav-item${isActive ? ' active' : ''}" data-list-team-health-tab="${escapeHtml(tab)}" aria-pressed="${isActive}">
+      <svg class="list-nav-icon" viewBox="0 0 24 24"><path d="${tab === 'overview' ? 'M3 12h3l2-5 4 10 2-5h7' : 'M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6'}"/></svg>
+      <span>${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
+    </button>`;
+  }).join('');
+  return `
+    <div class="list-pane-head">
+      <span class="list-pane-eyebrow">Team Health</span>
+      <h2>${count} ${escapeHtml(label)}</h2>
+      <p>${escapeHtml(subtext)}</p>
+    </div>
+    <div class="list-pane-body">
+      <div class="list-nav-group">
+        <div class="list-nav-group-label">Views</div>
+        ${tabsMarkup}
+      </div>
+    </div>
+  `;
+}
+
+function renderListPaneReports() {
+  const reports = getSortedReports();
+  const term = normalizeText(app.ui.searchTerm || '').toLowerCase();
+  const filtered = term
+    ? reports.filter((r) => (r.name || '').toLowerCase().includes(term)
+        || (r.mentors || '').toLowerCase().includes(term)
+        || (r.level || '').toLowerCase().includes(term))
+    : reports;
+  const activeId = app.ui.selectedId;
+  const cards = filtered.map((report) => {
+    const metrics = getMetrics(report.id);
+    const fill = supportLevelFill(report.supportLevel);
+    const isActive = activeId === report.id;
+    const level = report.level || 'Level not set';
+    const mentor = report.mentors ? `Mentor: ${report.mentors}` : '';
+    const chips = [];
+    if (metrics.oneOnOneOverdue) chips.push(`<span class="report-card-chip">1:1</span>`);
+    if (metrics.pdcOverdue) chips.push(`<span class="report-card-chip">PDC</span>`);
+    if (metrics.cvReviewOverdue) chips.push(`<span class="report-card-chip">CV</span>`);
+    if (report.supportLevel === 'Urgent') chips.push(`<span class="report-card-chip" data-tone="danger">Urgent</span>`);
+    else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-card-chip" data-tone="danger">Support</span>`);
+    return `<button type="button" class="report-card${isActive ? ' active' : ''}" data-report-card="${escapeHtml(report.id)}" aria-pressed="${isActive}">
+      <div class="report-card-top">
+        <span class="report-card-support" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
+        <span class="report-card-name">${escapeHtml(report.name || 'Unnamed')}</span>
+      </div>
+      <div class="report-card-meta">
+        <span>${escapeHtml(level)}</span>
+        ${mentor ? `<span class="pip"></span><span>${escapeHtml(mentor)}</span>` : ''}
+      </div>
+      ${chips.length ? `<div class="report-card-attention">${chips.join('')}</div>` : ''}
+    </button>`;
+  }).join('') || `<p class="help-text" style="padding:14px 12px">No direct reports ${term ? 'match your search' : 'yet'}.</p>`;
+  return `
+    <div class="list-pane-head">
+      <span class="list-pane-eyebrow">Direct Reports</span>
+      <h2>${reports.length} total</h2>
+    </div>
+    <div class="list-pane-tools">
+      <input id="listPaneSearch" type="search" placeholder="Search reports" value="${escapeHtml(app.ui.searchTerm || '')}">
+      <button type="button" id="listPaneAddBtn" class="secondary" style="font-size:13px;padding:9px 12px">+ Add direct report</button>
+    </div>
+    <div class="list-pane-body" id="listPaneReportList">
+      ${cards}
+    </div>
+  `;
+}
+
+function supportLevelFill(level) {
+  if (level === 'Urgent') return 'red';
+  if (level === 'Support needed') return 'amber';
+  if (level === 'Monitor') return 'blue';
+  if (level === 'Good') return 'green';
+  return 'grey';
+}
+
+function getSortedReports() {
+  // Reuse attention-first ordering that the table uses if possible; fall back to alphabetical.
+  const reports = getReports();
+  return [...reports].sort((a, b) => {
+    const ma = getMetrics(a.id);
+    const mb = getMetrics(b.id);
+    const aAtt = (ma.oneOnOneOverdue ? 1 : 0) + (ma.pdcOverdue ? 1 : 0) + (ma.cvReviewOverdue ? 1 : 0);
+    const bAtt = (mb.oneOnOneOverdue ? 1 : 0) + (mb.pdcOverdue ? 1 : 0) + (mb.cvReviewOverdue ? 1 : 0);
+    if (aAtt !== bAtt) return bAtt - aAtt;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+}
+
+function renderListPaneSettings() {
+  return `
+    <div class="list-pane-head">
+      <span class="list-pane-eyebrow">Settings</span>
+      <h2>Preferences</h2>
+      <p>Rules, data, and backups.</p>
+    </div>
+    <div class="list-pane-body">
+      <div class="list-nav-group">
+        <div class="list-nav-group-label">Categories</div>
+        <button type="button" class="list-nav-item active" data-settings-open="rules">
+          <svg class="list-nav-icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h12"/></svg>
+          <span>Rules & data</span>
+        </button>
+      </div>
+    </div>
+  `;
 }
 
 function collectWorkspaceVacations() {
@@ -5706,10 +6075,109 @@ function closeDataMenu() {
 
 function bindStaticEvents() {
   populateSelect(planFilterEl, PDC_STATUSES, true, 'All PDC statuses');
-  appVersionEl.textContent = APP_VERSION;
+  if (appVersionEl) appVersionEl.textContent = APP_VERSION;
+  // Surface version on nav rail logo tooltip.
+  const logoEl = document.querySelector('.nav-rail-logo');
+  if (logoEl) logoEl.title = `Team Pulse ${APP_VERSION}`;
   searchInputEl.value = app.ui.searchTerm;
   planFilterEl.value = app.ui.planFilter;
   attentionFilterEl.value = app.ui.attentionFilter;
+
+  // Left rail: main-view navigation.
+  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const nextView = btn.getAttribute('data-main-nav');
+      if (!MAIN_VIEWS.includes(nextView)) return;
+      if (app.ui.mainView === nextView) return;
+      // If user was editing a report, honor the workspace-close confirm flow.
+      if (!confirmWorkspaceClose()) return;
+      // Switching away from Reports clears selection so the right pane shows the list.
+      if (nextView !== 'reports') {
+        app.ui.selectedId = null;
+        app.ui.creatingReport = false;
+      }
+      app.ui.mainView = nextView;
+      // Settings view still opens the rules drawer for the actual form.
+      if (nextView === 'settings') {
+        render();
+        persistUiState();
+        openRulesDrawer();
+        return;
+      }
+      render();
+      persistUiState();
+    });
+  });
+
+  // Middle column: event delegation.
+  const listPaneEl = document.getElementById('listPane');
+  if (listPaneEl) {
+    listPaneEl.addEventListener('click', (event) => {
+      const teamHealthTabBtn = event.target.closest('[data-list-team-health-tab]');
+      if (teamHealthTabBtn) {
+        const nextTab = teamHealthTabBtn.getAttribute('data-list-team-health-tab');
+        if (!TEAM_HEALTH_TABS.includes(nextTab)) return;
+        app.ui.teamHealthTab = nextTab;
+        renderTeamHealth();
+        renderListPane();
+        persistUiState();
+        return;
+      }
+      const reportCard = event.target.closest('[data-report-card]');
+      if (reportCard) {
+        const id = reportCard.getAttribute('data-report-card');
+        selectReport(id);
+        const appShellEl = document.getElementById('appShell');
+        if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'content');
+        return;
+      }
+      const addBtn = event.target.closest('#listPaneAddBtn');
+      if (addBtn) {
+        openCreateWorkspace();
+        const appShellEl = document.getElementById('appShell');
+        if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'content');
+        return;
+      }
+      const settingsOpen = event.target.closest('[data-settings-open]');
+      if (settingsOpen) {
+        openRulesDrawer();
+        return;
+      }
+    });
+    listPaneEl.addEventListener('input', (event) => {
+      const searchEl = event.target.closest('#listPaneSearch');
+      if (searchEl) {
+        app.ui.searchTerm = searchEl.value || '';
+        // Only re-render the list body, not the header, to preserve focus.
+        const listEl = document.getElementById('listPaneReportList');
+        if (listEl) {
+          const temp = document.createElement('div');
+          temp.innerHTML = renderListPaneReports();
+          const nextList = temp.querySelector('#listPaneReportList');
+          if (nextList) listEl.innerHTML = nextList.innerHTML;
+        }
+        persistUiState();
+      }
+    });
+  }
+
+  // Settings content-pane card → open rules drawer.
+  const settingsBody = document.getElementById('settingsSectionBody');
+  if (settingsBody) {
+    settingsBody.addEventListener('click', (event) => {
+      const openBtn = event.target.closest('[data-settings-open]');
+      if (openBtn) openRulesDrawer();
+    });
+  }
+
+  // Mobile: back button returns to list pane.
+  const mobileBackBtn = document.getElementById('mobileBackBtn');
+  if (mobileBackBtn) {
+    mobileBackBtn.addEventListener('click', () => {
+      const appShellEl = document.getElementById('appShell');
+      if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'list');
+    });
+  }
 
   addReportBtn.addEventListener('click', () => openCreateWorkspace());
   startupChooseFolderBtn?.addEventListener('click', async () => {
@@ -5744,7 +6212,7 @@ function bindStaticEvents() {
     beginIcsImport(app.ui.selectedId || null, app.ui.selectedId ? 'meetingStatus' : '');
   });
   icsFileInputEl.addEventListener('change', handleIcsFileSelection);
-  attentionRulesBtn.addEventListener('click', openRulesDrawer);
+  if (attentionRulesBtn) attentionRulesBtn.addEventListener('click', openRulesDrawer);
   exportCsvBtn.addEventListener('click', () => {
     closeDataMenu();
     exportPlainFiles();
@@ -5866,17 +6334,6 @@ function bindStaticEvents() {
     const glyphBtn = event.target.closest('[data-glyph-open]');
     if (glyphBtn) {
       selectReport(glyphBtn.getAttribute('data-glyph-open'));
-      return;
-    }
-    const donutSegment = event.target.closest('[data-pdc-status]');
-    if (donutSegment) {
-      const status = donutSegment.getAttribute('data-pdc-status');
-      app.ui.planFilter = status;
-      planFilterEl.value = status;
-      persistUiState();
-      renderQuickFilterBar();
-      renderTable();
-      scrollToReports();
       return;
     }
     const themeBtn = event.target.closest('[data-theme-filter]');
@@ -6361,8 +6818,12 @@ function renderRecentThemesCard(reports) {
 }
 
 function currentTeamHealthTab() {
-  const legacyMapped = app.ui.teamHealthTab === 'tenure' || app.ui.teamHealthTab === 'themes' ? 'insights' : app.ui.teamHealthTab;
-  return TEAM_HEALTH_TABS.includes(legacyMapped) ? legacyMapped : 'cadence';
+  // Map legacy tab names to their new homes: tenure/themes -> insights, cadence/pdc-mix -> overview.
+  const raw = app.ui.teamHealthTab;
+  let mapped = raw;
+  if (raw === 'tenure' || raw === 'themes') mapped = 'insights';
+  else if (raw === 'cadence' || raw === 'pdc-mix') mapped = 'overview';
+  return TEAM_HEALTH_TABS.includes(mapped) ? mapped : 'overview';
 }
 
 function renderTeamHealthTabBar() {
@@ -6373,132 +6834,259 @@ function renderTeamHealthTabBar() {
   }).join('');
 }
 
-// Glyph grid severity thresholds. Tuning these is a one-line change.
-const GLYPH_AMBER_MIN = 1; // 1-2 attention items -> amber
-const GLYPH_RED_MIN = 3;   // 3+ attention items -> red
+// ============================================================================
+// Overview dashboard (Team Health > Overview tab)
+// ============================================================================
+//
+// The dashboard is an at-a-glance aggregate view. It is NOT a per-report list —
+// that's what the reports table below is for. Five sections, top to bottom:
+//
+//   1. Health score          - single composite number (0-100) + headline
+//   2. Cadence adherence     - three progress bars (1:1 / PDC / CV Review)
+//   3. Attention breakdown   - what is actually driving attention (by rule)
+//   4. Support distribution  - horizontal stacked bar of support levels
+//   5. Upcoming              - forward-looking list of next touchpoints
+//
+// Design notes:
+//   - Composite score weights each cadence equally, plus a support-level penalty.
+//     Rationale: all three touchpoints are management obligations with roughly
+//     equal weight. Support level is a separate signal but affects overall team
+//     health meaningfully, so we dock points when reports are flagged.
+//   - Attention breakdown groups by the underlying `rule` (not label text), so
+//     counts are accurate even if labels change.
+//   - Upcoming horizon is 14 days. Long enough to catch "this sprint" planning,
+//     short enough to stay actionable.
+//   - We keep `data-glyph-open` on clickable elements so existing click handlers
+//     (drawer open, keyboard activation) keep working without new wiring.
 
-// Inline SVG template for the person glyph (head + rounded shoulder silhouette).
-// Defined once, reused for every report. Fill color is set via `fill` attr on the path.
-const GLYPH_SVG = '<svg viewBox="0 0 24 32" aria-hidden="true" focusable="false"><path fill="{FILL}" d="M12 2.5c2.6 0 4.6 2 4.6 4.5S14.6 11.5 12 11.5 7.4 9.5 7.4 7 9.4 2.5 12 2.5zm0 10.5c5 0 9 3 9 7.6v8.4H3V20.6C3 16 7 13 12 13z"/></svg>';
+const UPCOMING_HORIZON_DAYS = 14;
 
-function glyphFillForAttentionCount(count) {
-  if (count >= GLYPH_RED_MIN) return 'var(--danger)';
-  if (count >= GLYPH_AMBER_MIN) return 'var(--warning)';
-  return 'var(--success)';
+// Map an attention rule to a tone for its meter bar.
+function attentionRuleTone(rule) {
+  if (rule === 'supportLevel' || rule === 'blockedPlans') return 'danger';
+  if (rule === 'noMentor' || rule === 'oneOnOneDuringVacation' || rule === 'pdcDuringVacation') return 'info';
+  return 'warning';
 }
 
-function renderCadenceTabHtml(reports) {
-  const reportStates = [...reports].map((report) => {
-    const metrics = getMetrics(report.id);
-    const attentionCount = metrics.attention.length;
-    const primaryIssue = metrics.attention[0] || 'On track';
-    return {
-      report,
-      metrics,
-      attentionCount,
-      primaryIssue
-    };
-  }).sort((a, b) => (b.attentionCount - a.attentionCount) || a.report.name.localeCompare(b.report.name));
-
+// Compose a single 0–100 health score from cadence adherence + support levels.
+// Kept in one place so the score, the headline, and the dial stay in sync.
+function computeTeamHealthScore(reportStates) {
   const total = reportStates.length;
-  const onTrackCount = reportStates.filter((item) => item.attentionCount === 0).length;
-  const attentionCount = total - onTrackCount;
-  const oneOnOneOnCadence = reportStates.filter((item) => !item.metrics.oneOnOneOverdue).length;
-  const pdcOnCadence = reportStates.filter((item) => !item.metrics.pdcOverdue).length;
-  const cvOnCadence = reportStates.filter((item) => !item.metrics.cvReviewOverdue).length;
+  if (!total) return { score: 0, tone: 'neutral', headline: 'No reports yet', sub: 'Add a direct report to get started.' };
+  const oneOnOneOn = reportStates.filter((item) => !item.metrics.oneOnOneOverdue).length;
+  const pdcOn = reportStates.filter((item) => !item.metrics.pdcOverdue).length;
+  const cvOn = reportStates.filter((item) => !item.metrics.cvReviewOverdue).length;
+  const cadenceScore = ((oneOnOneOn + pdcOn + cvOn) / (total * 3)) * 100;
+  // Support-level penalty: urgent costs more than "support needed".
+  const urgent = reportStates.filter((item) => item.report.supportLevel === 'Urgent').length;
+  const needsSupport = reportStates.filter((item) => item.report.supportLevel === 'Support needed').length;
+  const supportPenalty = Math.min(30, (urgent * 8 + needsSupport * 4));
+  const raw = cadenceScore - supportPenalty;
+  const score = Math.max(0, Math.min(100, Math.round(raw)));
+  const onTrack = reportStates.filter((item) => item.attentionCount === 0).length;
+  const needAttention = total - onTrack;
+  const tone = score >= 80 ? 'success' : score >= 55 ? 'warning' : 'danger';
+  const headline = score >= 80
+    ? 'Team is healthy'
+    : score >= 55
+      ? 'Some attention needed'
+      : 'Significant attention needed';
+  const sub = needAttention === 0
+    ? `All ${total} reports on track.`
+    : `${onTrack} of ${total} on track · ${needAttention} need attention`;
+  return { score, tone, headline, sub };
+}
 
-  const glyphs = reportStates.map((item) => {
-    const fill = glyphFillForAttentionCount(item.attentionCount);
-    const svg = GLYPH_SVG.replace('{FILL}', fill);
-    const statusText = item.attentionCount === 0 ? 'On track' : `${item.attentionCount} attention ${item.attentionCount === 1 ? 'item' : 'items'}`;
-    const metaText = item.attentionCount === 0 ? 'On track' : (item.attentionCount === 1 ? item.primaryIssue : `${item.attentionCount} items`);
-    const title = `${item.report.name} · ${statusText}`;
-    return `<button type="button" class="glyph-cell" data-glyph-open="${escapeHtml(item.report.id)}" title="${escapeHtml(title)}" aria-label="${escapeHtml(`Open ${item.report.name} — ${statusText}`)}">${svg}<span class="glyph-name">${escapeHtml(item.report.name)}</span><span class="glyph-meta">${escapeHtml(metaText)}</span></button>`;
-  }).join('');
-
-  const attentionChips = reportStates
-    .filter((item) => item.attentionCount > 0)
-    .map((item) => {
-      const summary = item.attentionCount === 1 ? item.primaryIssue : `${item.attentionCount} items`;
-      return `<button type="button" class="attention-person-chip" data-glyph-open="${escapeHtml(item.report.id)}" title="${escapeHtml(`${item.report.name} · ${item.primaryIssue}`)}">${escapeHtml(item.report.name)}<span>${escapeHtml(summary)}</span></button>`;
-    }).join('');
-
-  const summary = attentionCount === 0
-    ? `All ${total} on track`
-    : `${onTrackCount} of ${total} on track · ${attentionCount} need attention`;
-
+function renderHealthScoreSection(scoreInfo) {
+  const { score, tone, headline, sub } = scoreInfo;
+  const r = 52;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (circ * score) / 100;
+  const strokeColor = tone === 'success' ? 'var(--success)' : tone === 'warning' ? 'var(--warning)' : tone === 'danger' ? 'var(--danger)' : 'var(--muted)';
   return `
-    <div class="cadence-tab">
-      <div class="glyph-grid" role="group" aria-label="Team on-track status">${glyphs}</div>
-      <p class="glyph-summary">${escapeHtml(summary)}</p>
-      ${attentionChips ? `<div class="glyph-attention-row"><span class="label">Needs attention</span>${attentionChips}</div>` : ''}
-      <div class="cadence-bars">
-        ${healthProgressRow('1:1 Cadence', oneOnOneOnCadence, total, 'effective cadence rule per report')}
-        ${healthProgressRow('PDC Cadence', pdcOnCadence, total, 'effective cadence rule per report')}
-        ${healthProgressRow('CV Review Cadence', cvOnCadence, total, 'effective cadence rule per report')}
+    <div class="overview-section health-score">
+      <div class="health-score-dial" role="img" aria-label="Team health score ${score} of 100">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="${r}" fill="none" stroke="#ecf1f9" stroke-width="10"></circle>
+          <circle cx="60" cy="60" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"></circle>
+        </svg>
+        <div class="health-score-dial-value">
+          <div>
+            <strong>${score}</strong>
+            <span>of 100</span>
+          </div>
+        </div>
+      </div>
+      <div class="health-score-body">
+        <div class="health-score-label">Team Health</div>
+        <p class="health-score-headline" data-tone="${escapeHtml(tone)}">${escapeHtml(headline)}</p>
+        <p class="health-score-sub">${escapeHtml(sub)}</p>
       </div>
     </div>
   `;
 }
 
-// Donut geometry. Radius + stroke chosen so outer edge sits at 114 (center 120, inset ~6 for antialiasing).
-const DONUT_RADIUS = 90;
-const DONUT_STROKE = 24;
-const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
-
-function donutSegmentColor(status) {
-  switch (status) {
-    case 'Completed': return 'var(--success)';
-    case 'Needs review': return 'var(--warning)';
-    case 'Blocked': return 'var(--danger)';
-    case 'In progress': return 'var(--info, #3b82f6)';
-    default: return 'var(--muted, #b6bdce)';
-  }
+function renderCadenceBarsSection(reportStates) {
+  const total = reportStates.length;
+  const oneOnOneOn = reportStates.filter((item) => !item.metrics.oneOnOneOverdue).length;
+  const pdcOn = reportStates.filter((item) => !item.metrics.pdcOverdue).length;
+  const cvOn = reportStates.filter((item) => !item.metrics.cvReviewOverdue).length;
+  return `
+    <div class="overview-section">
+      <div class="overview-section-head">
+        <h3>Cadence adherence</h3>
+        <span class="overview-section-note">effective cadence rule per report</span>
+      </div>
+      <div class="cadence-bars">
+        ${healthProgressRow('1:1 Cadence', oneOnOneOn, total, 'on cadence')}
+        ${healthProgressRow('PDC Cadence', pdcOn, total, 'on cadence')}
+        ${healthProgressRow('CV Review Cadence', cvOn, total, 'on cadence')}
+      </div>
+    </div>
+  `;
 }
 
-function renderPdcMixTabHtml(reports) {
-  const total = reports.length;
-  const planMix = PDC_STATUSES.map((status) => ({ status, count: reports.filter((report) => report.pdcStatus === status).length }));
-  const nonEmpty = planMix.filter((item) => item.count > 0);
-
-  // Build donut segments. Each segment is a <circle> with a dash-dasharray set
-  // to [segmentLen, gap] and rotated into position by cumulative start angle.
-  let cumulativeAngle = -90; // start at 12 o'clock
-  const segments = nonEmpty.map((item) => {
-    const fraction = total > 0 ? item.count / total : 0;
-    const segmentLen = fraction * DONUT_CIRCUMFERENCE;
-    const gap = DONUT_CIRCUMFERENCE - segmentLen;
-    const rotate = cumulativeAngle;
-    cumulativeAngle += fraction * 360;
-    const color = donutSegmentColor(item.status);
-    const title = `${item.status}: ${item.count}`;
-    return `<circle class="donut-segment" data-pdc-status="${escapeHtml(item.status)}" cx="120" cy="120" r="${DONUT_RADIUS}" fill="none" stroke="${color}" stroke-width="${DONUT_STROKE}" stroke-dasharray="${segmentLen.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(${rotate.toFixed(2)} 120 120)"><title>${escapeHtml(title)}</title></circle>`;
-  }).join('');
-
-  const planLegend = planMix.map((item) => `
-    <span class="legend-item"><span class="swatch ${item.status === 'Completed' ? 'good' : item.status === 'Needs review' ? 'warn' : item.status === 'Blocked' ? 'danger' : 'neutral'}"></span>${escapeHtml(item.status)} <span class="count">${item.count}</span></span>
-  `).join('');
-
-  const centerLabel = `${total} ${total === 1 ? 'report' : 'reports'}`;
-
+function renderAttentionBreakdownSection(reportStates) {
+  // Aggregate attention items by rule across the team.
+  const ruleCounts = new Map();
+  let maxCount = 0;
+  reportStates.forEach((item) => {
+    (item.metrics.attentionDetails || []).forEach((detail) => {
+      const key = detail.rule;
+      const entry = ruleCounts.get(key) || { rule: key, label: detail.label, count: 0 };
+      // For supportLevel, collapse into a single bucket with a generic label.
+      if (key === 'supportLevel') entry.label = 'Support level elevated';
+      entry.count += 1;
+      ruleCounts.set(key, entry);
+      if (entry.count > maxCount) maxCount = entry.count;
+    });
+  });
+  const ordered = [...ruleCounts.values()].sort((a, b) => b.count - a.count);
+  const body = ordered.length === 0
+    ? '<p class="attention-breakdown-empty">Nothing is flagging right now. Nice.</p>'
+    : `<ul class="attention-breakdown-list">${ordered.map((item) => {
+        const pct = maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
+        const tone = attentionRuleTone(item.rule);
+        return `
+          <li class="attention-breakdown-row">
+            <span class="attention-breakdown-count">${item.count}</span>
+            <div>
+              <div class="attention-breakdown-label">${escapeHtml(item.label)}</div>
+              <div class="attention-breakdown-meter" data-tone="${escapeHtml(tone)}"><span style="width:${pct}%"></span></div>
+            </div>
+          </li>
+        `;
+      }).join('')}</ul>`;
   return `
-    <div class="pdc-mix-card">
-      <div class="pdc-mix-head">
-        <div>
-          <h3>PDC Status Mix</h3>
-          <p>Overall distribution of PDC status across the team. Click a segment to filter the table.</p>
-        </div>
+    <div class="overview-section">
+      <div class="overview-section-head">
+        <h3>What's driving attention</h3>
+        <span class="overview-section-note">by rule, across the team</span>
       </div>
-      <div class="donut-wrap">
-        <svg class="donut-svg" viewBox="0 0 240 240" role="img" aria-label="PDC status mix donut chart">
-          <circle cx="120" cy="120" r="${DONUT_RADIUS}" fill="none" stroke="var(--surface-2, #eef2f9)" stroke-width="${DONUT_STROKE}"></circle>
-          ${segments}
-          <text x="120" y="116" text-anchor="middle" font-size="26" font-weight="700" fill="#172033">${total}</text>
-          <text x="120" y="138" text-anchor="middle" font-size="12" font-weight="600" fill="#5f6b85">${escapeHtml(total === 1 ? 'report' : 'reports')}</text>
-        </svg>
-        <span class="sr-only">${escapeHtml(centerLabel)}</span>
+      ${body}
+    </div>
+  `;
+}
+
+function renderSupportDistributionSection(reportStates) {
+  const total = reportStates.length;
+  const counts = SUPPORT_LEVELS.reduce((acc, level) => {
+    acc[level] = reportStates.filter((item) => (item.report.supportLevel || SUPPORT_LEVELS[0]) === level).length;
+    return acc;
+  }, {});
+  const segs = SUPPORT_LEVELS.map((level) => {
+    const count = counts[level];
+    const pct = total > 0 ? (count / total) * 100 : 0;
+    const fill = supportFillForLevel(level);
+    return `<div class="support-strip-seg" data-fill="${escapeHtml(fill)}" data-empty="${count === 0 ? 'true' : 'false'}" style="width:${pct.toFixed(2)}%" title="${escapeHtml(`${level}: ${count}`)}">${count > 0 && pct >= 10 ? count : ''}</div>`;
+  }).join('');
+  const legend = SUPPORT_LEVELS.map((level) => {
+    const count = counts[level];
+    const fill = supportFillForLevel(level);
+    return `<span class="support-legend-item" data-dim="${count === 0 ? 'true' : 'false'}"><span class="swatch" data-fill="${escapeHtml(fill)}"></span>${escapeHtml(level)}<span class="count">${count}</span></span>`;
+  }).join('');
+  return `
+    <div class="overview-section">
+      <div class="overview-section-head">
+        <h3>Support levels</h3>
+        <span class="overview-section-note">${total} ${total === 1 ? 'report' : 'reports'}</span>
       </div>
-      <div class="stacked-legend">${planLegend}</div>
+      <div class="support-strip" role="img" aria-label="Support level distribution">${segs}</div>
+      <div class="support-legend">${legend}</div>
+    </div>
+  `;
+}
+
+function renderUpcomingSection(reportStates) {
+  const today = todayStamp();
+  const horizon = addDays(today, UPCOMING_HORIZON_DAYS);
+  const items = [];
+  reportStates.forEach((state) => {
+    const r = state.report;
+    const push = (kind, date) => {
+      if (!date) return;
+      if (date < today || date > horizon) return;
+      items.push({ kind, date, report: r });
+    };
+    push('1:1', normalizeDate(r.nextOneOnOneDate));
+    push('PDC', normalizeDate(r.nextPdcDate));
+  });
+  items.sort((a, b) => a.date.localeCompare(b.date) || a.report.name.localeCompare(b.report.name));
+  const MAX = 8;
+  const visible = items.slice(0, MAX);
+  const overflow = items.length > MAX ? items.length - MAX : 0;
+  const body = visible.length === 0
+    ? `<p class="upcoming-empty">Nothing scheduled in the next ${UPCOMING_HORIZON_DAYS} days.</p>`
+    : `<ul class="upcoming-list">${visible.map((item) => {
+        const days = daysBetween(today, item.date);
+        const whenText = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `In ${days} days · ${formatDate(item.date)}`;
+        const tone = days === 0 ? 'warning' : days <= 2 ? 'warning' : days <= 7 ? 'success' : '';
+        return `
+          <li>
+            <button type="button" class="upcoming-row" data-glyph-open="${escapeHtml(item.report.id)}" title="${escapeHtml(`Open ${item.report.name}`)}">
+              <span class="upcoming-row-kind">${escapeHtml(item.kind)}</span>
+              <span class="upcoming-row-name">${escapeHtml(item.report.name)}</span>
+              <span class="upcoming-row-when" ${tone ? `data-tone="${escapeHtml(tone)}"` : ''}>${escapeHtml(whenText)}</span>
+            </button>
+          </li>
+        `;
+      }).join('')}${overflow > 0 ? `<li><p class="upcoming-empty">+${overflow} more in the next ${UPCOMING_HORIZON_DAYS} days.</p></li>` : ''}</ul>`;
+  return `
+    <div class="overview-section">
+      <div class="overview-section-head">
+        <h3>Upcoming · next ${UPCOMING_HORIZON_DAYS} days</h3>
+        <span class="overview-section-note">${items.length} scheduled</span>
+      </div>
+      ${body}
+    </div>
+  `;
+}
+
+// Compute whole-day difference between two YYYY-MM-DD strings. Positive when b > a.
+function daysBetween(a, b) {
+  if (!a || !b) return 0;
+  const d1 = new Date(a + 'T00:00:00');
+  const d2 = new Date(b + 'T00:00:00');
+  return Math.round((d2.getTime() - d1.getTime()) / 86400000);
+}
+
+function renderOverviewTabHtml(reports) {
+  const reportStates = [...reports].map((report) => {
+    const metrics = getMetrics(report.id);
+    return {
+      report,
+      metrics,
+      attentionCount: metrics.attention.length
+    };
+  });
+  const scoreInfo = computeTeamHealthScore(reportStates);
+  return `
+    <div class="overview-tab">
+      ${renderHealthScoreSection(scoreInfo)}
+      ${renderCadenceBarsSection(reportStates)}
+      ${renderAttentionBreakdownSection(reportStates)}
+      ${renderSupportDistributionSection(reportStates)}
+      ${renderUpcomingSection(reportStates)}
     </div>
   `;
 }
@@ -6532,8 +7120,7 @@ function renderTeamHealth() {
   renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
   let panelHtml = '';
-  if (tab === 'cadence') panelHtml = renderCadenceTabHtml(reports);
-  else if (tab === 'pdc-mix') panelHtml = renderPdcMixTabHtml(reports);
+  if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
   else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
 }
