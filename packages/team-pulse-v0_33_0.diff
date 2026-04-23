@@ -1,0 +1,227 @@
+--- /mnt/user-data/outputs/team-pulse-v0_32_1.html	2026-04-23 09:24:38.993287763 +0000
++++ /home/claude/team-pulse-v0_33_0.html	2026-04-23 09:31:14.041196880 +0000
+@@ -132,11 +132,12 @@
+     label span{font-weight:700;font-size:13px;color:var(--muted)}
+     .table-wrap{overflow-x:auto;border-top:1px solid var(--line)}
+     table{width:100%;border-collapse:collapse;min-width:1120px}
+-    th,td{padding:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;font-size:14px}
++    th,td{padding:0;border-right:1px solid var(--line);border-bottom:2px solid var(--line-strong);text-align:left;vertical-align:middle;font-size:14px}
+     th:last-child,td:last-child{border-right:none}
+-    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;background:#f5f6f8;position:sticky;top:0;z-index:1;padding:10px 14px;font-weight:800;border-bottom:1px solid var(--line-strong)}
++    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;background:#f5f6f8;position:sticky;top:0;z-index:1;padding:10px 14px;font-weight:800;border-bottom:2px solid var(--line-strong)}
+     td{padding:12px 14px;background:#fff}
+     td.data-cell{padding:0;text-align:center}
++    tbody tr:last-child td{border-bottom:none}
+     tbody tr{cursor:pointer;transition:background 0.12s ease}
+     tbody tr:hover td{background:#fafbfd}
+     tbody tr:hover td.data-cell[data-fill]{filter:brightness(0.96)}
+@@ -388,10 +389,22 @@
+     .vacation-row-readonly{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff}
+     .vacation-row-readonly-range{font-size:14px;font-weight:700;color:var(--text)}
+     .vacation-row-readonly-note{color:var(--muted);font-size:13px}
+-    .vacation-empty,.followup-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fafcff}
+-    .followup-panel{display:grid;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fbfcff;margin-bottom:14px}
+-    .followup-list,.meeting-followups{display:grid;gap:10px}
+-    .followup-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
++    .vacation-empty,.followup-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:var(--radius-sm);padding:14px;background:#fafcff}
++    .sharp-panel{border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;overflow:hidden}
++    .sharp-panel + .sharp-panel{margin-top:14px}
++    .sharp-panel-header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 16px;background:#fafbfd;border-bottom:1px solid var(--line)}
++    .sharp-panel-header h3{margin:0;font-size:15px;font-weight:700;color:var(--text)}
++    .sharp-panel-header .sharp-panel-header-meta{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
++    .sharp-panel-header p{margin:0;color:var(--muted);font-size:13px;flex-basis:100%;font-weight:500}
++    .sharp-panel-body{padding:0}
++    .sharp-panel-body.padded{padding:14px 16px}
++    .sharp-panel-row{padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
++    .sharp-panel-row:last-child{border-bottom:none}
++    .sharp-panel-row:hover{background:#fafbfd}
++    .followup-list,.meeting-followups{display:block}
++    .followup-list .followup-item,.meeting-followups .followup-item{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border:none;border-radius:0;background:#fff;border-bottom:1px solid var(--line)}
++    .followup-list .followup-item:last-child,.meeting-followups .followup-item:last-child{border-bottom:none}
++    .followup-list .followup-item:hover,.meeting-followups .followup-item:hover{background:#fafbfd}
+     .followup-item input{width:auto;margin-top:2px}
+     .followup-copy{display:grid;gap:4px;min-width:0}
+     .followup-copy strong{font-size:14px;line-height:1.35}
+@@ -483,16 +496,19 @@
+     .insights-tab > *{margin-top:0 !important}
+     .drawer-header-status-block{display:grid;gap:12px}
+     .drawer-body{gap:18px;padding-top:18px}
+-    .meeting-history{gap:10px}
+-    .meeting-disclosure{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+-    .meeting-summary{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 14px;cursor:pointer;list-style:none}
++    .meeting-history{gap:0}
++    .meeting-disclosure{border:none;border-bottom:1px solid var(--line);border-radius:0;background:#fff;overflow:hidden}
++    .meeting-disclosure:last-child{border-bottom:none}
++    .meeting-disclosure:hover{background:#fafbfd}
++    .meeting-disclosure[open]{background:#fafbfd}
++    .meeting-summary{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 16px;cursor:pointer;list-style:none}
+     .meeting-summary::-webkit-details-marker{display:none}
+     .meeting-summary-main{display:grid;gap:8px;min-width:0}
+     .meeting-summary-copy{color:var(--muted);font-size:13px;line-height:1.4}
+     .meeting-summary-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:52px;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em}
+     .meeting-summary-toggle::before{content:"Open"}
+     details[open] > .meeting-summary .meeting-summary-toggle::before{content:"Hide"}
+-    .meeting-item-body{padding:0 14px 14px;border-top:1px solid var(--line);display:grid;gap:12px}
++    .meeting-item-body{padding:0 16px 14px;border-top:1px solid var(--line);display:grid;gap:12px}
+     .meeting-item-head{margin-bottom:0;padding-top:12px}
+     .meeting-item-actions button{margin-left:0}
+     .tile-link-row{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin-bottom:10px;cursor:pointer;text-align:left;justify-items:start;align-items:start}
+@@ -526,8 +542,8 @@
+     .toolbar-menu{width:100%}
+     .toolbar-menu-popover{position:static;margin-top:8px;width:100%}
+     }
+-    .meeting-history{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+-    .meeting-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
++    .meeting-history{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
++    .meeting-item{border:none;border-bottom:1px solid var(--line);border-radius:0;padding:12px 16px;background:#fff}
+     .meeting-item-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:8px}
+     .meeting-item-head button{margin-left:auto}
+     .meeting-date{color:var(--muted);font-size:13px}
+@@ -549,7 +565,7 @@
+         <p class="eyebrow">Manager Notebook</p>
+         <div class="title-row">
+           <h1>Team Pulse</h1>
+-          <span id="appVersion" class="pill version-pill">v0.32.1</span>
++          <span id="appVersion" class="pill version-pill">v0.33.0</span>
+           <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+         </div>
+       </div>
+@@ -881,7 +897,7 @@
+   </div>
+ 
+   <script>
+-const APP_VERSION = 'v0.32.1';
++const APP_VERSION = 'v0.33.0';
+ const CURRENT_SCHEMA_VERSION = 7;
+ const AUTOSAVE_DEBOUNCE_MS = 160;
+ const TOAST_TIMEOUT_MS = 2000;
+@@ -3708,44 +3724,43 @@
+ 
+ function renderOpenFollowUpsPanel(report, metrics) {
+   const openFollowUps = metrics.openFollowUps || [];
+-  if (!openFollowUps.length) return '<div class="followup-empty">No open follow-ups right now.</div>';
++  if (!openFollowUps.length) return '';
+   return `
+-    <div class="followup-panel">
+-      <div class="drawer-section-head">
+-        <div>
+-          <h3 style="margin:0;">Open Follow-Ups</h3>
+-          <p class="section-note">Follow-ups are extracted from meeting-note lines that start with [] or [x].</p>
+-        </div>
+-        ${badge(`${openFollowUps.length} open`, 'warning')}
+-      </div>
+-      <div class="followup-list">
+-        ${openFollowUps.map((item) => `
+-          <label class="followup-item">
+-            <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+-            <span class="followup-copy">
+-              <strong>${escapeHtml(item.text)}</strong>
+-              <span class="followup-meta">
+-                <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+-                <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
++    <div class="sharp-panel followup-panel">
++      <div class="sharp-panel-header">
++        <h3>Open Follow-Ups</h3>
++        <div class="sharp-panel-header-meta">${badge(`${openFollowUps.length} open`, 'warning')}</div>
++      </div>
++      <div class="sharp-panel-body">
++        <div class="followup-list">
++          ${openFollowUps.map((item) => `
++            <label class="followup-item">
++              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
++              <span class="followup-copy">
++                <strong>${escapeHtml(item.text)}</strong>
++                <span class="followup-meta">
++                  <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
++                  <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
++                </span>
+               </span>
+-            </span>
+-          </label>
+-        `).join('')}
++            </label>
++          `).join('')}
++        </div>
+       </div>
+     </div>
+   `;
+ }
+ 
+ function renderMeetingHistory(report) {
+-  if (!report.meetings.length) {
+-    return '<p class="section-note">No meetings logged yet.</p>';
+-  }
++  const hasMeetings = report.meetings.length > 0;
+   const followUpMap = new Map();
+-  extractFollowUps(report).forEach((item) => {
+-    if (!followUpMap.has(item.meetingId)) followUpMap.set(item.meetingId, []);
+-    followUpMap.get(item.meetingId).push(item);
+-  });
+-  return `
++  if (hasMeetings) {
++    extractFollowUps(report).forEach((item) => {
++      if (!followUpMap.has(item.meetingId)) followUpMap.set(item.meetingId, []);
++      followUpMap.get(item.meetingId).push(item);
++    });
++  }
++  const bodyMarkup = hasMeetings ? `
+     <ul class="meeting-history">
+       ${report.meetings.map((meeting) => {
+         const followUps = followUpMap.get(meeting.id) || [];
+@@ -3785,6 +3800,21 @@
+       `;
+       }).join('')}
+     </ul>
++  ` : `
++    <div class="sharp-panel-body padded">
++      <p class="section-note" style="margin:0;">No meetings logged yet.</p>
++    </div>
++  `;
++  return `
++    <div class="sharp-panel">
++      <div class="sharp-panel-header">
++        <h3>Meetings</h3>
++        <div class="sharp-panel-header-meta">
++          <button type="button" id="openMeetingModalBtn">Log Meeting</button>
++        </div>
++      </div>
++      ${bodyMarkup}
++    </div>
+   `;
+ }
+ 
+@@ -4676,26 +4706,16 @@
+           <div class="drawer-tab-panel" data-drawer-panel="meetings" ${activeTab === 'meetings' ? '' : 'hidden'}>
+             <div class="drawer-panel-stack">
+               ${isCreating ? `
+-              <div class="drawer-section" id="meetingHistorySection">
+-                <div class="drawer-section-head">
+-                  <div>
+-                    <h3>Meetings</h3>
+-                    <p class="section-note">Save this direct report first, then use Log meeting from this workspace.</p>
+-                  </div>
++              <div class="sharp-panel">
++                <div class="sharp-panel-header">
++                  <h3>Meetings</h3>
+                 </div>
+-                <p class="section-note">Meeting history becomes available after the direct report has been created.</p>
+-              </div>` : `
+-              <div class="drawer-section" id="meetingHistorySection">
+-                <div class="drawer-section-head">
+-                  <div>
+-                    <h3>Meetings</h3>
+-                    <p class="section-note">Log meetings and review open follow-ups without leaving this workspace.</p>
+-                  </div>
+-                  <button type="button" id="openMeetingModalBtn">Log Meeting</button>
++                <div class="sharp-panel-body padded">
++                  <p class="section-note" style="margin:0;">Meeting history becomes available after the direct report has been created.</p>
+                 </div>
+-                ${renderOpenFollowUpsPanel(report, metrics)}
+-                ${renderMeetingHistory(report)}
+-              </div>`}
++              </div>` : `
++              ${renderOpenFollowUpsPanel(report, metrics)}
++              ${renderMeetingHistory(report)}`}
+             </div>
+           </div>
+ 

@@ -1,0 +1,71 @@
+Team Pulse v0.29.0 changes
+
+Drawer tabs reordered and renamed
+- Tab order is now Profile (left) · Meetings (center) · PDC Summary (right).
+- The pdc-notes tab key was renamed to pdc-summary and the label changed from "PDC Notes" to "PDC Summary". All internal references updated, including the two call sites that switch the tab programmatically when adding evidence.
+
+Prep for 1:1 removed in full
+- Removed the "Prep for 1:1" button from the drawer header, the drawer-header-actions-inline wrapper, and its CSS.
+- Removed the entire briefing modal HTML block (overlay, title, subtitle, body container, close button).
+- Removed every prep / briefing function: computePrepWindow, buildAutoAgendaPrompts, buildBriefing, renderPrepItem, renderBriefingHtml, renderActiveBriefingBody, rebuildActiveBriefing, bindPrepInteractions, openBriefingModal, openBriefingFromWorkspace, closeBriefingModal.
+- Removed the helpers that only existed to power Prep: changeSummaryForKey, summarizeEvent, buildChangeEntries, describeCustomFieldChanges, currentLocalDateStamp, isDateWithinRange, pluralize, copyTextToClipboard, downloadTextFile. The v0.28 changelog had already flagged describeCustomFieldChanges as orphaned; the rest became orphaned with this removal.
+- Kept isoToLocalDateStamp — it turned out to have a live non-prep caller in collectRecentNoteTexts. Restored as a stand-alone helper next to localDateStamp.
+- Removed state (activeBriefing, prepSession), DOM refs (briefingModalEl, briefingModalTitleEl, briefingModalSubtitleEl, briefingModalBodyEl, closeBriefingModalBtn), the overlay-lock check for the briefing modal, and the close-button listener binding.
+- Removed the five closeBriefingModal() cleanup calls from openCreateWorkspace, selectReport, clearSelectedReport, renderDetailDrawer, and deleteReport.
+- Removed all .prep-* and .briefing-* CSS, including the .prep-topline reference in the mobile media query.
+- Rationale: the v0.28 build shipped a decision-oriented prep flow (Open Threads / What's Changed / Agenda), but without AI synthesis the value was limited — the same information is available in the Meetings tab (follow-ups) and the Profile tab (cadence + changes).
+
+Drawer header pills simplified
+- Removed the focus-state pill, the detail status note underneath it, and all per-report pills: PDC status, Support level, Mentor, Next 1:1, Next PDC, open follow-ups count, snoozed count, and upcoming vacation.
+- The status strip now shows exactly one pill, the "On vacation · Back {date}" badge, and only when a vacation is currently active. The strip element itself is omitted when empty.
+- Rationale: the pills were restating information that the Profile tab already shows; the single vacation pill remains because "this person is unreachable right now" is a piece of at-a-glance context the profile view doesn't make obvious.
+- Deleted the now-unused computeDrawerFocusState and focusBadgeVariant functions.
+
+Mentor name moved under consultant level
+- Added a new line under the level text in the drawer header, formatted as "Mentor: {name}". Only rendered when mentors is set, matching the reality that mentors are only assigned for the first few months at the firm.
+- New .detail-mentor CSS class (muted text, 14px, 4px top margin).
+
+Vacation Tracker and Cadence Targets now gated behind Edit
+- Both sections now follow the same Edit → Cancel pattern as Profile.
+- Vacation Tracker in read-only mode shows each vacation window as a compact card with the formatted range and the note (if any); the "No vacation windows recorded yet" empty state is preserved. In edit mode, the full row editor and Add Vacation button appear, plus a Cancel button that discards unsaved workspace draft (with confirmation if the form is dirty).
+- Cadence Targets in read-only mode shows three cards (1:1 / PDC / CV review) with either the override value or the team default, with a "Team default" hint when no override is set. In edit mode, the existing number inputs with placeholder defaults appear.
+- Added app.ui.vacationEditMode and app.ui.cadenceEditMode, both ephemeral (default false, not persisted). Both flags reset on selectReport and clearSelectedReport, and implicitly reset on successful save because the save flow closes and re-opens the drawer.
+- buildReportPayloadFromForm now guards the vacations collection behind a DOM presence check (mirroring the existing cadenceOverrides guard), so saving while the vacation section is read-only doesn't wipe existing vacations.
+
+Markdown editor rebuilt as Write / Preview tabs
+- Replaced the "Preview markdown" <details> disclosure in the Manager Notes section and the always-visible "Preview" panel in the Log Meeting modal with GitHub-style tabs. Each editor now has a Write tab (active by default, contains the textarea) and a Preview tab (shows the rendered markdown, hidden while Write is active).
+- Added a generic bindMarkdownShell(shellId, { textareaEl, previewEl, onSync }) helper that wires up tab-click handlers and live-syncs the preview on textarea input. Both the Manager Notes shell and the Meeting Notes shell use it.
+- The Log Meeting modal resets to Write mode every time it opens.
+- Updated the default "empty preview" message from "Markdown preview appears here." to "Nothing to preview yet."
+- New CSS: .md-shell, .md-tabs, .md-tab, .md-panel-write, .md-panel-preview, with the data-md-active attribute controlling which panel is visible.
+
+Summary table columns swapped
+- Removed the "PDC status" and "Attention" columns from the Direct Reports table.
+- Added "Support" (shows the supportLevel badge using the existing variantForSupport coloring) and "Open follow-ups" (shows "{N} open" as a warning badge for 1-2 open, a danger badge for 3+, and an em dash when there are none).
+- Rationale: PDC status is already visible in the Touchpoints and Next columns via the PDC dates; the generic "Attention" column mixed several signals at different urgency levels. Support level is a single direct signal of who needs manager attention right now, and open follow-ups count is a concrete action surface.
+- Note: renderAttentionBadges is now orphaned (no callers). Left in place for this release in case attention surfacing comes back in a different shape.
+
+Chrome
+- Bumped APP_VERSION and the static version pill from v0.28.0 to v0.29.0.
+- Total file size reduction from v0.27.0 -> v0.28.0 was approximately 600 lines; v0.28.0 -> v0.29.0 is approximately 480 lines further net (v0.28 = 6969 lines, v0.29 = 6490 lines), almost entirely driven by the Prep for 1:1 removal partially offset by new edit-mode markup and markdown-tab markup.
+
+Validation
+- Extracted inline JavaScript and passed node --check.
+- Verified JS also parses via the V8 Function constructor.
+- HTML tag balance verified at the file level for div, section, ul, li, form, label, aside, tbody, table, thead, tr, td, th — all opens/closes match.
+- Sanity-grepped that every removed identifier is gone: Prep for 1:1, Prep Next 1:1, Next 1:1 Briefing, Review Draft, prepSession, briefingModal, activeBriefing, computePrepWindow, buildAutoAgendaPrompts, buildBriefing, renderPrepItem, renderBriefingHtml, renderActiveBriefingBody, rebuildActiveBriefing, bindPrepInteractions, openBriefingModal, openBriefingFromWorkspace, closeBriefingModal, changeSummaryForKey, summarizeEvent, buildChangeEntries, describeCustomFieldChanges, currentLocalDateStamp, isDateWithinRange, pluralize, copyTextToClipboard, downloadTextFile, computeDrawerFocusState, focusBadgeVariant, pdc-notes. All zero hits.
+
+Known dead code not removed in this release
+- renderAttentionBadges is orphaned after the summary-table swap. Left in place in case attention surfacing comes back elsewhere.
+- SUPPORT_LEVELS[0] default handling, variantForPdcStatus, PDC_STATUSES, and related machinery are still live — they power the pdcStatus metric and filter UI, just not the removed column.
+
+Testing recommendations
+- Open a direct report. Verify the drawer shows no pills (or only "On vacation · Back …" if currently on vacation). Verify the header shows Name, level, and if set, "Mentor: {name}" underneath.
+- Click Edit on Vacation Tracker, add a vacation, click Save changes — confirm the drawer closes cleanly and the vacation is persisted. Re-open the report and confirm the vacation shows as a read-only card.
+- Click Edit on Vacation Tracker, make a change, click Cancel — confirm the draft is discarded (with confirmation prompt) and the read-only view returns.
+- Do the same for Cadence Targets. In read-only mode, confirm unset overrides show the team default with a "Team default" hint, and set overrides show the override number without the hint.
+- In Manager Notes, type `# Hello`, click Preview — confirm the markdown renders. Click Write — confirm the textarea returns. Do the same in the Log Meeting modal.
+- Open the Log Meeting modal from a report that's already in preview mode on another shell. Confirm the meeting shell opens in Write mode regardless.
+- On the main Direct Reports table, confirm the new Support and Open follow-ups columns render. Create a report with 3+ open follow-ups (via meeting notes with `[] foo` lines) and confirm the danger-variant badge appears.
+- Switch between reports — confirm that edit modes on Vacation and Cadence do not persist to the next report (i.e. the next report always opens in read-only for those two sections, matching how Profile already behaves).
+- Verify the drawer tab order is Profile, Meetings, PDC Summary. Verify persisted tab state survives a page reload (the stored value "pdc-notes" from a prior session will gracefully fall back to "profile" since it's no longer in DETAIL_DRAWER_TABS).

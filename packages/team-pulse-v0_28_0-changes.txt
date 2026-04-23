@@ -1,0 +1,53 @@
+Team Pulse v0.28.0 changes
+
+Review Draft removed
+- Removed the "Generate Review Draft" button from the drawer header.
+- Removed the Review Draft modal and every piece of the feature: resolveReviewWindow, buildReviewDraft, renderReviewDraftMarkdown, renderReviewDraftHtml, buildReviewPrintDocument, refreshActiveReviewDraft, openReviewModal, openReviewFromWorkspace, closeReviewModal, syncReviewConfigFromInputs, copyActiveReviewMarkdown, downloadActiveReviewMarkdown, printActiveReviewDraft, plus the slugifyFilename helper that only served download filenames.
+- Removed the Review Draft state fields (activeReviewDraft, activeReviewSource, activeReviewConfig), the 14 DOM element references, the window preset selector, the custom-range inputs, the preview format selector, and all four event listener bindings.
+- Removed all .review-* CSS and cleaned stale references from the mobile media query.
+- Rationale: the Review Draft output was essentially a repeat of the Profile tab in a different layout; it did not synthesize anything that Profile, Meetings, and PDC Notes did not already surface.
+
+Prep for 1:1 rebuilt
+- Renamed the drawer button "Prep Next 1:1" to "Prep for 1:1" and retitled the modal to match.
+- Replaced the old briefing output (Attention Items / Cadence Snapshot / Possible Topics restating the dashboard) with three decision-oriented sections, stacked top to bottom:
+  1. Open Threads — follow-ups extracted from past meetings, each rendered with a checkbox. Ticking a follow-up writes through to the underlying meeting note via toggleFollowUp, exactly as the Meetings tab does. The meta line is tagged "persists when ticked" so the behavior is visible up front.
+  2. What's Changed — events log entries plus meetings logged within the window. Window is anchored to min(daysSinceLast1on1, 30) — whichever is shorter. If no 1:1 has been logged yet, window falls back to the last 30 days. The section header shows the actual window applied (e.g. "Since last 1:1 · 14 days" or "Last 30 days"). Sorted most recent first.
+  3. Agenda — auto-generated prompts plus a text input for adding your own items. Both are tickable. v1 ships two auto-prompt generators: one fires for each overdue cadence item (1:1, PDC, CV review) with "Agree on a next date for X" and a rationale line showing why it fired; one fires when support level is "Support needed" or "Urgent" with "Check what's blocking and what support they need." Auto-prompts are tagged visually so they are distinguishable from user-added items.
+- Added prep-session state (app.ui.prepSession) holding the ticked auto-prompt keys and the list of custom agenda items. Resets on modal open and close. Does not persist to localStorage. Custom items have Remove buttons; checked state toggles the visual done class via lightweight DOM manipulation so adding or removing items does not lose existing tick state.
+- Added keyboard affordance on the add-agenda input: Enter key commits, then focus returns to the input so follow-up items can be added without re-clicking.
+
+Briefing export surface removed
+- Removed the Copy To Clipboard and Print buttons from the prep modal toolbar, along with copyActiveBriefing, printActiveBriefing, renderBriefingMarkdown, and buildBriefingPrintDocument. The new prep flow is live-editing only — ticks that matter (follow-ups) persist directly to the meeting data; the rest (agenda, auto-prompts) are ephemeral session notes, matching the reality that 1:1 outputs belong in the next meeting log.
+
+Renamed generic change-tracking helpers
+- reviewChangeSummaryForKey -> changeSummaryForKey
+- summarizeReviewEvent -> summarizeEvent
+- buildReviewChangeEntries -> buildChangeEntries
+- These were never Review-Draft-specific — they convert person_updated events to human-readable text. They now power the "What's Changed" section of the prep modal and remain available for future features that need to surface event history.
+
+New helpers
+- computePrepWindow(report, metrics) — resolves the min(daysSinceLast1on1, 30) window and labels it for display.
+- buildAutoAgendaPrompts(report, metrics) — generates the v1 auto-prompts. Designed to be extended one-liner per new prompt.
+- renderPrepItem(...) — shared item renderer covering persistent, auto, and custom agenda items with consistent tick / meta / remove layout.
+- renderActiveBriefingBody, rebuildActiveBriefing, bindPrepInteractions — isolate the refresh-and-rewire flow so toggling a persistent follow-up can refresh the modal without losing the agenda state.
+
+Chrome
+- Bumped APP_VERSION and the version pill to v0.28.0.
+
+Validation
+- Extracted inline JavaScript and passed node --check.
+- Verified JS also parses via the V8 Function constructor.
+- Sanity-grepped all Review Draft identifiers are gone: reviewModalEl, activeReviewDraft, openReviewModal, closeReviewModal, buildReviewDraft, renderReviewDraftMarkdown, renderReviewDraftHtml, buildReviewPrintDocument, refreshActiveReviewDraft, syncReviewConfigFromInputs, copyActiveReviewMarkdown, downloadActiveReviewMarkdown, printActiveReviewDraft, slugifyFilename, resolveReviewWindow, plus old strings "Review Draft", "Generate Review Draft", "Next 1:1 Briefing", "Prep Next 1:1".
+- Verified HTML tag balance in the rewritten renderBriefingHtml and renderPrepItem template literals: every <li>, <div>, <section>, and <ul> opens and closes cleanly.
+- Total file size reduction from v0.27.0: approximately 600 lines.
+
+Known dead code not removed in this release
+- describeCustomFieldChanges is now orphaned (no callers) since the new buildBriefing no longer computes per-field custom-field diffs. Left in place to minimize risk in this release; safe to prune in a later housekeeping pass.
+
+Testing recommendations
+- Open an existing report, click "Prep for 1:1" — confirm the three sections render with the correct window label.
+- Tick a follow-up in Open Threads, close the modal, reopen from the Meetings tab — confirm the follow-up now shows as checked there too, and the event log has a meeting_logged entry.
+- In Agenda, add a custom item via Enter key, tick it, add another, remove the first — confirm order is preserved and tick state on item 2 survives item 1's removal.
+- Open the modal on a report with no 1:1 ever logged — confirm window shows "Last 30 days" and the "What's Changed" section does not crash on the absent anchor.
+- Open the modal on a report where both PDC and CV review are overdue and support level is "Urgent" — confirm three auto-prompts appear.
+- Switch between two reports without closing the app — confirm the prep session resets (no stale custom items from the previous report).

@@ -1,0 +1,132 @@
+--- /mnt/user-data/outputs/team-pulse-v0_30_0.html	2026-04-23 06:15:45.752994306 +0000
++++ /home/claude/team-pulse-v0_31_0.html	2026-04-23 06:18:13.792284293 +0000
+@@ -253,11 +253,15 @@
+     .cadence-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+     .text-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+     .text-panel .value.empty,.overview-card .value.empty,.hero-card .value.empty{color:var(--muted);font-weight:600}
+-    .profile-readonly-grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+-    .profile-readonly-field{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fafcff}
+-    .profile-readonly-field .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800}
+-    .profile-readonly-field .value{font-size:15px;font-weight:700;color:var(--text);word-break:break-word}
+-    .profile-readonly-field .value.empty{color:var(--muted);font-weight:600;font-style:italic}
++    .profile-readonly-grid{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
++    .profile-readonly-field{display:grid;grid-template-columns:180px 1fr;gap:1px;background:var(--line);padding:0;border:none;border-radius:0}
++    .profile-readonly-field .label{display:flex;align-items:center;padding:12px 16px;background:#fff;color:var(--text);font-size:14px;text-transform:none;letter-spacing:0;font-weight:600;margin:0}
++    .profile-readonly-field .value{display:flex;align-items:center;padding:12px 16px;background:#f5f6f8;font-size:14px;font-weight:600;color:var(--text);word-break:break-word;min-height:44px}
++    .profile-readonly-field .value.empty{color:var(--muted);font-weight:500;font-style:italic}
++    .profile-readonly-field .value[data-fill="green"]{background:var(--sat-green);color:#fff;font-weight:700;justify-content:center}
++    .profile-readonly-field .value[data-fill="amber"]{background:var(--sat-amber);color:#fff;font-weight:700;justify-content:center}
++    .profile-readonly-field .value[data-fill="red"]{background:var(--sat-red);color:#fff;font-weight:700;justify-content:center}
++    .profile-readonly-field .value[data-fill="blue"]{background:var(--sat-blue);color:#fff;font-weight:700;justify-content:center}
+     .cadence-card{display:grid;gap:8px}
+     .cadence-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+     .cadence-date{font-size:16px;font-weight:800}
+@@ -356,10 +360,14 @@
+     .drawer-status-strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+     .drawer-status-strip .pill,.drawer-status-strip .badge{margin:0}
+     .drawer-status-note{margin:0;color:var(--muted);font-size:14px}
+-    .drawer-workspace-tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:1px solid var(--line)}
+-    .drawer-workspace-tab{appearance:none;border:none;background:transparent;color:var(--muted);padding:10px 16px;font-size:14px;font-weight:700;border-radius:0;cursor:pointer;position:relative;top:1px;transition:color 0.15s ease}
+-    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{color:var(--text);outline:none}
+-    .drawer-workspace-tab.active{color:var(--text);border-bottom:2px solid var(--text)}
++    .drawer-workspace-layout{display:grid;grid-template-columns:220px 1fr;gap:0;align-items:stretch;min-height:0;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff}
++    .drawer-workspace-tabs{display:flex;flex-direction:column;gap:2px;padding:14px 10px;background:#fafbfd;border-right:1px solid var(--line);border-bottom:none;min-width:0;position:sticky;top:0;align-self:start;max-height:calc(100vh - 40px);overflow-y:auto}
++    .drawer-workspace-tab{appearance:none;border:none;background:transparent;color:var(--text);padding:10px 12px;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer;text-align:left;width:100%;display:flex;align-items:center;gap:10px;line-height:1.2;transition:background 0.15s ease,color 0.15s ease}
++    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{background:#eef2f8;color:var(--text);outline:none}
++    .drawer-workspace-tab.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
++    .drawer-workspace-tab-icon{width:6px;height:6px;border-radius:999px;background:var(--sat-grey);flex:0 0 6px}
++    .drawer-workspace-tab.active .drawer-workspace-tab-icon{background:var(--accent)}
++    .drawer-workspace-content{min-width:0;padding:18px 20px 24px;background:#fff}
+     .drawer-tab-panel{display:grid;gap:22px}
+     .drawer-tab-panel[hidden]{display:none !important}
+     .drawer-panel-stack{display:grid;gap:22px}
+@@ -500,7 +508,12 @@
+     .topbar,.panel-header,.quick-filter-bar,.drawer-header-top,.save-dock{flex-direction:column;align-items:stretch}
+     .toolbar,.section-actions,.save-dock-actions{justify-content:stretch}
+     .toolbar > *,.section-actions > *,.save-dock-actions > *{width:100%}
+-    .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom,.profile-readonly-grid{grid-template-columns:1fr}
++    .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom{grid-template-columns:1fr}
++    .profile-readonly-field{grid-template-columns:1fr;gap:0}
++    .profile-readonly-field .label{padding-bottom:4px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
++    .drawer-workspace-layout{grid-template-columns:1fr}
++    .drawer-workspace-tabs{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);position:static;max-height:none;overflow:visible}
++    .drawer-workspace-tab{width:auto}
+     .tenure-river-head,.tenure-river-foot{flex-direction:column;align-items:stretch}
+     .drawer-hero-actions,.pulse-strip-head{flex-direction:column;align-items:stretch}
+     .vacation-row{grid-template-columns:1fr}
+@@ -538,7 +551,7 @@
+         <p class="eyebrow">Manager Notebook</p>
+         <div class="title-row">
+           <h1>Team Pulse</h1>
+-          <span id="appVersion" class="pill version-pill">v0.30.0</span>
++          <span id="appVersion" class="pill version-pill">v0.31.0</span>
+           <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+         </div>
+       </div>
+@@ -870,7 +883,7 @@
+   </div>
+ 
+   <script>
+-const APP_VERSION = 'v0.30.0';
++const APP_VERSION = 'v0.31.0';
+ const CURRENT_SCHEMA_VERSION = 7;
+ const AUTOSAVE_DEBOUNCE_MS = 160;
+ const TOAST_TIMEOUT_MS = 2000;
+@@ -4525,7 +4538,7 @@
+     <div class="drawer-workspace-tabs" id="detailWorkspaceTabBar" role="tablist" aria-label="Direct report workspace sections">
+       ${DETAIL_DRAWER_TABS.map((tab) => {
+         const isActive = tab === activeTab;
+-        return `<button type="button" class="drawer-workspace-tab${isActive ? ' active' : ''}" data-drawer-tab="${escapeHtml(tab)}" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(DETAIL_DRAWER_TAB_LABELS[tab])}</button>`;
++        return `<button type="button" class="drawer-workspace-tab${isActive ? ' active' : ''}" data-drawer-tab="${escapeHtml(tab)}" aria-selected="${isActive ? 'true' : 'false'}"><span class="drawer-workspace-tab-icon" aria-hidden="true"></span><span>${escapeHtml(DETAIL_DRAWER_TAB_LABELS[tab])}</span></button>`;
+       }).join('')}
+     </div>
+   `;
+@@ -4540,13 +4553,14 @@
+   return `<div class="drawer-status-strip">${items.join('')}</div>`;
+ }
+ 
+-function renderProfileReadonlyField(label, rawValue) {
++function renderProfileReadonlyField(label, rawValue, fill = '') {
+   const value = normalizeText(rawValue);
+   const hasValue = value.length > 0;
++  const fillAttr = fill ? ` data-fill="${escapeHtml(fill)}"` : '';
+   return `
+     <div class="profile-readonly-field">
+       <span class="label">${escapeHtml(label)}</span>
+-      <span class="value${hasValue ? '' : ' empty'}">${escapeHtml(hasValue ? value : 'Not set')}</span>
++      <span class="value${hasValue ? '' : ' empty'}"${fillAttr}>${escapeHtml(hasValue ? value : 'Not set')}</span>
+     </div>
+   `;
+ }
+@@ -4606,9 +4620,11 @@
+           ${renderDetailStatusStrip(editorReport, metrics, isCreating)}
+         </div>
+ 
+-        ${renderDetailDrawerTabBar()}
++        <div class="drawer-workspace-layout">
++          ${renderDetailDrawerTabBar()}
+ 
+-        <form id="detailEditorForm" class="workspace-form-grid">
++          <div class="drawer-workspace-content">
++            <form id="detailEditorForm" class="workspace-form-grid">
+           <div class="drawer-tab-panel" data-drawer-panel="pdc-summary" ${activeTab === 'pdc-summary' ? '' : 'hidden'}>
+             <div class="drawer-panel-stack">
+               <div class="drawer-section">
+@@ -4702,7 +4718,7 @@
+                   ${renderProfileReadonlyField('Name', editorReport.name)}
+                   ${renderProfileReadonlyField('Level', editorReport.level)}
+                   ${renderProfileReadonlyField('Mentor(s)', editorReport.mentors)}
+-                  ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0])}
++                  ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0], supportFillForLevel(editorReport.supportLevel || SUPPORT_LEVELS[0]))}
+                   ${renderProfileReadonlyField('Hire date', editorReport.hireDate ? formatDate(editorReport.hireDate) : '')}
+                   ${renderProfileReadonlyField('Last promotion / remuneration', editorReport.lastPromotionDate ? formatDate(editorReport.lastPromotionDate) : '')}
+                   ${renderProfileReadonlyField('Next planned 1:1', editorReport.nextOneOnOneDate ? formatDate(editorReport.nextOneOnOneDate) : '')}
+@@ -4717,6 +4733,8 @@
+             </div>
+           </div>
+         </form>
++          </div>
++        </div>
+       </div>
+     </div>
+   `;

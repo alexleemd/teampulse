@@ -1,0 +1,75 @@
+Team Pulse v0.33.0 changes
+
+Overview
+- Sharp-direction pass #2: heavier segmentation in the Direct Reports table, and a StaffPro-style "bordered panel with a header bar and a stack of rows" treatment for the Meetings tab.
+- Two surfaces changed: the main table (row separators weight) and the Meetings tab (Open Follow-Ups + Meetings as two separate sharp panels).
+- Rest of the app unchanged. Profile tab, PDC Summary tab, top-bar chrome, all other panels untouched.
+
+Direct Reports table — heavier row separators
+- `th, td` border-bottom changed from `1px solid var(--line)` to `2px solid var(--line-strong)`. Column separators (border-right) stay at 1px. This is the Monday/StaffPro convention: row dividers are the dominant rule, column dividers are secondary.
+- `th` now also uses a 2px bottom border for consistency with body rows (was 1px).
+- New rule: `tbody tr:last-child td{border-bottom:none}` — prevents a double-border at the bottom of the table where the last row's 2px border would stack against the table container's own edge.
+- Rationale for no zebra striping: the saturated-cell palette (green/amber/red/blue fills) introduced in v0.30 is the primary signal. Zebra striping would land those fills on alternating backgrounds, weakening the color system. Plain white rows + heavy dividers keep the color system cleanly readable.
+
+New reusable pattern: .sharp-panel
+- A bordered container designed to hold a list of rows.
+- Structure: `.sharp-panel` wraps a `.sharp-panel-header` (grey header bar) + `.sharp-panel-body` (the list).
+- Header bar: `#fafbfd` background (matches the drawer tab rail), 12/16 padding, title h3 left-aligned, optional meta (badge, button) via `.sharp-panel-header-meta` which right-aligns via `margin-left:auto`. Optional `<p>` description wraps to a full-width second line via `flex-basis:100%`.
+- Body: no padding by default, so row children land edge-to-edge against the panel borders. Use `.sharp-panel-body.padded` for bodies that contain paragraphs or single elements rather than rows.
+- Row children get a 1px bottom border; the last row's border is removed so the stack doesn't double against the panel's bottom edge.
+- Implemented by adding a small CSS block near the old followup-panel rules. Reusable anywhere in the app where we want the same treatment.
+
+Meetings tab — two separate panels
+- Previously, the Meetings tab wrapped both Open Follow-Ups and the meeting history inside one `.drawer-section` card with a single "Meetings" header and a Log Meeting button.
+- Now, Open Follow-Ups and Meetings render as two independent `.sharp-panel`s:
+  - Open Follow-Ups panel: rendered only when there are open follow-ups (empty state removed; the "No open follow-ups right now" dashed box is gone because an absent panel is a clearer signal than a filled empty state). Header shows "Open Follow-Ups" title + a warning badge with the count. Body is a row list of the follow-up checkboxes.
+  - Meetings panel: header shows "Meetings" title + the Log Meeting button pinned to the right. Body is a row list of meeting disclosures (one per meeting).
+- renderOpenFollowUpsPanel now returns '' when there are no open follow-ups (instead of a dashed empty state). The Meetings tab render handles this gracefully — if follow-ups are empty, only the Meetings panel shows.
+- renderMeetingHistory now wraps its output in a sharp-panel itself, so the Log Meeting button moved from the old drawer-section-head into the sharp-panel-header. The "isCreating" branch (where the report hasn't been saved yet) uses a sharp-panel with a padded empty body that explains meeting history becomes available after saving.
+- The outer `.drawer-section` wrapper around the whole Meetings tab is removed. The two sharp panels render directly inside `.drawer-panel-stack`.
+- Removed `id="meetingHistorySection"` from the old markup. Sanity-grepped: zero references elsewhere in the codebase.
+
+Meeting rows — sharp row list inside the panel
+- `.meeting-disclosure` lost its per-card border and 14px radius. Each disclosure is now a full-width row with a 1px bottom border, no radius, no outer border. The last disclosure's border is suppressed.
+- Hover state: `#fafbfd` background, applied to both closed and open states (open disclosures stay highlighted so you can see which one you're currently reading).
+- `.meeting-history` container: switched from `display:grid; gap:10px` to `display:flex; flex-direction:column; gap:0`. Rows now sit directly on top of each other with the row borders as the only separator.
+- `.meeting-summary` and `.meeting-item-body` padding bumped from 14px horizontal to 16px horizontal to match the .sharp-panel padding rhythm.
+- `.meeting-item-body` still has its internal top border as before, now rendered as an inset divider inside the open row.
+- `.followup-item` restyled to match: no outer border, no radius, 12/16 padding, 1px bottom border, last-child gets no border, hover state matches meeting rows.
+
+Mobile
+- `.meeting-history` and `.meeting-item` overrides in the later base ruleset (around line 543) updated to match: border-bottom-only separators, no radius, 16px horizontal padding.
+- Nothing else in the mobile media query (around line 480) needed changes — the sharp-panel pattern inherently stacks correctly on narrow viewports since header and body use flex-wrap where needed.
+
+Chrome
+- APP_VERSION bumped to v0.33.0.
+- Version pill bumped to v0.33.0.
+- No schema change.
+
+Validation
+- Extracted inline JS and passed node --check.
+- Also parsed via V8 Function constructor.
+- HTML tag balance verified at the file level across div, section, ul, li, form, label, aside, tbody, table, thead, tr, th.
+- Drawer template literal balance verified: 34 divs, 1 form, 12 spans — all matched.
+- Meeting history template literal balance verified: 12 divs, 1 ul, 1 li, 1 details, 1 summary, 3 spans, 3 buttons — all matched.
+
+Testing recommendations
+- Open the main Direct Reports table with several rows. Confirm each row is separated from the next by a visible 2px border in var(--line-strong) — noticeably thicker than the column separators. Table head retains the same 2px border below it. No visible double border at the bottom of the last row.
+- Confirm the saturated-palette data cells (Support green/amber/red/blue, filled overdue cells, etc.) still read clearly against the heavier dividers.
+- Open any direct report. Click the Meetings tab.
+- Confirm Meetings renders as a single bordered panel with a grey header bar showing "Meetings" title on the left and a "Log Meeting" button on the right. Each logged meeting is a full-width row inside the panel with a subtle divider between rows. Hovering a row highlights it in light grey. Opening a disclosure reveals the notes + Edit/Delete buttons and keeps the row highlighted while open.
+- If the report has open follow-ups: confirm a second bordered panel renders above Meetings, with "Open Follow-Ups" title and an orange count badge in the header. Follow-up rows inside are checkboxes you can tick to complete.
+- If the report has no open follow-ups: confirm the Open Follow-Ups panel is not rendered at all (no empty state).
+- If the report has no logged meetings: confirm the Meetings panel renders with its header bar and a muted "No meetings logged yet" message in a padded body.
+- Click Log Meeting from the panel header. Confirm the Log Meeting modal opens as before.
+- Tick a follow-up's checkbox. Confirm it toggles and persists (existing v0.29 behavior — no changes here).
+- Click Edit / Delete inside an open meeting disclosure. Confirm the existing handlers still fire.
+- Resize to phone width. Confirm the sharp-panel header still shows title and meta (button wraps below title if needed). Row padding is still generous enough to be touch-friendly.
+- Load a v0.29 / v0.30 / v0.31 / v0.32 JSON file. Should open without migration.
+
+Known follow-ups (not in this release)
+- .followup-empty CSS selector is now orphaned in the HTML (still present in a shared CSS rule alongside .vacation-empty, which is live). Left in place since removing it from the shared selector adds risk without benefit.
+- The `.followup-panel` class still appears on the sharp-panel wrapping Open Follow-Ups as an alias, but has no associated CSS anymore. Harmless; kept for future hooks.
+- `renderAttentionBadges` has been orphaned since v0.29. Still in place.
+- PDC Summary tab panels (Development Focus, Manager Notes) are still `.drawer-section` cards. Could be converted to sharp-panels later if you want, but as I noted earlier the pattern is really built for "list of rows" content, and those panels hold single editors / textareas rather than lists — so the transformation wouldn't do them much good.
+- Main page chrome (top bar with kpi-chips, quick-filter-bar, tile strip) still reflects v0.30 aesthetic. Out of scope for this build.

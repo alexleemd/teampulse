@@ -1,0 +1,85 @@
+Team Pulse v0.30.0 changes
+
+Overview
+- Visual refresh toward a Monday.com-style aesthetic. No functional changes, no data-model changes, no migrations. All work is in CSS, three JS render helpers, and one DOM hint (data-cell class on table <td>s).
+- Guiding principle: color as structured data, not decoration. The only saturated color on the page now lives inside the Direct Reports table cells. Chrome around the table is grayscale.
+
+Typography
+- Loaded Figtree from Google Fonts (weights 400-900) via <link rel="preconnect"> + <link href="...Figtree..."> in the <head>.
+- Body font-family swapped from Inter to Figtree, with the same system-font fallback chain.
+- Rationale: Figtree is what Monday uses (or something visually identical); the geometric-sans feel carries roughly 20% of the overall Monday look on its own.
+
+New saturated palette tokens
+- Added --sat-green (#00c875), --sat-amber (#fdab3d), --sat-red (#e2445c), --sat-blue (#579bfc), --sat-grey (#c4c4c4) to :root, alongside the existing --success/--warning/--danger/--info soft pair.
+- Also added --line-strong (#c8d2e3) for stronger rule lines where a table head needs to read as divider-not-border.
+- Kept all existing tokens intact. The old soft-badge palette (var(--success-soft), etc.) is still used by .badge and is unchanged.
+
+Direct Reports table — the headline change
+- Every data cell now uses a full-cell filled background instead of a badge-in-a-cell.
+- New structural classes:
+  - td.data-cell: removes td padding so the inner .data-cell-fill can fill edge-to-edge.
+  - .data-cell-fill[data-fill="..."]: the colored block; fills available via attribute selector are green / amber / red / blue / grey / muted / none.
+  - .touchpoint-grid: 3-column sub-grid inside the "Touchpoints" cell (1:1 / PDC / CV).
+  - .next-touchpoint-grid: 2-column sub-grid inside the "Next" cell (1:1 / PDC).
+  - .data-cell-stack + .touchpoint-col-label + .data-cell-sub: vertical label-over-date layout inside each sub-cell.
+- Fill mapping by column:
+  - Touchpoints (last): each sub-cell fills red when that touchpoint is overdue, muted grey when there is no last-touchpoint date, and no fill (white with dark date) when on-track.
+  - Next: each sub-cell fills amber when the planned date lands on a vacation day, muted grey when not planned, no fill otherwise.
+  - Support: full cell fills green (Good), blue (Monitor), amber (Support needed), red (Urgent). This is the "all 4 levels filled" choice.
+  - Open follow-ups: amber fill for 1-2 open, red fill for 3+, em dash with no fill at 0.
+- Table chrome:
+  - Thin 1px borders on every cell (right + bottom), no internal cell radius, no box-shadows on rows.
+  - Sticky table head restyled: flat grey #f5f6f8 background, 1px --line-strong bottom border, 10/14 padding, 800-weight caps.
+  - Row hover: mild 0.96 brightness filter on filled cells, neutral #fafbfd on non-filled cells. Selected row uses the same brightness trick so filled cells still read as the selected row.
+
+Removed/restructured CSS
+- Deleted .touchpoints, .touchpoint-row, .touchpoint-row.overdue, .tp-label, .tp-date, .touchpoint-status (+ .warning / .info / .soft variants), .touchpoints.next-touchpoints — the entire old pill-in-cell system. These were defined twice in v0.29 (once in the base layer, once in an override block around the old line 470); both definitions are gone.
+- Deleted .decay-warm / .decay-stale row highlight rules. No code path was setting those classes on <tr> elements, so they were dead. A sanity grep for decayClass callers confirmed the helper function itself is still live and used elsewhere but never reached the table row renderer.
+
+Render helper rewrite
+- Removed function touchpointRow(label, date, statusText, tone). Replaced with function dataCell(label, dateText, fill). The new helper emits the stacked label-above-date markup with a data-fill attribute on the wrapper.
+- renderLastTouchpointsMarkup now emits a .touchpoint-grid with three dataCell entries. Fill logic: red if overdue, muted if no date, none otherwise. Wraps formatDateOrFallback(..., '—') inline.
+- renderNextTouchpointsMarkup now emits a .next-touchpoint-grid with two dataCell entries. Fill logic: amber if the date hits a vacation day, muted if the date is missing, none otherwise. Uses the existing findVacationForDate helper unchanged.
+- renderNameMetaChips: dropped the "{N} follow-up(s)" meta chip from the name column. That signal now lives in its own Open follow-ups column and was duplicated information. All other name meta chips (Level, No mentor, On vacation, Upcoming vacation, Snoozes) are preserved.
+- renderTable row markup: the <td>s for Touchpoints, Next, Support, and Open follow-ups all carry class="data-cell" so the new padding rules apply. Support and Open follow-ups cells render via <div class="data-cell-fill" data-fill="..."> directly (not via badge()), so the background fills the whole cell.
+- New helper function supportFillForLevel(level) next to variantForSupport; maps Good→green, Monitor→blue, Support needed→amber, Urgent→red. variantForSupport is kept — it's still the source of truth for the soft-badge coloring used elsewhere (filter pills, drawer read-only displays).
+
+Chrome flattening (the "move color off chrome, onto data" principle)
+- .card: removed box-shadow, tightened radius to --radius-sm.
+- .drawer-hero: removed the 135° blue→white gradient, replaced with flat white; tightened radius to --radius-sm; border moved from #dce6f8 to --line.
+- .drawer-section: removed the subtle drop shadow; tightened radius.
+- .workspace-focus-panel: removed the drop shadow. Also changed the .good/.attention/.urgent variants from tinted backgrounds (pale green/yellow/red) to a 4px left-border accent in the new saturated palette. This keeps the semantic read (that panel flags the report's overall state) but stops the panel from being a second colored surface competing with the table.
+- .tenure-river-svg-wrap / .tenure-mini-wrap: removed the vertical blue gradient, replaced with flat #fbfcfd; tightened radius.
+- .drawer-workspace-tabs / .drawer-workspace-tab: rebuilt as bottom-border tabs instead of pill-shaped tabs. Active tab is now dark text with a 2px bottom border, rather than a filled blue pill. This is the Monday/GitHub/Linear convention for this particular UI.
+- Quick-filter-bar radius tightened to var(--radius-sm) for consistency with the rest of the flatter chrome.
+- kpi-chip bar (top right): unchanged. Already grayscale in most states; the active-state accent blue is doing useful work as quick-filter-applied feedback.
+
+Version chrome
+- APP_VERSION constant bumped to 'v0.30.0'.
+- Static version pill in the header bumped to v0.30.0.
+- No schema change. v0.29.0 JSON files load without migration.
+
+Validation
+- Extracted inline JS (245,451 chars, single <script> block) and passed node --check.
+- Also verified JS parses via the V8 Function constructor.
+- HTML tag balance verified at the file level for div, section, ul, li, form, label, aside, tbody, table, thead, tr, th — all opens/closes match. (td counts are 0/0 at the file level because all table body <td> tags live inside JS template strings.)
+- Grepped for stale identifiers: touchpointRow, touchpoint-row, touchpoint-status, class="touchpoints", next-touchpoints, decay-warm, decay-stale. All zero hits in the output file.
+
+File size
+- v0.29 = 6493 lines, v0.30 = 6523 lines, net +30 lines. The new table CSS block (saturated palette + .data-cell-fill system + two sub-grids) adds mass; the old pill-row CSS + touchpointRow helper remove mass; they roughly cancel.
+
+Testing recommendations
+- Open the app with several direct reports. Confirm the table reads spreadsheet-first: filled red cells where there's an overdue touchpoint, filled amber where a planned date conflicts with vacation, a single filled color block for Support level per row, and filled amber/red cells for Open follow-ups when they exist. On-track rows should have white data cells with grey column labels.
+- Confirm the name cell still shows Level, No mentor (if missing), and On vacation / Vacation chips. Confirm the follow-ups chip is NOT present in the name cell anymore — it only lives in its dedicated column.
+- Confirm all four support levels render with distinct fills: Good green, Monitor blue, Support needed amber, Urgent red.
+- Confirm row hover darkens filled cells slightly (brightness 0.96) and that the selected row remains visually distinct.
+- Open any direct report. Confirm the drawer hero is now flat white (no blue gradient), the section cards have no drop shadow, and the workspace tabs render as a bottom-border row instead of pill tabs. The active tab should be dark text with a 2px bottom underline.
+- Confirm the workspace focus panel variants show a colored left-edge accent (4px green/amber/red bar) instead of a tinted background.
+- Resize the window. Confirm the table still scrolls horizontally with its new min-widths (touchpoint-grid min 360px, next-touchpoint-grid min 240px, overall table min 980px). Mobile layout in the existing media query was not touched and should still stack the chrome; the table scrolls horizontally as before.
+- Confirm the Figtree font loads. With network disabled, the body should fall back cleanly to ui-sans-serif / system-ui.
+- Load a v0.29 JSON file. It should open without migration prompts.
+
+Known follow-ups (not in this release)
+- The .decay-* CSS classes were removed from the stylesheet but the decayClass() helper itself is still in the JS (used by non-table code paths). Left intact.
+- The .badge system is still used heavily elsewhere (filters, drawer read-only fields, summary copy). Monday-fying those would be a v0.31 project if we want it.
+- The status-line / drawer-status-strip "On vacation" pill in the drawer header still uses the soft-badge style. That's consistent with the "one exception that is allowed to be colored because it's urgent context" principle from v0.29 and was left alone.

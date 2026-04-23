@@ -1,0 +1,1239 @@
+--- /mnt/user-data/uploads/team-pulse-v0_28_0.html	2026-04-22 21:22:42.042758526 +0000
++++ team-pulse.html	2026-04-22 21:32:22.799300916 +0000
+@@ -176,6 +176,16 @@
+     .drawer-overlay.open .rules-drawer{transform:translateX(0)}
+     .workspace-form-grid{display:grid;gap:14px}
+     .notes-editor textarea,.notes-textarea{min-height:220px}
++    .md-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:0}
++    .md-tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;border-top-left-radius:10px;border-top-right-radius:10px;position:relative;top:1px}
++    .md-tab:hover,.md-tab:focus-visible{color:var(--text);outline:none}
++    .md-tab.active{background:#fff;border-color:var(--line);color:var(--text)}
++    .md-panel-write,.md-panel-preview{border:1px solid var(--line);border-top-left-radius:0;border-radius:0 14px 14px 14px;background:#fff;padding:12px}
++    .md-panel-preview{background:#fbfcff;min-height:120px}
++    .md-panel-write textarea{border:none;outline:none;resize:vertical;width:100%;background:transparent;padding:0;font:inherit;color:inherit;min-height:180px}
++    .md-panel-write textarea:focus{outline:none}
++    .md-shell[data-md-active="preview"] .md-panel-write{display:none}
++    .md-shell[data-md-active="write"] .md-panel-preview{display:none}
+     .note-preview-shell{display:grid;gap:8px;margin-top:14px}
+     .note-preview-label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
+     .note-preview{background:#fbfcff;border:1px dashed var(--line);border-radius:14px;padding:14px;min-height:72px}
+@@ -306,6 +316,7 @@
+     .detail-subhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+     .detail-level{font-size:20px;font-weight:800;letter-spacing:-0.01em;color:var(--text)}
+     .detail-supporting-meta{color:var(--muted);font-size:15px;font-weight:600}
++    .detail-mentor{margin-top:4px;color:var(--muted);font-size:14px;font-weight:600}
+     .workspace-focus-panel{display:grid;gap:8px;padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#fff;box-shadow:0 8px 20px rgba(23,32,51,0.05)}
+     .workspace-focus-panel .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800}
+     .workspace-focus-panel strong{font-size:24px;line-height:1.15;color:var(--text)}
+@@ -338,45 +349,19 @@
+     .drawer-details summary::after{content:"Show";color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em}
+     .drawer-details[open] summary::after{content:"Hide"}
+     .drawer-details > div{margin-top:14px;display:grid;gap:16px}
+-    .modal.briefing-modal{width:min(960px,calc(100vw - 32px))}
+-    .briefing-empty{color:var(--muted);font-size:14px}
+-    .prep-layout{display:grid;gap:18px}
+-    .prep-topline{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start}
+-    .prep-summary{display:grid;gap:4px;min-width:0}
+-    .prep-summary h3{margin:0;font-size:24px;line-height:1.1}
+-    .prep-summary p{margin:0;color:var(--muted);font-size:13px}
+-    .prep-section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 6px 16px rgba(23,32,51,0.04)}
+-    .prep-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+-    .prep-section-head h3{margin:0;font-size:16px;line-height:1.2}
+-    .prep-section-head p{margin:2px 0 0;color:var(--muted);font-size:12px}
+-    .prep-section-hint{color:var(--muted);font-size:12px;margin:0 0 10px}
+-    .prep-empty{color:var(--muted);font-size:13px;font-style:italic;margin:0;padding:10px 0}
+-    .prep-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+-    .prep-item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff;transition:background 0.15s ease,border-color 0.15s ease}
+-    .prep-item.done{background:#f5f8fc;border-color:#dbe2ee}
+-    .prep-item.done .prep-item-text{color:var(--muted);text-decoration:line-through}
+-    .prep-item-check{margin-top:2px;width:18px;height:18px;cursor:pointer;accent-color:var(--accent)}
+-    .prep-item-body{display:grid;gap:4px;min-width:0}
+-    .prep-item-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;word-break:break-word}
+-    .prep-item-meta{color:var(--muted);font-size:12px}
+-    .prep-item-meta.persisted{color:#1766d6}
+-    .prep-item-actions{display:flex;gap:6px;align-items:start}
+-    .prep-item-remove{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:16px;width:28px;height:28px;border-radius:999px;cursor:pointer;line-height:1;padding:0;display:grid;place-items:center}
+-    .prep-item-remove:hover{color:#b0393b;border-color:#f2c6c6;background:#fff4f4}
+-    .prep-auto-tag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;padding:2px 6px;border-radius:999px;background:#eef2f8;color:#314667;margin-right:6px;vertical-align:middle}
+-    .prep-add-row{display:flex;gap:8px;margin-top:10px}
+-    .prep-add-row input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff}
+-    .prep-add-row input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,108,220,0.15)}
+-    .prep-add-row button{white-space:nowrap}
+-    .prep-change-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+-    .prep-change-item{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:8px 10px;border-radius:10px;background:#fbfcff;border:1px solid var(--line);font-size:13px;line-height:1.45}
+-    .prep-change-date{color:var(--muted);font-weight:700;font-size:12px;white-space:nowrap}
+-    .prep-change-text{color:var(--text);min-width:0;word-break:break-word}
+     .field-hint{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:600}
+     .cadence-target-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
++    .cadence-target-grid-readonly{gap:10px}
++    .cadence-target-readonly{display:grid;gap:4px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}
++    .cadence-target-readonly .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
++    .cadence-target-readonly .value{font-size:15px;font-weight:700;color:var(--text)}
+     .vacation-summary{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+     .vacation-list{display:grid;gap:12px}
++    .vacation-list-readonly{gap:8px}
+     .vacation-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}
++    .vacation-row-readonly{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff}
++    .vacation-row-readonly-range{font-size:14px;font-weight:700;color:var(--text)}
++    .vacation-row-readonly-note{color:var(--muted);font-size:13px}
+     .vacation-empty,.followup-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fafcff}
+     .followup-panel{display:grid;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fbfcff;margin-bottom:14px}
+     .followup-list,.meeting-followups{display:grid;gap:10px}
+@@ -482,7 +467,6 @@
+     .insights-tab{display:grid;gap:18px}
+     .insights-tab > *{margin-top:0 !important}
+     .drawer-header-status-block{display:grid;gap:12px}
+-    .drawer-header-actions-inline{display:flex;justify-content:flex-start;align-items:center;gap:10px;flex-wrap:wrap}
+     .drawer-body{gap:18px;padding-top:18px}
+     .meeting-history{gap:10px}
+     .meeting-disclosure{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+@@ -509,7 +493,7 @@
+     .toolbar > *,.section-actions > *,.save-dock-actions > *{width:100%}
+     .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom,.profile-readonly-grid{grid-template-columns:1fr}
+     .tenure-river-head,.tenure-river-foot{flex-direction:column;align-items:stretch}
+-    .drawer-hero-actions,.pulse-strip-head,.prep-topline{flex-direction:column;align-items:stretch}
++    .drawer-hero-actions,.pulse-strip-head{flex-direction:column;align-items:stretch}
+     .vacation-row{grid-template-columns:1fr}
+     #detailDrawerOverlay{padding:10px}
+     #detailDrawerOverlay .drawer{width:calc(100vw - 16px);max-width:calc(100vw - 16px);height:calc(100vh - 16px);max-height:calc(100vh - 16px)}
+@@ -545,7 +529,7 @@
+         <p class="eyebrow">Manager Notebook</p>
+         <div class="title-row">
+           <h1>Team Pulse</h1>
+-          <span id="appVersion" class="pill version-pill">v0.28.0</span>
++          <span id="appVersion" class="pill version-pill">v0.29.0</span>
+           <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+         </div>
+       </div>
+@@ -633,8 +617,8 @@
+               <th>Name</th>
+               <th>Touchpoints</th>
+               <th>Next</th>
+-              <th>PDC status</th>
+-              <th>Attention</th>
++              <th>Support</th>
++              <th>Open follow-ups</th>
+             </tr>
+           </thead>
+           <tbody id="reportsTableBody"></tbody>
+@@ -708,13 +692,16 @@
+             <span>Meeting date</span>
+             <input id="meetingDate" name="meetingDate" type="date" required>
+           </label>
+-          <label class="full">
++          <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
+             <span>Notes</span>
+-            <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+-          </label>
+-          <div class="full note-preview-shell">
+-            <span class="note-preview-label">Preview</span>
+-            <div id="meetingNotesPreview" class="note-preview note-markdown"><p class="note-preview-empty">Markdown preview appears here.</p></div>
++            <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
++              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
++              <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
++            </div>
++            <div class="md-panel-write" role="tabpanel">
++              <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
++            </div>
++            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
+           </div>
+         </div>
+         <div class="actions" style="margin-top:16px;">
+@@ -850,21 +837,6 @@
+     </aside>
+   </div>
+ 
+-  <div id="briefingModal" class="overlay" aria-hidden="true">
+-    <div class="modal briefing-modal">
+-      <div class="modal-header">
+-        <div>
+-          <h2 id="briefingModalTitle">Prep for 1:1</h2>
+-          <p id="briefingModalSubtitle">Open threads, recent changes, and a live agenda.</p>
+-        </div>
+-        <button id="closeBriefingModalBtn" class="secondary">Close</button>
+-      </div>
+-      <div class="modal-body">
+-        <div id="briefingModalBody"></div>
+-      </div>
+-    </div>
+-  </div>
+-
+   <div id="tileModal" class="overlay" aria-hidden="true">
+     <div class="modal tile-modal">
+       <div class="modal-header">
+@@ -889,7 +861,7 @@
+   </div>
+ 
+   <script>
+-const APP_VERSION = 'v0.28.0';
++const APP_VERSION = 'v0.29.0';
+ const CURRENT_SCHEMA_VERSION = 7;
+ const AUTOSAVE_DEBOUNCE_MS = 160;
+ const TOAST_TIMEOUT_MS = 2000;
+@@ -971,6 +943,8 @@
+   creatingReport: false,
+   detailDrawerTab: 'profile',
+   profileEditMode: false,
++  vacationEditMode: false,
++  cadenceEditMode: false,
+   teamTenureMode: 'tenure',
+   teamHealthTab: 'cadence'
+ });
+@@ -981,11 +955,11 @@
+   'pdc-mix': 'PDC Mix',
+   'insights': 'Insights'
+ });
+-const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'pdc-notes', 'meetings']);
++const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary']);
+ const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
+-  'pdc-notes': 'PDC Notes',
++  'profile': 'Profile',
+   'meetings': 'Meetings',
+-  'profile': 'Profile'
++  'pdc-summary': 'PDC Summary'
+ });
+ 
+ const FORMATTERS = {
+@@ -1026,8 +1000,7 @@
+     payload: null,
+     dirty: false
+   },
+-  lastDestructiveAction: null,
+-  activeBriefing: null
++  lastDestructiveAction: null
+ };
+ 
+ const toastStackEl = document.getElementById('toastStack');
+@@ -1093,11 +1066,6 @@
+ const closeTileModalBtn = document.getElementById('closeTileModalBtn');
+ const tileModalPrimaryBtn = document.getElementById('tileModalPrimaryBtn');
+ const tileModalSecondaryBtn = document.getElementById('tileModalSecondaryBtn');
+-const briefingModalEl = document.getElementById('briefingModal');
+-const briefingModalTitleEl = document.getElementById('briefingModalTitle');
+-const briefingModalSubtitleEl = document.getElementById('briefingModalSubtitle');
+-const briefingModalBodyEl = document.getElementById('briefingModalBody');
+-const closeBriefingModalBtn = document.getElementById('closeBriefingModalBtn');
+ 
+ const meetingModalEl = document.getElementById('meetingModal');
+ const meetingModalTitleEl = document.getElementById('meetingModalTitle');
+@@ -1324,11 +1292,34 @@
+   return blocks.join('');
+ }
+ 
+-function updateRenderedNotePreview(previewEl, text, emptyMessage = 'Markdown preview appears here.') {
++function updateRenderedNotePreview(previewEl, text, emptyMessage = 'Nothing to preview yet.') {
+   if (!previewEl) return;
+   previewEl.innerHTML = renderNoteMarkdown(text, { emptyHtml: `<p class="note-preview-empty">${escapeHtml(emptyMessage)}</p>` });
+ }
+ 
++function bindMarkdownShell(shellId, { textareaEl, previewEl, onSync }) {
++  const shell = document.getElementById(shellId);
++  if (!shell) return;
++  const setMode = (mode) => {
++    if (mode !== 'write' && mode !== 'preview') return;
++    shell.setAttribute('data-md-active', mode);
++    shell.querySelectorAll('[data-md-target]').forEach((btn) => {
++      const isActive = btn.getAttribute('data-md-mode') === mode;
++      btn.classList.toggle('active', isActive);
++      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
++    });
++    if (mode === 'preview' && typeof onSync === 'function') onSync();
++    if (mode === 'write' && textareaEl) textareaEl.focus();
++  };
++  shell.querySelectorAll('[data-md-target]').forEach((btn) => {
++    if (btn.getAttribute('data-md-target') !== shellId) return;
++    btn.addEventListener('click', () => setMode(btn.getAttribute('data-md-mode')));
++  });
++  if (textareaEl && typeof onSync === 'function') {
++    textareaEl.addEventListener('input', onSync);
++  }
++}
++
+ function syncMeetingNotesPreview() {
+   updateRenderedNotePreview(meetingNotesPreviewEl, meetingNotesInputEl?.value || '');
+ }
+@@ -1737,6 +1728,13 @@
+   return `${safe.getFullYear()}-${String(safe.getMonth() + 1).padStart(2, '0')}-${String(safe.getDate()).padStart(2, '0')}`;
+ }
+ 
++function isoToLocalDateStamp(value) {
++  if (!value) return '';
++  const date = new Date(value);
++  if (Number.isNaN(date.getTime())) return '';
++  return localDateStamp(date);
++}
++
+ function startOfCurrentWeek(referenceDate = new Date()) {
+   const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+   const offset = (date.getDay() + 6) % 7;
+@@ -1877,500 +1875,6 @@
+   return report;
+ }
+ 
+-function describeCustomFieldChanges(currentFields = [], previousFields = []) {
+-  const previousMap = new Map((Array.isArray(previousFields) ? previousFields : []).map((field) => [customFieldComparisonKey(field), field]));
+-  return (Array.isArray(currentFields) ? currentFields : []).flatMap((field) => {
+-    const key = customFieldComparisonKey(field);
+-    const label = normalizeText(field.label) || 'Untitled Field';
+-    const value = normalizeText(field.value);
+-    if (!key || !value) return [];
+-    const previous = previousMap.get(key);
+-    const previousValue = normalizeText(previous?.value);
+-    if (previousValue === value) return [];
+-    const prefix = previous ? `Custom field "${label}" changed to` : `Custom field "${label}" added as`;
+-    return [`${prefix} ${formatValueForSummary(value)}`];
+-  });
+-}
+-
+-function computePrepWindow(report, metrics) {
+-  // Anchor: min(daysSinceLast1on1, 30) — whichever is shorter.
+-  // If no 1:1 has ever been logged, window is 30 days.
+-  const today = currentLocalDateStamp();
+-  const endDate = today;
+-  const daysSince = metrics?.lastOneOnOne ? dateDiffInDays(metrics.lastOneOnOne) : null;
+-  let windowDays = 30;
+-  if (Number.isFinite(daysSince) && daysSince !== null && daysSince > 0) {
+-    windowDays = Math.min(daysSince, 30);
+-  }
+-  const startDate = addDays(today, -windowDays);
+-  const anchoredToLast1on1 = Number.isFinite(daysSince) && daysSince !== null && daysSince > 0 && daysSince <= 30;
+-  return {
+-    startDate,
+-    endDate,
+-    days: windowDays,
+-    anchoredToLast1on1,
+-    label: anchoredToLast1on1
+-      ? `Since last 1:1 · ${windowDays} day${windowDays === 1 ? '' : 's'}`
+-      : `Last ${windowDays} days`
+-  };
+-}
+-
+-function buildAutoAgendaPrompts(report, metrics) {
+-  const prompts = [];
+-  // Overdue cadence items — agree on a next date
+-  if (metrics.oneOnOneOverdue) {
+-    prompts.push({ key: 'overdue:1:1', text: 'Agree on a next date for 1:1', rationale: '1:1 is overdue' });
+-  }
+-  if (metrics.pdcOverdue) {
+-    prompts.push({ key: 'overdue:pdc', text: 'Agree on a next date for PDC', rationale: 'PDC is overdue' });
+-  }
+-  if (metrics.cvReviewOverdue) {
+-    prompts.push({ key: 'overdue:cv-review', text: 'Agree on a next date for CV review', rationale: 'CV review is overdue' });
+-  }
+-  // Support level signal
+-  const support = normalizeSupportLevel(report?.supportLevel);
+-  if (support === 'Support needed' || support === 'Urgent') {
+-    prompts.push({
+-      key: 'support:' + support.toLowerCase().replace(/\s+/g, '-'),
+-      text: 'Check what\'s blocking and what support they need',
+-      rationale: `Support level is "${support}"`
+-    });
+-  }
+-  return prompts;
+-}
+-
+-function buildBriefing(report, options = {}) {
+-  const settings = options.settings || app.doc?.settings || normalizeSettings({});
+-  const events = options.events || app.doc?.events || [];
+-  const reportId = normalizeText(options.reportId || report?.id);
+-  const metrics = buildReportMetrics(report, settings);
+-  const lastOneOnOne = latestMeeting(report, '1:1');
+-  const openFollowUps = (metrics.openFollowUps || []).map((item) => ({ ...item }));
+-  const prepWindow = computePrepWindow(report, metrics);
+-  // Recent changes from the events log, within the prep window
+-  const recentChanges = reportId
+-    ? buildChangeEntries(reportId, prepWindow, events)
+-    : [];
+-  // Meetings logged within the prep window (exclude the anchor 1:1 itself)
+-  const meetingsInWindow = [...(report?.meetings || [])]
+-    .filter((meeting) => {
+-      const date = normalizeDate(meeting.meetingDate);
+-      if (!date) return false;
+-      if (date < prepWindow.startDate || date > prepWindow.endDate) return false;
+-      if (lastOneOnOne && meeting.id === lastOneOnOne.id) return false;
+-      return true;
+-    })
+-    .sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)))
+-    .map((meeting) => ({
+-      id: meeting.id,
+-      meetingType: canonicalMeetingType(meeting.meetingType),
+-      meetingDate: normalizeDate(meeting.meetingDate),
+-      summary: firstMeaningfulLine(meeting.notes)
+-    }));
+-  const autoPrompts = buildAutoAgendaPrompts(report, metrics);
+-  return {
+-    report: {
+-      id: reportId,
+-      name: normalizeText(report?.name)
+-    },
+-    generatedAt: nowIso(),
+-    prepWindow,
+-    lastOneOnOneDate: lastOneOnOne ? normalizeDate(lastOneOnOne.meetingDate) : '',
+-    openFollowUps,
+-    recentChanges,
+-    meetingsInWindow,
+-    autoPrompts,
+-    metrics
+-  };
+-}
+-
+-function renderPrepItem({ key, text, meta, metaClass, done, removable, persisted }) {
+-  const attrs = persisted
+-    ? `data-prep-persisted="${escapeHtml(persisted)}"`
+-    : `data-prep-key="${escapeHtml(key)}"`;
+-  return `
+-    <li class="prep-item${done ? ' done' : ''}">
+-      <input type="checkbox" class="prep-item-check" ${attrs} ${done ? 'checked' : ''} aria-label="${escapeHtml(done ? 'Reopen' : 'Mark done')}">
+-      <div class="prep-item-body">
+-        <div class="prep-item-text">${escapeHtml(text)}</div>
+-        ${meta ? `<div class="prep-item-meta${metaClass ? ' ' + metaClass : ''}">${escapeHtml(meta)}</div>` : ''}
+-      </div>
+-      <div class="prep-item-actions">
+-        ${removable ? `<button type="button" class="prep-item-remove" data-prep-remove="${escapeHtml(key)}" aria-label="Remove">×</button>` : ''}
+-      </div>
+-    </li>
+-  `;
+-}
+-
+-function renderBriefingHtml(briefing) {
+-  if (!briefing) return '<p class="briefing-empty">No briefing is available yet.</p>';
+-  const session = app.ui.prepSession || { customItems: [], tickedAutoKeys: {} };
+-  const tickedSet = new Set(Object.keys(session.tickedAutoKeys || {}).filter((k) => session.tickedAutoKeys[k]));
+-
+-  // Section 1: Open Threads (follow-ups from meetings + meetings logged in window)
+-  const openThreadsItems = [];
+-  briefing.openFollowUps.forEach((item) => {
+-    openThreadsItems.push(renderPrepItem({
+-      key: `followup:${item.meetingId}:${item.lineIndex}`,
+-      text: item.text,
+-      meta: `${item.meetingType} · ${formatDate(item.meetingDate)} · persists when ticked`,
+-      metaClass: 'persisted',
+-      done: false,
+-      persisted: `${item.meetingId}::${item.lineIndex}`
+-    }));
+-  });
+-  const openThreadsSection = `
+-    <section class="prep-section">
+-      <div class="prep-section-head">
+-        <div>
+-          <h3>Open Threads</h3>
+-          <p>Follow-ups from past meetings. Ticking these writes through to the meeting note.</p>
+-        </div>
+-      </div>
+-      ${openThreadsItems.length
+-        ? `<ul class="prep-list">${openThreadsItems.join('')}</ul>`
+-        : '<p class="prep-empty">No open follow-ups.</p>'}
+-    </section>
+-  `;
+-
+-  // Section 2: What's Changed Since Last 1:1 (events log + meetings in window)
+-  const changeEntries = [];
+-  briefing.meetingsInWindow.forEach((meeting) => {
+-    changeEntries.push({
+-      date: meeting.meetingDate,
+-      text: `${meeting.meetingType} logged${meeting.summary ? ` — ${meeting.summary}` : ''}`
+-    });
+-  });
+-  briefing.recentChanges.forEach((change) => {
+-    changeEntries.push({
+-      date: change.localDate || '',
+-      text: change.summary
+-    });
+-  });
+-  // Sort most recent first
+-  changeEntries.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+-  const changesSection = `
+-    <section class="prep-section">
+-      <div class="prep-section-head">
+-        <div>
+-          <h3>What's Changed</h3>
+-          <p>${escapeHtml(briefing.prepWindow.label)}</p>
+-        </div>
+-      </div>
+-      ${changeEntries.length
+-        ? `<ul class="prep-change-list">${changeEntries.map((entry) => `
+-            <li class="prep-change-item">
+-              <span class="prep-change-date">${escapeHtml(entry.date ? formatDate(entry.date) : '—')}</span>
+-              <span class="prep-change-text">${escapeHtml(entry.text)}</span>
+-            </li>`).join('')}</ul>`
+-        : '<p class="prep-empty">Nothing has changed in this window.</p>'}
+-    </section>
+-  `;
+-
+-  // Section 3: Agenda (auto-prompts + user-added items, all tickable)
+-  const agendaItems = [];
+-  briefing.autoPrompts.forEach((prompt) => {
+-    agendaItems.push(`
+-      <li class="prep-item${tickedSet.has(prompt.key) ? ' done' : ''}">
+-        <input type="checkbox" class="prep-item-check" data-prep-auto="${escapeHtml(prompt.key)}" ${tickedSet.has(prompt.key) ? 'checked' : ''} aria-label="${escapeHtml(tickedSet.has(prompt.key) ? 'Uncheck' : 'Check')}">
+-        <div class="prep-item-body">
+-          <div class="prep-item-text"><span class="prep-auto-tag">Auto</span>${escapeHtml(prompt.text)}</div>
+-          <div class="prep-item-meta">${escapeHtml(prompt.rationale)}</div>
+-        </div>
+-        <div class="prep-item-actions"></div>
+-      </li>
+-    `);
+-  });
+-  (session.customItems || []).forEach((item) => {
+-    agendaItems.push(`
+-      <li class="prep-item${item.done ? ' done' : ''}">
+-        <input type="checkbox" class="prep-item-check" data-prep-custom="${escapeHtml(item.id)}" ${item.done ? 'checked' : ''} aria-label="${escapeHtml(item.done ? 'Uncheck' : 'Check')}">
+-        <div class="prep-item-body">
+-          <div class="prep-item-text">${escapeHtml(item.text)}</div>
+-        </div>
+-        <div class="prep-item-actions">
+-          <button type="button" class="prep-item-remove" data-prep-custom-remove="${escapeHtml(item.id)}" aria-label="Remove">×</button>
+-        </div>
+-      </li>
+-    `);
+-  });
+-  const agendaSection = `
+-    <section class="prep-section">
+-      <div class="prep-section-head">
+-        <div>
+-          <h3>Agenda</h3>
+-          <p>Auto-generated prompts plus anything you want to add. Ticks are for this session only.</p>
+-        </div>
+-      </div>
+-      ${agendaItems.length
+-        ? `<ul class="prep-list">${agendaItems.join('')}</ul>`
+-        : '<p class="prep-empty">No agenda items yet. Add one below.</p>'}
+-      <div class="prep-add-row">
+-        <input type="text" id="prepAgendaInput" placeholder="Add an agenda item and press Enter">
+-        <button type="button" id="prepAgendaAddBtn">Add</button>
+-      </div>
+-    </section>
+-  `;
+-
+-  const summaryParts = [];
+-  if (briefing.lastOneOnOneDate) {
+-    summaryParts.push(`Last 1:1 on ${formatDate(briefing.lastOneOnOneDate)}`);
+-  } else {
+-    summaryParts.push('No 1:1 logged yet');
+-  }
+-  summaryParts.push(`${briefing.openFollowUps.length} open follow-up${briefing.openFollowUps.length === 1 ? '' : 's'}`);
+-
+-  return `
+-    <div class="prep-layout">
+-      <div class="prep-topline">
+-        <div class="prep-summary">
+-          <h3>${escapeHtml(briefing.report.name || 'Direct Report')}</h3>
+-          <p>${escapeHtml(summaryParts.join(' · '))}</p>
+-        </div>
+-      </div>
+-      ${openThreadsSection}
+-      ${changesSection}
+-      ${agendaSection}
+-    </div>
+-  `;
+-}
+-
+-function currentLocalDateStamp() {
+-  return localDateStamp(new Date());
+-}
+-
+-function isoToLocalDateStamp(value) {
+-  if (!value) return '';
+-  const date = new Date(value);
+-  if (Number.isNaN(date.getTime())) return '';
+-  return localDateStamp(date);
+-}
+-
+-function isDateWithinRange(dateString, startDate, endDate) {
+-  const date = normalizeDate(dateString);
+-  const start = normalizeDate(startDate);
+-  const end = normalizeDate(endDate);
+-  if (!date) return false;
+-  if (start && date < start) return false;
+-  if (end && date > end) return false;
+-  return true;
+-}
+-
+-function pluralize(value, singular, plural = `${singular}s`) {
+-  return `${value} ${value === 1 ? singular : plural}`;
+-}
+-
+-function changeSummaryForKey(key, value) {
+-  const normalizedKey = normalizeText(key);
+-  if (normalizedKey === 'name') return normalizeText(value) ? `Name updated to ${normalizeText(value)}` : 'Name cleared';
+-  if (normalizedKey === 'level') return normalizeLevel(value) ? `Level updated to ${normalizeLevel(value)}` : 'Level cleared';
+-  if (normalizedKey === 'mentors') return normalizeText(value) ? `Mentor(s) updated to ${normalizeText(value)}` : 'Mentor(s) cleared';
+-  if (normalizedKey === 'hireDate') return normalizeDate(value) ? `Hire date updated to ${formatDate(value)}` : 'Hire date cleared';
+-  if (normalizedKey === 'lastPromotionDate') return normalizeDate(value) ? `Last promotion / remuneration updated to ${formatDate(value)}` : 'Last promotion / remuneration cleared';
+-  if (normalizedKey === 'nextOneOnOneDate') return normalizeDate(value) ? `Next planned 1:1 set for ${formatDate(value)}` : 'Next planned 1:1 cleared';
+-  if (normalizedKey === 'nextPdcDate') return normalizeDate(value) ? `Next planned PDC set for ${formatDate(value)}` : 'Next planned PDC cleared';
+-  if (normalizedKey === 'supportLevel') return `Support level updated to ${normalizeSupportLevel(value)}`;
+-  if (normalizedKey === 'pdcStatus') return `PDC status updated to ${normalizePdcStatus(value)}`;
+-  if (normalizedKey === 'developmentGoalSummary') return normalizeText(value) ? 'Development goal summary updated' : 'Development goal summary cleared';
+-  if (normalizedKey === 'promotionReadiness') return normalizeText(value) ? 'Promotion readiness / growth area updated' : 'Promotion readiness / growth area cleared';
+-  if (normalizedKey === 'cadenceOverrides') {
+-    const label = serializeCadenceOverrides(value);
+-    return label ? `Cadence targets updated (${label})` : 'Cadence targets reset to team defaults';
+-  }
+-  if (normalizedKey === 'vacations') {
+-    const count = normalizeVacationEntries(value).length;
+-    return count ? `Vacation tracker updated (${pluralize(count, 'window')})` : 'Vacation tracker cleared';
+-  }
+-  if (normalizedKey === 'snoozes') {
+-    const count = normalizeSnoozeEntries(value).length;
+-    return count ? `Attention snoozes updated (${pluralize(count, 'active snooze')})` : 'Attention snoozes cleared';
+-  }
+-  if (normalizedKey === 'evidence') return '';
+-  if (normalizedKey === 'customFields') {
+-    const count = Array.isArray(value) ? value.length : 0;
+-    return count ? `Custom fields updated (${pluralize(count, 'field')})` : 'Custom fields cleared';
+-  }
+-  return '';
+-}
+-
+-function summarizeEvent(event) {
+-  const safeEvent = normalizeEventRecord(event);
+-  if (!safeEvent.id || !safeEvent.type) return [];
+-  if (safeEvent.type === 'person_created') return ['Direct report profile created'];
+-  if (safeEvent.type === 'person_updated') {
+-    const changes = normalizePersonChanges(safeEvent.changes || {});
+-    return Object.keys(changes).map((key) => changeSummaryForKey(key, changes[key])).filter(Boolean);
+-  }
+-  if (safeEvent.type === 'note_added') return ['Manager notes updated'];
+-  if (safeEvent.type === 'meeting_deleted') return ['Meeting history entry removed'];
+-  return [];
+-}
+-
+-function buildChangeEntries(reportId, windowRange, events = []) {
+-  const targetId = normalizeText(reportId);
+-  if (!targetId || !windowRange) return [];
+-  return (Array.isArray(events) ? events : [])
+-    .map((event) => normalizeEventRecord(event))
+-    .filter((event) => event.personId === targetId && isDateWithinRange(isoToLocalDateStamp(event.createdAt), windowRange.startDate, windowRange.endDate))
+-    .flatMap((event) => summarizeEvent(event).map((summary, index) => ({
+-      createdAt: normalizeText(event.createdAt),
+-      localDate: isoToLocalDateStamp(event.createdAt),
+-      summary,
+-      sortKey: `${normalizeText(event.createdAt)}::${String(index).padStart(2, '0')}`
+-    })))
+-    .sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)) || String(a.summary).localeCompare(String(b.summary)));
+-}
+-
+-
+-async function copyTextToClipboard(text) {
+-  if (navigator.clipboard?.writeText) {
+-    await navigator.clipboard.writeText(text);
+-    return true;
+-  }
+-  const textarea = document.createElement('textarea');
+-  textarea.value = text;
+-  textarea.setAttribute('readonly', 'readonly');
+-  textarea.style.position = 'fixed';
+-  textarea.style.opacity = '0';
+-  document.body.appendChild(textarea);
+-  textarea.select();
+-  const copied = document.execCommand('copy');
+-  textarea.remove();
+-  return copied;
+-}
+-
+-function downloadTextFile(filename, text, mimeType = 'text/plain;charset=utf-8') {
+-  const blob = new Blob([text], { type: mimeType });
+-  const url = URL.createObjectURL(blob);
+-  const link = document.createElement('a');
+-  link.href = url;
+-  link.download = filename;
+-  document.body.appendChild(link);
+-  link.click();
+-  link.remove();
+-  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+-}
+-
+-function renderActiveBriefingBody() {
+-  if (!app.activeBriefing) return;
+-  briefingModalBodyEl.innerHTML = renderBriefingHtml(app.activeBriefing);
+-  bindPrepInteractions();
+-}
+-
+-function rebuildActiveBriefing() {
+-  if (!app.activeBriefing) return;
+-  const reportId = app.activeBriefing.report.id;
+-  const report = getReportById(reportId);
+-  if (!report) return;
+-  app.activeBriefing = buildBriefing(report, { reportId });
+-  renderActiveBriefingBody();
+-}
+-
+-function bindPrepInteractions() {
+-  // Persisted follow-up checkboxes — write through via toggleFollowUp
+-  briefingModalBodyEl.querySelectorAll('[data-prep-persisted]').forEach((input) => {
+-    input.addEventListener('change', () => {
+-      const [meetingId, lineIndexStr] = String(input.getAttribute('data-prep-persisted') || '').split('::');
+-      const lineIndex = Number(lineIndexStr);
+-      if (!meetingId || !Number.isFinite(lineIndex)) return;
+-      const reportId = app.activeBriefing?.report?.id;
+-      if (!reportId) return;
+-      toggleFollowUp(reportId, meetingId, lineIndex, !!input.checked);
+-      // toggleFollowUp calls render(); rebuild briefing to reflect new follow-up state
+-      rebuildActiveBriefing();
+-    });
+-  });
+-  // Auto-prompt checkboxes — session-local
+-  briefingModalBodyEl.querySelectorAll('[data-prep-auto]').forEach((input) => {
+-    input.addEventListener('change', () => {
+-      const key = input.getAttribute('data-prep-auto');
+-      if (!key || !app.ui.prepSession) return;
+-      app.ui.prepSession.tickedAutoKeys = app.ui.prepSession.tickedAutoKeys || {};
+-      app.ui.prepSession.tickedAutoKeys[key] = !!input.checked;
+-      // Toggle the visual class without a full re-render to keep focus and input state
+-      const li = input.closest('.prep-item');
+-      if (li) li.classList.toggle('done', !!input.checked);
+-    });
+-  });
+-  // Custom agenda checkboxes
+-  briefingModalBodyEl.querySelectorAll('[data-prep-custom]').forEach((input) => {
+-    input.addEventListener('change', () => {
+-      const id = input.getAttribute('data-prep-custom');
+-      const session = app.ui.prepSession;
+-      if (!id || !session) return;
+-      const target = (session.customItems || []).find((item) => item.id === id);
+-      if (target) target.done = !!input.checked;
+-      const li = input.closest('.prep-item');
+-      if (li) li.classList.toggle('done', !!input.checked);
+-    });
+-  });
+-  // Custom agenda remove buttons
+-  briefingModalBodyEl.querySelectorAll('[data-prep-custom-remove]').forEach((btn) => {
+-    btn.addEventListener('click', () => {
+-      const id = btn.getAttribute('data-prep-custom-remove');
+-      const session = app.ui.prepSession;
+-      if (!id || !session) return;
+-      session.customItems = (session.customItems || []).filter((item) => item.id !== id);
+-      renderActiveBriefingBody();
+-    });
+-  });
+-  // Add-agenda input: Enter key or Add button
+-  const addInput = document.getElementById('prepAgendaInput');
+-  const addBtn = document.getElementById('prepAgendaAddBtn');
+-  const commitAdd = () => {
+-    if (!addInput || !app.ui.prepSession) return;
+-    const text = normalizeText(addInput.value);
+-    if (!text) return;
+-    app.ui.prepSession.customItems = app.ui.prepSession.customItems || [];
+-    app.ui.prepSession.customItems.push({ id: nextId('prep'), text, done: false });
+-    addInput.value = '';
+-    renderActiveBriefingBody();
+-    // Re-focus the input so the user can keep adding items
+-    document.getElementById('prepAgendaInput')?.focus();
+-  };
+-  addInput?.addEventListener('keydown', (event) => {
+-    if (event.key === 'Enter') {
+-      event.preventDefault();
+-      commitAdd();
+-    }
+-  });
+-  addBtn?.addEventListener('click', commitAdd);
+-}
+-
+-function openBriefingModal(report, reportId = '') {
+-  const briefing = buildBriefing(report, { reportId: reportId || report?.id });
+-  app.activeBriefing = briefing;
+-  // Reset session state for this modal instance
+-  app.ui.prepSession = {
+-    reportId: briefing.report.id,
+-    tickedAutoKeys: {},
+-    customItems: []
+-  };
+-  briefingModalTitleEl.textContent = 'Prep for 1:1';
+-  briefingModalSubtitleEl.textContent = briefing.prepWindow.label;
+-  renderActiveBriefingBody();
+-  briefingModalEl.classList.add('open');
+-  briefingModalEl.setAttribute('aria-hidden', 'false');
+-  syncBodyOverlayLock();
+-}
+-
+-function openBriefingFromWorkspace() {
+-  captureWorkspaceDraftFromDom();
+-  const { isCreating, persistedReport, editorReport } = getCurrentWorkspaceEditorState();
+-  if (isCreating || !persistedReport || !editorReport) return false;
+-  openBriefingModal(editorReport, persistedReport.id);
+-  return true;
+-}
+-
+-function closeBriefingModal() {
+-  app.activeBriefing = null;
+-  app.ui.prepSession = null;
+-  briefingModalEl.classList.remove('open');
+-  briefingModalEl.setAttribute('aria-hidden', 'true');
+-  briefingModalBodyEl.innerHTML = '';
+-  syncBodyOverlayLock();
+-}
+-
+ 
+ function reportHasActiveVacation(report) {
+   return getVacationStatus(report).active;
+@@ -3133,8 +2637,7 @@
+     || meetingModalEl.classList.contains('open')
+     || detailDrawerOverlayEl.classList.contains('open')
+     || rulesDrawerOverlayEl.classList.contains('open')
+-    || tileModalEl.classList.contains('open')
+-    || briefingModalEl.classList.contains('open');
++    || tileModalEl.classList.contains('open');
+   document.body.classList.toggle('overlay-open', locked);
+ }
+ 
+@@ -3831,7 +3334,6 @@
+ 
+ function openCreateWorkspace(options = {}) {
+   if (!ensureConnectedOrToast()) return false;
+-  closeBriefingModal();
+   if (app.ui.creatingReport) return true;
+   if (!options.skipConfirm && !confirmWorkspaceClose()) return false;
+   clearWorkspaceDraft();
+@@ -3846,7 +3348,6 @@
+ }
+ 
+ function selectReport(id, options = {}) {
+-  closeBriefingModal();
+   const targetId = normalizeText(id);
+   if (!targetId) return false;
+   if (!options.skipConfirm && !app.ui.creatingReport && app.ui.selectedId === targetId) return true;
+@@ -3856,6 +3357,8 @@
+   app.ui.selectedId = targetId;
+   if (!options.keepTab) app.ui.detailDrawerTab = 'profile';
+   app.ui.profileEditMode = false;
++  app.ui.vacationEditMode = false;
++  app.ui.cadenceEditMode = false;
+   if (options.fullRender) {
+     render();
+   } else {
+@@ -3869,11 +3372,12 @@
+ function clearSelectedReport(options = {}) {
+   if (!options.skipConfirm && !confirmWorkspaceClose()) return false;
+   closeMeetingModal();
+-  closeBriefingModal();
+   clearWorkspaceDraft();
+   app.ui.creatingReport = false;
+   app.ui.selectedId = null;
+   app.ui.profileEditMode = false;
++  app.ui.vacationEditMode = false;
++  app.ui.cadenceEditMode = false;
+   renderTable();
+   renderDetailDrawer();
+   persistUiState();
+@@ -4130,9 +3634,13 @@
+   // innerHTML kept: multi-cell table rows with nested namecell, badges, and action buttons; all dynamic inputs pass through escapeHtml().
+   reportsTableBodyEl.innerHTML = reports.map((report) => {
+     const metrics = getMetrics(report.id);
+-    const attentionHtml = renderAttentionBadges(metrics);
+     const isSelected = report.id === app.ui.selectedId;
+     const rowClass = isSelected ? 'selected' : '';
++    const supportLevel = report.supportLevel || SUPPORT_LEVELS[0];
++    const openCount = metrics.openFollowUps.length;
++    const followUpCell = openCount
++      ? badge(`${openCount} open`, openCount >= 3 ? 'danger' : 'warning')
++      : '<span class="subtle">—</span>';
+     return `
+       <tr data-report-row="${escapeHtml(report.id)}" class="${rowClass}">
+         <td>
+@@ -4143,8 +3651,8 @@
+         </td>
+         <td>${renderLastTouchpointsMarkup(report, metrics)}</td>
+         <td>${renderNextTouchpointsMarkup(report)}</td>
+-        <td>${badge(metrics.pdcStatus, variantForPdcStatus(metrics.pdcStatus))}</td>
+-        <td><div class="badges">${attentionHtml}</div></td>
++        <td>${badge(supportLevel, variantForSupport(supportLevel))}</td>
++        <td>${followUpCell}</td>
+       </tr>
+     `;
+   }).join('');
+@@ -4597,7 +4105,9 @@
+   `;
+ }
+ 
+-function renderVacationTrackerMarkup(editorReport, metrics) {
++function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
++  const isCreating = !!options.isCreating;
++  const inEditMode = isCreating || !!app.ui.vacationEditMode;
+   const vacations = normalizeVacationEntries(editorReport.vacations);
+   const active = getVacationStatus(editorReport).current;
+   const upcoming = getVacationStatus(editorReport).next;
+@@ -4608,13 +4118,19 @@
+           <h3>Vacation Tracker</h3>
+           <p class="section-note">Track leave windows so cadence and planning stay realistic.</p>
+         </div>
+-        <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
++        ${isCreating ? '' : (inEditMode
++          ? `<div class="actions">
++              <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
++              <button type="button" class="secondary" id="cancelVacationEditBtn">Cancel</button>
++            </div>`
++          : '<button type="button" class="secondary" id="openVacationEditBtn">Edit</button>')}
+       </div>
+       <div class="vacation-summary">
+         ${active ? badge(`On vacation · Back ${formatDate(vacationBackDate(active))}`, 'info') : ''}
+         ${!active && upcoming ? badge(`Upcoming · ${formatVacationRange(upcoming)}`, 'warning') : ''}
+         ${!active && !upcoming ? badge('No vacation scheduled', 'neutral') : ''}
+       </div>
++      ${inEditMode ? `
+       <div id="vacationList" class="vacation-list">
+         ${vacations.length ? vacations.map((vacation) => `
+           <div class="vacation-row" data-vacation-row="${escapeHtml(vacation.id)}">
+@@ -4625,33 +4141,76 @@
+           </div>
+         `).join('') : '<div class="vacation-empty">No vacation windows recorded yet.</div>'}
+       </div>
++      ` : (vacations.length ? `
++      <div class="vacation-list vacation-list-readonly">
++        ${vacations.map((vacation) => `
++          <div class="vacation-row-readonly">
++            <div class="vacation-row-readonly-range">${escapeHtml(formatVacationRange(vacation))}</div>
++            ${vacation.note ? `<div class="vacation-row-readonly-note">${escapeHtml(vacation.note)}</div>` : ''}
++          </div>
++        `).join('')}
++      </div>
++      ` : '<div class="vacation-empty">No vacation windows recorded yet.</div>')}
+     </div>
+   `;
+ }
+ 
+-function renderCadenceTargetsMarkup(editorReport) {
++function renderCadenceTargetsMarkup(editorReport, options = {}) {
++  const isCreating = !!options.isCreating;
++  const inEditMode = isCreating || !!app.ui.cadenceEditMode;
+   const overrides = normalizeCadenceOverrides(editorReport.cadenceOverrides);
++  const defaults = {
++    oneOnOneDays: app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays,
++    pdcDays: app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays,
++    cvReviewDays: app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays
++  };
++  const readonlyCell = (label, overrideDays, defaultDays) => {
++    const using = overrideDays ? `${overrideDays} days` : `${defaultDays} days`;
++    const hint = overrideDays ? '' : 'Team default';
++    return `
++      <div class="cadence-target-readonly">
++        <span class="label">${escapeHtml(label)}</span>
++        <span class="value">${escapeHtml(using)}</span>
++        ${hint ? `<span class="field-hint">${escapeHtml(hint)}</span>` : ''}
++      </div>
++    `;
++  };
+   return `
+     <div class="drawer-section">
+-      <h3>Cadence Targets</h3>
+-      <p class="section-note">Leave a field blank to keep using the team default.</p>
++      <div class="drawer-section-head">
++        <div>
++          <h3>Cadence Targets</h3>
++          <p class="section-note">Leave a field blank to keep using the team default.</p>
++        </div>
++        ${isCreating ? '' : (inEditMode
++          ? '<button type="button" class="secondary" id="cancelCadenceEditBtn">Cancel</button>'
++          : '<button type="button" class="secondary" id="openCadenceEditBtn">Edit</button>')}
++      </div>
++      ${inEditMode ? `
+       <div class="cadence-target-grid">
+         <label>
+           <span>1:1 target</span>
+-          <input type="number" min="1" inputmode="numeric" name="cadenceOneOnOneDays" value="${escapeHtml(String(overrides.oneOnOneDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays))}">
+-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays))} days</small>
++          <input type="number" min="1" inputmode="numeric" name="cadenceOneOnOneDays" value="${escapeHtml(String(overrides.oneOnOneDays || ''))}" placeholder="${escapeHtml(String(defaults.oneOnOneDays))}">
++          <small class="field-hint">Team default: ${escapeHtml(String(defaults.oneOnOneDays))} days</small>
+         </label>
+         <label>
+           <span>PDC target</span>
+-          <input type="number" min="1" inputmode="numeric" name="cadencePdcDays" value="${escapeHtml(String(overrides.pdcDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays))}">
+-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays))} days</small>
++          <input type="number" min="1" inputmode="numeric" name="cadencePdcDays" value="${escapeHtml(String(overrides.pdcDays || ''))}" placeholder="${escapeHtml(String(defaults.pdcDays))}">
++          <small class="field-hint">Team default: ${escapeHtml(String(defaults.pdcDays))} days</small>
+         </label>
+         <label>
+           <span>CV review target</span>
+-          <input type="number" min="1" inputmode="numeric" name="cadenceCvReviewDays" value="${escapeHtml(String(overrides.cvReviewDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays))}">
+-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays))} days</small>
++          <input type="number" min="1" inputmode="numeric" name="cadenceCvReviewDays" value="${escapeHtml(String(overrides.cvReviewDays || ''))}" placeholder="${escapeHtml(String(defaults.cvReviewDays))}">
++          <small class="field-hint">Team default: ${escapeHtml(String(defaults.cvReviewDays))} days</small>
+         </label>
+       </div>
++      ` : `
++      <div class="cadence-target-grid cadence-target-grid-readonly">
++        ${readonlyCell('1:1 target', overrides.oneOnOneDays, defaults.oneOnOneDays)}
++        ${readonlyCell('PDC target', overrides.pdcDays, defaults.pdcDays)}
++        ${readonlyCell('CV review target', overrides.cvReviewDays, defaults.cvReviewDays)}
++      </div>
++      `}
+     </div>
+   `;
+ }
+@@ -4926,46 +4485,6 @@
+   `;
+ }
+ 
+-function computeDrawerFocusState(editorReport, metrics, isCreating) {
+-  if (isCreating) {
+-    return {
+-      tone: 'attention',
+-      value: 'Complete profile',
+-      detail: 'Save this direct report first. After that, meetings and cadence tracking will appear here.'
+-    };
+-  }
+-  const attention = metrics.attention || [];
+-  const activeVacation = metrics.vacationStatus.current;
+-  const openFollowUps = metrics.openFollowUps || [];
+-  const hasUrgent = attention.some((item) => /urgent/i.test(item));
+-
+-  let tone;
+-  if (activeVacation) tone = 'good';
+-  else if (hasUrgent) tone = 'urgent';
+-  else if (attention.length || openFollowUps.length) tone = 'attention';
+-  else tone = 'good';
+-
+-  let value;
+-  if (activeVacation) value = `On Vacation · Back ${formatDate(vacationBackDate(activeVacation))}`;
+-  else if (attention.length) value = attention[0];
+-  else if (openFollowUps.length) value = `${openFollowUps.length} Open Follow-Up${openFollowUps.length === 1 ? '' : 's'}`;
+-  else value = 'On track';
+-
+-  let detail;
+-  if (activeVacation) {
+-    detail = [formatVacationRange(activeVacation), activeVacation.note || 'Cadence warnings are muted during the active vacation window.'].filter(Boolean).join(' · ');
+-  } else if (attention.length) {
+-    const followUpSuffix = openFollowUps.length ? `${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}` : '';
+-    detail = [attention.join(' · '), followUpSuffix].filter(Boolean).join(' · ');
+-  } else if (openFollowUps.length) {
+-    detail = openFollowUps.slice(0, 2).map((item) => item.text).join(' · ');
+-  } else {
+-    detail = 'Recent touchpoints and profile fields look on track.';
+-  }
+-
+-  return { tone, value, detail };
+-}
+-
+ function currentDetailDrawerTab() {
+   return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
+ }
+@@ -4982,29 +4501,13 @@
+   `;
+ }
+ 
+-function focusBadgeVariant(tone) {
+-  if (tone === 'urgent') return 'danger';
+-  if (tone === 'attention') return 'warning';
+-  return 'success';
+-}
+-
+-function renderDetailStatusStrip(editorReport, metrics, focusState, isCreating) {
+-  const items = [badge(focusState.value, focusBadgeVariant(focusState.tone))];
+-  if (!isCreating) {
+-    items.push(badge(`PDC · ${metrics.pdcStatus || editorReport.pdcStatus || 'Not started'}`, variantForPdcStatus(metrics.pdcStatus || editorReport.pdcStatus)));
+-    items.push(badge(`Support · ${editorReport.supportLevel || SUPPORT_LEVELS[0]}`, variantForSupport(editorReport.supportLevel || SUPPORT_LEVELS[0])));
+-    items.push(`<span class="pill">${escapeHtml(`Mentor · ${editorReport.mentors || 'Not set'}`)}</span>`);
+-    items.push(`<span class="pill">${escapeHtml(editorReport.nextOneOnOneDate ? `Next 1:1 · ${formatDate(editorReport.nextOneOnOneDate)}` : 'Next 1:1 not planned')}</span>`);
+-    items.push(`<span class="pill">${escapeHtml(editorReport.nextPdcDate ? `Next PDC · ${formatDate(editorReport.nextPdcDate)}` : 'Next PDC not planned')}</span>`);
+-    if (metrics.openFollowUps.length) items.push(badge(`${metrics.openFollowUps.length} open follow-up${metrics.openFollowUps.length === 1 ? '' : 's'}`, 'warning'));
+-    if (metrics.activeSnoozes.length) items.push(badge(`${metrics.activeSnoozes.length} snoozed`, 'soft'));
+-    if (metrics.vacationStatus.active) items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
+-    else if (metrics.vacationStatus.next) items.push(badge(`Vacation · ${formatVacationRange(metrics.vacationStatus.next)}`, 'soft'));
++function renderDetailStatusStrip(editorReport, metrics, isCreating) {
++  const items = [];
++  if (!isCreating && metrics.vacationStatus.active) {
++    items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
+   }
+-  return `
+-    <div class="drawer-status-strip">${items.join('')}</div>
+-    <p class="drawer-status-note">${escapeHtml(focusState.detail)}</p>
+-  `;
++  if (!items.length) return '';
++  return `<div class="drawer-status-strip">${items.join('')}</div>`;
+ }
+ 
+ function renderProfileReadonlyField(label, rawValue) {
+@@ -5028,7 +4531,6 @@
+     : (persistedReport ? { ...persistedReport, ...(draftPayload || {}) } : null);
+   const report = isCreating ? editorReport : persistedReport;
+   if (!editorReport || !report) {
+-    closeBriefingModal();
+     detailDrawerOverlayEl.classList.remove('open');
+     detailDrawerOverlayEl.setAttribute('aria-hidden', 'true');
+     detailDrawerEl.replaceChildren();
+@@ -5037,7 +4539,6 @@
+   }
+ 
+   const metrics = buildReportMetrics(editorReport, app.doc?.settings || normalizeSettings({}));
+-  const focusState = computeDrawerFocusState(editorReport, metrics, isCreating);
+   const activeTab = currentDetailDrawerTab();
+   const titleText = isCreating
+     ? (editorReport.name || 'New Direct Report')
+@@ -5061,6 +4562,7 @@
+               <span class="detail-level">${escapeHtml(levelText)}</span>
+               ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
+             </div>
++            ${!isCreating && normalizeText(editorReport.mentors) ? `<div class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</div>` : ''}
+           </div>
+           <div class="actions">
+             <button type="button" class="secondary" id="closeDetailDrawerBtn">Close</button>
+@@ -5071,19 +4573,13 @@
+       </div>
+       <div class="drawer-body" id="detailDrawerBody">
+         <div class="drawer-header-status-block">
+-          ${renderDetailStatusStrip(editorReport, metrics, focusState, isCreating)}
+-          ${isCreating ? '' : `
+-          <div class="drawer-header-actions-inline">
+-            <div class="actions">
+-              <button type="button" id="openBriefingModalBtn">Prep for 1:1</button>
+-            </div>
+-          </div>`}
++          ${renderDetailStatusStrip(editorReport, metrics, isCreating)}
+         </div>
+ 
+         ${renderDetailDrawerTabBar()}
+ 
+         <form id="detailEditorForm" class="workspace-form-grid">
+-          <div class="drawer-tab-panel" data-drawer-panel="pdc-notes" ${activeTab === 'pdc-notes' ? '' : 'hidden'}>
++          <div class="drawer-tab-panel" data-drawer-panel="pdc-summary" ${activeTab === 'pdc-summary' ? '' : 'hidden'}>
+             <div class="drawer-panel-stack">
+               <div class="drawer-section">
+                 <h3>Development Focus</h3>
+@@ -5106,16 +4602,16 @@
+                     <p class="section-note">Keep quick context, coaching notes, and review reminders here.</p>
+                   </div>
+                 </div>
+-                <label class="notes-editor">
+-                  <span>Notes</span>
+-                  <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
+-                </label>
+-                <details class="drawer-details">
+-                  <summary>Preview markdown</summary>
+-                  <div class="note-preview-shell">
+-                    <div id="detailNotesPreview" class="note-preview note-markdown">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Markdown preview appears here.</p>' })}</div>
++                <div class="md-shell" id="detailNotesShell" data-md-active="write">
++                  <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
++                    <button type="button" class="md-tab active" data-md-target="detailNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
++                    <button type="button" class="md-tab" data-md-target="detailNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
++                  </div>
++                  <div class="md-panel-write" role="tabpanel">
++                    <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
+                   </div>
+-                </details>
++                  <div class="md-panel-preview note-markdown" id="detailNotesPreview" role="tabpanel">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Nothing to preview yet.</p>' })}</div>
++                </div>
+               </div>
+ 
+               ${isCreating ? '' : renderAttentionControlsMarkup(editorReport, metrics)}
+@@ -5185,9 +4681,9 @@
+                 `}
+               </div>
+ 
+-              ${renderVacationTrackerMarkup(editorReport, metrics)}
++              ${renderVacationTrackerMarkup(editorReport, metrics, { isCreating })}
+ 
+-              ${renderCadenceTargetsMarkup(editorReport)}
++              ${renderCadenceTargetsMarkup(editorReport, { isCreating })}
+             </div>
+           </div>
+         </form>
+@@ -5200,7 +4696,6 @@
+   document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
+     document.getElementById('detailEditorForm')?.requestSubmit();
+   });
+-  document.getElementById('openBriefingModalBtn')?.addEventListener('click', openBriefingFromWorkspace);
+   document.getElementById('openProfileEditBtn')?.addEventListener('click', () => {
+     app.ui.profileEditMode = true;
+     renderDetailDrawer();
+@@ -5211,6 +4706,26 @@
+     app.ui.profileEditMode = false;
+     renderDetailDrawer();
+   });
++  document.getElementById('openVacationEditBtn')?.addEventListener('click', () => {
++    app.ui.vacationEditMode = true;
++    renderDetailDrawer();
++  });
++  document.getElementById('cancelVacationEditBtn')?.addEventListener('click', () => {
++    if (hasUnsavedWorkspaceChanges() && !window.confirm('Discard unsaved vacation changes?')) return;
++    clearWorkspaceDraft();
++    app.ui.vacationEditMode = false;
++    renderDetailDrawer();
++  });
++  document.getElementById('openCadenceEditBtn')?.addEventListener('click', () => {
++    app.ui.cadenceEditMode = true;
++    renderDetailDrawer();
++  });
++  document.getElementById('cancelCadenceEditBtn')?.addEventListener('click', () => {
++    if (hasUnsavedWorkspaceChanges() && !window.confirm('Discard unsaved cadence changes?')) return;
++    clearWorkspaceDraft();
++    app.ui.cadenceEditMode = false;
++    renderDetailDrawer();
++  });
+   const detailEditorFormEl = document.getElementById('detailEditorForm');
+   detailEditorFormEl?.addEventListener('submit', (event) => saveWorkspaceChanges(event, isCreating ? '' : report.id));
+   bindWorkspaceDraftListeners(detailEditorFormEl);
+@@ -5227,11 +4742,11 @@
+   const detailNotesInputEl = document.getElementById('detailNotes');
+   const detailNotesPreviewEl = document.getElementById('detailNotesPreview');
+   const syncDetailNotesPreview = () => updateRenderedNotePreview(detailNotesPreviewEl, detailNotesInputEl?.value || '');
+-  detailNotesInputEl?.addEventListener('input', syncDetailNotesPreview);
++  bindMarkdownShell('detailNotesShell', { textareaEl: detailNotesInputEl, previewEl: detailNotesPreviewEl, onSync: syncDetailNotesPreview });
+   syncDetailNotesPreview();
+   document.getElementById('addVacationBtn')?.addEventListener('click', addVacationDraftRow);
+   document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
+-    app.ui.detailDrawerTab = 'pdc-notes';
++    app.ui.detailDrawerTab = 'pdc-summary';
+     persistUiState();
+     addEvidenceDraftRow();
+     window.setTimeout(() => {
+@@ -5289,7 +4804,7 @@
+       button.addEventListener('click', () => {
+         const meetingId = button.getAttribute('data-add-evidence-meeting');
+         const meeting = getReportById(report.id)?.meetings.find((item) => item.id === meetingId);
+-        app.ui.detailDrawerTab = 'pdc-notes';
++        app.ui.detailDrawerTab = 'pdc-summary';
+         persistUiState();
+         addEvidenceDraftRow({ linkedMeetingId: meetingId, date: meeting?.meetingDate || todayStamp() });
+         window.setTimeout(() => {
+@@ -5503,7 +5018,9 @@
+         cvReviewDays: formData.get('cadenceCvReviewDays')
+       })
+       : deepCopy(existingReport?.cadenceOverrides || {}),
+-    vacations: collectWorkspaceVacations(),
++    vacations: document.getElementById('vacationList')
++      ? collectWorkspaceVacations()
++      : normalizeVacationEntries(existingReport?.vacations || []),
+     evidence: evidenceInputsPresent ? collectWorkspaceEvidence() : deepCopy(existingReport?.evidence || []),
+     customFields
+   };
+@@ -5583,7 +5100,6 @@
+ }
+ 
+ async function deleteReport(reportId) {
+-  closeBriefingModal();
+   const report = getReportById(reportId);
+   if (!report) return;
+   if (!window.confirm(`Delete ${report.name} from Team Pulse?`)) return;
+@@ -5684,6 +5200,15 @@
+   meetingImportIcsBtn.classList.toggle('hidden', !!meeting);
+   setStatus(meetingStatusEl, '');
+   syncMeetingNotesPreview();
++  const meetingShell = document.getElementById('meetingNotesShell');
++  if (meetingShell) {
++    meetingShell.setAttribute('data-md-active', 'write');
++    meetingShell.querySelectorAll('[data-md-target]').forEach((btn) => {
++      const isWrite = btn.getAttribute('data-md-mode') === 'write';
++      btn.classList.toggle('active', isWrite);
++      btn.setAttribute('aria-selected', isWrite ? 'true' : 'false');
++    });
++  }
+   meetingModalEl.classList.add('open');
+   meetingModalEl.setAttribute('aria-hidden', 'false');
+   syncBodyOverlayLock();
+@@ -6178,7 +5703,7 @@
+   closeMeetingModalBtn.addEventListener('click', closeMeetingModal);
+   cancelMeetingModalBtn.addEventListener('click', closeMeetingModal);
+   meetingFormEl.addEventListener('submit', handleMeetingSubmit);
+-  meetingNotesInputEl?.addEventListener('input', syncMeetingNotesPreview);
++  bindMarkdownShell('meetingNotesShell', { textareaEl: meetingNotesInputEl, previewEl: meetingNotesPreviewEl, onSync: syncMeetingNotesPreview });
+   meetingImportIcsBtn.addEventListener('click', () => {
+     const reportId = normalizeText(document.getElementById('meetingReportId')?.value) || app.ui.selectedId;
+     if (!reportId) {
+@@ -6226,7 +5751,6 @@
+   });
+ 
+   closeTileModalBtn.addEventListener('click', closeTileModal);
+-  closeBriefingModalBtn.addEventListener('click', closeBriefingModal);
+   tileModalPrimaryBtn.addEventListener('click', applyActiveTileAction);
+   tileModalSecondaryBtn.addEventListener('click', closeTileModal);
+   statsEl.addEventListener('click', handleTileClick);

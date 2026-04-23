@@ -1,0 +1,58 @@
+Team Pulse v0.31.0 changes
+
+Overview
+- Two structural moves toward the Monday aesthetic. Both live inside the detail drawer.
+- Tab bar restyled from a horizontal bottom-border row into a vertical left-rail menu, with a two-column drawer layout (menu on the left, content pane on the right). This is the "left nav" style from Monday's main app chrome, but scoped to the drawer for this build.
+- Profile readonly view restyled from cards-in-a-grid into Monday-style property rows: label on the left in a white cell, value on the right in a grey filled cell, full width, one row per field, with a crisp 1px divider between rows. Support level gets the saturated palette fill already introduced in v0.30 for the main table.
+- Top-level app chrome (top bar, main page) is unchanged in this build. Whether to put the whole app behind a permanent left sidebar is deferred to a future release.
+
+Drawer tab rail (the headline change)
+- New container .drawer-workspace-layout between the status strip and the form. 2-column CSS grid with a fixed 220px first column (the menu) and 1fr second column (the content). Hairline border and radius wrap both columns as one unit.
+- .drawer-workspace-tabs now renders as a vertical flex column with a light grey background (#fafbfd), right border as a column divider, 14/10 padding, sticky positioning so the menu stays visible while the content pane scrolls.
+- .drawer-workspace-tab now renders as a full-width left-aligned row: 10/12 padding, 8px corner radius, hover becomes #eef2f8 grey, active state uses --accent-soft background with --accent text and weight 700. Each tab button now includes a 6px dot icon (.drawer-workspace-tab-icon) — grey by default, accent-colored when active — giving the same "small colored dot next to label" cue Monday uses for its nav items.
+- The old v0.30 bottom-border tab styling (grey text, active = dark text with 2px underline) is gone. The data-drawer-tab attribute, button order, and tab switching logic are all unchanged, so the click handlers and aria-selected wiring continue to work without modification.
+- New wrapper .drawer-workspace-content wraps the form in the right column; 18/20/24 padding, white background.
+- renderDetailDrawerTabBar now emits the dot span inside each button. No other render code changed.
+
+Profile property rows
+- .profile-readonly-grid is now a flex column with a 1px gap and a --line background. This gap + background trick produces the crisp 1px hairline dividers between rows without any per-row border CSS.
+- .profile-readonly-field is a 180px | 1fr grid with its own 1px gap. Label cell gets a white background (var(--card) would also work); value cell gets a neutral #f5f6f8 grey background. Both cells get 12/16 padding and 14px font-size at weight 600. Minimum row height of 44px keeps rows airy and clickable-feeling even when content is short.
+- Empty values (normalizeText returns '') render 'Not set' in muted italic as before, but inside the new grey cell instead of a rounded card.
+- New data-fill attribute support on the value cell: green / amber / red / blue map to the saturated palette introduced in v0.30. When set, the value cell's text becomes white and is center-justified, matching the "Working on it" saturated-orange cell in the reference screenshot.
+- renderProfileReadonlyField signature extended with an optional fill parameter (defaulted to '' for backward compatibility). All existing callers still work without changes.
+- The Support level row is the only field currently using the fill. It now reads as a green / blue / amber / red block matching the Support column in the Direct Reports table — same palette, same meaning, different surface.
+
+Mobile behavior
+- On screens <= 860px, the .drawer-workspace-layout collapses to a single column. The tab rail becomes a horizontal wrap-flex strip above the content (flex-direction: row, border-bottom instead of border-right, sticky positioning dropped). Tab buttons lose the 100% width constraint so they pack naturally.
+- On the same breakpoint, .profile-readonly-field collapses from the 180px|1fr row to a single column with the label above the value. The label switches from 14px weight-600 text to 12px uppercase muted-color label styling, which reads better as a stacked eyebrow than as a sentence-case row header.
+- .profile-readonly-grid was removed from the older mobile grid-template-columns:1fr list because it's no longer a grid; the per-field override handles the mobile stack now.
+
+Chrome
+- APP_VERSION bumped to v0.31.0.
+- Static version pill bumped to v0.31.0.
+- No schema change. v0.29/v0.30 JSON files load without migration.
+
+File size
+- v0.30 = 6523 lines, v0.31 = 6541 lines, net +18 lines. The new layout container, sticky tab rail, dot-icon span, and property-row CSS add weight; the removed v0.30 bottom-border tab rules and the old card-style profile CSS come out.
+
+Validation
+- Extracted inline JS and passed node --check.
+- JS also parses via V8 Function constructor.
+- HTML tag balance verified at the file level for div, section, ul, li, form, label, aside, tbody, table, thead, tr, th — all opens/closes match.
+- Drawer render template spot-checked for balanced div/form/span tags inside the big template literal: 37/37 divs, 1/1 forms, 12/12 spans.
+- All v0.30 drawer tab identifiers still work: data-drawer-tab attributes, #detailWorkspaceTabBar id, DETAIL_DRAWER_TABS array, currentDetailDrawerTab() helper, and the click handler wiring in the body-level event delegation are untouched.
+
+Testing recommendations
+- Open a direct report. Confirm the drawer now shows a vertical tab rail on the left (Profile / Meetings / PDC Summary) with a small dot next to each label, and the content area on the right. Active tab should have a blue-tinted background and dark blue text.
+- Click between tabs. Confirm the panel changes as before and the selected tab visually updates. The URL / persisted tab state from v0.30 still applies, so reloading should bring you back to the last tab you used.
+- Scroll within the Profile tab (if the content overflows). The tab rail on the left should stick at the top of the drawer body while the content scrolls. If the tab rail itself is taller than the viewport, it should scroll independently — but in practice with only three tabs this won't happen.
+- On the Profile tab in read-only mode, confirm the fields render as a stacked table of rows rather than a grid of cards. Each row should have the label in a white cell on the left and the value in a grey cell on the right, with a thin line between rows.
+- Confirm Support level specifically renders as a filled colored cell using the same color as the Support column in the main table: green for Good, blue for Monitor, amber for Support needed, red for Urgent.
+- Click Edit on Profile. Confirm the edit-mode form still renders normally (the form uses .form-grid, not the readonly grid, so nothing should look different from v0.30 in edit mode).
+- Resize the window down to phone-width. Confirm the tab rail flips to horizontal across the top and property rows stack with labels above values in the muted-uppercase style.
+- Load a v0.29 or v0.30 JSON file. It should open without any migration prompts.
+
+Known follow-ups (not in this release)
+- The top-level app chrome (main page top bar, KPI chips, toolbar menu, save dock) is unchanged. A future build can move this to a permanent left sidebar like Monday's home/my-work/more rail, but you wanted to live with the drawer restyle first before committing to that.
+- Vacation Tracker and Cadence Targets in the Profile tab still use their own card-based read-only layouts rather than the new property-row system. Migrating those to the same property-row style would be consistent but wasn't in scope for this build.
+- The Meetings tab and PDC Summary tab content structures are unchanged — they use .drawer-section cards as before. Monday would probably put the manager-notes markdown block and the follow-up list as property rows too, but that's a larger rethink and was deferred.
