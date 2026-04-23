@@ -4,11 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Team Pulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#f5f7fb;--card:#ffffff;--text:#172033;--muted:#5f6b85;--line:#dbe2ee;--accent:#2957d6;--accent-soft:#e8efff;--success:#0d7a48;--success-soft:#e7f7ee;--warning:#b06b00;--warning-soft:#fff4df;--danger:#b42318;--danger-soft:#ffebe9;--info:#115b9c;--info-soft:#e8f4ff;--shadow:0 10px 35px rgba(23,32,51,0.08);--radius:18px;--radius-sm:12px;--radius-xs:8px}
+    :root{--bg:#f5f7fb;--card:#ffffff;--text:#172033;--muted:#5f6b85;--line:#dbe2ee;--line-strong:#c8d2e3;--accent:#2957d6;--accent-soft:#e8efff;--success:#0d7a48;--success-soft:#e7f7ee;--warning:#b06b00;--warning-soft:#fff4df;--danger:#b42318;--danger-soft:#ffebe9;--info:#115b9c;--info-soft:#e8f4ff;--sat-green:#00c875;--sat-amber:#fdab3d;--sat-red:#e2445c;--sat-blue:#579bfc;--sat-grey:#c4c4c4;--shadow:0 10px 35px rgba(23,32,51,0.08);--radius:18px;--radius-sm:12px;--radius-xs:8px}
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
-    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+    body{font-family:Figtree,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
     button,input,select,textarea{font:inherit}
     .page{max-width:1400px;margin:0 auto;padding:28px 28px 120px}
     .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
@@ -19,7 +22,7 @@
     .subtle,.panel-header p,.section-note,.table-tip,.help-text,.hint{color:var(--muted)}
     .toolbar,.actions,.section-actions,.legend,.badges,.quick-actions,.save-dock-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
     .toolbar{justify-content:flex-end}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm)}
     .panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:20px 20px 0}
     .panel-header p{margin:6px 0 0;font-size:14px}
     .content{padding:20px}
@@ -86,7 +89,7 @@
     .team-health-tab.active{background:var(--accent-soft);color:var(--accent);border-color:transparent}
     #teamHealthBody > .tenure-river-card:first-child,#teamHealthBody > .recent-themes-card:first-child,#teamHealthBody > .pdc-mix-card:first-child,#teamHealthBody > .cadence-tab:first-child{margin-top:0}
     /* Cadence tab: person cards + cadence bars */
-    .cadence-tab{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+    .cadence-tab{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
     .glyph-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:12px;margin:0}
     .glyph-cell{appearance:none;background:#fbfcff;border:1px solid var(--line);padding:10px 8px;cursor:pointer;border-radius:14px;display:grid;gap:6px;justify-items:center;min-width:0;text-align:center;transition:border-color 0.15s ease,background 0.15s ease,transform 0.12s ease}
     .glyph-cell svg{width:28px;height:auto;display:block}
@@ -110,7 +113,7 @@
     .health-progress.success > span{background:var(--success)}
     .health-progress.danger > span{background:var(--danger)}
     /* PDC Mix tab: donut chart */
-    .pdc-mix-card{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+    .pdc-mix-card{display:grid;gap:16px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
     .pdc-mix-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
     .pdc-mix-head p{margin:6px 0 0;color:var(--muted);font-size:14px}
     .donut-wrap{display:grid;place-items:center;padding:8px 0}
@@ -129,26 +132,44 @@
     label span{font-weight:700;font-size:13px;color:var(--muted)}
     .table-wrap{overflow-x:auto;border-top:1px solid var(--line)}
     table{width:100%;border-collapse:collapse;min-width:1120px}
-    th,td{padding:14px 18px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
-    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;background:#fbfcff;position:sticky;top:0;z-index:1}
+    th,td{padding:0;border-right:1px solid var(--line);border-bottom:2px solid var(--line-strong);text-align:left;vertical-align:middle;font-size:14px}
+    th:last-child,td:last-child{border-right:none}
+    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;background:#f5f6f8;position:sticky;top:0;z-index:1;padding:10px 14px;font-weight:800;border-bottom:2px solid var(--line-strong)}
+    td{padding:12px 14px;background:#fff}
+    td.data-cell{padding:0;text-align:center}
+    tbody tr:last-child td{border-bottom:none}
     tbody tr{cursor:pointer;transition:background 0.12s ease}
-    tbody tr:hover{background:#fbfcff}
-    tbody tr.decay-warm{background:rgba(176,107,0,0.04)}
-    tbody tr.decay-stale{background:rgba(176,107,0,0.08)}
-    tbody tr.decay-warm:hover{background:rgba(176,107,0,0.07)}
-    tbody tr.decay-stale:hover{background:rgba(176,107,0,0.12)}
-    tbody tr.selected,tbody tr.selected:hover{background:#eef4ff}
+    tbody tr:hover td{background:#fafbfd}
+    tbody tr:hover td.data-cell[data-fill]{filter:brightness(0.96)}
+    tbody tr.selected td,tbody tr.selected:hover td{background:#eef4ff}
+    tbody tr.selected td.data-cell[data-fill]{filter:brightness(0.96)}
     .namecell{display:grid;gap:4px}
     .namecell strong{font-size:15px}
     .namesub{color:var(--muted);font-size:13px}
     .namesub.info{color:var(--info);font-weight:700}
     .namesub.warning{color:var(--warning);font-weight:700}
-    .touchpoints{display:grid;gap:7px;min-width:200px}
-    .touchpoint-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;padding:8px 10px;border-radius:10px;background:#f8faff;border:1px solid #edf1f8}
-    .touchpoint-row.overdue{background:var(--warning-soft);border-color:#f2dfb5}
-    .touchpoint-row .tp-label{color:var(--muted);font-weight:700}
-    .touchpoint-row .tp-date{font-weight:700;color:var(--text);text-align:right}
-    .quick-filter-bar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#f8fbff;margin:8px 0 12px}
+    .data-cell-fill{display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px 12px;font-size:13px;font-weight:700;color:#fff;text-align:center}
+    .data-cell-fill[data-fill="green"]{background:var(--sat-green)}
+    .data-cell-fill[data-fill="amber"]{background:var(--sat-amber)}
+    .data-cell-fill[data-fill="red"]{background:var(--sat-red)}
+    .data-cell-fill[data-fill="blue"]{background:var(--sat-blue)}
+    .data-cell-fill[data-fill="grey"]{background:var(--sat-grey);color:#fff}
+    .data-cell-fill[data-fill="none"]{background:transparent;color:var(--text)}
+    .data-cell-fill[data-fill="none"] .data-cell-sub{color:var(--muted)}
+    .data-cell-fill[data-fill="muted"]{background:#f2f5fb;color:var(--muted);font-weight:700}
+    .data-cell-stack{display:flex;flex-direction:column;gap:2px;align-items:center;line-height:1.2}
+    .data-cell-sub{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;opacity:0.92}
+    .touchpoint-grid{display:grid;grid-template-columns:1fr 1fr 1fr;min-width:360px}
+    .touchpoint-grid .data-cell-fill{border-right:1px solid rgba(255,255,255,0.35);min-height:52px}
+    .touchpoint-grid .data-cell-fill[data-fill="none"]{border-right:1px solid var(--line)}
+    .touchpoint-grid .data-cell-fill:last-child{border-right:none}
+    .touchpoint-col-label{font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;opacity:0.85;margin-bottom:2px}
+    .touchpoint-col-label.on-soft{color:var(--muted)}
+    .next-touchpoint-grid{display:grid;grid-template-columns:1fr 1fr;min-width:240px}
+    .next-touchpoint-grid .data-cell-fill{border-right:1px solid rgba(255,255,255,0.35);min-height:52px}
+    .next-touchpoint-grid .data-cell-fill[data-fill="none"]{border-right:1px solid var(--line)}
+    .next-touchpoint-grid .data-cell-fill:last-child{border-right:none}
+    .quick-filter-bar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#f8fbff;margin:8px 0 12px}
     .quick-filter-bar strong{display:block;margin-bottom:4px}
     .table-tip{font-size:13px;margin-top:2px}
     .empty-state,.callout{border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);background:#fff}
@@ -176,6 +197,16 @@
     .drawer-overlay.open .rules-drawer{transform:translateX(0)}
     .workspace-form-grid{display:grid;gap:14px}
     .notes-editor textarea,.notes-textarea{min-height:220px}
+    .md-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:0}
+    .md-tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;border-top-left-radius:10px;border-top-right-radius:10px;position:relative;top:1px}
+    .md-tab:hover,.md-tab:focus-visible{color:var(--text);outline:none}
+    .md-tab.active{background:#fff;border-color:var(--line);color:var(--text)}
+    .md-panel-write,.md-panel-preview{border:1px solid var(--line);border-top-left-radius:0;border-radius:0 14px 14px 14px;background:#fff;padding:12px}
+    .md-panel-preview{background:#fbfcff;min-height:120px}
+    .md-panel-write textarea{border:none;outline:none;resize:vertical;width:100%;background:transparent;padding:0;font:inherit;color:inherit;min-height:180px}
+    .md-panel-write textarea:focus{outline:none}
+    .md-shell[data-md-active="preview"] .md-panel-write{display:none}
+    .md-shell[data-md-active="write"] .md-panel-preview{display:none}
     .note-preview-shell{display:grid;gap:8px;margin-top:14px}
     .note-preview-label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
     .note-preview{background:#fbfcff;border:1px dashed var(--line);border-radius:14px;padding:14px;min-height:72px}
@@ -210,12 +241,12 @@
     .drawer-header-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
     .drawer-header h2{font-size:clamp(24px,2vw,34px);line-height:1.08;margin:0}
     .drawer-header p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .drawer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:22px 22px 40px;display:grid;gap:22px;align-content:start;background:#fafcff}
-    .drawer-section{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 20px rgba(23,32,51,0.04)}
+    .drawer-body{flex:1 1 auto;min-height:0;overflow:hidden;padding:22px 22px 22px;display:flex;flex-direction:column;gap:18px;background:#fff}
+    .drawer-section{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
     .drawer-section h3{font-size:18px;margin:0 0 10px}
-    .drawer-hero{background:linear-gradient(135deg,#f2f7ff 0%,#ffffff 100%);border:1px solid #dce6f8;border-radius:20px;padding:18px;display:grid;gap:14px}
+    .drawer-hero{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px;display:grid;gap:14px}
     .hero-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-    .hero-card,.overview-card,.cadence-card,.text-panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+    .hero-card,.overview-card,.cadence-card,.text-panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px}
     .hero-card .label,.overview-card .label,.cadence-card .label,.text-panel .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-weight:800}
     .hero-card .value,.overview-card .value,.text-panel .value{font-size:15px;font-weight:700;color:var(--text);white-space:pre-wrap}
     .overview-grid,.text-grid,.cadence-grid,.form-grid{display:grid;gap:14px}
@@ -223,6 +254,15 @@
     .cadence-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     .text-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .text-panel .value.empty,.overview-card .value.empty,.hero-card .value.empty{color:var(--muted);font-weight:600}
+    .profile-readonly-grid{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
+    .profile-readonly-field{display:grid;grid-template-columns:180px 1fr;gap:1px;background:var(--line);padding:0;border:none;border-radius:0}
+    .profile-readonly-field .label{display:flex;align-items:center;padding:12px 16px;background:#fff;color:var(--text);font-size:14px;text-transform:none;letter-spacing:0;font-weight:600;margin:0}
+    .profile-readonly-field .value{display:flex;align-items:center;padding:12px 16px;background:#f5f6f8;font-size:14px;font-weight:600;color:var(--text);word-break:break-word;min-height:44px}
+    .profile-readonly-field .value.empty{color:var(--muted);font-weight:500;font-style:italic}
+    .profile-readonly-field .value[data-fill="green"]{background:var(--sat-green);color:#fff;font-weight:700;justify-content:center}
+    .profile-readonly-field .value[data-fill="amber"]{background:var(--sat-amber);color:#fff;font-weight:700;justify-content:center}
+    .profile-readonly-field .value[data-fill="red"]{background:var(--sat-red);color:#fff;font-weight:700;justify-content:center}
+    .profile-readonly-field .value[data-fill="blue"]{background:var(--sat-blue);color:#fff;font-weight:700;justify-content:center}
     .cadence-card{display:grid;gap:8px}
     .cadence-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
     .cadence-date{font-size:16px;font-weight:800}
@@ -246,10 +286,10 @@
     .tenure-mode-btn.active{color:var(--text);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px}
     .tenure-mode-btn:hover,.tenure-mode-btn:focus-visible{color:var(--text);outline:none}
     .tenure-mode-sep{color:var(--muted);font-weight:700;user-select:none}
-    .tenure-river-card{margin-top:18px;display:grid;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+    .tenure-river-card{margin-top:18px;display:grid;gap:14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
     .tenure-river-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px}
     .tenure-river-head p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .tenure-river-svg-wrap,.tenure-mini-wrap{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fbfdff 0%,#f6f9ff 100%);padding:10px;overflow:auto}
+    .tenure-river-svg-wrap,.tenure-mini-wrap{border:1px solid var(--line);border-radius:var(--radius-sm);background:#fbfcfd;padding:10px;overflow:auto}
     .tenure-river-svg,.tenure-mini-svg{display:block;width:100%;height:auto}
     .tenure-river-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start}
     .tenure-legend{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
@@ -301,17 +341,14 @@
     .detail-subhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
     .detail-level{font-size:20px;font-weight:800;letter-spacing:-0.01em;color:var(--text)}
     .detail-supporting-meta{color:var(--muted);font-size:15px;font-weight:600}
-    .detail-meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-    .detail-meta-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:14px;font-weight:700;box-shadow:0 6px 18px rgba(23,32,51,0.04)}
-    .detail-meta-label{color:var(--muted)}
-    .detail-meta-chip strong{color:var(--text);font-size:14px;font-weight:800}
-    .workspace-focus-panel{display:grid;gap:8px;padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#fff;box-shadow:0 8px 20px rgba(23,32,51,0.05)}
+    .detail-mentor{margin-top:4px;color:var(--muted);font-size:14px;font-weight:600}
+    .workspace-focus-panel{display:grid;gap:8px;padding:16px 18px;border-radius:var(--radius-sm);border:1px solid var(--line);background:#fff}
     .workspace-focus-panel .label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800}
     .workspace-focus-panel strong{font-size:24px;line-height:1.15;color:var(--text)}
     .workspace-focus-panel p{margin:0;color:var(--muted);font-size:14px}
-    .workspace-focus-panel.good{border-color:#d9ebdd;background:#f5fcf6}
-    .workspace-focus-panel.attention{border-color:#f4dfb0;background:#fff9ed}
-    .workspace-focus-panel.urgent{border-color:#f2c6c6;background:#fff4f4}
+    .workspace-focus-panel.good{border-left:4px solid var(--sat-green)}
+    .workspace-focus-panel.attention{border-left:4px solid var(--sat-amber)}
+    .workspace-focus-panel.urgent{border-left:4px solid var(--sat-red)}
     .development-focus-grid{display:grid;gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
     .development-field{display:grid;gap:8px}
     .development-field span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800}
@@ -324,10 +361,12 @@
     .drawer-status-strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .drawer-status-strip .pill,.drawer-status-strip .badge{margin:0}
     .drawer-status-note{margin:0;color:var(--muted);font-size:14px}
-    .drawer-workspace-tabs{display:flex;flex-wrap:wrap;gap:8px}
-    .drawer-workspace-tab{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 14px;font-size:14px;font-weight:700;border-radius:999px;cursor:pointer;transition:background 0.15s ease,color 0.15s ease,border-color 0.15s ease}
-    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{background:#f2f5fb;color:var(--text);outline:none}
-    .drawer-workspace-tab.active{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+    .drawer-workspace-layout{display:grid;grid-template-columns:220px 1fr;gap:0;align-items:stretch;min-height:0;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;overflow:hidden;flex:1 1 auto}
+    .drawer-workspace-tabs{display:flex;flex-direction:column;gap:0;padding:10px 0;background:#fafbfd;border-right:1px solid var(--line);border-bottom:none;min-width:0;overflow-y:auto}
+    .drawer-workspace-tab{appearance:none;border:none;background:transparent;color:var(--text);padding:10px 18px;font-size:14px;font-weight:600;border-radius:0;cursor:pointer;text-align:left;width:100%;line-height:1.2;display:block;transition:background 0.15s ease,color 0.15s ease}
+    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{background:#eef2f8;color:var(--text);outline:none}
+    .drawer-workspace-tab.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
+    .drawer-workspace-content{min-width:0;padding:18px 20px 24px;background:#fff;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
     .drawer-tab-panel{display:grid;gap:22px}
     .drawer-tab-panel[hidden]{display:none !important}
     .drawer-panel-stack{display:grid;gap:22px}
@@ -337,64 +376,35 @@
     .drawer-details summary::after{content:"Show";color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em}
     .drawer-details[open] summary::after{content:"Hide"}
     .drawer-details > div{margin-top:14px;display:grid;gap:16px}
-    .modal.briefing-modal{width:min(960px,calc(100vw - 32px))}
-    .briefing-topline{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-    .briefing-summary{display:grid;gap:6px}
-    .briefing-summary h3{margin:0;font-size:28px;line-height:1.1}
-    .briefing-summary p{margin:0;color:var(--muted);font-size:14px}
-    .briefing-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    .briefing-layout{display:grid;gap:14px}
-    .briefing-section{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
-    .briefing-section h3{margin:0 0 10px;font-size:18px}
-    .briefing-list{display:grid;gap:12px}
-    .briefing-item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfcff}
-    .briefing-item-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-bottom:6px}
-    .briefing-item-title{font-weight:800}
-    .briefing-item-meta{color:var(--muted);font-size:13px;font-weight:600}
-    .briefing-item-copy{color:var(--text);white-space:pre-wrap}
-    .briefing-bullets{display:grid;gap:8px;margin:0;padding-left:20px}
-    .briefing-bullets li{padding-left:2px}
-    .briefing-note-block{background:#fbfcff;border:1px solid var(--line);border-radius:14px;padding:14px}
-    .briefing-cadence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .briefing-cadence-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcff;display:grid;gap:6px}
-    .briefing-cadence-card .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
-    .briefing-cadence-card strong{font-size:20px;line-height:1.1}
-    .briefing-cadence-card span{color:var(--muted);font-size:13px}
-    .briefing-empty{color:var(--muted);font-size:14px}
-    .modal.review-modal{width:min(1040px,calc(100vw - 32px))}
-    .review-config-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end;margin-bottom:16px}
-    .review-config-grid label{display:grid;gap:6px}
-    .review-custom-range[hidden]{display:none}
-    .review-preview{display:grid;gap:14px}
-    .review-topline{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-    .review-summary{display:grid;gap:6px}
-    .review-summary h3{margin:0;font-size:28px;line-height:1.1}
-    .review-summary p{margin:0;color:var(--muted);font-size:14px}
-    .review-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .review-kv{display:grid;gap:0;border:1px solid var(--line);border-radius:14px;padding:2px 14px;background:#fbfcff}
-    .review-kv-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(219,226,238,0.9)}
-    .review-kv-row:last-child{border-bottom:none}
-    .review-kv-row span{color:var(--muted);font-size:13px;font-weight:700}
-    .review-kv-row strong{text-align:right;font-size:14px;line-height:1.4}
-    .review-count-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .review-count-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcff;display:grid;gap:6px}
-    .review-count-card .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
-    .review-count-card strong{font-size:22px;line-height:1.1}
-    .review-count-card span{color:var(--muted);font-size:13px}
-    .review-group-list{display:grid;gap:14px}
-    .review-group{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfcff}
-    .review-group-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
-    .review-markdown-preview{margin:0;white-space:pre-wrap;background:#fbfcff;border:1px solid var(--line);border-radius:16px;padding:16px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;color:var(--text)}
-    .review-empty{color:var(--muted);font-size:14px}
     .field-hint{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:600}
     .cadence-target-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .cadence-target-grid-readonly{gap:10px}
+    .cadence-target-readonly{display:grid;gap:4px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}
+    .cadence-target-readonly .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:var(--muted)}
+    .cadence-target-readonly .value{font-size:15px;font-weight:700;color:var(--text)}
     .vacation-summary{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
     .vacation-list{display:grid;gap:12px}
+    .vacation-list-readonly{gap:8px}
     .vacation-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}
-    .vacation-empty,.followup-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fafcff}
-    .followup-panel{display:grid;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fbfcff;margin-bottom:14px}
-    .followup-list,.meeting-followups{display:grid;gap:10px}
-    .followup-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .vacation-row-readonly{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff}
+    .vacation-row-readonly-range{font-size:14px;font-weight:700;color:var(--text)}
+    .vacation-row-readonly-note{color:var(--muted);font-size:13px}
+    .vacation-empty,.followup-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:var(--radius-sm);padding:14px;background:#fafcff}
+    .sharp-panel{border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;overflow:hidden}
+    .sharp-panel + .sharp-panel{margin-top:14px}
+    .sharp-panel-header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 16px;background:#fafbfd;border-bottom:1px solid var(--line)}
+    .sharp-panel-header h3{margin:0;font-size:15px;font-weight:700;color:var(--text)}
+    .sharp-panel-header .sharp-panel-header-meta{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .sharp-panel-header p{margin:0;color:var(--muted);font-size:13px;flex-basis:100%;font-weight:500}
+    .sharp-panel-body{padding:0}
+    .sharp-panel-body.padded{padding:14px 16px}
+    .sharp-panel-row{padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
+    .sharp-panel-row:last-child{border-bottom:none}
+    .sharp-panel-row:hover{background:#fafbfd}
+    .followup-list,.meeting-followups{display:block}
+    .followup-list .followup-item,.meeting-followups .followup-item{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border:none;border-radius:0;background:#fff;border-bottom:1px solid var(--line)}
+    .followup-list .followup-item:last-child,.meeting-followups .followup-item:last-child{border-bottom:none}
+    .followup-list .followup-item:hover,.meeting-followups .followup-item:hover{background:#fafbfd}
     .followup-item input{width:auto;margin-top:2px}
     .followup-copy{display:grid;gap:4px;min-width:0}
     .followup-copy strong{font-size:14px;line-height:1.35}
@@ -464,6 +474,47 @@
     .theme-chip.active span{color:var(--accent)}
     .theme-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fafcff}
 
+    .toolbar-menu{position:relative}
+    .toolbar-menu summary{list-style:none}
+    .toolbar-menu summary::-webkit-details-marker{display:none}
+    .toolbar-menu-trigger{appearance:none;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:10px;padding:11px 14px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;transition:background 0.15s ease,border-color 0.15s ease,box-shadow 0.15s ease}
+    .toolbar-menu-trigger:hover,.toolbar-menu[open] .toolbar-menu-trigger{background:#f8fbff;border-color:#cfd9ec}
+    .toolbar-menu-popover{position:absolute;right:0;top:calc(100% + 8px);min-width:220px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);display:grid;gap:4px;z-index:30}
+    .toolbar-menu-item{width:100%;justify-content:flex-start}
+    .toolbar-menu-item.secondary{background:transparent;border:none;color:var(--text);padding:10px 12px;border-radius:10px;box-shadow:none}
+    .toolbar-menu-item.secondary:hover{background:#f2f5fb}
+    .table-wrap table{min-width:980px}
+    .namecell{gap:8px}
+    .namecell strong{font-size:16px;line-height:1.25}
+    .table-meta-chips{display:flex;flex-wrap:wrap;gap:6px}
+    .table-meta-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid #e4ebf5;background:#f5f7fb;color:var(--muted);font-size:12px;font-weight:700;line-height:1.1;max-width:100%}
+    .table-meta-chip.info{background:var(--info-soft);border-color:#d5e6fb;color:var(--info)}
+    .table-meta-chip.warning{background:var(--warning-soft);border-color:#f2dfb5;color:var(--warning)}
+    .table-meta-chip.success{background:var(--success-soft);border-color:#d6eedf;color:var(--success)}
+    .table-meta-chip strong{font-size:inherit;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .insights-tab{display:grid;gap:18px}
+    .insights-tab > *{margin-top:0 !important}
+    .drawer-header-status-block{display:grid;gap:12px}
+    .drawer-body{gap:18px;padding-top:18px}
+    .meeting-history{gap:0}
+    .meeting-disclosure{border:none;border-bottom:1px solid var(--line);border-radius:0;background:#fff;overflow:hidden}
+    .meeting-disclosure:last-child{border-bottom:none}
+    .meeting-disclosure:hover{background:#fafbfd}
+    .meeting-disclosure[open]{background:#fafbfd}
+    .meeting-summary{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 16px;cursor:pointer;list-style:none}
+    .meeting-summary::-webkit-details-marker{display:none}
+    .meeting-summary-main{display:grid;gap:8px;min-width:0}
+    .meeting-summary-copy{color:var(--muted);font-size:13px;line-height:1.4}
+    .meeting-summary-toggle{display:inline-flex;align-items:center;justify-content:center;min-width:52px;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em}
+    .meeting-summary-toggle::before{content:"Open"}
+    details[open] > .meeting-summary .meeting-summary-toggle::before{content:"Hide"}
+    .meeting-item-body{padding:0 16px 14px;border-top:1px solid var(--line);display:grid;gap:12px}
+    .meeting-item-head{margin-bottom:0;padding-top:12px}
+    .meeting-item-actions button{margin-left:0}
+    .tile-link-row{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin-bottom:10px;cursor:pointer;text-align:left;justify-items:start;align-items:start}
+    .tile-link-row strong{color:inherit}
+    .tile-link-row:hover{background:#fbfcff;border-color:#cfd9ec}
+
     @media (max-width:1100px){#detailDrawerOverlay .drawer{width:min(1380px,calc(100vw - 24px));max-width:min(1380px,calc(100vw - 24px))}
     .hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
@@ -471,9 +522,14 @@
     .topbar,.panel-header,.quick-filter-bar,.drawer-header-top,.save-dock{flex-direction:column;align-items:stretch}
     .toolbar,.section-actions,.save-dock-actions{justify-content:stretch}
     .toolbar > *,.section-actions > *,.save-dock-actions > *{width:100%}
-    .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.briefing-cadence-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom,.review-config-grid,.review-overview-grid,.review-count-grid{grid-template-columns:1fr}
+    .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom{grid-template-columns:1fr}
+    .profile-readonly-field{grid-template-columns:1fr;gap:0}
+    .profile-readonly-field .label{padding-bottom:4px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+    .drawer-workspace-layout{grid-template-columns:1fr}
+    .drawer-workspace-tabs{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);position:static;max-height:none;overflow:visible}
+    .drawer-workspace-tab{width:auto}
     .tenure-river-head,.tenure-river-foot{flex-direction:column;align-items:stretch}
-    .drawer-hero-actions,.briefing-topline,.pulse-strip-head,.review-topline{flex-direction:column;align-items:stretch}
+    .drawer-hero-actions,.pulse-strip-head{flex-direction:column;align-items:stretch}
     .vacation-row{grid-template-columns:1fr}
     #detailDrawerOverlay{padding:10px}
     #detailDrawerOverlay .drawer{width:calc(100vw - 16px);max-width:calc(100vw - 16px);height:calc(100vh - 16px);max-height:calc(100vh - 16px)}
@@ -482,8 +538,12 @@
     .custom-field-row{grid-template-columns:1fr}
     .save-dock{left:12px;right:12px;bottom:12px}
     }
-    .meeting-history{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-    .meeting-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    @media (max-width:860px){
+    .toolbar-menu{width:100%}
+    .toolbar-menu-popover{position:static;margin-top:8px;width:100%}
+    }
+    .meeting-history{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
+    .meeting-item{border:none;border-bottom:1px solid var(--line);border-radius:0;padding:12px 16px;background:#fff}
     .meeting-item-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:8px}
     .meeting-item-head button{margin-left:auto}
     .meeting-date{color:var(--muted);font-size:13px}
@@ -505,14 +565,20 @@
         <p class="eyebrow">Manager Notebook</p>
         <div class="title-row">
           <h1>Team Pulse</h1>
-          <span id="appVersion" class="pill version-pill">v0.26.0</span>
+          <span id="appVersion" class="pill version-pill">v0.33.0</span>
           <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
         </div>
       </div>
       <div class="toolbar">
-        <button id="saveFileBtn" class="secondary">Choose folder</button>
-        <button id="connectDataFileBtn" class="secondary">Import JSON</button>
-        <button id="importIcsBtn" class="secondary">Import .ics</button>
+        <details class="toolbar-menu" id="dataMenu">
+          <summary class="toolbar-menu-trigger">Data</summary>
+          <div class="toolbar-menu-popover" role="menu" aria-label="Data actions">
+            <button id="saveFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Choose folder</button>
+            <button id="connectDataFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import JSON</button>
+            <button id="importIcsBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import .ics</button>
+            <button id="exportCsvBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Export files</button>
+          </div>
+        </details>
         <button id="attentionRulesBtn" class="secondary">Settings</button>
       </div>
     </div>
@@ -551,16 +617,15 @@
       <div class="panel-header">
         <div>
           <h2>Direct Reports</h2>
-          <p>Compact scan view. Click any row to open that person's workspace.</p>
+          <p>Attention first, then next touchpoints. Click any row to open that person's notes.</p>
         </div>
         <div class="section-actions">
           <button id="addReportBtn">Add direct report</button>
-          <button id="exportCsvBtn" class="secondary">Export files</button>
         </div>
       </div>
       <div class="content topless">
         <div class="searchbar">
-          <input id="searchInput" type="search" placeholder="Search by name, mentor, level, PDC status, next PDC, support level, or notes">
+          <input id="searchInput" type="search" placeholder="Search by name, mentor, status, next touchpoint, or notes">
           <select id="planFilter">
             <option value="">All PDC statuses</option>
           </select>
@@ -579,20 +644,17 @@
           </div>
           <button id="clearQuickFilterBtn" class="secondary">Clear quick filter</button>
         </div>
-        <div class="table-tip">The table is for scanning. The workspace is where you edit details, add notes, and log meetings.</div>
+        <div class="table-tip">Sorted by attention first, then the nearest touchpoint.</div>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Name</th>
-              <th>Pulse</th>
-              <th>Level</th>
               <th>Touchpoints</th>
-              <th>Next 1:1</th>
-              <th>PDC status</th>
+              <th>Next</th>
               <th>Support</th>
-              <th>Attention</th>
+              <th>Open follow-ups</th>
             </tr>
           </thead>
           <tbody id="reportsTableBody"></tbody>
@@ -633,7 +695,7 @@
         <button id="startupChooseFolderBtn" type="button">Choose Team Pulse folder</button>
         <button id="startupImportJsonBtn" type="button" class="secondary">Import existing JSON</button>
       </div>
-      <p class="help-text">You can change folders later from the toolbar.</p>
+      <p class="help-text">You can change folders later from Data.</p>
     </div>
   </div>
 </div>
@@ -666,13 +728,16 @@
             <span>Meeting date</span>
             <input id="meetingDate" name="meetingDate" type="date" required>
           </label>
-          <label class="full">
+          <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
             <span>Notes</span>
-            <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
-          </label>
-          <div class="full note-preview-shell">
-            <span class="note-preview-label">Preview</span>
-            <div id="meetingNotesPreview" class="note-preview note-markdown"><p class="note-preview-empty">Markdown preview appears here.</p></div>
+            <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
+              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
+              <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
+            </div>
+            <div class="md-panel-write" role="tabpanel">
+              <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+            </div>
+            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
           </div>
         </div>
         <div class="actions" style="margin-top:16px;">
@@ -808,71 +873,6 @@
     </aside>
   </div>
 
-  <div id="briefingModal" class="overlay" aria-hidden="true">
-    <div class="modal briefing-modal">
-      <div class="modal-header">
-        <div>
-          <h2 id="briefingModalTitle">Next 1:1 Briefing</h2>
-          <p id="briefingModalSubtitle">Pulls together recent meetings, follow-ups, cadence, and notes.</p>
-        </div>
-        <button id="closeBriefingModalBtn" class="secondary">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="briefing-toolbar" style="margin-bottom:16px;">
-          <button id="copyBriefingBtn" class="secondary">Copy To Clipboard</button>
-          <button id="printBriefingBtn" class="secondary">Print</button>
-        </div>
-        <div id="briefingModalBody"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="reviewModal" class="overlay" aria-hidden="true">
-    <div class="modal review-modal">
-      <div class="modal-header">
-        <div>
-          <h2 id="reviewModalTitle">Review Draft</h2>
-          <p id="reviewModalSubtitle">Assembles meetings, goals, follow-ups, and change history for the selected window.</p>
-        </div>
-        <button id="closeReviewModalBtn" class="secondary">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="review-config-grid">
-          <label>
-            <span>Window</span>
-            <select id="reviewWindowPreset">
-              <option value="last-quarter">Last quarter</option>
-              <option value="last-6-months">Last 6 months</option>
-              <option value="last-year">Last year</option>
-              <option value="custom">Custom range</option>
-            </select>
-          </label>
-          <label id="reviewCustomStartWrap" class="review-custom-range" hidden>
-            <span>Start date</span>
-            <input id="reviewCustomStart" type="date">
-          </label>
-          <label id="reviewCustomEndWrap" class="review-custom-range" hidden>
-            <span>End date</span>
-            <input id="reviewCustomEnd" type="date">
-          </label>
-          <label>
-            <span>Preview format</span>
-            <select id="reviewPreviewFormat">
-              <option value="printable">Printable HTML</option>
-              <option value="markdown">Markdown</option>
-            </select>
-          </label>
-        </div>
-        <div class="briefing-toolbar" style="margin-bottom:16px;">
-          <button id="copyReviewMarkdownBtn" class="secondary">Copy Markdown</button>
-          <button id="downloadReviewMarkdownBtn" class="secondary">Download Markdown</button>
-          <button id="printReviewDraftBtn" class="secondary">Print</button>
-        </div>
-        <div id="reviewModalBody"></div>
-      </div>
-    </div>
-  </div>
-
   <div id="tileModal" class="overlay" aria-hidden="true">
     <div class="modal tile-modal">
       <div class="modal-header">
@@ -897,7 +897,7 @@
   </div>
 
   <script>
-const APP_VERSION = 'v0.26.0';
+const APP_VERSION = 'v0.33.0';
 const CURRENT_SCHEMA_VERSION = 7;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -964,7 +964,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   promotionConversationMonths: DEFAULT_PROMOTION_CONVERSATION_MONTHS,
   themesWindowDays: 90,
   lastExportDate: '',
-  stableMode: false,
+  stableMode: true,
   latestExportFiles: []
 });
 const DEFAULT_UI = Object.freeze({
@@ -977,23 +977,25 @@ const DEFAULT_UI = Object.freeze({
   attentionFilter: '',
   startupHasConnectedFolder: false,
   creatingReport: false,
-  detailDrawerTab: 'pdc-notes',
+  detailDrawerTab: 'profile',
+  profileEditMode: false,
+  vacationEditMode: false,
+  cadenceEditMode: false,
   teamTenureMode: 'tenure',
   teamHealthTab: 'cadence'
 });
 
-const TEAM_HEALTH_TABS = Object.freeze(['cadence', 'pdc-mix', 'tenure', 'themes']);
+const TEAM_HEALTH_TABS = Object.freeze(['cadence', 'pdc-mix', 'insights']);
 const TEAM_HEALTH_TAB_LABELS = Object.freeze({
   'cadence': 'Cadence',
   'pdc-mix': 'PDC Mix',
-  'tenure': 'Tenure',
-  'themes': 'Themes'
+  'insights': 'Insights'
 });
-const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'pdc-notes', 'meetings']);
+const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary']);
 const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
-  'pdc-notes': 'PDC Notes',
+  'profile': 'Profile',
   'meetings': 'Meetings',
-  'profile': 'Profile'
+  'pdc-summary': 'PDC Summary'
 });
 
 const FORMATTERS = {
@@ -1004,25 +1006,6 @@ const FORMATTERS = {
   clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' })
 };
 
-// Shared CSS for the Briefing and Review print/export documents.
-// Section-specific rules live inside the respective build*PrintDocument functions.
-const PRINT_BASE_CSS = `
-body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:32px;color:#172033;line-height:1.45;background:#fff}
-*{box-sizing:border-box}
-h1,h2,h3{margin:0}
-.page{display:grid;gap:16px}
-.briefing-section{border:1px solid #dbe2ee;border-radius:16px;padding:16px;background:#fff;page-break-inside:avoid}
-.briefing-section h3{margin:0 0 10px;font-size:18px}
-.briefing-list{display:grid;gap:12px}
-.briefing-item{border:1px solid #dbe2ee;border-radius:14px;padding:12px;background:#fbfcff}
-.briefing-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:6px}
-.briefing-item-title{font-weight:800}
-.briefing-item-meta{color:#5f6b85;font-size:13px;font-weight:600}
-.briefing-item-copy{white-space:pre-wrap}
-.badges{display:flex;flex-wrap:wrap;gap:8px}
-.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;line-height:1;background:#eef2f8;color:#314667}
-.badge.warning{background:#fff4df;color:#b06b00}
-.badge.success{background:#e7f7ee;color:#0d7a48}`;
 
 const app = {
   doc: null,
@@ -1053,11 +1036,7 @@ const app = {
     payload: null,
     dirty: false
   },
-  lastDestructiveAction: null,
-  activeBriefing: null,
-  activeReviewDraft: null,
-  activeReviewSource: null,
-  activeReviewConfig: null
+  lastDestructiveAction: null
 };
 
 const toastStackEl = document.getElementById('toastStack');
@@ -1085,6 +1064,7 @@ const searchInputEl = document.getElementById('searchInput');
 const planFilterEl = document.getElementById('planFilter');
 const attentionFilterEl = document.getElementById('attentionFilter');
 const addReportBtn = document.getElementById('addReportBtn');
+const dataMenuEl = document.getElementById('dataMenu');
 const saveFileBtn = document.getElementById('saveFileBtn');
 const connectDataFileBtn = document.getElementById('connectDataFileBtn');
 const importIcsBtn = document.getElementById('importIcsBtn');
@@ -1122,27 +1102,6 @@ const tileModalBodyEl = document.getElementById('tileModalBody');
 const closeTileModalBtn = document.getElementById('closeTileModalBtn');
 const tileModalPrimaryBtn = document.getElementById('tileModalPrimaryBtn');
 const tileModalSecondaryBtn = document.getElementById('tileModalSecondaryBtn');
-const briefingModalEl = document.getElementById('briefingModal');
-const briefingModalTitleEl = document.getElementById('briefingModalTitle');
-const briefingModalSubtitleEl = document.getElementById('briefingModalSubtitle');
-const briefingModalBodyEl = document.getElementById('briefingModalBody');
-const closeBriefingModalBtn = document.getElementById('closeBriefingModalBtn');
-const copyBriefingBtn = document.getElementById('copyBriefingBtn');
-const printBriefingBtn = document.getElementById('printBriefingBtn');
-const reviewModalEl = document.getElementById('reviewModal');
-const reviewModalTitleEl = document.getElementById('reviewModalTitle');
-const reviewModalSubtitleEl = document.getElementById('reviewModalSubtitle');
-const reviewModalBodyEl = document.getElementById('reviewModalBody');
-const closeReviewModalBtn = document.getElementById('closeReviewModalBtn');
-const reviewWindowPresetEl = document.getElementById('reviewWindowPreset');
-const reviewCustomStartWrapEl = document.getElementById('reviewCustomStartWrap');
-const reviewCustomEndWrapEl = document.getElementById('reviewCustomEndWrap');
-const reviewCustomStartEl = document.getElementById('reviewCustomStart');
-const reviewCustomEndEl = document.getElementById('reviewCustomEnd');
-const reviewPreviewFormatEl = document.getElementById('reviewPreviewFormat');
-const copyReviewMarkdownBtn = document.getElementById('copyReviewMarkdownBtn');
-const downloadReviewMarkdownBtn = document.getElementById('downloadReviewMarkdownBtn');
-const printReviewDraftBtn = document.getElementById('printReviewDraftBtn');
 
 const meetingModalEl = document.getElementById('meetingModal');
 const meetingModalTitleEl = document.getElementById('meetingModalTitle');
@@ -1195,9 +1154,9 @@ function persistUiState() {
     searchTerm: app.ui.searchTerm,
     planFilter: app.ui.planFilter,
     attentionFilter: app.ui.attentionFilter,
-    detailDrawerTab: DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'pdc-notes',
+    detailDrawerTab: DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile',
     teamTenureMode: app.ui.teamTenureMode === 'promotion' ? 'promotion' : 'tenure',
-    teamHealthTab: TEAM_HEALTH_TABS.includes(app.ui.teamHealthTab) ? app.ui.teamHealthTab : 'cadence',
+    teamHealthTab: currentTeamHealthTab(),
     startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
@@ -1369,9 +1328,32 @@ function renderNoteMarkdown(text, options = {}) {
   return blocks.join('');
 }
 
-function updateRenderedNotePreview(previewEl, text, emptyMessage = 'Markdown preview appears here.') {
+function updateRenderedNotePreview(previewEl, text, emptyMessage = 'Nothing to preview yet.') {
   if (!previewEl) return;
   previewEl.innerHTML = renderNoteMarkdown(text, { emptyHtml: `<p class="note-preview-empty">${escapeHtml(emptyMessage)}</p>` });
+}
+
+function bindMarkdownShell(shellId, { textareaEl, previewEl, onSync }) {
+  const shell = document.getElementById(shellId);
+  if (!shell) return;
+  const setMode = (mode) => {
+    if (mode !== 'write' && mode !== 'preview') return;
+    shell.setAttribute('data-md-active', mode);
+    shell.querySelectorAll('[data-md-target]').forEach((btn) => {
+      const isActive = btn.getAttribute('data-md-mode') === mode;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    if (mode === 'preview' && typeof onSync === 'function') onSync();
+    if (mode === 'write' && textareaEl) textareaEl.focus();
+  };
+  shell.querySelectorAll('[data-md-target]').forEach((btn) => {
+    if (btn.getAttribute('data-md-target') !== shellId) return;
+    btn.addEventListener('click', () => setMode(btn.getAttribute('data-md-mode')));
+  });
+  if (textareaEl && typeof onSync === 'function') {
+    textareaEl.addEventListener('input', onSync);
+  }
 }
 
 function syncMeetingNotesPreview() {
@@ -1782,6 +1764,13 @@ function localDateStamp(date) {
   return `${safe.getFullYear()}-${String(safe.getMonth() + 1).padStart(2, '0')}-${String(safe.getDate()).padStart(2, '0')}`;
 }
 
+function isoToLocalDateStamp(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return localDateStamp(date);
+}
+
 function startOfCurrentWeek(referenceDate = new Date()) {
   const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
   const offset = (date.getDay() + 6) % 7;
@@ -1922,1013 +1911,6 @@ function buildProjectedReportFromEvents(events = [], reportId, options = {}) {
   return report;
 }
 
-function describeCustomFieldChanges(currentFields = [], previousFields = []) {
-  const previousMap = new Map((Array.isArray(previousFields) ? previousFields : []).map((field) => [customFieldComparisonKey(field), field]));
-  return (Array.isArray(currentFields) ? currentFields : []).flatMap((field) => {
-    const key = customFieldComparisonKey(field);
-    const label = normalizeText(field.label) || 'Untitled Field';
-    const value = normalizeText(field.value);
-    if (!key || !value) return [];
-    const previous = previousMap.get(key);
-    const previousValue = normalizeText(previous?.value);
-    if (previousValue === value) return [];
-    const prefix = previous ? `Custom field "${label}" changed to` : `Custom field "${label}" added as`;
-    return [`${prefix} ${formatValueForSummary(value)}`];
-  });
-}
-
-function cadenceSummaryLine(dateString) {
-  const days = dateDiffInDays(dateString);
-  if (days === null) return 'Not logged yet';
-  if (days === 0) return 'Logged today';
-  if (days === 1) return '1 day ago';
-  return `${days} days ago`;
-}
-
-function buildBriefing(report, options = {}) {
-  const settings = options.settings || app.doc?.settings || normalizeSettings({});
-  const events = options.events || app.doc?.events || [];
-  const reportId = normalizeText(options.reportId || report?.id);
-  const lastOneOnOne = latestMeeting(report, '1:1');
-  const meetingsSince = [...(report?.meetings || [])]
-    .filter((meeting) => {
-      if (!lastOneOnOne) return true;
-      if (meeting.id === lastOneOnOne.id) return false;
-      if (meeting.meetingDate > lastOneOnOne.meetingDate) return true;
-      return meeting.meetingDate === lastOneOnOne.meetingDate && canonicalMeetingType(meeting.meetingType) !== '1:1';
-    })
-    .sort((a, b) => String(a.meetingDate).localeCompare(String(b.meetingDate)) || String(a.createdAt || '').localeCompare(String(b.createdAt || '')))
-    .map((meeting) => ({
-      id: meeting.id,
-      meetingType: canonicalMeetingType(meeting.meetingType),
-      meetingDate: normalizeDate(meeting.meetingDate),
-      summary: firstMeaningfulLine(meeting.notes),
-      notes: normalizeText(meeting.notes)
-    }));
-  const metrics = buildReportMetrics(report, settings);
-  const openFollowUps = (metrics.openFollowUps || []).map((item) => ({ ...item }));
-  let previousReport = null;
-  let previousMetrics = null;
-  const changes = [];
-  if (reportId && lastOneOnOne) {
-    previousReport = buildProjectedReportFromEvents(events, reportId, {
-      cutoffCreatedAt: normalizeText(lastOneOnOne.createdAt),
-      cutoffDate: normalizeDate(lastOneOnOne.meetingDate)
-    });
-    if (previousReport) {
-      previousMetrics = buildReportMetrics(previousReport, settings);
-      if (previousMetrics.pdcStatus !== metrics.pdcStatus) {
-        changes.push(`PDC status changed from ${previousMetrics.pdcStatus} to ${metrics.pdcStatus}`);
-      }
-      if (normalizeSupportLevel(previousReport.supportLevel) !== normalizeSupportLevel(report.supportLevel)) {
-        changes.push(`Support level changed from ${normalizeSupportLevel(previousReport.supportLevel)} to ${normalizeSupportLevel(report.supportLevel)}`);
-      }
-      changes.push(...describeCustomFieldChanges(report.customFields, previousReport.customFields));
-    }
-  }
-  const possibleTopics = [];
-  const lastPdcAge = dateDiffInDays(metrics.lastPdc);
-  if (normalizeText(report.promotionReadiness) && (lastPdcAge === null || lastPdcAge > 60)) {
-    possibleTopics.push('Promotion conversation may be due');
-  }
-  if (['Support needed', 'Urgent'].includes(normalizeSupportLevel(report.supportLevel))) {
-    possibleTopics.push(`Check in on support level (currently ${normalizeSupportLevel(report.supportLevel)})`);
-  }
-  (Array.isArray(report.customFields) ? report.customFields : []).forEach((field) => {
-    const date = normalizeDate(field.value);
-    if (!date) return;
-    const age = dateDiffInDays(date);
-    if (age !== null && age > 0) {
-      const label = normalizeText(field.label) || 'Untitled Field';
-      possibleTopics.push(`Custom date field "${label}" is in the past (${formatDate(date)})`);
-    }
-  });
-  if (!normalizeText(report.mentors)) {
-    possibleTopics.push('No mentor assigned — worth discussing');
-  }
-  return {
-    report: {
-      id: reportId,
-      name: normalizeText(report?.name),
-      level: normalizeLevel(report?.level),
-      supportLevel: normalizeSupportLevel(report?.supportLevel),
-      notes: normalizeText(report?.notes),
-      mentors: normalizeText(report?.mentors),
-      promotionReadiness: normalizeText(report?.promotionReadiness)
-    },
-    generatedAt: nowIso(),
-    summaryText: lastOneOnOne
-      ? `Last 1:1 on ${formatDate(lastOneOnOne.meetingDate)} · ${meetingsSince.length} meeting${meetingsSince.length === 1 ? '' : 's'} since then`
-      : 'No 1:1 logged yet · showing all recorded meetings',
-    lastOneOnOne: lastOneOnOne ? {
-      id: lastOneOnOne.id,
-      meetingDate: normalizeDate(lastOneOnOne.meetingDate),
-      createdAt: normalizeText(lastOneOnOne.createdAt),
-      summary: firstMeaningfulLine(lastOneOnOne.notes)
-    } : null,
-    meetingsSince,
-    openFollowUps,
-    changes,
-    attention: [...(metrics.attention || [])],
-    cadenceSummary: {
-      lastOneOnOne: normalizeDate(metrics.lastOneOnOne),
-      lastPdc: normalizeDate(metrics.lastPdc),
-      lastCvReview: normalizeDate(metrics.lastCvReview),
-      daysSinceLastOneOnOne: dateDiffInDays(metrics.lastOneOnOne),
-      daysSinceLastPdc: dateDiffInDays(metrics.lastPdc),
-      daysSinceLastCvReview: dateDiffInDays(metrics.lastCvReview)
-    },
-    managerNotes: normalizeText(report?.notes),
-    possibleTopics: [...new Set(possibleTopics)],
-    metrics,
-    previousReport,
-    previousMetrics
-  };
-}
-
-function renderBriefingMarkdown(briefing) {
-  if (!briefing) return '';
-  const lines = [`# Next 1:1 Briefing — ${briefing.report.name || 'Direct Report'}`, '', briefing.summaryText, ''];
-  if (briefing.meetingsSince.length) {
-    lines.push('## Since Last Time We Talked');
-    briefing.meetingsSince.forEach((meeting) => {
-      const summary = meeting.summary ? `: ${meeting.summary}` : '';
-      lines.push(`- ${meeting.meetingType} on ${meeting.meetingDate}${summary}`);
-    });
-    lines.push('');
-  }
-  if (briefing.openFollowUps.length) {
-    lines.push('## Open Follow-Ups');
-    briefing.openFollowUps.forEach((item) => {
-      lines.push(`- ${item.text} (${item.meetingType} on ${item.meetingDate})`);
-    });
-    lines.push('');
-  }
-  if (briefing.changes.length) {
-    lines.push("## What's Changed");
-    briefing.changes.forEach((item) => lines.push(`- ${item}`));
-    lines.push('');
-  }
-  if (briefing.attention.length) {
-    lines.push('## Attention Items');
-    briefing.attention.forEach((item) => lines.push(`- ${item}`));
-    lines.push('');
-  }
-  lines.push('## Cadence Snapshot');
-  lines.push(`- 1:1: ${briefing.cadenceSummary.lastOneOnOne || 'Not logged'} · ${cadenceSummaryLine(briefing.cadenceSummary.lastOneOnOne)}`);
-  lines.push(`- PDC: ${briefing.cadenceSummary.lastPdc || 'Not logged'} · ${cadenceSummaryLine(briefing.cadenceSummary.lastPdc)}`);
-  lines.push(`- CV Review: ${briefing.cadenceSummary.lastCvReview || 'Not logged'} · ${cadenceSummaryLine(briefing.cadenceSummary.lastCvReview)}`);
-  lines.push('');
-  if (briefing.managerNotes) {
-    lines.push('## Last Manager Notes');
-    lines.push(briefing.managerNotes);
-    lines.push('');
-  }
-  if (briefing.possibleTopics.length) {
-    lines.push('## Possible Topics');
-    briefing.possibleTopics.forEach((item) => lines.push(`- ${item}`));
-    lines.push('');
-  }
-  return lines.join('\n').trim();
-}
-
-function renderBriefingHtml(briefing) {
-  if (!briefing) return '<p class="briefing-empty">No briefing is available yet.</p>';
-  const meetingSection = briefing.meetingsSince.length ? `
-    <section class="briefing-section">
-      <h3>Since Last Time We Talked</h3>
-      <div class="briefing-list">
-        ${briefing.meetingsSince.map((meeting) => `
-          <div class="briefing-item">
-            <div class="briefing-item-top">
-              <span class="briefing-item-title">${escapeHtml(meeting.meetingType)}</span>
-              <span class="briefing-item-meta">${escapeHtml(formatDate(meeting.meetingDate))}</span>
-            </div>
-            <div class="briefing-item-copy">${escapeHtml(meeting.summary || 'No notes captured for this meeting.')}</div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  const followUpSection = briefing.openFollowUps.length ? `
-    <section class="briefing-section">
-      <h3>Open Follow-Ups</h3>
-      <div class="briefing-list">
-        ${briefing.openFollowUps.map((item) => `
-          <div class="briefing-item">
-            <div class="briefing-item-top">
-              <span class="briefing-item-title">${escapeHtml(item.text)}</span>
-              <span class="briefing-item-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  const changesSection = briefing.changes.length ? `
-    <section class="briefing-section">
-      <h3>What's Changed</h3>
-      <ul class="briefing-bullets">
-        ${briefing.changes.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-      </ul>
-    </section>` : '';
-  const attentionSection = briefing.attention.length ? `
-    <section class="briefing-section">
-      <h3>Attention Items</h3>
-      <ul class="briefing-bullets">
-        ${briefing.attention.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-      </ul>
-    </section>` : '';
-  const notesSection = briefing.managerNotes ? `
-    <section class="briefing-section">
-      <h3>Last Manager Notes</h3>
-      <div class="briefing-note-block note-markdown">${renderNoteMarkdown(briefing.managerNotes)}</div>
-    </section>` : '';
-  const topicsSection = briefing.possibleTopics.length ? `
-    <section class="briefing-section">
-      <h3>Possible Topics</h3>
-      <ul class="briefing-bullets">
-        ${briefing.possibleTopics.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-      </ul>
-    </section>` : '';
-  return `
-    <div class="briefing-layout">
-      <div class="briefing-topline">
-        <div class="briefing-summary">
-          <h3>${escapeHtml(briefing.report.name || 'Direct Report')}</h3>
-          <p>${escapeHtml(briefing.summaryText)}</p>
-        </div>
-        <div class="badges">
-          ${badge(`${briefing.openFollowUps.length} Open Follow-Up${briefing.openFollowUps.length === 1 ? '' : 's'}`, briefing.openFollowUps.length ? 'warning' : 'neutral')}
-          ${badge(`${briefing.attention.length} Attention Item${briefing.attention.length === 1 ? '' : 's'}`, briefing.attention.length ? 'warning' : 'success')}
-        </div>
-      </div>
-      ${meetingSection}
-      ${followUpSection}
-      ${changesSection}
-      ${attentionSection}
-      <section class="briefing-section">
-        <h3>Cadence Snapshot</h3>
-        <div class="briefing-cadence-grid">
-          <div class="briefing-cadence-card">
-            <span class="label">1:1</span>
-            <strong>${escapeHtml(briefing.cadenceSummary.lastOneOnOne ? formatDate(briefing.cadenceSummary.lastOneOnOne) : 'Not logged')}</strong>
-            <span>${escapeHtml(cadenceSummaryLine(briefing.cadenceSummary.lastOneOnOne))}</span>
-          </div>
-          <div class="briefing-cadence-card">
-            <span class="label">PDC</span>
-            <strong>${escapeHtml(briefing.cadenceSummary.lastPdc ? formatDate(briefing.cadenceSummary.lastPdc) : 'Not logged')}</strong>
-            <span>${escapeHtml(cadenceSummaryLine(briefing.cadenceSummary.lastPdc))}</span>
-          </div>
-          <div class="briefing-cadence-card">
-            <span class="label">CV Review</span>
-            <strong>${escapeHtml(briefing.cadenceSummary.lastCvReview ? formatDate(briefing.cadenceSummary.lastCvReview) : 'Not logged')}</strong>
-            <span>${escapeHtml(cadenceSummaryLine(briefing.cadenceSummary.lastCvReview))}</span>
-          </div>
-        </div>
-      </section>
-      ${notesSection}
-      ${topicsSection}
-    </div>
-  `;
-}
-
-function buildBriefingPrintDocument(briefing) {
-  const title = escapeHtml(`Next 1:1 Briefing — ${briefing.report.name || 'Direct Report'}`);
-  const body = renderBriefingHtml(briefing);
-  const specificCss = `
-.briefing-topline{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-.briefing-summary{display:grid;gap:6px}
-.briefing-summary h3{font-size:28px;line-height:1.1}
-.briefing-summary p{margin:0;color:#5f6b85;font-size:14px}
-.briefing-bullets{display:grid;gap:8px;margin:0;padding-left:20px}
-.briefing-note-block{background:#fbfcff;border:1px solid #dbe2ee;border-radius:14px;padding:14px}
-.note-markdown{line-height:1.55;word-break:break-word}
-.note-markdown > :first-child{margin-top:0}
-.note-markdown > :last-child{margin-bottom:0}
-.note-markdown p{margin:0 0 10px}
-.note-markdown h1,.note-markdown h2,.note-markdown h3,.note-markdown h4,.note-markdown h5,.note-markdown h6{margin:0 0 10px;line-height:1.25}
-.note-markdown ul,.note-markdown ol{margin:0 0 10px;padding-left:22px}
-.note-markdown li+li{margin-top:4px}
-.note-markdown a{color:#1766d6;text-decoration:underline}
-.note-markdown code{font:0.95em/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#eef2f8;border-radius:6px;padding:1px 5px}
-.note-markdown pre{margin:0 0 10px;padding:12px 14px;border-radius:14px;background:#172033;color:#f5f7fb;overflow:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-.note-markdown pre code{background:transparent;padding:0;color:inherit}
-.note-task-list{display:grid;gap:8px}
-.note-task{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #dbe2ee;border-radius:12px;background:#fff}
-.note-task-status{display:inline-flex;align-items:center;justify-content:center;min-width:48px;padding:4px 8px;border-radius:999px;background:#eef2f8;color:#314667;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em}
-.note-task.done .note-task-status{background:#e7f7ee;color:#0d7a48}
-.note-task.open .note-task-status{background:#fff4df;color:#b06b00}
-.briefing-cadence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.briefing-cadence-card{border:1px solid #dbe2ee;border-radius:14px;padding:14px;background:#fbfcff;display:grid;gap:6px}
-.briefing-cadence-card .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:#5f6b85}
-.briefing-cadence-card strong{font-size:20px;line-height:1.1}
-.briefing-cadence-card span{color:#5f6b85;font-size:13px}
-@media print{body{margin:18px}.briefing-topline{flex-direction:column;align-items:flex-start}.briefing-cadence-grid{grid-template-columns:1fr}}`;
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>${title}</title>
-<style>${PRINT_BASE_CSS}${specificCss}
-</style>
-</head>
-<body>
-<div class="page">${body}</div>
-</body>
-</html>`;
-}
-
-function currentLocalDateStamp() {
-  return localDateStamp(new Date());
-}
-
-function isoToLocalDateStamp(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return localDateStamp(date);
-}
-
-function shiftLocalDateByMonths(dateString, months) {
-  const base = parseLocalDate(dateString) || parseLocalDate(currentLocalDateStamp()) || new Date();
-  const originalDay = base.getDate();
-  const shifted = new Date(base.getFullYear(), base.getMonth() + Number(months || 0), 1);
-  shifted.setHours(0, 0, 0, 0);
-  const lastDay = new Date(shifted.getFullYear(), shifted.getMonth() + 1, 0).getDate();
-  shifted.setDate(Math.min(originalDay, lastDay));
-  return localDateStamp(shifted);
-}
-
-function previousQuarterRange(referenceDate = currentLocalDateStamp()) {
-  const reference = parseLocalDate(referenceDate) || new Date();
-  const currentQuarterStartMonth = Math.floor(reference.getMonth() / 3) * 3;
-  const start = new Date(reference.getFullYear(), currentQuarterStartMonth - 3, 1);
-  const end = new Date(reference.getFullYear(), currentQuarterStartMonth, 0);
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
-  return { startDate: localDateStamp(start), endDate: localDateStamp(end) };
-}
-
-function resolveReviewWindow(preset = 'last-quarter', customStart = '', customEnd = '', referenceDate = currentLocalDateStamp()) {
-  const safePreset = ['last-quarter', 'last-6-months', 'last-year', 'custom'].includes(preset) ? preset : 'last-quarter';
-  let startDate = '';
-  let endDate = '';
-  if (safePreset === 'last-quarter') {
-    ({ startDate, endDate } = previousQuarterRange(referenceDate));
-  } else if (safePreset === 'last-6-months') {
-    endDate = normalizeDate(referenceDate) || currentLocalDateStamp();
-    startDate = shiftLocalDateByMonths(endDate, -6);
-  } else if (safePreset === 'last-year') {
-    endDate = normalizeDate(referenceDate) || currentLocalDateStamp();
-    startDate = shiftLocalDateByMonths(endDate, -12);
-  } else {
-    startDate = normalizeDate(customStart) || shiftLocalDateByMonths(referenceDate, -3);
-    endDate = normalizeDate(customEnd) || normalizeDate(referenceDate) || currentLocalDateStamp();
-  }
-  if (startDate && endDate && endDate < startDate) [startDate, endDate] = [endDate, startDate];
-  const title = safePreset === 'last-quarter'
-    ? 'Last quarter'
-    : safePreset === 'last-6-months'
-      ? 'Last 6 months'
-      : safePreset === 'last-year'
-        ? 'Last year'
-        : 'Custom window';
-  return {
-    preset: safePreset,
-    startDate,
-    endDate,
-    title,
-    label: startDate && endDate ? `${title} · ${formatDate(startDate)} → ${formatDate(endDate)}` : title
-  };
-}
-
-function isDateWithinRange(dateString, startDate, endDate) {
-  const date = normalizeDate(dateString);
-  const start = normalizeDate(startDate);
-  const end = normalizeDate(endDate);
-  if (!date) return false;
-  if (start && date < start) return false;
-  if (end && date > end) return false;
-  return true;
-}
-
-function pluralize(value, singular, plural = `${singular}s`) {
-  return `${value} ${value === 1 ? singular : plural}`;
-}
-
-function reviewChangeSummaryForKey(key, value) {
-  const normalizedKey = normalizeText(key);
-  if (normalizedKey === 'name') return normalizeText(value) ? `Name updated to ${normalizeText(value)}` : 'Name cleared';
-  if (normalizedKey === 'level') return normalizeLevel(value) ? `Level updated to ${normalizeLevel(value)}` : 'Level cleared';
-  if (normalizedKey === 'mentors') return normalizeText(value) ? `Mentor(s) updated to ${normalizeText(value)}` : 'Mentor(s) cleared';
-  if (normalizedKey === 'hireDate') return normalizeDate(value) ? `Hire date updated to ${formatDate(value)}` : 'Hire date cleared';
-  if (normalizedKey === 'lastPromotionDate') return normalizeDate(value) ? `Last promotion / remuneration updated to ${formatDate(value)}` : 'Last promotion / remuneration cleared';
-  if (normalizedKey === 'nextOneOnOneDate') return normalizeDate(value) ? `Next planned 1:1 set for ${formatDate(value)}` : 'Next planned 1:1 cleared';
-  if (normalizedKey === 'nextPdcDate') return normalizeDate(value) ? `Next planned PDC set for ${formatDate(value)}` : 'Next planned PDC cleared';
-  if (normalizedKey === 'supportLevel') return `Support level updated to ${normalizeSupportLevel(value)}`;
-  if (normalizedKey === 'pdcStatus') return `PDC status updated to ${normalizePdcStatus(value)}`;
-  if (normalizedKey === 'developmentGoalSummary') return normalizeText(value) ? 'Development goal summary updated' : 'Development goal summary cleared';
-  if (normalizedKey === 'promotionReadiness') return normalizeText(value) ? 'Promotion readiness / growth area updated' : 'Promotion readiness / growth area cleared';
-  if (normalizedKey === 'cadenceOverrides') {
-    const label = serializeCadenceOverrides(value);
-    return label ? `Cadence targets updated (${label})` : 'Cadence targets reset to team defaults';
-  }
-  if (normalizedKey === 'vacations') {
-    const count = normalizeVacationEntries(value).length;
-    return count ? `Vacation tracker updated (${pluralize(count, 'window')})` : 'Vacation tracker cleared';
-  }
-  if (normalizedKey === 'snoozes') {
-    const count = normalizeSnoozeEntries(value).length;
-    return count ? `Attention snoozes updated (${pluralize(count, 'active snooze')})` : 'Attention snoozes cleared';
-  }
-  if (normalizedKey === 'evidence') {
-    const count = normalizeEvidenceEntries(value).length;
-    return count ? `Evidence locker updated (${pluralize(count, 'item')})` : 'Evidence locker cleared';
-  }
-  if (normalizedKey === 'customFields') {
-    const count = Array.isArray(value) ? value.length : 0;
-    return count ? `Custom fields updated (${pluralize(count, 'field')})` : 'Custom fields cleared';
-  }
-  return '';
-}
-
-function summarizeReviewEvent(event) {
-  const safeEvent = normalizeEventRecord(event);
-  if (!safeEvent.id || !safeEvent.type) return [];
-  if (safeEvent.type === 'person_created') return ['Direct report profile created'];
-  if (safeEvent.type === 'person_updated') {
-    const changes = normalizePersonChanges(safeEvent.changes || {});
-    return Object.keys(changes).map((key) => reviewChangeSummaryForKey(key, changes[key])).filter(Boolean);
-  }
-  if (safeEvent.type === 'note_added') return ['Manager notes updated'];
-  if (safeEvent.type === 'meeting_deleted') return ['Meeting history entry removed'];
-  return [];
-}
-
-function buildReviewChangeEntries(reportId, windowRange, events = []) {
-  const targetId = normalizeText(reportId);
-  if (!targetId || !windowRange) return [];
-  return (Array.isArray(events) ? events : [])
-    .map((event) => normalizeEventRecord(event))
-    .filter((event) => event.personId === targetId && isDateWithinRange(isoToLocalDateStamp(event.createdAt), windowRange.startDate, windowRange.endDate))
-    .flatMap((event) => summarizeReviewEvent(event).map((summary, index) => ({
-      createdAt: normalizeText(event.createdAt),
-      localDate: isoToLocalDateStamp(event.createdAt),
-      summary,
-      sortKey: `${normalizeText(event.createdAt)}::${String(index).padStart(2, '0')}`
-    })))
-    .sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)) || String(a.summary).localeCompare(String(b.summary)));
-}
-
-function slugifyFilename(value) {
-  const slug = normalizeText(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return slug || 'direct-report';
-}
-
-function buildReviewDraft(report, options = {}) {
-  const settings = options.settings || app.doc?.settings || normalizeSettings({});
-  const events = options.events || app.doc?.events || [];
-  const reportId = normalizeText(options.reportId || report?.id);
-  const windowRange = resolveReviewWindow(options.window?.preset || 'last-quarter', options.window?.startDate || options.window?.customStart, options.window?.endDate || options.window?.customEnd, options.referenceDate || currentLocalDateStamp());
-  const metrics = buildReportMetrics(report || makeDraftReport(), settings);
-  const meetings = [...(report?.meetings || [])]
-    .map((meeting) => ({
-      ...meeting,
-      meetingType: canonicalMeetingType(meeting.meetingType),
-      meetingDate: normalizeDate(meeting.meetingDate),
-      notes: normalizeText(meeting.notes)
-    }))
-    .filter((meeting) => isDateWithinRange(meeting.meetingDate, windowRange.startDate, windowRange.endDate))
-    .sort((a, b) => String(a.meetingDate).localeCompare(String(b.meetingDate)) || String(a.createdAt || '').localeCompare(String(b.createdAt || '')));
-  const cadenceCounts = {
-    oneOnOne: meetings.filter((meeting) => meeting.meetingType === '1:1').length,
-    pdc: meetings.filter((meeting) => meeting.meetingType === 'PDC').length,
-    cvReview: meetings.filter((meeting) => meeting.meetingType === 'CV review').length
-  };
-  const evidence = normalizeEvidenceEntries(report?.evidence || [])
-    .filter((entry) => isDateWithinRange(entry.date, windowRange.startDate, windowRange.endDate))
-    .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.category || '').localeCompare(String(b.category || '')) || String(a.summary || '').localeCompare(String(b.summary || '')));
-  const meetingMap = new Map((report?.meetings || []).map((meeting) => [meeting.id, meeting]));
-  const categoryOrder = [...resolveEvidenceCategories(settings)];
-  evidence.forEach((entry) => {
-    const key = entry.category || 'Uncategorized';
-    if (!categoryOrder.includes(key)) categoryOrder.push(key);
-  });
-  if (evidence.some((entry) => !entry.category) && !categoryOrder.includes('Uncategorized')) categoryOrder.push('Uncategorized');
-  const evidenceGroups = categoryOrder
-    .map((category) => ({
-      category,
-      items: evidence
-        .filter((entry) => (entry.category || 'Uncategorized') === category)
-        .map((entry) => {
-          const linkedMeeting = meetingMap.get(entry.linkedMeetingId) || null;
-          return {
-            ...entry,
-            linkedMeetingLabel: linkedMeeting ? `${canonicalMeetingType(linkedMeeting.meetingType)} · ${linkedMeeting.meetingDate}` : ''
-          };
-        })
-    }))
-    .filter((group) => group.items.length);
-  const meetingHighlights = meetings.map((meeting) => ({
-    id: meeting.id,
-    meetingType: meeting.meetingType,
-    meetingDate: meeting.meetingDate,
-    summary: firstMeaningfulLine(meeting.notes),
-    notes: meeting.notes
-  }));
-  const openFollowUps = extractFollowUps(report).filter((item) => !item.done).sort((a, b) => String(a.meetingDate).localeCompare(String(b.meetingDate)) || String(a.text).localeCompare(String(b.text)));
-  const changes = buildReviewChangeEntries(reportId, windowRange, events);
-  const tenureText = report?.hireDate ? formatMonthSpan(monthsBetween(report.hireDate)) : '';
-  const lastPromotionText = report?.lastPromotionDate ? formatMonthSpan(monthsBetween(report.lastPromotionDate)) : '';
-  const summaryParts = [windowRange.label, pluralize(meetings.length, 'meeting')];
-  if (evidence.length) summaryParts.push(pluralize(evidence.length, 'evidence item'));
-  return {
-    report: {
-      id: reportId,
-      name: normalizeText(report?.name),
-      level: normalizeLevel(report?.level),
-      mentors: normalizeText(report?.mentors),
-      supportLevel: normalizeSupportLevel(report?.supportLevel),
-      pdcStatus: metrics.pdcStatus,
-      hireDate: normalizeDate(report?.hireDate),
-      lastPromotionDate: normalizeDate(report?.lastPromotionDate),
-      developmentGoalSummary: normalizeText(report?.developmentGoalSummary),
-      promotionReadiness: normalizeText(report?.promotionReadiness),
-      tenureText,
-      lastPromotionText
-    },
-    generatedAt: nowIso(),
-    window: windowRange,
-    summaryText: summaryParts.join(' · '),
-    cadenceCounts,
-    evidenceGroups,
-    meetingHighlights,
-    openFollowUps,
-    changes,
-    goals: {
-      developmentGoalSummary: normalizeText(report?.developmentGoalSummary),
-      promotionReadiness: normalizeText(report?.promotionReadiness)
-    },
-    latestDates: {
-      lastOneOnOne: normalizeDate(metrics.lastOneOnOne),
-      lastPdc: normalizeDate(metrics.lastPdc),
-      lastCvReview: normalizeDate(metrics.lastCvReview)
-    },
-    totals: {
-      meetings: meetings.length,
-      evidence: evidence.length
-    }
-  };
-}
-
-function renderReviewDraftMarkdown(draft) {
-  if (!draft) return '';
-  const lines = [`# Review Draft — ${draft.report.name || 'Direct Report'}`, '', `Window: ${draft.window.startDate} → ${draft.window.endDate}`, ''];
-  lines.push('## Overview');
-  lines.push(`- Level: ${draft.report.level || 'Not set'}`);
-  lines.push(`- Tenure: ${draft.report.tenureText || 'Not recorded'}`);
-  lines.push(`- Support level: ${draft.report.supportLevel}`);
-  lines.push(`- PDC status: ${draft.report.pdcStatus}`);
-  if (draft.report.lastPromotionText) lines.push(`- Time since last promotion: ${draft.report.lastPromotionText}`);
-  if (draft.report.mentors) lines.push(`- Mentor(s): ${draft.report.mentors}`);
-  lines.push('');
-  lines.push('## Cadence');
-  lines.push(`- 1:1s: ${draft.cadenceCounts.oneOnOne}`);
-  lines.push(`- PDCs: ${draft.cadenceCounts.pdc}`);
-  lines.push(`- CV reviews: ${draft.cadenceCounts.cvReview}`);
-  lines.push('');
-  if (draft.evidenceGroups.length) {
-    lines.push('## Evidence');
-    draft.evidenceGroups.forEach((group) => {
-      lines.push(`### ${group.category}`);
-      group.items.forEach((item) => {
-        lines.push(`- ${item.date} — ${item.summary || 'Evidence entry'}`);
-        if (item.detail) lines.push(`  - ${item.detail.replace(/\s*\n\s*/g, ' ')}`);
-        if (item.linkedMeetingLabel) lines.push(`  - Linked meeting: ${item.linkedMeetingLabel}`);
-      });
-      lines.push('');
-    });
-  }
-  if (draft.meetingHighlights.length) {
-    lines.push('## Meeting Highlights');
-    draft.meetingHighlights.forEach((item) => {
-      lines.push(`- ${item.meetingType} on ${item.meetingDate}${item.summary ? `: ${item.summary}` : ''}`);
-    });
-    lines.push('');
-  }
-  if (draft.goals.developmentGoalSummary || draft.goals.promotionReadiness) {
-    lines.push('## Goals and Promotion Readiness');
-    if (draft.goals.developmentGoalSummary) {
-      lines.push('### Development goal summary');
-      lines.push(draft.goals.developmentGoalSummary);
-      lines.push('');
-    }
-    if (draft.goals.promotionReadiness) {
-      lines.push('### Promotion readiness / growth area');
-      lines.push(draft.goals.promotionReadiness);
-      lines.push('');
-    }
-  }
-  if (draft.openFollowUps.length) {
-    lines.push('## Open Follow-Ups');
-    draft.openFollowUps.forEach((item) => lines.push(`- ${item.text} (${item.meetingType} on ${item.meetingDate})`));
-    lines.push('');
-  }
-  if (draft.changes.length) {
-    lines.push('## Changes in the Period');
-    draft.changes.forEach((entry) => lines.push(`- ${entry.localDate || entry.createdAt.slice(0, 10)} — ${entry.summary}`));
-    lines.push('');
-  }
-  return lines.join('\n').trim();
-}
-
-function renderReviewDraftHtml(draft) {
-  if (!draft) return '<p class="review-empty">No review draft is available yet.</p>';
-  const overviewRowsLeft = [
-    ['Level', draft.report.level || 'Not set'],
-    ['Tenure', draft.report.tenureText || 'Not recorded'],
-    ['Support level', draft.report.supportLevel],
-    ['PDC status', draft.report.pdcStatus]
-  ];
-  const overviewRowsRight = [
-    ['Last promotion / remuneration', draft.report.lastPromotionDate ? formatDate(draft.report.lastPromotionDate) : 'Not recorded'],
-    ['Mentor(s)', draft.report.mentors || 'Not set'],
-    ['Last 1:1', draft.latestDates.lastOneOnOne ? formatDate(draft.latestDates.lastOneOnOne) : 'Not logged'],
-    ['Last PDC', draft.latestDates.lastPdc ? formatDate(draft.latestDates.lastPdc) : 'Not logged']
-  ];
-  const renderOverviewColumn = (rows) => `<div class="review-kv">${rows.map(([label, value]) => `<div class="review-kv-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('')}</div>`;
-  const evidenceSection = draft.evidenceGroups.length ? `
-    <section class="briefing-section">
-      <h3>Evidence</h3>
-      <div class="review-group-list">
-        ${draft.evidenceGroups.map((group) => `
-          <div class="review-group">
-            <div class="review-group-head">
-              <strong>${escapeHtml(group.category)}</strong>
-              ${badge(pluralize(group.items.length, 'item'), 'neutral')}
-            </div>
-            <div class="briefing-list">
-              ${group.items.map((item) => `
-                <div class="briefing-item">
-                  <div class="briefing-item-top">
-                    <span class="briefing-item-title">${escapeHtml(item.summary || 'Evidence entry')}</span>
-                    <span class="briefing-item-meta">${escapeHtml(formatDate(item.date))}</span>
-                  </div>
-                  ${item.detail ? `<div class="briefing-item-copy">${escapeHtml(item.detail)}</div>` : ''}
-                  ${item.linkedMeetingLabel ? `<div class="evidence-meeting-meta">Linked meeting: ${escapeHtml(item.linkedMeetingLabel)}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  const meetingSection = draft.meetingHighlights.length ? `
-    <section class="briefing-section">
-      <h3>Meeting Highlights</h3>
-      <div class="briefing-list">
-        ${draft.meetingHighlights.map((item) => `
-          <div class="briefing-item">
-            <div class="briefing-item-top">
-              <span class="briefing-item-title">${escapeHtml(item.meetingType)}</span>
-              <span class="briefing-item-meta">${escapeHtml(formatDate(item.meetingDate))}</span>
-            </div>
-            <div class="briefing-item-copy">${escapeHtml(item.summary || 'No notes captured for this meeting.')}</div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  const goalsSection = (draft.goals.developmentGoalSummary || draft.goals.promotionReadiness) ? `
-    <section class="briefing-section">
-      <h3>Goals and Promotion Readiness</h3>
-      <div class="briefing-list">
-        ${draft.goals.developmentGoalSummary ? `
-          <div class="briefing-item">
-            <div class="briefing-item-top"><span class="briefing-item-title">Development goal summary</span></div>
-            <div class="briefing-item-copy">${escapeHtml(draft.goals.developmentGoalSummary)}</div>
-          </div>` : ''}
-        ${draft.goals.promotionReadiness ? `
-          <div class="briefing-item">
-            <div class="briefing-item-top"><span class="briefing-item-title">Promotion readiness / growth area</span></div>
-            <div class="briefing-item-copy">${escapeHtml(draft.goals.promotionReadiness)}</div>
-          </div>` : ''}
-      </div>
-    </section>` : '';
-  const followUpsSection = draft.openFollowUps.length ? `
-    <section class="briefing-section">
-      <h3>Open Follow-Ups</h3>
-      <div class="briefing-list">
-        ${draft.openFollowUps.map((item) => `
-          <div class="briefing-item">
-            <div class="briefing-item-top">
-              <span class="briefing-item-title">${escapeHtml(item.text)}</span>
-              <span class="briefing-item-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  const changesSection = draft.changes.length ? `
-    <section class="briefing-section">
-      <h3>Changes in the Period</h3>
-      <div class="briefing-list">
-        ${draft.changes.map((entry) => `
-          <div class="briefing-item">
-            <div class="briefing-item-top">
-              <span class="briefing-item-title">${escapeHtml(entry.summary)}</span>
-              <span class="briefing-item-meta">${escapeHtml(formatDate(entry.localDate || entry.createdAt.slice(0, 10)))}</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>` : '';
-  return `
-    <div class="review-preview">
-      <div class="review-topline">
-        <div class="review-summary">
-          <h3>${escapeHtml(draft.report.name || 'Direct Report')}</h3>
-          <p>${escapeHtml(draft.summaryText)}</p>
-        </div>
-        <div class="badges">
-          ${badge(`Support level · ${draft.report.supportLevel}`, variantForSupport(draft.report.supportLevel))}
-          ${badge(`PDC status · ${draft.report.pdcStatus}`, variantForPdcStatus(draft.report.pdcStatus))}
-          ${badge(pluralize(draft.totals.meetings, 'meeting'), draft.totals.meetings ? 'neutral' : 'soft')}
-          ${badge(pluralize(draft.openFollowUps.length, 'open follow-up'), draft.openFollowUps.length ? 'warning' : 'success')}
-        </div>
-      </div>
-      <section class="briefing-section">
-        <h3>Overview</h3>
-        <div class="review-overview-grid">
-          ${renderOverviewColumn(overviewRowsLeft)}
-          ${renderOverviewColumn(overviewRowsRight)}
-        </div>
-      </section>
-      <section class="briefing-section">
-        <h3>Cadence</h3>
-        <div class="review-count-grid">
-          <div class="review-count-card">
-            <span class="label">1:1s</span>
-            <strong>${draft.cadenceCounts.oneOnOne}</strong>
-            <span>Logged inside the selected window</span>
-          </div>
-          <div class="review-count-card">
-            <span class="label">PDCs</span>
-            <strong>${draft.cadenceCounts.pdc}</strong>
-            <span>Logged inside the selected window</span>
-          </div>
-          <div class="review-count-card">
-            <span class="label">CV reviews</span>
-            <strong>${draft.cadenceCounts.cvReview}</strong>
-            <span>Logged inside the selected window</span>
-          </div>
-        </div>
-      </section>
-      ${evidenceSection}
-      ${meetingSection}
-      ${goalsSection}
-      ${followUpsSection}
-      ${changesSection}
-    </div>
-  `;
-}
-
-function buildReviewPrintDocument(draft) {
-  const title = escapeHtml(`Review Draft — ${draft.report.name || 'Direct Report'}`);
-  const body = renderReviewDraftHtml(draft);
-  const specificCss = `
-.review-topline{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-.review-summary{display:grid;gap:6px}
-.review-summary h3{font-size:28px;line-height:1.1}
-.review-summary p{margin:0;color:#5f6b85;font-size:14px}
-.review-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.review-kv{display:grid;gap:0;border:1px solid #dbe2ee;border-radius:14px;padding:2px 14px;background:#fbfcff}
-.review-kv-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #dbe2ee}
-.review-kv-row:last-child{border-bottom:none}
-.review-kv-row span{color:#5f6b85;font-size:13px;font-weight:700}
-.review-kv-row strong{text-align:right;font-size:14px;line-height:1.4}
-.review-count-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.review-count-card{border:1px solid #dbe2ee;border-radius:14px;padding:14px;background:#fbfcff;display:grid;gap:6px}
-.review-count-card .label{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;font-weight:800;color:#5f6b85}
-.review-count-card strong{font-size:22px;line-height:1.1}
-.review-count-card span{color:#5f6b85;font-size:13px}
-.review-group-list{display:grid;gap:14px}
-.review-group{border:1px solid #dbe2ee;border-radius:14px;padding:12px;background:#fbfcff}
-.review-group-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
-.badge.info{background:#e9f2ff;color:#2957d6}
-.badge.neutral{background:#eef2f8;color:#314667}
-.badge.soft{background:#f5f7fb;color:#5f6b85}
-.badge.danger{background:#fdeaea;color:#b42318}
-.evidence-meeting-meta{color:#5f6b85;font-size:12px;font-weight:600;margin-top:2px}
-@media print{body{margin:18px}.review-topline{flex-direction:column;align-items:flex-start}.review-overview-grid,.review-count-grid{grid-template-columns:1fr}}`;
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>${title}</title>
-<style>${PRINT_BASE_CSS}${specificCss}
-</style>
-</head>
-<body>
-<div class="page">${body}</div>
-</body>
-</html>`;
-}
-
-async function copyTextToClipboard(text) {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return true;
-  }
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.setAttribute('readonly', 'readonly');
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.select();
-  const copied = document.execCommand('copy');
-  textarea.remove();
-  return copied;
-}
-
-function downloadTextFile(filename, text, mimeType = 'text/plain;charset=utf-8') {
-  const blob = new Blob([text], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
-function openBriefingModal(report, reportId = '') {
-  const briefing = buildBriefing(report, { reportId: reportId || report?.id });
-  app.activeBriefing = briefing;
-  briefingModalTitleEl.textContent = 'Next 1:1 Briefing';
-  briefingModalSubtitleEl.textContent = briefing.summaryText;
-  briefingModalBodyEl.innerHTML = renderBriefingHtml(briefing);
-  briefingModalEl.classList.add('open');
-  briefingModalEl.setAttribute('aria-hidden', 'false');
-  syncBodyOverlayLock();
-}
-
-function openBriefingFromWorkspace() {
-  captureWorkspaceDraftFromDom();
-  const { isCreating, persistedReport, editorReport } = getCurrentWorkspaceEditorState();
-  if (isCreating || !persistedReport || !editorReport) return false;
-  openBriefingModal(editorReport, persistedReport.id);
-  return true;
-}
-
-function closeBriefingModal() {
-  app.activeBriefing = null;
-  briefingModalEl.classList.remove('open');
-  briefingModalEl.setAttribute('aria-hidden', 'true');
-  briefingModalBodyEl.innerHTML = '';
-  syncBodyOverlayLock();
-}
-
-async function copyActiveBriefing() {
-  if (!app.activeBriefing) return;
-  try {
-    await copyTextToClipboard(renderBriefingMarkdown(app.activeBriefing));
-    showToast('Briefing copied to the clipboard.', 'success');
-  } catch (error) {
-    console.error('Could not copy briefing', error);
-    showToast('Could not copy the briefing.', 'error');
-  }
-}
-
-function printActiveBriefing() {
-  if (!app.activeBriefing) return;
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-  if (!printWindow) {
-    showToast('Allow pop-ups to print the briefing.', 'warning');
-    return;
-  }
-  printWindow.document.write(buildBriefingPrintDocument(app.activeBriefing));
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.onload = () => {
-    printWindow.print();
-    if (printWindow.onafterprint !== undefined) {
-      printWindow.onafterprint = () => printWindow.close();
-    }
-  };
-}
-
-function refreshActiveReviewDraft() {
-  if (!app.activeReviewSource || !app.activeReviewConfig) return;
-  const safeFormat = app.activeReviewConfig.format === 'markdown' ? 'markdown' : 'printable';
-  const resolvedWindow = resolveReviewWindow(app.activeReviewConfig.preset, app.activeReviewConfig.customStart, app.activeReviewConfig.customEnd, currentLocalDateStamp());
-  app.activeReviewConfig = {
-    ...app.activeReviewConfig,
-    preset: resolvedWindow.preset,
-    format: safeFormat,
-    customStart: app.activeReviewConfig.preset === 'custom' ? resolvedWindow.startDate : app.activeReviewConfig.customStart,
-    customEnd: app.activeReviewConfig.preset === 'custom' ? resolvedWindow.endDate : app.activeReviewConfig.customEnd
-  };
-  if (reviewWindowPresetEl) reviewWindowPresetEl.value = app.activeReviewConfig.preset;
-  if (reviewCustomStartEl) reviewCustomStartEl.value = app.activeReviewConfig.customStart || resolvedWindow.startDate || '';
-  if (reviewCustomEndEl) reviewCustomEndEl.value = app.activeReviewConfig.customEnd || resolvedWindow.endDate || '';
-  if (reviewPreviewFormatEl) reviewPreviewFormatEl.value = safeFormat;
-  if (reviewCustomStartWrapEl) reviewCustomStartWrapEl.hidden = app.activeReviewConfig.preset !== 'custom';
-  if (reviewCustomEndWrapEl) reviewCustomEndWrapEl.hidden = app.activeReviewConfig.preset !== 'custom';
-  const draft = buildReviewDraft(app.activeReviewSource.report, {
-    reportId: app.activeReviewSource.reportId,
-    settings: app.doc?.settings || normalizeSettings({}),
-    events: app.doc?.events || [],
-    window: resolvedWindow
-  });
-  app.activeReviewDraft = draft;
-  reviewModalTitleEl.textContent = 'Review Draft';
-  reviewModalSubtitleEl.textContent = draft.summaryText;
-  reviewModalBodyEl.innerHTML = safeFormat === 'markdown'
-    ? `<pre class="review-markdown-preview">${escapeHtml(renderReviewDraftMarkdown(draft))}</pre>`
-    : renderReviewDraftHtml(draft);
-}
-
-function openReviewModal(report, reportId = '') {
-  const lastQuarter = resolveReviewWindow('last-quarter', '', '', currentLocalDateStamp());
-  app.activeReviewSource = { report: deepCopy(report || makeDraftReport()), reportId: reportId || report?.id || '' };
-  app.activeReviewConfig = {
-    preset: 'last-quarter',
-    customStart: lastQuarter.startDate,
-    customEnd: lastQuarter.endDate,
-    format: 'printable'
-  };
-  refreshActiveReviewDraft();
-  reviewModalEl.classList.add('open');
-  reviewModalEl.setAttribute('aria-hidden', 'false');
-  syncBodyOverlayLock();
-}
-
-function openReviewFromWorkspace() {
-  captureWorkspaceDraftFromDom();
-  const { isCreating, persistedReport, editorReport } = getCurrentWorkspaceEditorState();
-  if (isCreating || !persistedReport || !editorReport) return false;
-  openReviewModal(editorReport, persistedReport.id);
-  return true;
-}
-
-function closeReviewModal() {
-  app.activeReviewDraft = null;
-  app.activeReviewSource = null;
-  app.activeReviewConfig = null;
-  reviewModalEl.classList.remove('open');
-  reviewModalEl.setAttribute('aria-hidden', 'true');
-  reviewModalBodyEl.innerHTML = '';
-  syncBodyOverlayLock();
-}
-
-function syncReviewConfigFromInputs() {
-  if (!app.activeReviewConfig) return;
-  app.activeReviewConfig = {
-    ...app.activeReviewConfig,
-    preset: reviewWindowPresetEl?.value || 'last-quarter',
-    customStart: reviewCustomStartEl?.value || app.activeReviewConfig.customStart || '',
-    customEnd: reviewCustomEndEl?.value || app.activeReviewConfig.customEnd || '',
-    format: reviewPreviewFormatEl?.value === 'markdown' ? 'markdown' : 'printable'
-  };
-  refreshActiveReviewDraft();
-}
-
-async function copyActiveReviewMarkdown() {
-  if (!app.activeReviewDraft) return;
-  try {
-    await copyTextToClipboard(renderReviewDraftMarkdown(app.activeReviewDraft));
-    showToast('Review draft markdown copied to the clipboard.', 'success');
-  } catch (error) {
-    console.error('Could not copy review draft markdown', error);
-    showToast('Could not copy the review draft markdown.', 'error');
-  }
-}
-
-function downloadActiveReviewMarkdown() {
-  if (!app.activeReviewDraft) return;
-  const filename = `team-pulse-review-${slugifyFilename(app.activeReviewDraft.report.name)}-${app.activeReviewDraft.window.startDate || 'start'}-to-${app.activeReviewDraft.window.endDate || 'end'}.md`;
-  downloadTextFile(filename, renderReviewDraftMarkdown(app.activeReviewDraft), 'text/markdown;charset=utf-8');
-  showToast('Review draft markdown downloaded.', 'success');
-}
-
-function printActiveReviewDraft() {
-  if (!app.activeReviewDraft) return;
-  const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-  if (!printWindow) {
-    showToast('Allow pop-ups to print the review draft.', 'warning');
-    return;
-  }
-  printWindow.document.write(buildReviewPrintDocument(app.activeReviewDraft));
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.onload = () => {
-    printWindow.print();
-    if (printWindow.onafterprint !== undefined) {
-      printWindow.onafterprint = () => printWindow.close();
-    }
-  };
-}
 
 function reportHasActiveVacation(report) {
   return getVacationStatus(report).active;
@@ -3635,6 +2617,15 @@ function variantForSupport(flag) {
   }[flag] || 'neutral';
 }
 
+function supportFillForLevel(flag) {
+  return {
+    'Good': 'green',
+    'Monitor': 'blue',
+    'Support needed': 'amber',
+    'Urgent': 'red'
+  }[flag] || 'none';
+}
+
 function badge(label, variant = 'neutral') {
   return `<span class="badge ${variant}">${escapeHtml(label)}</span>`;
 }
@@ -3691,9 +2682,7 @@ function syncBodyOverlayLock() {
     || meetingModalEl.classList.contains('open')
     || detailDrawerOverlayEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
-    || tileModalEl.classList.contains('open')
-    || briefingModalEl.classList.contains('open')
-    || reviewModalEl.classList.contains('open');
+    || tileModalEl.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
 }
 
@@ -4149,7 +3138,7 @@ function buildMeetingsCsv() {
 }
 
 function buildPeopleCsv() {
-  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','notes','cadence_overrides','vacations','snoozes','evidence_summary','additional_fields'];
+  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','notes','cadence_overrides','vacations','snoozes','additional_fields'];
   const rows = [headers.join(',')];
   [...getReports()].sort((a, b) => a.name.localeCompare(b.name)).forEach((report) => {
     rows.push([
@@ -4168,7 +3157,6 @@ function buildPeopleCsv() {
       csvCell(serializeCadenceOverrides(report.cadenceOverrides)),
       csvCell(serializeVacations(report.vacations)),
       csvCell(serializeSnoozes(report.snoozes)),
-      csvCell((report.evidence || []).map((entry) => [entry.date, entry.category, entry.summary].filter(Boolean).join(' · ')).join(' | ')),
       csvCell((report.customFields || []).map((field) => `${field.label}: ${field.value}`).join(' | '))
     ].join(','));
   });
@@ -4391,14 +3379,13 @@ function closeRulesDrawer() {
 
 function openCreateWorkspace(options = {}) {
   if (!ensureConnectedOrToast()) return false;
-  closeBriefingModal();
-  closeReviewModal();
   if (app.ui.creatingReport) return true;
   if (!options.skipConfirm && !confirmWorkspaceClose()) return false;
   clearWorkspaceDraft();
   app.ui.creatingReport = true;
   app.ui.selectedId = null;
   app.ui.detailDrawerTab = 'profile';
+  app.ui.profileEditMode = true;
   renderTable();
   renderDetailDrawer();
   persistUiState();
@@ -4406,17 +3393,17 @@ function openCreateWorkspace(options = {}) {
 }
 
 function selectReport(id, options = {}) {
-  closeBriefingModal();
-  closeReviewModal();
   const targetId = normalizeText(id);
   if (!targetId) return false;
   if (!options.skipConfirm && !app.ui.creatingReport && app.ui.selectedId === targetId) return true;
   if (!options.skipConfirm && !confirmWorkspaceClose()) return false;
-  const wasCreating = !!app.ui.creatingReport;
   clearWorkspaceDraft();
   app.ui.creatingReport = false;
   app.ui.selectedId = targetId;
-  if (wasCreating && !options.keepTab) app.ui.detailDrawerTab = 'pdc-notes';
+  if (!options.keepTab) app.ui.detailDrawerTab = 'profile';
+  app.ui.profileEditMode = false;
+  app.ui.vacationEditMode = false;
+  app.ui.cadenceEditMode = false;
   if (options.fullRender) {
     render();
   } else {
@@ -4430,11 +3417,12 @@ function selectReport(id, options = {}) {
 function clearSelectedReport(options = {}) {
   if (!options.skipConfirm && !confirmWorkspaceClose()) return false;
   closeMeetingModal();
-  closeBriefingModal();
-  closeReviewModal();
   clearWorkspaceDraft();
   app.ui.creatingReport = false;
   app.ui.selectedId = null;
+  app.ui.profileEditMode = false;
+  app.ui.vacationEditMode = false;
+  app.ui.cadenceEditMode = false;
   renderTable();
   renderDetailDrawer();
   persistUiState();
@@ -4540,13 +3528,112 @@ function planMixSegmentClass(status) {
   }[status] || 'not-started';
 }
 
-function touchpointRow(label, date, overdue) {
+function dataCell(label, dateText, fill = 'none') {
+  const labelClass = fill === 'none' ? 'touchpoint-col-label on-soft' : 'touchpoint-col-label';
   return `
-    <div class="touchpoint-row ${overdue ? 'overdue' : ''}">
-      <span class="tp-label">${escapeHtml(label)}</span>
-      <span class="tp-date">${escapeHtml(formatDateOrFallback(date))}</span>
+    <div class="data-cell-fill" data-fill="${escapeHtml(fill)}">
+      <div class="data-cell-stack">
+        <span class="${labelClass}">${escapeHtml(label)}</span>
+        <span>${escapeHtml(dateText)}</span>
+      </div>
     </div>
   `;
+}
+
+function tableMetaChip(label, tone = '') {
+  return `<span class="table-meta-chip${tone ? ` ${tone}` : ''}">${escapeHtml(label)}</span>`;
+}
+
+function renderNameMetaChips(report, metrics) {
+  const chips = [];
+  if (report.level) chips.push(tableMetaChip(`Level · ${report.level}`));
+  if (!report.mentors) chips.push(tableMetaChip('No mentor', 'warning'));
+  if (metrics.vacationStatus.active) chips.push(tableMetaChip(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
+  else if (metrics.vacationStatus.next) chips.push(tableMetaChip(`Vacation · ${formatVacationRange(metrics.vacationStatus.next)}`, 'warning'));
+  if (metrics.activeSnoozes.length) chips.push(tableMetaChip(`${metrics.activeSnoozes.length} snooze${metrics.activeSnoozes.length === 1 ? '' : 's'}`));
+  return chips.length ? `<div class="table-meta-chips">${chips.join('')}</div>` : '';
+}
+
+function renderLastTouchpointsMarkup(report, metrics) {
+  const cell = (label, date, overdue) => {
+    const dateText = formatDateOrFallback(date, '—');
+    const fill = !date ? 'muted' : overdue ? 'red' : 'none';
+    return dataCell(label, dateText, fill);
+  };
+  return `
+    <div class="touchpoint-grid">
+      ${cell('1:1', metrics.lastOneOnOne, metrics.oneOnOneOverdue)}
+      ${cell('PDC', metrics.lastPdc, metrics.pdcOverdue)}
+      ${cell('CV', metrics.lastCvReview, metrics.cvReviewOverdue)}
+    </div>
+  `;
+}
+
+function renderNextTouchpointsMarkup(report) {
+  const cell = (label, date) => {
+    const vacation = date && !!findVacationForDate(report, date);
+    if (!date) return dataCell(label, 'Not planned', 'muted');
+    if (vacation) return dataCell(label, formatDate(date), 'amber');
+    return dataCell(label, formatDate(date), 'none');
+  };
+  return `
+    <div class="next-touchpoint-grid">
+      ${cell('1:1', report.nextOneOnOneDate)}
+      ${cell('PDC', report.nextPdcDate)}
+    </div>
+  `;
+}
+
+function renderAttentionBadges(metrics) {
+  if (!metrics.attention.length) return badge('On track', 'success');
+  const visible = metrics.attention.slice(0, 2).map((issue) => badge(issue, attentionTone(issue))).join('');
+  const overflow = metrics.attention.length > 2 ? badge(`+${metrics.attention.length - 2} more`, 'soft') : '';
+  return `${visible}${overflow}`;
+}
+
+function cadenceDueDate(anchorDate, fallbackDate, thresholdDays) {
+  const sourceDate = normalizeDate(anchorDate || fallbackDate);
+  return sourceDate ? addDays(sourceDate, thresholdDays) : '';
+}
+
+function reportNearestActionDate(report, metrics) {
+  return [
+    cadenceDueDate(metrics.lastOneOnOne, report.hireDate, metrics.thresholds.oneOnOneDays),
+    cadenceDueDate(metrics.lastPdc, report.hireDate, metrics.thresholds.pdcDays),
+    cadenceDueDate(metrics.lastCvReview, report.hireDate, metrics.thresholds.cvReviewDays),
+    normalizeDate(report.nextOneOnOneDate),
+    normalizeDate(report.nextPdcDate)
+  ].filter(Boolean).sort()[0] || '';
+}
+
+function reportUrgencyBucket(report, metrics) {
+  if (metrics.attention.length) return 0;
+  if (metrics.openFollowUps.length) return 1;
+  return 2;
+}
+
+function reportUrgencyScore(report, metrics) {
+  let score = metrics.attention.length * 100;
+  if (metrics.oneOnOneOverdue) score += 40;
+  if (metrics.pdcOverdue) score += 35;
+  if (metrics.cvReviewOverdue) score += 30;
+  if (normalizeSupportLevel(report.supportLevel) === 'Urgent') score += 25;
+  else if (normalizeSupportLevel(report.supportLevel) === 'Support needed') score += 15;
+  score += Math.min(metrics.openFollowUps.length, 6) * 3;
+  return score;
+}
+
+function compareReportsForTable(left, right) {
+  const leftMetrics = getMetrics(left.id);
+  const rightMetrics = getMetrics(right.id);
+  const bucketDiff = reportUrgencyBucket(left, leftMetrics) - reportUrgencyBucket(right, rightMetrics);
+  if (bucketDiff) return bucketDiff;
+  const scoreDiff = reportUrgencyScore(right, rightMetrics) - reportUrgencyScore(left, leftMetrics);
+  if (scoreDiff) return scoreDiff;
+  const leftDate = reportNearestActionDate(left, leftMetrics) || '9999-12-31';
+  const rightDate = reportNearestActionDate(right, rightMetrics) || '9999-12-31';
+  if (leftDate !== rightDate) return leftDate.localeCompare(rightDate);
+  return String(left.name || '').localeCompare(String(right.name || ''));
 }
 
 function getQuickFilterMeta(filterKey) {
@@ -4582,7 +3669,7 @@ function renderTable() {
   if (!allReports.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 8;
+    td.colSpan = 5;
     const empty = document.createElement('div');
     empty.className = 'empty-state';
     const msg = document.createElement('p');
@@ -4602,42 +3689,27 @@ function renderTable() {
   // innerHTML kept: multi-cell table rows with nested namecell, badges, and action buttons; all dynamic inputs pass through escapeHtml().
   reportsTableBodyEl.innerHTML = reports.map((report) => {
     const metrics = getMetrics(report.id);
-    const attentionHtml = metrics.attention.length
-      ? metrics.attention.map((issue) => badge(issue, attentionTone(issue))).join('')
-      : `${badge('On track', 'success')}${metrics.activeSnoozes.length ? badge(`${metrics.activeSnoozes.length} snoozed`, 'soft') : ''}`;
-    const vacationMeta = metrics.vacationStatus.active
-      ? `<span class="namesub info">${escapeHtml(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`)}</span>`
-      : metrics.vacationStatus.next
-        ? `<span class="namesub warning">${escapeHtml(`Vacation ${formatVacationRange(metrics.vacationStatus.next)}`)}</span>`
-        : '';
-    const followUpMeta = metrics.openFollowUps.length ? `<span class="namesub">${escapeHtml(`${metrics.openFollowUps.length} open follow-up${metrics.openFollowUps.length === 1 ? '' : 's'}`)}</span>` : '';
-    const snoozeMeta = metrics.activeSnoozes.length ? `<span class="namesub">${escapeHtml(`${metrics.activeSnoozes.length} active snooze${metrics.activeSnoozes.length === 1 ? '' : 's'}`)}</span>` : '';
     const isSelected = report.id === app.ui.selectedId;
-    const rowClass = [isSelected ? 'selected' : '', decayClass(report)].filter(Boolean).join(' ');
+    const rowClass = isSelected ? 'selected' : '';
+    const supportLevel = report.supportLevel || SUPPORT_LEVELS[0];
+    const supportFill = supportFillForLevel(supportLevel);
+    const openCount = metrics.openFollowUps.length;
+    let followUpFill = 'none';
+    let followUpText = '—';
+    if (openCount >= 3) { followUpFill = 'red'; followUpText = `${openCount} open`; }
+    else if (openCount > 0) { followUpFill = 'amber'; followUpText = `${openCount} open`; }
     return `
       <tr data-report-row="${escapeHtml(report.id)}" class="${rowClass}">
         <td>
           <div class="namecell">
             <strong>${escapeHtml(report.name)}</strong>
-            <span class="namesub">${escapeHtml(report.mentors ? `Mentor: ${report.mentors}` : 'No mentor assigned')}</span>
-            ${vacationMeta}
-            ${followUpMeta}
-            ${snoozeMeta}
+            ${renderNameMetaChips(report, metrics)}
           </div>
         </td>
-        <td><div class="table-pulse-wrap">${renderCadenceStripMarkup(report, 8, { compact: true })}</div></td>
-        <td>${escapeHtml(report.level || '-')}</td>
-        <td>
-          <div class="touchpoints">
-            ${touchpointRow('1:1', metrics.lastOneOnOne, metrics.oneOnOneOverdue)}
-            ${touchpointRow('PDC', metrics.lastPdc, metrics.pdcOverdue)}
-            ${touchpointRow('CV', metrics.lastCvReview, metrics.cvReviewOverdue)}
-          </div>
-        </td>
-        <td>${escapeHtml(report.nextOneOnOneDate ? formatDate(report.nextOneOnOneDate) : '-')}</td>
-        <td>${badge(report.pdcStatus, variantForPdcStatus(report.pdcStatus))}</td>
-        <td>${badge(report.supportLevel, variantForSupport(report.supportLevel))}</td>
-        <td><div class="badges">${attentionHtml}</div></td>
+        <td class="data-cell">${renderLastTouchpointsMarkup(report, metrics)}</td>
+        <td class="data-cell">${renderNextTouchpointsMarkup(report)}</td>
+        <td class="data-cell" data-fill="${escapeHtml(supportFill)}"><div class="data-cell-fill" data-fill="${escapeHtml(supportFill)}">${escapeHtml(supportLevel)}</div></td>
+        <td class="data-cell" data-fill="${escapeHtml(followUpFill)}"><div class="data-cell-fill" data-fill="${escapeHtml(followUpFill)}">${escapeHtml(followUpText)}</div></td>
       </tr>
     `;
   }).join('');
@@ -4652,44 +3724,43 @@ function renderTable() {
 
 function renderOpenFollowUpsPanel(report, metrics) {
   const openFollowUps = metrics.openFollowUps || [];
-  if (!openFollowUps.length) return '<div class="followup-empty">No open follow-ups right now.</div>';
+  if (!openFollowUps.length) return '';
   return `
-    <div class="followup-panel">
-      <div class="drawer-section-head">
-        <div>
-          <h3 style="margin:0;">Open Follow-Ups</h3>
-          <p class="section-note">Follow-ups are extracted from meeting-note lines that start with [] or [x].</p>
-        </div>
-        ${badge(`${openFollowUps.length} open`, 'warning')}
+    <div class="sharp-panel followup-panel">
+      <div class="sharp-panel-header">
+        <h3>Open Follow-Ups</h3>
+        <div class="sharp-panel-header-meta">${badge(`${openFollowUps.length} open`, 'warning')}</div>
       </div>
-      <div class="followup-list">
-        ${openFollowUps.map((item) => `
-          <label class="followup-item">
-            <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
-            <span class="followup-copy">
-              <strong>${escapeHtml(item.text)}</strong>
-              <span class="followup-meta">
-                <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
-                <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
+      <div class="sharp-panel-body">
+        <div class="followup-list">
+          ${openFollowUps.map((item) => `
+            <label class="followup-item">
+              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+              <span class="followup-copy">
+                <strong>${escapeHtml(item.text)}</strong>
+                <span class="followup-meta">
+                  <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                  <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
+                </span>
               </span>
-            </span>
-          </label>
-        `).join('')}
+            </label>
+          `).join('')}
+        </div>
       </div>
     </div>
   `;
 }
 
 function renderMeetingHistory(report) {
-  if (!report.meetings.length) {
-    return '<p class="section-note">No meetings logged yet.</p>';
-  }
+  const hasMeetings = report.meetings.length > 0;
   const followUpMap = new Map();
-  extractFollowUps(report).forEach((item) => {
-    if (!followUpMap.has(item.meetingId)) followUpMap.set(item.meetingId, []);
-    followUpMap.get(item.meetingId).push(item);
-  });
-  return `
+  if (hasMeetings) {
+    extractFollowUps(report).forEach((item) => {
+      if (!followUpMap.has(item.meetingId)) followUpMap.set(item.meetingId, []);
+      followUpMap.get(item.meetingId).push(item);
+    });
+  }
+  const bodyMarkup = hasMeetings ? `
     <ul class="meeting-history">
       ${report.meetings.map((meeting) => {
         const followUps = followUpMap.get(meeting.id) || [];
@@ -4697,25 +3768,53 @@ function renderMeetingHistory(report) {
         const followUpBadge = followUps.length
           ? badge(`${openCount ? `${openCount} open` : 'All done'} · ${followUps.length} follow-up${followUps.length === 1 ? '' : 's'}`, openCount ? 'warning' : 'soft')
           : '';
+        const summaryText = firstMeaningfulLine(meeting.notes) || 'No notes captured for this meeting.';
         return `
-        <li class="meeting-item" data-meeting-item="${escapeHtml(meeting.id)}">
-          <div class="meeting-item-head">
-            <div class="meeting-item-meta">
-              ${badge(meeting.meetingType, 'info')}
-              <span class="meeting-date">${escapeHtml(formatDate(meeting.meetingDate))}</span>
-              <span class="meeting-item-subtle">${escapeHtml(meeting.source === 'ics' ? 'Imported from .ics' : 'Logged in Team Pulse')}</span>
-              ${followUpBadge}
+        <li>
+          <details class="meeting-disclosure" data-meeting-item="${escapeHtml(meeting.id)}">
+            <summary class="meeting-summary">
+              <div class="meeting-summary-main">
+                <div class="meeting-item-meta">
+                  ${badge(meeting.meetingType, 'info')}
+                  <span class="meeting-date">${escapeHtml(formatDate(meeting.meetingDate))}</span>
+                  ${followUpBadge}
+                </div>
+                <div class="meeting-summary-copy">${escapeHtml(summaryText)}</div>
+              </div>
+              <span class="meeting-summary-toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="meeting-item-body">
+              <div class="meeting-item-head">
+                <div class="meeting-item-meta">
+                  <span class="meeting-item-subtle">${escapeHtml(meeting.source === 'ics' ? 'Imported from .ics' : 'Logged in Team Pulse')}</span>
+                </div>
+                <div class="meeting-item-actions">
+                  <button type="button" class="secondary" data-edit-meeting="${escapeHtml(meeting.id)}">Edit</button>
+                  <button type="button" class="secondary" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
+                </div>
+              </div>
+              ${meeting.notes ? `<div class="meeting-notes note-markdown">${renderNoteMarkdown(meeting.notes)}</div>` : '<p class="section-note">No meeting notes.</p>'}
             </div>
-            <div class="meeting-item-actions">
-              <button type="button" class="secondary" data-edit-meeting="${escapeHtml(meeting.id)}">Edit</button>
-              <button type="button" class="secondary" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
-            </div>
-          </div>
-          ${meeting.notes ? `<div class="meeting-notes note-markdown">${renderNoteMarkdown(meeting.notes)}</div>` : '<p class="section-note">No meeting notes.</p>'}
+          </details>
         </li>
       `;
       }).join('')}
     </ul>
+  ` : `
+    <div class="sharp-panel-body padded">
+      <p class="section-note" style="margin:0;">No meetings logged yet.</p>
+    </div>
+  `;
+  return `
+    <div class="sharp-panel">
+      <div class="sharp-panel-header">
+        <h3>Meetings</h3>
+        <div class="sharp-panel-header-meta">
+          <button type="button" id="openMeetingModalBtn">Log Meeting</button>
+        </div>
+      </div>
+      ${bodyMarkup}
+    </div>
   `;
 }
 
@@ -5077,7 +4176,9 @@ function renderEvidenceLockerMarkup(editorReport) {
   `;
 }
 
-function renderVacationTrackerMarkup(editorReport, metrics) {
+function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
+  const isCreating = !!options.isCreating;
+  const inEditMode = isCreating || !!app.ui.vacationEditMode;
   const vacations = normalizeVacationEntries(editorReport.vacations);
   const active = getVacationStatus(editorReport).current;
   const upcoming = getVacationStatus(editorReport).next;
@@ -5088,13 +4189,19 @@ function renderVacationTrackerMarkup(editorReport, metrics) {
           <h3>Vacation Tracker</h3>
           <p class="section-note">Track leave windows so cadence and planning stay realistic.</p>
         </div>
-        <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
+        ${isCreating ? '' : (inEditMode
+          ? `<div class="actions">
+              <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
+              <button type="button" class="secondary" id="cancelVacationEditBtn">Cancel</button>
+            </div>`
+          : '<button type="button" class="secondary" id="openVacationEditBtn">Edit</button>')}
       </div>
       <div class="vacation-summary">
         ${active ? badge(`On vacation · Back ${formatDate(vacationBackDate(active))}`, 'info') : ''}
         ${!active && upcoming ? badge(`Upcoming · ${formatVacationRange(upcoming)}`, 'warning') : ''}
         ${!active && !upcoming ? badge('No vacation scheduled', 'neutral') : ''}
       </div>
+      ${inEditMode ? `
       <div id="vacationList" class="vacation-list">
         ${vacations.length ? vacations.map((vacation) => `
           <div class="vacation-row" data-vacation-row="${escapeHtml(vacation.id)}">
@@ -5105,33 +4212,76 @@ function renderVacationTrackerMarkup(editorReport, metrics) {
           </div>
         `).join('') : '<div class="vacation-empty">No vacation windows recorded yet.</div>'}
       </div>
+      ` : (vacations.length ? `
+      <div class="vacation-list vacation-list-readonly">
+        ${vacations.map((vacation) => `
+          <div class="vacation-row-readonly">
+            <div class="vacation-row-readonly-range">${escapeHtml(formatVacationRange(vacation))}</div>
+            ${vacation.note ? `<div class="vacation-row-readonly-note">${escapeHtml(vacation.note)}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      ` : '<div class="vacation-empty">No vacation windows recorded yet.</div>')}
     </div>
   `;
 }
 
-function renderCadenceTargetsMarkup(editorReport) {
+function renderCadenceTargetsMarkup(editorReport, options = {}) {
+  const isCreating = !!options.isCreating;
+  const inEditMode = isCreating || !!app.ui.cadenceEditMode;
   const overrides = normalizeCadenceOverrides(editorReport.cadenceOverrides);
+  const defaults = {
+    oneOnOneDays: app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays,
+    pdcDays: app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays,
+    cvReviewDays: app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays
+  };
+  const readonlyCell = (label, overrideDays, defaultDays) => {
+    const using = overrideDays ? `${overrideDays} days` : `${defaultDays} days`;
+    const hint = overrideDays ? '' : 'Team default';
+    return `
+      <div class="cadence-target-readonly">
+        <span class="label">${escapeHtml(label)}</span>
+        <span class="value">${escapeHtml(using)}</span>
+        ${hint ? `<span class="field-hint">${escapeHtml(hint)}</span>` : ''}
+      </div>
+    `;
+  };
   return `
     <div class="drawer-section">
-      <h3>Cadence Targets</h3>
-      <p class="section-note">Leave a field blank to keep using the team default.</p>
+      <div class="drawer-section-head">
+        <div>
+          <h3>Cadence Targets</h3>
+          <p class="section-note">Leave a field blank to keep using the team default.</p>
+        </div>
+        ${isCreating ? '' : (inEditMode
+          ? '<button type="button" class="secondary" id="cancelCadenceEditBtn">Cancel</button>'
+          : '<button type="button" class="secondary" id="openCadenceEditBtn">Edit</button>')}
+      </div>
+      ${inEditMode ? `
       <div class="cadence-target-grid">
         <label>
           <span>1:1 target</span>
-          <input type="number" min="1" inputmode="numeric" name="cadenceOneOnOneDays" value="${escapeHtml(String(overrides.oneOnOneDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays))}">
-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.oneOnOneDays || DEFAULT_THRESHOLDS.oneOnOneDays))} days</small>
+          <input type="number" min="1" inputmode="numeric" name="cadenceOneOnOneDays" value="${escapeHtml(String(overrides.oneOnOneDays || ''))}" placeholder="${escapeHtml(String(defaults.oneOnOneDays))}">
+          <small class="field-hint">Team default: ${escapeHtml(String(defaults.oneOnOneDays))} days</small>
         </label>
         <label>
           <span>PDC target</span>
-          <input type="number" min="1" inputmode="numeric" name="cadencePdcDays" value="${escapeHtml(String(overrides.pdcDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays))}">
-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.pdcDays || DEFAULT_THRESHOLDS.pdcDays))} days</small>
+          <input type="number" min="1" inputmode="numeric" name="cadencePdcDays" value="${escapeHtml(String(overrides.pdcDays || ''))}" placeholder="${escapeHtml(String(defaults.pdcDays))}">
+          <small class="field-hint">Team default: ${escapeHtml(String(defaults.pdcDays))} days</small>
         </label>
         <label>
           <span>CV review target</span>
-          <input type="number" min="1" inputmode="numeric" name="cadenceCvReviewDays" value="${escapeHtml(String(overrides.cvReviewDays || ''))}" placeholder="${escapeHtml(String(app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays))}">
-          <small class="field-hint">Team default: ${escapeHtml(String(app.doc?.settings?.thresholds?.cvReviewDays || DEFAULT_THRESHOLDS.cvReviewDays))} days</small>
+          <input type="number" min="1" inputmode="numeric" name="cadenceCvReviewDays" value="${escapeHtml(String(overrides.cvReviewDays || ''))}" placeholder="${escapeHtml(String(defaults.cvReviewDays))}">
+          <small class="field-hint">Team default: ${escapeHtml(String(defaults.cvReviewDays))} days</small>
         </label>
       </div>
+      ` : `
+      <div class="cadence-target-grid cadence-target-grid-readonly">
+        ${readonlyCell('1:1 target', overrides.oneOnOneDays, defaults.oneOnOneDays)}
+        ${readonlyCell('PDC target', overrides.pdcDays, defaults.pdcDays)}
+        ${readonlyCell('CV review target', overrides.cvReviewDays, defaults.cvReviewDays)}
+      </div>
+      `}
     </div>
   `;
 }
@@ -5406,48 +4556,8 @@ function renderTenureTimelineSection(report, metrics) {
   `;
 }
 
-function computeDrawerFocusState(editorReport, metrics, isCreating) {
-  if (isCreating) {
-    return {
-      tone: 'attention',
-      value: 'Complete profile',
-      detail: 'Save this direct report first. After that, meetings and cadence tracking will appear here.'
-    };
-  }
-  const attention = metrics.attention || [];
-  const activeVacation = metrics.vacationStatus.current;
-  const openFollowUps = metrics.openFollowUps || [];
-  const hasUrgent = attention.some((item) => /urgent/i.test(item));
-
-  let tone;
-  if (activeVacation) tone = 'good';
-  else if (hasUrgent) tone = 'urgent';
-  else if (attention.length || openFollowUps.length) tone = 'attention';
-  else tone = 'good';
-
-  let value;
-  if (activeVacation) value = `On Vacation · Back ${formatDate(vacationBackDate(activeVacation))}`;
-  else if (attention.length) value = attention[0];
-  else if (openFollowUps.length) value = `${openFollowUps.length} Open Follow-Up${openFollowUps.length === 1 ? '' : 's'}`;
-  else value = 'On track';
-
-  let detail;
-  if (activeVacation) {
-    detail = [formatVacationRange(activeVacation), activeVacation.note || 'Cadence warnings are muted during the active vacation window.'].filter(Boolean).join(' · ');
-  } else if (attention.length) {
-    const followUpSuffix = openFollowUps.length ? `${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}` : '';
-    detail = [attention.join(' · '), followUpSuffix].filter(Boolean).join(' · ');
-  } else if (openFollowUps.length) {
-    detail = openFollowUps.slice(0, 2).map((item) => item.text).join(' · ');
-  } else {
-    detail = 'Recent touchpoints and profile fields look on track.';
-  }
-
-  return { tone, value, detail };
-}
-
 function currentDetailDrawerTab() {
-  return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'pdc-notes';
+  return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
 function renderDetailDrawerTabBar() {
@@ -5462,27 +4572,24 @@ function renderDetailDrawerTabBar() {
   `;
 }
 
-function focusBadgeVariant(tone) {
-  if (tone === 'urgent') return 'danger';
-  if (tone === 'attention') return 'warning';
-  return 'success';
+function renderDetailStatusStrip(editorReport, metrics, isCreating) {
+  const items = [];
+  if (!isCreating && metrics.vacationStatus.active) {
+    items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
+  }
+  if (!items.length) return '';
+  return `<div class="drawer-status-strip">${items.join('')}</div>`;
 }
 
-function renderDetailStatusStrip(editorReport, metrics, focusState, isCreating) {
-  const items = [badge(focusState.value, focusBadgeVariant(focusState.tone))];
-  if (!isCreating) {
-    items.push(badge(`PDC · ${metrics.pdcStatus || editorReport.pdcStatus || 'Not started'}`, variantForPdcStatus(metrics.pdcStatus || editorReport.pdcStatus)));
-    items.push(badge(`Support · ${editorReport.supportLevel || SUPPORT_LEVELS[0]}`, variantForSupport(editorReport.supportLevel || SUPPORT_LEVELS[0])));
-    items.push(`<span class="pill">${escapeHtml(editorReport.nextOneOnOneDate ? `Next 1:1 · ${formatDate(editorReport.nextOneOnOneDate)}` : 'Next 1:1 not planned')}</span>`);
-    items.push(`<span class="pill">${escapeHtml(editorReport.nextPdcDate ? `Next PDC · ${formatDate(editorReport.nextPdcDate)}` : 'Next PDC not planned')}</span>`);
-    if (metrics.openFollowUps.length) items.push(badge(`${metrics.openFollowUps.length} open follow-up${metrics.openFollowUps.length === 1 ? '' : 's'}`, 'warning'));
-    if (metrics.activeSnoozes.length) items.push(badge(`${metrics.activeSnoozes.length} snoozed`, 'soft'));
-    if (metrics.vacationStatus.active) items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
-    else if (metrics.vacationStatus.next) items.push(badge(`Vacation · ${formatVacationRange(metrics.vacationStatus.next)}`, 'soft'));
-  }
+function renderProfileReadonlyField(label, rawValue, fill = '') {
+  const value = normalizeText(rawValue);
+  const hasValue = value.length > 0;
+  const fillAttr = fill ? ` data-fill="${escapeHtml(fill)}"` : '';
   return `
-    <div class="drawer-status-strip">${items.join('')}</div>
-    <p class="drawer-status-note">${escapeHtml(focusState.detail)}</p>
+    <div class="profile-readonly-field">
+      <span class="label">${escapeHtml(label)}</span>
+      <span class="value${hasValue ? '' : ' empty'}"${fillAttr}>${escapeHtml(hasValue ? value : 'Not set')}</span>
+    </div>
   `;
 }
 
@@ -5496,8 +4603,6 @@ function renderDetailDrawer() {
     : (persistedReport ? { ...persistedReport, ...(draftPayload || {}) } : null);
   const report = isCreating ? editorReport : persistedReport;
   if (!editorReport || !report) {
-    closeBriefingModal();
-    closeReviewModal();
     detailDrawerOverlayEl.classList.remove('open');
     detailDrawerOverlayEl.setAttribute('aria-hidden', 'true');
     detailDrawerEl.replaceChildren();
@@ -5506,7 +4611,6 @@ function renderDetailDrawer() {
   }
 
   const metrics = buildReportMetrics(editorReport, app.doc?.settings || normalizeSettings({}));
-  const focusState = computeDrawerFocusState(editorReport, metrics, isCreating);
   const activeTab = currentDetailDrawerTab();
   const titleText = isCreating
     ? (editorReport.name || 'New Direct Report')
@@ -5514,19 +4618,23 @@ function renderDetailDrawer() {
   const levelText = isCreating
     ? (editorReport.level || 'Fill in the profile below')
     : (editorReport.level || 'Level not set');
-  const cadenceOverrides = normalizeCadenceOverrides(editorReport.cadenceOverrides);
-  const hasCadenceOverrides = Object.values(cadenceOverrides).some((value) => !!value);
-  const advancedNotes = [];
-  if (!isCreating && metrics.activeSnoozes.length) advancedNotes.push(`${metrics.activeSnoozes.length} snoozed`);
-  if (hasCadenceOverrides) advancedNotes.push('custom cadence');
-  const advancedSummary = advancedNotes.length
-    ? `Advanced exceptions & cadence rules (${advancedNotes.join(' · ')})`
-    : 'Advanced exceptions & cadence rules';
+  const profileInEditMode = isCreating || !!app.ui.profileEditMode;
 
   detailDrawerOverlayEl.classList.add('open');
   detailDrawerOverlayEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
 
+  // Preserve scroll position across re-renders when we're rendering the same report & tab
+  // (e.g. Edit/Cancel toggles). Resets naturally on tab switch or report change.
+  const previousContentEl = detailDrawerEl.querySelector('.drawer-workspace-content');
+  const previousTabEl = detailDrawerEl.querySelector('.drawer-workspace-tab.active');
+  const previousTabKey = previousTabEl?.getAttribute('data-drawer-tab') || null;
+  const previousReportId = detailDrawerEl.getAttribute('data-rendered-report-id') || null;
+  const currentReportId = isCreating ? '__creating__' : report.id;
+  const sameContext = previousTabKey === activeTab && previousReportId === currentReportId;
+  const previousContentScroll = sameContext ? (previousContentEl?.scrollTop || 0) : 0;
+
+  detailDrawerEl.setAttribute('data-rendered-report-id', currentReportId);
   detailDrawerEl.innerHTML = `
     <div class="drawer-shell">
       <div class="drawer-header">
@@ -5537,13 +4645,7 @@ function renderDetailDrawer() {
               <span class="detail-level">${escapeHtml(levelText)}</span>
               ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
             </div>
-            <div class="detail-meta-row">
-              <span class="detail-meta-chip"><span class="detail-meta-label">Mentor</span><strong>${escapeHtml(editorReport.mentors || 'Not set')}</strong></span>
-              <span class="detail-meta-chip"><span class="detail-meta-label">PDC status</span><strong>${escapeHtml(metrics.pdcStatus || editorReport.pdcStatus || 'Not started')}</strong></span>
-              <span class="detail-meta-chip"><span class="detail-meta-label">Support</span><strong>${escapeHtml(editorReport.supportLevel || SUPPORT_LEVELS[0])}</strong></span>
-              <span class="detail-meta-chip"><span class="detail-meta-label">Next 1:1</span><strong>${escapeHtml(editorReport.nextOneOnOneDate ? formatDate(editorReport.nextOneOnOneDate) : 'Not planned')}</strong></span>
-              <span class="detail-meta-chip"><span class="detail-meta-label">Next PDC</span><strong>${escapeHtml(editorReport.nextPdcDate ? formatDate(editorReport.nextPdcDate) : 'Not planned')}</strong></span>
-            </div>
+            ${!isCreating && normalizeText(editorReport.mentors) ? `<div class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</div>` : ''}
           </div>
           <div class="actions">
             <button type="button" class="secondary" id="closeDetailDrawerBtn">Close</button>
@@ -5553,27 +4655,16 @@ function renderDetailDrawer() {
         </div>
       </div>
       <div class="drawer-body" id="detailDrawerBody">
-        <div class="drawer-hero">
-          <div class="workspace-focus-panel ${focusState.tone}">
-            <span class="label">${isCreating ? 'Start here' : 'Current focus'}</span>
-            <strong>${escapeHtml(focusState.value)}</strong>
-            <p>${escapeHtml(focusState.detail)}</p>
-          </div>
-          ${renderDetailStatusStrip(editorReport, metrics, focusState, isCreating)}
-          ${isCreating ? '' : `
-          <div class="drawer-hero-actions">
-            <div class="actions">
-              <button type="button" id="openBriefingModalBtn">Prep Next 1:1</button>
-              <button type="button" class="secondary" id="openReviewModalBtn">Generate Review Draft</button>
-            </div>
-            <p class="section-note">Keep the workspace centred on notes and follow-ups. Generate summaries only when you need them.</p>
-          </div>`}
+        <div class="drawer-header-status-block">
+          ${renderDetailStatusStrip(editorReport, metrics, isCreating)}
         </div>
 
-        ${renderDetailDrawerTabBar()}
+        <div class="drawer-workspace-layout">
+          ${renderDetailDrawerTabBar()}
 
-        <form id="detailEditorForm" class="workspace-form-grid">
-          <div class="drawer-tab-panel" data-drawer-panel="pdc-notes" ${activeTab === 'pdc-notes' ? '' : 'hidden'}>
+          <div class="drawer-workspace-content">
+            <form id="detailEditorForm" class="workspace-form-grid">
+          <div class="drawer-tab-panel" data-drawer-panel="pdc-summary" ${activeTab === 'pdc-summary' ? '' : 'hidden'}>
             <div class="drawer-panel-stack">
               <div class="drawer-section">
                 <h3>Development Focus</h3>
@@ -5596,50 +4687,51 @@ function renderDetailDrawer() {
                     <p class="section-note">Keep quick context, coaching notes, and review reminders here.</p>
                   </div>
                 </div>
-                <label class="notes-editor">
-                  <span>Notes</span>
-                  <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
-                </label>
-                <details class="drawer-details">
-                  <summary>Preview markdown</summary>
-                  <div class="note-preview-shell">
-                    <div id="detailNotesPreview" class="note-preview note-markdown">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Markdown preview appears here.</p>' })}</div>
+                <div class="md-shell" id="detailNotesShell" data-md-active="write">
+                  <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
+                    <button type="button" class="md-tab active" data-md-target="detailNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
+                    <button type="button" class="md-tab" data-md-target="detailNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
                   </div>
-                </details>
+                  <div class="md-panel-write" role="tabpanel">
+                    <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
+                  </div>
+                  <div class="md-panel-preview note-markdown" id="detailNotesPreview" role="tabpanel">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Nothing to preview yet.</p>' })}</div>
+                </div>
               </div>
+
+              ${isCreating ? '' : renderAttentionControlsMarkup(editorReport, metrics)}
             </div>
           </div>
 
           <div class="drawer-tab-panel" data-drawer-panel="meetings" ${activeTab === 'meetings' ? '' : 'hidden'}>
             <div class="drawer-panel-stack">
               ${isCreating ? `
-              <div class="drawer-section" id="meetingHistorySection">
-                <div class="drawer-section-head">
-                  <div>
-                    <h3>Meetings</h3>
-                    <p class="section-note">Save this direct report first, then use Log meeting from this workspace.</p>
-                  </div>
+              <div class="sharp-panel">
+                <div class="sharp-panel-header">
+                  <h3>Meetings</h3>
                 </div>
-                <p class="section-note">Meeting history becomes available after the direct report has been created.</p>
+                <div class="sharp-panel-body padded">
+                  <p class="section-note" style="margin:0;">Meeting history becomes available after the direct report has been created.</p>
+                </div>
               </div>` : `
-              <div class="drawer-section" id="meetingHistorySection">
-                <div class="drawer-section-head">
-                  <div>
-                    <h3>Meetings</h3>
-                    <p class="section-note">Log meetings and review open follow-ups without leaving this workspace.</p>
-                  </div>
-                  <button type="button" id="openMeetingModalBtn">Log Meeting</button>
-                </div>
-                ${renderOpenFollowUpsPanel(report, metrics)}
-                ${renderMeetingHistory(report)}
-              </div>`}
+              ${renderOpenFollowUpsPanel(report, metrics)}
+              ${renderMeetingHistory(report)}`}
             </div>
           </div>
 
           <div class="drawer-tab-panel" data-drawer-panel="profile" ${activeTab === 'profile' ? '' : 'hidden'}>
             <div class="drawer-panel-stack">
               <div class="drawer-section">
-                <h3>Profile</h3>
+                <div class="drawer-section-head">
+                  <div>
+                    <h3>Profile</h3>
+                    ${profileInEditMode ? '<p class="section-note">Edit the fields below, then Save changes to apply.</p>' : ''}
+                  </div>
+                  ${isCreating ? '' : (profileInEditMode
+                    ? '<button type="button" class="secondary" id="cancelProfileEditBtn">Cancel</button>'
+                    : '<button type="button" class="secondary" id="openProfileEditBtn">Edit</button>')}
+                </div>
+                ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
@@ -5650,31 +4742,73 @@ function renderDetailDrawer() {
                   <label><span>Next planned 1:1</span><input name="nextOneOnOneDate" type="date" value="${escapeHtml(editorReport.nextOneOnOneDate || '')}"></label>
                   <label><span>Next planned PDC</span><input name="nextPdcDate" type="date" value="${escapeHtml(editorReport.nextPdcDate || '')}"></label>
                 </div>
+                ` : `
+                <div class="profile-readonly-grid">
+                  ${renderProfileReadonlyField('Name', editorReport.name)}
+                  ${renderProfileReadonlyField('Level', editorReport.level)}
+                  ${renderProfileReadonlyField('Mentor(s)', editorReport.mentors)}
+                  ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0], supportFillForLevel(editorReport.supportLevel || SUPPORT_LEVELS[0]))}
+                  ${renderProfileReadonlyField('Hire date', editorReport.hireDate ? formatDate(editorReport.hireDate) : '')}
+                  ${renderProfileReadonlyField('Last promotion / remuneration', editorReport.lastPromotionDate ? formatDate(editorReport.lastPromotionDate) : '')}
+                  ${renderProfileReadonlyField('Next planned 1:1', editorReport.nextOneOnOneDate ? formatDate(editorReport.nextOneOnOneDate) : '')}
+                  ${renderProfileReadonlyField('Next planned PDC', editorReport.nextPdcDate ? formatDate(editorReport.nextPdcDate) : '')}
+                </div>
+                `}
               </div>
 
-              ${renderVacationTrackerMarkup(editorReport, metrics)}
+              ${renderVacationTrackerMarkup(editorReport, metrics, { isCreating })}
 
-              <details class="drawer-details">
-                <summary>${escapeHtml(advancedSummary)}</summary>
-                <div>
-                  ${isCreating ? '' : renderAttentionControlsMarkup(editorReport, metrics)}
-                  ${renderCadenceTargetsMarkup(editorReport)}
-                </div>
-              </details>
+              ${renderCadenceTargetsMarkup(editorReport, { isCreating })}
             </div>
           </div>
         </form>
+          </div>
+        </div>
       </div>
     </div>
   `;
+
+  // Restore the content pane's scroll position (captured before innerHTML rewrite).
+  if (previousContentScroll > 0) {
+    const newContentEl = detailDrawerEl.querySelector('.drawer-workspace-content');
+    if (newContentEl) newContentEl.scrollTop = previousContentScroll;
+  }
 
   document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => clearSelectedReport());
   document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => deleteReport(report.id));
   document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
     document.getElementById('detailEditorForm')?.requestSubmit();
   });
-  document.getElementById('openBriefingModalBtn')?.addEventListener('click', openBriefingFromWorkspace);
-  document.getElementById('openReviewModalBtn')?.addEventListener('click', openReviewFromWorkspace);
+  document.getElementById('openProfileEditBtn')?.addEventListener('click', () => {
+    app.ui.profileEditMode = true;
+    renderDetailDrawer();
+  });
+  document.getElementById('cancelProfileEditBtn')?.addEventListener('click', () => {
+    if (hasUnsavedWorkspaceChanges() && !window.confirm('Discard unsaved profile changes?')) return;
+    clearWorkspaceDraft();
+    app.ui.profileEditMode = false;
+    renderDetailDrawer();
+  });
+  document.getElementById('openVacationEditBtn')?.addEventListener('click', () => {
+    app.ui.vacationEditMode = true;
+    renderDetailDrawer();
+  });
+  document.getElementById('cancelVacationEditBtn')?.addEventListener('click', () => {
+    if (hasUnsavedWorkspaceChanges() && !window.confirm('Discard unsaved vacation changes?')) return;
+    clearWorkspaceDraft();
+    app.ui.vacationEditMode = false;
+    renderDetailDrawer();
+  });
+  document.getElementById('openCadenceEditBtn')?.addEventListener('click', () => {
+    app.ui.cadenceEditMode = true;
+    renderDetailDrawer();
+  });
+  document.getElementById('cancelCadenceEditBtn')?.addEventListener('click', () => {
+    if (hasUnsavedWorkspaceChanges() && !window.confirm('Discard unsaved cadence changes?')) return;
+    clearWorkspaceDraft();
+    app.ui.cadenceEditMode = false;
+    renderDetailDrawer();
+  });
   const detailEditorFormEl = document.getElementById('detailEditorForm');
   detailEditorFormEl?.addEventListener('submit', (event) => saveWorkspaceChanges(event, isCreating ? '' : report.id));
   bindWorkspaceDraftListeners(detailEditorFormEl);
@@ -5691,11 +4825,11 @@ function renderDetailDrawer() {
   const detailNotesInputEl = document.getElementById('detailNotes');
   const detailNotesPreviewEl = document.getElementById('detailNotesPreview');
   const syncDetailNotesPreview = () => updateRenderedNotePreview(detailNotesPreviewEl, detailNotesInputEl?.value || '');
-  detailNotesInputEl?.addEventListener('input', syncDetailNotesPreview);
+  bindMarkdownShell('detailNotesShell', { textareaEl: detailNotesInputEl, previewEl: detailNotesPreviewEl, onSync: syncDetailNotesPreview });
   syncDetailNotesPreview();
   document.getElementById('addVacationBtn')?.addEventListener('click', addVacationDraftRow);
   document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
-    app.ui.detailDrawerTab = 'pdc-notes';
+    app.ui.detailDrawerTab = 'pdc-summary';
     persistUiState();
     addEvidenceDraftRow();
     window.setTimeout(() => {
@@ -5739,6 +4873,7 @@ function renderDetailDrawer() {
   });
   const jumpToMeeting = (meetingId) => {
     const target = [...document.querySelectorAll('[data-meeting-item]')].find((item) => item.getAttribute('data-meeting-item') === meetingId);
+    if (target && typeof target.open === 'boolean') target.open = true;
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   document.querySelectorAll('[data-jump-meeting]').forEach((button) => {
@@ -5752,7 +4887,7 @@ function renderDetailDrawer() {
       button.addEventListener('click', () => {
         const meetingId = button.getAttribute('data-add-evidence-meeting');
         const meeting = getReportById(report.id)?.meetings.find((item) => item.id === meetingId);
-        app.ui.detailDrawerTab = 'pdc-notes';
+        app.ui.detailDrawerTab = 'pdc-summary';
         persistUiState();
         addEvidenceDraftRow({ linkedMeetingId: meetingId, date: meeting?.meetingDate || todayStamp() });
         window.setTimeout(() => {
@@ -5940,15 +5075,22 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     : deepCopy(existingReport?.customFields || []);
   const cadenceOverrideInputsPresent = !!document.querySelector('[name="cadenceOneOnOneDays"], [name="cadencePdcDays"], [name="cadenceCvReviewDays"]');
   const evidenceInputsPresent = !!document.getElementById('evidenceGroups');
+  const profileInputsPresent = !!document.querySelector('[name="name"]');
+  const pickProfileField = (key, normalizer, fallback = '') => {
+    if (profileInputsPresent) return normalizer(formData.get(key));
+    return existingReport && existingReport[key] !== undefined ? existingReport[key] : fallback;
+  };
   return {
-    name: normalizeText(formData.get('name')),
-    level: normalizeLevel(formData.get('level')),
-    mentors: normalizeText(formData.get('mentors')),
-    hireDate: normalizeDate(formData.get('hireDate')),
-    lastPromotionDate: normalizeDate(formData.get('lastPromotionDate')),
-    nextOneOnOneDate: normalizeDate(formData.get('nextOneOnOneDate')),
-    nextPdcDate: normalizeDate(formData.get('nextPdcDate')),
-    supportLevel: normalizeSupportLevel(formData.get('supportLevel')),
+    name: pickProfileField('name', normalizeText),
+    level: pickProfileField('level', normalizeLevel),
+    mentors: pickProfileField('mentors', normalizeText),
+    hireDate: pickProfileField('hireDate', normalizeDate),
+    lastPromotionDate: pickProfileField('lastPromotionDate', normalizeDate),
+    nextOneOnOneDate: pickProfileField('nextOneOnOneDate', normalizeDate),
+    nextPdcDate: pickProfileField('nextPdcDate', normalizeDate),
+    supportLevel: profileInputsPresent
+      ? normalizeSupportLevel(formData.get('supportLevel'))
+      : normalizeSupportLevel(existingReport?.supportLevel),
     developmentGoalSummary: normalizeText(formData.get('developmentGoalSummary')),
     promotionReadiness: normalizeText(formData.get('promotionReadiness')),
     notes: normalizeText(formData.get('notes')),
@@ -5959,7 +5101,9 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
         cvReviewDays: formData.get('cadenceCvReviewDays')
       })
       : deepCopy(existingReport?.cadenceOverrides || {}),
-    vacations: collectWorkspaceVacations(),
+    vacations: document.getElementById('vacationList')
+      ? collectWorkspaceVacations()
+      : normalizeVacationEntries(existingReport?.vacations || []),
     evidence: evidenceInputsPresent ? collectWorkspaceEvidence() : deepCopy(existingReport?.evidence || []),
     customFields
   };
@@ -6039,8 +5183,6 @@ async function updateReport(reportId, payload, options = {}) {
 }
 
 async function deleteReport(reportId) {
-  closeBriefingModal();
-  closeReviewModal();
   const report = getReportById(reportId);
   if (!report) return;
   if (!window.confirm(`Delete ${report.name} from Team Pulse?`)) return;
@@ -6141,6 +5283,15 @@ function openMeetingModal(reportId, options = {}) {
   meetingImportIcsBtn.classList.toggle('hidden', !!meeting);
   setStatus(meetingStatusEl, '');
   syncMeetingNotesPreview();
+  const meetingShell = document.getElementById('meetingNotesShell');
+  if (meetingShell) {
+    meetingShell.setAttribute('data-md-active', 'write');
+    meetingShell.querySelectorAll('[data-md-target]').forEach((btn) => {
+      const isWrite = btn.getAttribute('data-md-mode') === 'write';
+      btn.classList.toggle('active', isWrite);
+      btn.setAttribute('aria-selected', isWrite ? 'true' : 'false');
+    });
+  }
   meetingModalEl.classList.add('open');
   meetingModalEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
@@ -6549,6 +5700,10 @@ function handleTileClick(event) {
   applyKpiQuickFilter(tile.getAttribute('data-tile'));
 }
 
+function closeDataMenu() {
+  dataMenuEl?.removeAttribute('open');
+}
+
 function bindStaticEvents() {
   populateSelect(planFilterEl, PDC_STATUSES, true, 'All PDC statuses');
   appVersionEl.textContent = APP_VERSION;
@@ -6573,17 +5728,27 @@ function bindStaticEvents() {
   createJsonFileBtn.addEventListener('click', () => chooseFolderAndConnect());
   openJsonFileBtn.addEventListener('click', importLegacyJsonFlow);
   saveFileBtn.addEventListener('click', () => {
+    closeDataMenu();
     if (app.folderHandle && app.connectedFolderReady) {
       flushAutosaveQueue(true);
     } else {
       chooseFolderAndConnect();
     }
   });
-  connectDataFileBtn.addEventListener('click', importLegacyJsonFlow);
-  importIcsBtn.addEventListener('click', () => beginIcsImport(app.ui.selectedId || null, app.ui.selectedId ? 'meetingStatus' : ''));
+  connectDataFileBtn.addEventListener('click', () => {
+    closeDataMenu();
+    importLegacyJsonFlow();
+  });
+  importIcsBtn.addEventListener('click', () => {
+    closeDataMenu();
+    beginIcsImport(app.ui.selectedId || null, app.ui.selectedId ? 'meetingStatus' : '');
+  });
   icsFileInputEl.addEventListener('change', handleIcsFileSelection);
   attentionRulesBtn.addEventListener('click', openRulesDrawer);
-  exportCsvBtn.addEventListener('click', () => exportPlainFiles());
+  exportCsvBtn.addEventListener('click', () => {
+    closeDataMenu();
+    exportPlainFiles();
+  });
   saveDockBtn.addEventListener('click', () => flushAutosaveQueue(true));
   dismissDockBtn.addEventListener('click', () => saveDockEl.classList.add('hidden'));
 
@@ -6621,7 +5786,7 @@ function bindStaticEvents() {
   closeMeetingModalBtn.addEventListener('click', closeMeetingModal);
   cancelMeetingModalBtn.addEventListener('click', closeMeetingModal);
   meetingFormEl.addEventListener('submit', handleMeetingSubmit);
-  meetingNotesInputEl?.addEventListener('input', syncMeetingNotesPreview);
+  bindMarkdownShell('meetingNotesShell', { textareaEl: meetingNotesInputEl, previewEl: meetingNotesPreviewEl, onSync: syncMeetingNotesPreview });
   meetingImportIcsBtn.addEventListener('click', () => {
     const reportId = normalizeText(document.getElementById('meetingReportId')?.value) || app.ui.selectedId;
     if (!reportId) {
@@ -6669,17 +5834,6 @@ function bindStaticEvents() {
   });
 
   closeTileModalBtn.addEventListener('click', closeTileModal);
-  closeBriefingModalBtn.addEventListener('click', closeBriefingModal);
-  closeReviewModalBtn.addEventListener('click', closeReviewModal);
-  copyBriefingBtn.addEventListener('click', copyActiveBriefing);
-  printBriefingBtn.addEventListener('click', printActiveBriefing);
-  copyReviewMarkdownBtn.addEventListener('click', copyActiveReviewMarkdown);
-  downloadReviewMarkdownBtn.addEventListener('click', downloadActiveReviewMarkdown);
-  printReviewDraftBtn.addEventListener('click', printActiveReviewDraft);
-  reviewWindowPresetEl.addEventListener('change', syncReviewConfigFromInputs);
-  reviewCustomStartEl.addEventListener('change', syncReviewConfigFromInputs);
-  reviewCustomEndEl.addEventListener('change', syncReviewConfigFromInputs);
-  reviewPreviewFormatEl.addEventListener('change', syncReviewConfigFromInputs);
   tileModalPrimaryBtn.addEventListener('click', applyActiveTileAction);
   tileModalSecondaryBtn.addEventListener('click', closeTileModal);
   statsEl.addEventListener('click', handleTileClick);
@@ -6759,6 +5913,7 @@ function bindStaticEvents() {
   });
 
   document.addEventListener('click', (event) => {
+    if (dataMenuEl?.hasAttribute('open') && !dataMenuEl.contains(event.target)) closeDataMenu();
     const exportBtn = event.target.closest('#exportNowBtn');
     if (exportBtn) exportPlainFiles();
     const restoreBtn = event.target.closest('#restoreBackupBtn');
@@ -6836,7 +5991,7 @@ function normalizeSettings(rawSettings = {}) {
   merged.evidenceCategories = normalizeEvidenceCategories(merged.evidenceCategories || rawSettings.evidenceCategories);
   merged.promotionConversationMonths = safePositiveInteger(merged.promotionConversationMonths || rawSettings.promotionConversationMonths, DEFAULT_PROMOTION_CONVERSATION_MONTHS);
   merged.themesWindowDays = safePositiveInteger(merged.themesWindowDays || rawSettings.themesWindowDays, THEMES_WINDOW_DEFAULT);
-  merged.stableMode = !!merged.stableMode;
+  merged.stableMode = rawSettings.stableMode === undefined ? true : !!merged.stableMode;
   merged.lastExportDate = normalizeText(merged.lastExportDate);
   merged.latestExportFiles = Array.isArray(merged.latestExportFiles) ? merged.latestExportFiles.map((value) => normalizeText(value)).filter(Boolean) : [];
   return merged;
@@ -7126,7 +6281,6 @@ function getFilteredReports() {
       serializeCadenceOverrides(report.cadenceOverrides),
       serializeVacations(report.vacations),
       serializeSnoozes(report.snoozes),
-      serializeEvidence(report.evidence),
       metrics.openFollowUps.map((item) => item.text).join(' '),
       (report.customFields || []).map((field) => `${field.label} ${field.value}`).join(' '),
       metrics.attention.join(' ')
@@ -7140,7 +6294,7 @@ function getFilteredReports() {
     if (activeTheme && !reportMatchesThemeFilter(report, activeTheme, themeWindowDays)) return false;
     if (!reportMatchesQuickFilter(report)) return false;
     return true;
-  });
+  }).sort(compareReportsForTable);
 }
 
 function renderQuickFilterBar() {
@@ -7207,7 +6361,8 @@ function renderRecentThemesCard(reports) {
 }
 
 function currentTeamHealthTab() {
-  return TEAM_HEALTH_TABS.includes(app.ui.teamHealthTab) ? app.ui.teamHealthTab : 'cadence';
+  const legacyMapped = app.ui.teamHealthTab === 'tenure' || app.ui.teamHealthTab === 'themes' ? 'insights' : app.ui.teamHealthTab;
+  return TEAM_HEALTH_TABS.includes(legacyMapped) ? legacyMapped : 'cadence';
 }
 
 function renderTeamHealthTabBar() {
@@ -7348,6 +6503,16 @@ function renderPdcMixTabHtml(reports) {
   `;
 }
 
+function renderInsightsTabHtml(reports) {
+  return `
+    <div class="insights-tab">
+      ${renderTeamTenureCard(reports)}
+      ${renderRecentThemesCard(reports)}
+    </div>
+  `;
+}
+
+
 function renderTeamHealth() {
   const reports = getReports();
   teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
@@ -7369,8 +6534,7 @@ function renderTeamHealth() {
   let panelHtml = '';
   if (tab === 'cadence') panelHtml = renderCadenceTabHtml(reports);
   else if (tab === 'pdc-mix') panelHtml = renderPdcMixTabHtml(reports);
-  else if (tab === 'tenure') panelHtml = renderTeamTenureCard(reports);
-  else if (tab === 'themes') panelHtml = renderRecentThemesCard(reports);
+  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
 }
 
