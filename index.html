@@ -13,60 +13,36 @@
     html,body{margin:0;padding:0}
     body{font-family:Figtree,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
     button,input,select,textarea{font:inherit}
-    /* === App shell (3-pane Lattice-style) =================================== */
-    .app-shell{display:grid;grid-template-columns:64px 320px 1fr;grid-template-rows:100vh;height:100vh;overflow:hidden}
-    .app-shell.no-middle{grid-template-columns:64px 1fr}
+    /* === App shell (Lattice-style unified sidebar) ========================== */
+    .app-shell{display:grid;grid-template-columns:240px 1fr;grid-template-rows:100vh;height:100vh;overflow:hidden}
     .app-shell.shell-loading{grid-template-columns:1fr;overflow:auto}
-    /* Icon rail */
-    .nav-rail{background:#0f172a;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;border-right:1px solid #1e293b;position:relative;z-index:2}
-    .nav-rail-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#8a5cff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;margin-bottom:10px;letter-spacing:-0.02em}
-    .nav-rail-btn{appearance:none;border:none;background:transparent;color:#94a3b8;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s ease,color 0.15s ease;position:relative}
-    .nav-rail-btn:hover,.nav-rail-btn:focus-visible{background:#1e293b;color:#e2e8f0;outline:none}
-    .nav-rail-btn:disabled{opacity:0.35;cursor:not-allowed;background:transparent;color:#64748b}
-    .nav-rail-btn:disabled:hover{background:transparent}
-    .nav-rail-btn.active{background:#2957d6;color:#fff}
-    .nav-rail-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .nav-rail-btn[data-badge]::after{content:attr(data-badge);position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--warning);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;pointer-events:none}
-    .nav-rail-spacer{flex:1}
-    .nav-rail-btn .nav-rail-tooltip{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:#0f172a;color:#fff;font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s ease;box-shadow:0 6px 20px rgba(0,0,0,0.25);z-index:10}
-    .nav-rail-btn:hover .nav-rail-tooltip,.nav-rail-btn:focus-visible .nav-rail-tooltip{opacity:1}
-    /* Middle column (list pane) */
-    .list-pane{background:#fafbfd;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;min-width:0}
-    .list-pane-head{padding:18px 18px 10px;border-bottom:1px solid var(--line);background:#fff;display:grid;gap:6px;flex:none}
-    .list-pane-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
-    .list-pane-head h2{font-size:20px;font-weight:800;margin:0;letter-spacing:-0.01em}
-    .list-pane-head p{margin:2px 0 0;color:var(--muted);font-size:13px}
-    .list-pane-tools{padding:12px 14px 8px;display:grid;gap:8px;flex:none}
-    .list-pane-tools input[type="search"],.list-pane-tools select{padding:9px 12px;font-size:13px;border-radius:10px}
-    .list-pane-body{flex:1 1 auto;overflow-y:auto;padding:6px 10px 16px}
-    .list-pane-body::-webkit-scrollbar{width:8px}
-    .list-pane-body::-webkit-scrollbar-thumb{background:#d8dfec;border-radius:4px}
-    .list-nav-group{margin-top:10px}
-    .list-nav-group-label{padding:8px 12px 4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
-    .list-nav-item{appearance:none;width:100%;text-align:left;background:transparent;border:none;padding:10px 12px;display:flex;align-items:center;gap:10px;border-radius:10px;cursor:pointer;color:var(--text);font-size:14px;font-weight:600;transition:background 0.12s ease}
-    .list-nav-item:hover,.list-nav-item:focus-visible{background:#eef2f8;outline:none}
-    .list-nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
-    .list-nav-item .list-nav-icon{width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .list-nav-item .list-nav-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);background:#eef2f8;border-radius:999px;padding:2px 8px;line-height:1.5}
-    .list-nav-item.active .list-nav-count{background:#fff;color:var(--accent)}
+    /* Unified sidebar */
+    .sidebar{background:#0f172a;display:flex;flex-direction:column;padding:18px 10px 14px;border-right:1px solid #1e293b;position:relative;z-index:2;overflow-y:auto;overflow-x:hidden}
+    .sidebar::-webkit-scrollbar{width:6px}
+    .sidebar::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
+    .sidebar-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;margin-bottom:8px;border-bottom:1px solid #1e293b}
+    .sidebar-brand-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f7bff,#8a5cff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;letter-spacing:-0.02em;flex:none}
+    .sidebar-brand-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .sidebar-brand-name{font-size:15px;font-weight:800;color:#fff;letter-spacing:-0.01em;line-height:1}
+    .sidebar-brand-version{font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.04em;line-height:1}
+    .sidebar-group{display:flex;flex-direction:column;gap:1px;padding:6px 0}
+    .sidebar-group + .sidebar-group{border-top:1px solid #1e293b;margin-top:4px;padding-top:10px}
+    .sidebar-group-label{padding:6px 12px 6px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b}
+    .sidebar-item{appearance:none;width:100%;text-align:left;background:transparent;border:none;padding:9px 12px;display:flex;align-items:center;gap:11px;border-radius:8px;cursor:pointer;color:#cbd5e1;font-size:14px;font-weight:600;transition:background 0.12s ease,color 0.12s ease;position:relative;justify-content:flex-start}
+    .sidebar-item:hover,.sidebar-item:focus-visible{background:#1e293b;color:#f1f5f9;outline:none}
+    .sidebar-item:disabled{opacity:0.35;cursor:not-allowed;background:transparent;color:#64748b}
+    .sidebar-item:disabled:hover{background:transparent}
+    .sidebar-item.active{background:#2957d6;color:#fff}
+    .sidebar-item.active:hover{background:#2957d6}
+    .sidebar-item.sub{padding:9px 12px;font-size:13px;font-weight:600}
+    .sidebar-item svg{width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .sidebar-item > span:not(.sidebar-item-badge){flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .sidebar-item-badge{margin-left:auto;min-width:20px;height:18px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,0.12);color:#f1f5f9;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;line-height:1;flex:none}
+    .sidebar-item.active .sidebar-item-badge{background:rgba(255,255,255,0.25);color:#fff}
+    .sidebar-item-badge[data-tone="warning"]{background:var(--warning);color:#fff}
+    .sidebar-spacer{flex:1;min-height:10px}
     /* Report list cards in middle column */
-    .report-card{appearance:none;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:6px;cursor:pointer;transition:background 0.12s ease,border-color 0.12s ease,box-shadow 0.12s ease;margin-bottom:8px}
-    .report-card:hover,.report-card:focus-visible{border-color:#c2cde0;background:#fff;outline:none;box-shadow:0 2px 6px rgba(23,32,51,0.04)}
-    .report-card.active{background:var(--accent-soft);border-color:rgba(41,87,214,0.25);box-shadow:0 0 0 1px rgba(41,87,214,0.1)}
-    .report-card-top{display:flex;align-items:center;gap:10px}
-    .report-card-name{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-    .report-card-support{width:10px;height:10px;border-radius:999px;flex:none}
-    .report-card-support[data-fill="green"]{background:var(--sat-green)}
-    .report-card-support[data-fill="blue"]{background:var(--sat-blue)}
-    .report-card-support[data-fill="amber"]{background:var(--sat-amber)}
-    .report-card-support[data-fill="red"]{background:var(--sat-red)}
-    .report-card-support[data-fill="grey"]{background:var(--sat-grey)}
-    .report-card-meta{font-size:12px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .report-card-meta .pip{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:0.4}
-    .report-card-attention{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
-    .report-card-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:2px 6px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
-    .report-card-chip[data-tone="danger"]{background:var(--danger-soft);color:var(--danger)}
-    .report-card-chip[data-tone="info"]{background:var(--info-soft);color:var(--info)}
+    /* Legacy report-card (for old list pane) - kept minimal for any stragglers */
     /* Right pane (content) */
     .content-pane{overflow-y:auto;overflow-x:hidden;background:var(--bg);min-width:0;position:relative}
     .content-pane-inner{max-width:1200px;margin:0 auto;padding:24px 28px 60px}
@@ -80,16 +56,17 @@
     .content-empty-icon svg{width:28px;height:28px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
     .content-empty h3{color:var(--text);font-size:18px;font-weight:700}
     .content-empty p{max-width:380px;margin:0;font-size:14px}
-    /* Mobile / narrow: collapse to stacked (list hidden, tab bar at top) */
+    /* Mobile / narrow: collapse to stacked */
     @media (max-width:900px){.app-shell{grid-template-columns:1fr !important;grid-template-rows:auto 1fr;height:100vh;overflow:hidden}
-    .app-shell[data-pane="list"] .nav-rail-mobile{display:flex}
-    .nav-rail{flex-direction:row;width:100%;height:56px;padding:0 10px;justify-content:flex-start;gap:4px;border-right:none;border-bottom:1px solid #1e293b}
-    .nav-rail-logo{margin-bottom:0;margin-right:8px}
-    .nav-rail-spacer{display:none}
-    .nav-rail-btn .nav-rail-tooltip{display:none}
-    .list-pane,.content-pane{display:none}
-    .app-shell[data-mobile-pane="list"] .list-pane{display:flex}
-    .app-shell[data-mobile-pane="content"] .content-pane{display:block}
+    .sidebar{flex-direction:row;width:100%;height:auto;padding:8px 10px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid #1e293b;align-items:center;gap:4px}
+    .sidebar-brand{border-bottom:none;padding:0 8px 0 0;margin-bottom:0;border-right:1px solid #1e293b;margin-right:4px;height:40px}
+    .sidebar-group{flex-direction:row;padding:0;border-top:none !important;margin-top:0 !important;padding-top:0 !important;gap:2px}
+    .sidebar-group-label{display:none}
+    .sidebar-item{padding:8px 10px;font-size:13px;white-space:nowrap}
+    .sidebar-item.sub{padding-left:10px}
+    .sidebar-item svg{display:none}
+    .sidebar-item-badge{display:none}
+    .sidebar-spacer{display:none}
     .content-pane-inner{padding:16px}
     .content-header{flex-direction:column;align-items:stretch}
     .mobile-back-btn{display:inline-flex !important}
@@ -306,27 +283,27 @@
     .modal-header p{margin:6px 0 0;color:var(--muted);font-size:14px}
     .modal-body{padding:20px}
     /* Rules drawer (settings) still slides in from right */
-    .drawer{position:absolute;right:0;top:0;bottom:0;width:min(1180px,72vw);max-width:calc(100vw - 14px);height:100vh;background:#fff;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);transition:transform 0.16s ease;border-left:1px solid var(--line);overflow:hidden}
-    .drawer.rules-drawer{width:min(460px,94vw)}
+    .drawer{position:absolute;right:0;top:0;bottom:0;width:min(1180px,72vw);max-width:calc(100vw - 14px);height:100vh;background:#fff;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);transition:transform 0.16s ease;border-left:1px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
+    .drawer.rules-drawer{width:min(560px,94vw)}
     .drawer-overlay.open .drawer{transform:translateX(0)}
     /* Detail drawer: now inline in the content pane, not modal.
        When the drawer is active, the content pane goes full-bleed (no padding, no max-width)
        and the drawer manages its own internal scrolling. */
-    #detailDrawer{display:flex;flex-direction:column;min-height:0;background:#fff;overflow:hidden;flex:1 1 auto}
+    #detailDrawer{display:flex;flex-direction:column;min-height:0;background:transparent;overflow:visible;flex:1 1 auto}
     #detailDrawer[hidden]{display:none !important}
-    .content-pane.drawer-active{overflow:hidden}
-    .content-pane.drawer-active .content-pane-inner{padding:0;max-width:none;height:100vh;display:flex;flex-direction:column}
+    .content-pane.drawer-active{overflow:auto}
+    .content-pane.drawer-active .content-pane-inner{padding:24px 28px 60px;max-width:1200px;display:block}
     .content-pane.drawer-active #contentHeader{display:none}
     .content-pane.drawer-active #detailDrawer{flex:1 1 auto;min-height:0}
-    .rules-drawer{position:absolute;right:0;top:0;bottom:0;width:min(460px,94vw);max-width:calc(100vw - 14px);height:100vh;border-radius:0;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);border-left:1px solid var(--line)}
+    .rules-drawer{position:absolute;right:0;top:0;bottom:0;width:min(560px,94vw);max-width:calc(100vw - 14px);height:100vh;border-radius:0;box-shadow:-16px 0 40px rgba(14,23,38,0.18);transform:translateX(18px);border-left:1px solid var(--line);display:flex;flex-direction:column}
     .drawer-overlay.open .rules-drawer{transform:translateX(0)}
     .workspace-form-grid{display:grid;gap:14px}
     .notes-editor textarea,.notes-textarea{min-height:220px}
-    .md-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:0}
-    .md-tab{appearance:none;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--muted);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;border-top-left-radius:10px;border-top-right-radius:10px;position:relative;top:1px}
+    .md-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:0;padding-left:4px}
+    .md-tab{appearance:none;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;border-radius:0;margin-bottom:-1px;transition:color 0.12s ease,border-color 0.12s ease}
     .md-tab:hover,.md-tab:focus-visible{color:var(--text);outline:none}
-    .md-tab.active{background:#fff;border-color:var(--line);color:var(--text)}
-    .md-panel-write,.md-panel-preview{border:1px solid var(--line);border-top-left-radius:0;border-radius:0 14px 14px 14px;background:#fff;padding:12px}
+    .md-tab.active{background:transparent;border-bottom-color:var(--accent);color:var(--text)}
+    .md-panel-write,.md-panel-preview{border:1px solid var(--line);border-radius:0 0 10px 10px;background:#fff;padding:12px}
     .md-panel-preview{background:#fbfcff;min-height:120px}
     .md-panel-write textarea{border:none;outline:none;resize:vertical;width:100%;background:transparent;padding:0;font:inherit;color:inherit;min-height:180px}
     .md-panel-write textarea:focus{outline:none}
@@ -362,11 +339,15 @@
     .workspace-form-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
     .header-status{margin-top:8px;min-height:18px}
     .drawer-shell{height:100%;min-height:0;display:flex;flex-direction:column}
-    .drawer-header{padding:22px 22px 18px;border-bottom:1px solid var(--line);background:#fff}
-    .drawer-header-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
-    .drawer-header h2{font-size:clamp(24px,2vw,34px);line-height:1.08;margin:0}
+    /* Default drawer styles (used by rules-drawer / settings overlay). */
+    .drawer-header{padding:22px 22px 18px;border-bottom:1px solid var(--line);background:#fff;flex:none}
+    .drawer-header-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+    .drawer-header h2{font-size:clamp(24px,2vw,32px);line-height:1.08;margin:0;letter-spacing:-0.01em}
     .drawer-header p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .drawer-body{flex:1 1 auto;min-height:0;overflow:hidden;padding:22px 22px 22px;display:flex;flex-direction:column;gap:18px;background:#fff}
+    .drawer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:22px;display:flex;flex-direction:column;gap:18px;background:#fff;overscroll-behavior:contain}
+    /* Inline detail drawer: flat, no internal scroll (the content pane scrolls). */
+    #detailDrawer .drawer-header{padding:4px 0 18px;border-bottom:none;background:transparent}
+    #detailDrawer .drawer-body{overflow:visible;padding:0;background:transparent;gap:16px}
     .drawer-section{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
     .drawer-section h3{font-size:18px;margin:0 0 10px}
     .drawer-hero{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px;display:grid;gap:14px}
@@ -486,12 +467,12 @@
     .drawer-status-strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .drawer-status-strip .pill,.drawer-status-strip .badge{margin:0}
     .drawer-status-note{margin:0;color:var(--muted);font-size:14px}
-    .drawer-workspace-layout{display:grid;grid-template-columns:220px 1fr;gap:0;align-items:stretch;min-height:0;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;overflow:hidden;flex:1 1 auto}
-    .drawer-workspace-tabs{display:flex;flex-direction:column;gap:0;padding:10px 0;background:#fafbfd;border-right:1px solid var(--line);border-bottom:none;min-width:0;overflow-y:auto}
-    .drawer-workspace-tab{appearance:none;border:none;background:transparent;color:var(--text);padding:10px 18px;font-size:14px;font-weight:600;border-radius:0;cursor:pointer;text-align:left;width:100%;line-height:1.2;display:block;transition:background 0.15s ease,color 0.15s ease}
-    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{background:#eef2f8;color:var(--text);outline:none}
-    .drawer-workspace-tab.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
-    .drawer-workspace-content{min-width:0;padding:18px 20px 24px;background:#fff;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+    .drawer-workspace-layout{display:flex;flex-direction:column;gap:0;min-height:0;flex:1 1 auto;background:transparent}
+    .drawer-workspace-tabs{display:flex;flex-direction:row;gap:4px;padding:0 2px;background:transparent;border-bottom:1px solid var(--line);overflow-x:auto;flex:none;margin-bottom:16px}
+    .drawer-workspace-tab{appearance:none;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:10px 14px;font-size:14px;font-weight:700;border-radius:0;cursor:pointer;text-align:center;line-height:1.2;transition:color 0.15s ease,border-color 0.15s ease;white-space:nowrap;margin-bottom:-1px}
+    .drawer-workspace-tab:hover,.drawer-workspace-tab:focus-visible{background:transparent;color:var(--text);outline:none}
+    .drawer-workspace-tab.active{background:transparent;color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+    .drawer-workspace-content{min-width:0;padding:0;background:transparent;overflow:visible;overscroll-behavior:contain;flex:1 1 auto}
     .drawer-tab-panel{display:grid;gap:22px}
     .drawer-tab-panel[hidden]{display:none !important}
     .drawer-panel-stack{display:grid;gap:22px}
@@ -650,8 +631,8 @@
     .searchbar,.form-grid,.hero-meta,.hero-cards,.overview-grid,.cadence-grid,.text-grid,.development-focus-grid,.cadence-target-grid,.attention-form-grid,.evidence-row-top,.evidence-row-bottom{grid-template-columns:1fr}
     .profile-readonly-field{grid-template-columns:1fr;gap:0}
     .profile-readonly-field .label{padding-bottom:4px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
-    .drawer-workspace-layout{grid-template-columns:1fr}
-    .drawer-workspace-tabs{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);position:static;max-height:none;overflow:visible}
+    .drawer-workspace-layout{display:flex;flex-direction:column}
+    .drawer-workspace-tabs{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
     .drawer-workspace-tab{width:auto}
     .tenure-river-head,.tenure-river-foot{flex-direction:column;align-items:stretch}
     .drawer-hero-actions,.pulse-strip-head{flex-direction:column;align-items:stretch}
@@ -676,6 +657,77 @@
     .health-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
     .health-item{display:grid;gap:4px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
     .health-item span{color:var(--muted);font-size:13px}
+    /* === Reports tile grid (main content area) ============================== */
+    .reports-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+    .reports-toolbar .searchbox{flex:1 1 280px;max-width:360px;position:relative}
+    .reports-toolbar .searchbox input{width:100%;padding:10px 14px 10px 38px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    .reports-toolbar .searchbox::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:14px;height:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235f6b85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");background-repeat:no-repeat;pointer-events:none}
+    .reports-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;justify-content:start;align-content:start}
+    .report-tile{appearance:none;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 0.15s ease,box-shadow 0.15s ease,transform 0.04s ease;min-height:120px;font-family:inherit;color:inherit}
+    .report-tile:hover,.report-tile:focus-visible{border-color:#c2cde0;box-shadow:0 4px 14px rgba(23,32,51,0.06);outline:none}
+    .report-tile:active{transform:translateY(1px)}
+    .report-tile-head{display:flex;align-items:center;gap:10px}
+    .report-tile-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;letter-spacing:-0.02em}
+    .report-tile-name{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+    .report-tile-support-dot{width:10px;height:10px;border-radius:50%;flex:none}
+    .report-tile-support-dot[data-fill="green"]{background:var(--sat-green)}
+    .report-tile-support-dot[data-fill="blue"]{background:var(--sat-blue)}
+    .report-tile-support-dot[data-fill="amber"]{background:var(--sat-amber)}
+    .report-tile-support-dot[data-fill="red"]{background:var(--sat-red)}
+    .report-tile-support-dot[data-fill="grey"]{background:var(--sat-grey)}
+    .report-tile-meta{color:var(--muted);font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:2px}
+    .report-tile-meta-line{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .report-tile-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+    .report-tile-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:3px 7px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
+    .report-tile-chip[data-tone="danger"]{background:var(--danger-soft);color:var(--danger)}
+    .report-tile-chip[data-tone="info"]{background:var(--info-soft);color:var(--info)}
+    .report-tile-chip[data-tone="good"]{background:var(--success-soft);color:var(--success)}
+    .report-tile-add{appearance:none;background:#fff;border:2px dashed var(--line-strong);border-radius:14px;padding:16px 18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--accent);font-size:14px;font-weight:700;transition:background 0.15s ease,border-color 0.15s ease}
+    .report-tile-add:hover,.report-tile-add:focus-visible{background:var(--accent-soft);border-color:var(--accent);outline:none}
+    /* === Meetings view ====================================================== */
+    .meetings-view-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+    .meetings-view-filter{display:flex;align-items:center;gap:8px}
+    .meetings-view-filter > span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+    .meetings-view-filter select{min-width:220px;padding:9px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    .meetings-view-filter select.meetings-filter-pulse{animation:meetingsFilterPulse 0.9s ease}
+    @keyframes meetingsFilterPulse{0%{box-shadow:0 0 0 0 rgba(41,87,214,0.4)}70%{box-shadow:0 0 0 8px rgba(41,87,214,0)}100%{box-shadow:0 0 0 0 rgba(41,87,214,0)}}
+    .meetings-view{display:flex;flex-direction:column;gap:12px}
+    .meetings-view-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;cursor:pointer;transition:border-color 0.12s ease,box-shadow 0.12s ease}
+    .meetings-view-item:hover{border-color:#c2cde0;box-shadow:0 2px 8px rgba(23,32,51,0.04)}
+    .meetings-view-date{display:flex;flex-direction:column;text-align:center;width:52px;flex:none}
+    .meetings-view-date-m{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase}
+    .meetings-view-date-d{font-size:22px;font-weight:800;color:var(--text);line-height:1}
+    .meetings-view-main{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .meetings-view-main-title{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .meetings-view-main-sub{font-size:12px;color:var(--muted);font-weight:600}
+    .meetings-view-main-snip{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60ch}
+    /* === PDC Summary view =================================================== */
+    .pdc-summary-view{display:grid;gap:14px}
+    .pdc-summary-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+    .pdc-summary-card-head{display:flex;gap:12px;align-items:center}
+    .pdc-summary-card-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;letter-spacing:-0.02em}
+    .pdc-summary-card-title{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+    .pdc-summary-card-title h3{margin:0;font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.01em;line-height:1.2}
+    .pdc-summary-card-meta{font-size:13px;color:var(--muted);font-weight:600}
+    .pdc-summary-card-open{flex:none;padding:7px 12px;font-size:13px}
+    .pdc-summary-card-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .pdc-summary-block{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .pdc-summary-block-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+    .pdc-summary-block p{margin:0;font-size:14px;color:var(--text);line-height:1.5;white-space:pre-wrap}
+    .pdc-summary-block p.pdc-summary-block-empty{color:var(--muted);font-style:italic;font-weight:500}
+    @media (max-width:700px){.pdc-summary-card-body{grid-template-columns:1fr}}
+    /* === Full-width report detail page ====================================== */
+    .detail-page{display:flex;flex-direction:column;gap:18px}
+    .detail-page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+    .detail-page-header-title{display:flex;gap:14px;align-items:center;flex:1;min-width:0}
+    .detail-page-header-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none;letter-spacing:-0.02em}
+    .detail-page-header-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .detail-page-header-text h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-0.01em;line-height:1.1}
+    .detail-page-header-text p{margin:0;color:var(--muted);font-size:14px;font-weight:600}
+    .detail-page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);padding:0 2px;overflow-x:auto}
+    .detail-page-tab{appearance:none;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:color 0.12s ease,border-color 0.12s ease;border-radius:0;margin-bottom:-1px}
+    .detail-page-tab:hover{color:var(--text)}
+    .detail-page-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     body.stable-mode .section-note,body.stable-mode .table-tip,body.stable-mode .drawer-header p,body.stable-mode .help-text,body.stable-mode .toggle-copy p,body.stable-mode .panel-header p{display:none}
   </style>
 </head>
@@ -684,28 +736,17 @@
 
   <div class="app-shell" id="appShell" data-main-view="teamHealth" data-mobile-pane="content">
 
-    <!-- LEFT RAIL — app-level nav -->
-    <nav class="nav-rail" aria-label="Main navigation">
-      <div class="nav-rail-logo" title="Team Pulse">TP</div>
-      <button type="button" class="nav-rail-btn active" data-main-nav="teamHealth" aria-label="Team Health" aria-pressed="true">
-        <svg viewBox="0 0 24 24"><path d="M3 12h3l2-5 4 10 2-5h7"/></svg>
-        <span class="nav-rail-tooltip">Team Health</span>
-      </button>
-      <button type="button" class="nav-rail-btn" data-main-nav="reports" aria-label="Direct Reports" aria-pressed="false">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
-        <span class="nav-rail-tooltip">Direct Reports</span>
-      </button>
-      <div class="nav-rail-spacer"></div>
-      <button type="button" class="nav-rail-btn" data-main-nav="settings" aria-label="Settings" aria-pressed="false">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
-        <span class="nav-rail-tooltip">Settings</span>
-      </button>
+    <!-- UNIFIED SIDEBAR — app-level nav with full names -->
+    <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-mark">TP</div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">Team Pulse</span>
+          <span class="sidebar-brand-version" id="appVersion">v0.0.0</span>
+        </div>
+      </div>
+      <div id="sidebarNav"></div>
     </nav>
-
-    <!-- MIDDLE COLUMN — view-specific list -->
-    <aside class="list-pane" id="listPane" aria-label="Section list">
-      <div id="listPaneContent"></div>
-    </aside>
 
     <!-- RIGHT COLUMN — active content -->
     <main class="content-pane" id="contentPane" role="main">
@@ -758,18 +799,15 @@
           </div>
         </section>
 
-        <!-- Hidden: Reports section (empty-state when no report selected) -->
+        <!-- Reports section: tile grid (when no report selected) -->
         <section id="reportsSection" hidden>
-          <div class="content-empty" style="min-height:60vh">
-            <div class="content-empty-icon">
-              <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
+          <div class="reports-toolbar">
+            <div class="searchbox">
+              <input id="reportsGridSearch" type="search" placeholder="Search direct reports…" autocomplete="off">
             </div>
-            <h3 id="reportsEmptyHeadline">Pick a direct report</h3>
-            <p id="reportsEmptyBody">Select someone from the list on the left to open their workspace — profile, meetings, and PDC summary all in one place.</p>
-            <div class="actions" style="justify-content:center;margin-top:8px">
-              <button id="addReportBtn">+ Add direct report</button>
-            </div>
+            <button id="addReportBtn">+ Add direct report</button>
           </div>
+          <div id="reportsGrid" class="reports-grid"></div>
           <div id="quickFilterBar" class="quick-filter-bar hidden">
             <div>
               <strong id="quickFilterTitle"></strong>
@@ -778,7 +816,7 @@
             <button id="clearQuickFilterBtn" class="secondary">Clear quick filter</button>
           </div>
           <div id="tableEmpty" class="empty-state hidden">No direct reports yet. Add one to get started.</div>
-          <!-- Hidden searchbar + table (still here for legacy handlers; list pane has its own) -->
+          <!-- Hidden searchbar + table (still here for legacy handlers) -->
           <div class="hidden">
             <input id="searchInput" type="search" placeholder="Search">
             <select id="planFilter"><option value="">All PDC statuses</option></select>
@@ -791,6 +829,16 @@
             </select>
             <table><tbody id="reportsTableBody"></tbody></table>
           </div>
+        </section>
+
+        <!-- All Meetings section (across all reports) -->
+        <section id="meetingsSection" hidden>
+          <div id="meetingsBody"></div>
+        </section>
+
+        <!-- PDC Summary section (across all reports) -->
+        <section id="pdcSummarySection" hidden>
+          <div id="pdcSummaryBody"></div>
         </section>
 
         <!-- Detail drawer (now inline, not modal) -->
@@ -883,7 +931,7 @@
           <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
             <span>Notes</span>
             <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
-              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
+              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
               <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
             </div>
             <div class="md-panel-write" role="tabpanel">
@@ -1046,7 +1094,7 @@
   </div>
 
   <script>
-const APP_VERSION = 'v0.35.0';
+const APP_VERSION = 'v0.37.0';
 const CURRENT_SCHEMA_VERSION = 7;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -1132,17 +1180,26 @@ const DEFAULT_UI = Object.freeze({
   cadenceEditMode: false,
   teamTenureMode: 'tenure',
   teamHealthTab: 'overview',
-  mainView: 'teamHealth'
+  mainView: 'teamHealth',
+  meetingsFilterReportId: ''
 });
 
-const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'settings']);
+const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'meetings', 'pdcSummary', 'settings']);
 
-const TEAM_HEALTH_TABS = Object.freeze(['overview', 'insights']);
+const TEAM_HEALTH_TABS = Object.freeze(['overview', 'cadence', 'attention', 'support', 'insights']);
 const TEAM_HEALTH_TAB_LABELS = Object.freeze({
   'overview': 'Overview',
+  'cadence': 'Cadence',
+  'attention': 'Attention',
+  'support': 'Support Levels',
   'insights': 'Insights'
 });
 const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary']);
+// The direct-report workspace shows only the Profile tab. Meetings and
+// PDC Summary are now top-level sidebar destinations (under People). The
+// constant above stays multi-valued because the drawer HTML still includes
+// those panels — they just never become active.
+const VISIBLE_DETAIL_DRAWER_TABS = Object.freeze(['profile']);
 const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
   'profile': 'Profile',
   'meetings': 'Meetings',
@@ -1311,7 +1368,8 @@ function persistUiState() {
     teamTenureMode: app.ui.teamTenureMode === 'promotion' ? 'promotion' : 'tenure',
     teamHealthTab: currentTeamHealthTab(),
     mainView: MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth',
-    startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder
+    startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder,
+    meetingsFilterReportId: app.ui.meetingsFilterReportId || ''
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
 }
@@ -4708,14 +4766,17 @@ function renderTenureTimelineSection(report, metrics) {
 }
 
 function currentDetailDrawerTab() {
-  return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
+  // Clamp to the visible set: the workspace now only exposes Profile.
+  return VISIBLE_DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
 function renderDetailDrawerTabBar() {
+  // With a single visible tab (Profile), the tab bar adds noise — render nothing.
+  if (VISIBLE_DETAIL_DRAWER_TABS.length <= 1) return '';
   const activeTab = currentDetailDrawerTab();
   return `
     <div class="drawer-workspace-tabs" id="detailWorkspaceTabBar" role="tablist" aria-label="Direct report workspace sections">
-      ${DETAIL_DRAWER_TABS.map((tab) => {
+      ${VISIBLE_DETAIL_DRAWER_TABS.map((tab) => {
         const isActive = tab === activeTab;
         return `<button type="button" class="drawer-workspace-tab${isActive ? ' active' : ''}" data-drawer-tab="${escapeHtml(tab)}" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(DETAIL_DRAWER_TAB_LABELS[tab])}</button>`;
       }).join('')}
@@ -4838,7 +4899,7 @@ function renderDetailDrawer() {
                 </div>
                 <div class="md-shell" id="detailNotesShell" data-md-active="write">
                   <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
-                    <button type="button" class="md-tab active" data-md-target="detailNotesShell" data-md-mode="write" role="tab" aria-selected="true">Write</button>
+                    <button type="button" class="md-tab active" data-md-target="detailNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
                     <button type="button" class="md-tab" data-md-target="detailNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
                   </div>
                   <div class="md-panel-write" role="tabpanel">
@@ -5172,15 +5233,19 @@ function render() {
   if (ready) closeStartupPrompt();
   document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
 
-  // Startup gate takes over the content pane when no folder is connected.
-  startupGateEl.classList.toggle('hidden', ready);
+  // Inline startup gate is only used as a fallback when the modal flow isn't shown
+  // (e.g. on browsers without File System Access API, where the modal's primary
+  // action would be useless). When the modal is available, it becomes the sole UX
+  // so there's no duplicate "Choose a Team Pulse Folder" UI underneath it.
+  const modalWillShow = !ready && supportsDirectoryAccess();
+  const showInlineGate = !ready && !modalWillShow;
+  startupGateEl.classList.toggle('hidden', !showInlineGate);
   const appShellEl = document.getElementById('appShell');
   const contentHeaderEl = document.getElementById('contentHeader');
-  const listPaneEl = document.getElementById('listPane');
-  if (appShellEl) appShellEl.classList.toggle('no-middle', !ready);
-  if (listPaneEl) listPaneEl.style.display = ready ? '' : 'none';
+  const sidebarEl = document.getElementById('sidebar');
+  if (sidebarEl) sidebarEl.style.display = ready ? '' : 'none';
   if (contentHeaderEl) contentHeaderEl.hidden = !ready;
-  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => { btn.disabled = !ready; });
+  document.querySelectorAll('.sidebar-item[data-nav-main],.sidebar-item[data-nav-team-health]').forEach((btn) => { btn.disabled = !ready; });
 
   // Legacy stats strip (KPI pills) stays hidden — the middle column carries attention counts now.
   statsEl.classList.add('hidden');
@@ -5194,6 +5259,10 @@ function render() {
     // Hide all main-view sections; only startup gate shows.
     teamHealthSectionEl.setAttribute('hidden', '');
     reportsSectionEl.setAttribute('hidden', '');
+    const meetingsSectionEl = document.getElementById('meetingsSection');
+    if (meetingsSectionEl) meetingsSectionEl.setAttribute('hidden', '');
+    const pdcSummarySectionEl = document.getElementById('pdcSummarySection');
+    if (pdcSummarySectionEl) pdcSummarySectionEl.setAttribute('hidden', '');
     const settingsSectionEl = document.getElementById('settingsSection');
     if (settingsSectionEl) settingsSectionEl.setAttribute('hidden', '');
     renderDetailDrawer();
@@ -5204,19 +5273,7 @@ function render() {
   const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
   if (appShellEl) {
     appShellEl.setAttribute('data-main-view', mainView);
-    // On mobile: if no report selected on Reports view, show list pane.
-    // On Team Health & Settings, default to content (the right pane is the primary view).
-    if (mainView === 'reports' && !app.ui.selectedId && !app.ui.creatingReport) {
-      appShellEl.setAttribute('data-mobile-pane', 'list');
-    }
   }
-
-  // Sync nav-rail button states.
-  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => {
-    const isActive = btn.getAttribute('data-main-nav') === mainView;
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-  });
 
   // Update content header title.
   const headerTitleEl = document.getElementById('contentHeaderTitle');
@@ -5224,12 +5281,27 @@ function render() {
   const reportCount = getReports().length;
   const reportLabel = reportCount === 1 ? 'direct report' : 'direct reports';
   if (mainView === 'teamHealth') {
-    if (headerTitleEl) headerTitleEl.textContent = 'Team Health';
-    if (headerSubEl) headerSubEl.textContent = `${reportCount} ${reportLabel} · quick scan before opening a workspace`;
+    const tab = currentTeamHealthTab();
+    const label = TEAM_HEALTH_TAB_LABELS[tab] || 'Team Health';
+    if (headerTitleEl) headerTitleEl.textContent = label;
+    const subs = {
+      overview: `${reportCount} ${reportLabel} · quick scan before opening a workspace`,
+      cadence: `How the team is tracking on 1:1, PDC, and CV review rhythms`,
+      attention: `What's driving attention across the team, by rule`,
+      support: `Distribution of manager-assessed support levels across the team`,
+      insights: `Tenure river and recent themes across the team`
+    };
+    if (headerSubEl) headerSubEl.textContent = subs[tab] || '';
   } else if (mainView === 'reports') {
     const sel = app.ui.selectedId ? getReportById(app.ui.selectedId) : null;
     if (headerTitleEl) headerTitleEl.textContent = sel ? sel.name : (app.ui.creatingReport ? 'New direct report' : 'Direct Reports');
-    if (headerSubEl) headerSubEl.textContent = sel ? (sel.level || 'Workspace') : (app.ui.creatingReport ? 'Fill in the profile' : `${reportCount} ${reportLabel} · pick one on the left`);
+    if (headerSubEl) headerSubEl.textContent = sel ? (sel.level || 'Workspace') : (app.ui.creatingReport ? 'Fill in the profile' : `${reportCount} ${reportLabel}`);
+  } else if (mainView === 'meetings') {
+    if (headerTitleEl) headerTitleEl.textContent = 'Meetings';
+    if (headerSubEl) headerSubEl.textContent = 'All meetings across every direct report, newest first.';
+  } else if (mainView === 'pdcSummary') {
+    if (headerTitleEl) headerTitleEl.textContent = 'PDC Summary';
+    if (headerSubEl) headerSubEl.textContent = `Development focus and promotion readiness across ${reportCount} ${reportLabel}.`;
   } else if (mainView === 'settings') {
     if (headerTitleEl) headerTitleEl.textContent = 'Settings';
     if (headerSubEl) headerSubEl.textContent = 'Overdue rules, data health, exports, backups.';
@@ -5238,9 +5310,15 @@ function render() {
   // Toggle content-pane sections based on active view.
   const showTeamHealth = mainView === 'teamHealth';
   const showReports = mainView === 'reports';
+  const showMeetings = mainView === 'meetings';
+  const showPdcSummary = mainView === 'pdcSummary';
   const showSettings = mainView === 'settings';
   teamHealthSectionEl.toggleAttribute('hidden', !showTeamHealth);
   reportsSectionEl.toggleAttribute('hidden', !showReports || !!app.ui.selectedId || app.ui.creatingReport);
+  const meetingsSectionEl = document.getElementById('meetingsSection');
+  if (meetingsSectionEl) meetingsSectionEl.toggleAttribute('hidden', !showMeetings);
+  const pdcSummarySectionEl = document.getElementById('pdcSummarySection');
+  if (pdcSummarySectionEl) pdcSummarySectionEl.toggleAttribute('hidden', !showPdcSummary);
   const settingsSectionEl = document.getElementById('settingsSection');
   if (settingsSectionEl) settingsSectionEl.toggleAttribute('hidden', !showSettings);
 
@@ -5253,14 +5331,17 @@ function render() {
   const contentPaneEl = document.getElementById('contentPane');
   if (contentPaneEl) contentPaneEl.classList.toggle('drawer-active', drawerVisible);
 
-  // Render middle column (list pane).
-  renderListPane();
+  // Render the unified sidebar nav.
+  renderSidebar();
 
   // Always render sections that compute data; the hidden attribute handles visibility.
   renderQuickFilterBar();
   renderStats();
   renderTeamHealth();
   renderTable();
+  renderReportsGrid();
+  renderMeetingsView();
+  renderPdcSummaryView();
   renderDetailDrawer();
   renderSettingsView();
 }
@@ -5276,53 +5357,91 @@ function renderSettingsView() {
   `;
 }
 
-// Middle column (list pane) renderer.
-function renderListPane() {
-  const mount = document.getElementById('listPaneContent');
+// Unified sidebar renderer — replaces the old 3-pane list-pane system.
+// Renders all nav items (Team Health sub-views, Direct Reports, Meetings, Settings)
+// in a single dark sidebar with full names.
+function renderSidebar() {
+  const mount = document.getElementById('sidebarNav');
   if (!mount) return;
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (!ready) { mount.innerHTML = ''; return; }
   const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
-  if (mainView === 'teamHealth') mount.innerHTML = renderListPaneTeamHealth();
-  else if (mainView === 'reports') mount.innerHTML = renderListPaneReports();
-  else if (mainView === 'settings') mount.innerHTML = renderListPaneSettings();
-}
-
-function renderListPaneTeamHealth() {
+  const thTab = currentTeamHealthTab();
   const reports = getReports();
-  const count = reports.length;
-  const label = count === 1 ? 'direct report' : 'direct reports';
+  const reportCount = reports.length;
   const attentionCount = reports.filter((r) => {
     const m = getMetrics(r.id);
     return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
   }).length;
-  const subtext = count === 0
-    ? 'Add someone to get started.'
-    : (attentionCount === 0 ? 'All on track.' : `${attentionCount} need attention`);
-  const currentTab = currentTeamHealthTab();
-  const tabsMarkup = TEAM_HEALTH_TABS.map((tab) => {
-    const isActive = tab === currentTab;
-    return `<button type="button" class="list-nav-item${isActive ? ' active' : ''}" data-list-team-health-tab="${escapeHtml(tab)}" aria-pressed="${isActive}">
-      <svg class="list-nav-icon" viewBox="0 0 24 24"><path d="${tab === 'overview' ? 'M3 12h3l2-5 4 10 2-5h7' : 'M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6'}"/></svg>
+
+  const thIcon = (tab) => {
+    switch (tab) {
+      case 'overview':  return '<svg viewBox="0 0 24 24"><path d="M3 12h3l2-5 4 10 2-5h7"/></svg>';
+      case 'cadence':   return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+      case 'attention': return '<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>';
+      case 'support':   return '<svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"/></svg>';
+      case 'insights':  return '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>';
+      default:          return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>';
+    }
+  };
+
+  const teamHealthItems = TEAM_HEALTH_TABS.map((tab) => {
+    const isActive = mainView === 'teamHealth' && tab === thTab;
+    let badge = '';
+    if (tab === 'attention' && attentionCount > 0) {
+      badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
+    }
+    return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}" aria-pressed="${isActive}">
+      ${thIcon(tab)}
       <span>${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
+      ${badge}
     </button>`;
   }).join('');
-  return `
-    <div class="list-pane-head">
-      <span class="list-pane-eyebrow">Team Health</span>
-      <h2>${count} ${escapeHtml(label)}</h2>
-      <p>${escapeHtml(subtext)}</p>
+
+  const reportsBadge = reportCount > 0 ? `<span class="sidebar-item-badge">${reportCount}</span>` : '';
+  const isReports = mainView === 'reports';
+  const isMeetings = mainView === 'meetings';
+  const isPdcSummary = mainView === 'pdcSummary';
+  const isSettings = mainView === 'settings';
+
+  mount.innerHTML = `
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Team Health</div>
+      ${teamHealthItems}
     </div>
-    <div class="list-pane-body">
-      <div class="list-nav-group">
-        <div class="list-nav-group-label">Views</div>
-        ${tabsMarkup}
-      </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">People</div>
+      <button type="button" class="sidebar-item${isReports ? ' active' : ''}" data-nav-main="reports" aria-pressed="${isReports}">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
+        <span>Direct Reports</span>
+        ${reportsBadge}
+      </button>
+      <button type="button" class="sidebar-item${isMeetings ? ' active' : ''}" data-nav-main="meetings" aria-pressed="${isMeetings}">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+        <span>Meetings</span>
+      </button>
+      <button type="button" class="sidebar-item${isPdcSummary ? ' active' : ''}" data-nav-main="pdcSummary" aria-pressed="${isPdcSummary}">
+        <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
+        <span>PDC Summary</span>
+      </button>
+    </div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-group">
+      <button type="button" class="sidebar-item${isSettings ? ' active' : ''}" data-nav-main="settings" aria-pressed="${isSettings}">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
+        <span>Settings</span>
+      </button>
     </div>
   `;
 }
 
-function renderListPaneReports() {
+// Back-compat shim: any remaining caller of renderListPane() goes to the new sidebar.
+function renderListPane() { renderSidebar(); }
+
+// Renders the reports tile grid (new main-content view for Direct Reports).
+function renderReportsGrid() {
+  const mount = document.getElementById('reportsGrid');
+  if (!mount) return;
   const reports = getSortedReports();
   const term = normalizeText(app.ui.searchTerm || '').toLowerCase();
   const filtered = term
@@ -5330,44 +5449,51 @@ function renderListPaneReports() {
         || (r.mentors || '').toLowerCase().includes(term)
         || (r.level || '').toLowerCase().includes(term))
     : reports;
-  const activeId = app.ui.selectedId;
-  const cards = filtered.map((report) => {
+
+  // Sync the search input value without clobbering focus.
+  const searchEl = document.getElementById('reportsGridSearch');
+  if (searchEl && document.activeElement !== searchEl) {
+    searchEl.value = app.ui.searchTerm || '';
+  }
+
+  const tiles = filtered.map((report) => {
     const metrics = getMetrics(report.id);
     const fill = supportLevelFill(report.supportLevel);
-    const isActive = activeId === report.id;
     const level = report.level || 'Level not set';
     const mentor = report.mentors ? `Mentor: ${report.mentors}` : '';
     const chips = [];
-    if (metrics.oneOnOneOverdue) chips.push(`<span class="report-card-chip">1:1</span>`);
-    if (metrics.pdcOverdue) chips.push(`<span class="report-card-chip">PDC</span>`);
-    if (metrics.cvReviewOverdue) chips.push(`<span class="report-card-chip">CV</span>`);
-    if (report.supportLevel === 'Urgent') chips.push(`<span class="report-card-chip" data-tone="danger">Urgent</span>`);
-    else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-card-chip" data-tone="danger">Support</span>`);
-    return `<button type="button" class="report-card${isActive ? ' active' : ''}" data-report-card="${escapeHtml(report.id)}" aria-pressed="${isActive}">
-      <div class="report-card-top">
-        <span class="report-card-support" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
-        <span class="report-card-name">${escapeHtml(report.name || 'Unnamed')}</span>
+    if (metrics.oneOnOneOverdue) chips.push(`<span class="report-tile-chip">1:1 overdue</span>`);
+    if (metrics.pdcOverdue) chips.push(`<span class="report-tile-chip">PDC overdue</span>`);
+    if (metrics.cvReviewOverdue) chips.push(`<span class="report-tile-chip">CV overdue</span>`);
+    if (report.supportLevel === 'Urgent') chips.push(`<span class="report-tile-chip" data-tone="danger">Urgent</span>`);
+    else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-tile-chip" data-tone="danger">Support needed</span>`);
+    else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="info">Monitor</span>`);
+    else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
+    const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    return `<button type="button" class="report-tile" data-report-card="${escapeHtml(report.id)}">
+      <div class="report-tile-head">
+        <div class="report-tile-avatar">${escapeHtml(initials)}</div>
+        <span class="report-tile-name">${escapeHtml(report.name || 'Unnamed')}</span>
+        <span class="report-tile-support-dot" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
       </div>
-      <div class="report-card-meta">
-        <span>${escapeHtml(level)}</span>
-        ${mentor ? `<span class="pip"></span><span>${escapeHtml(mentor)}</span>` : ''}
+      <div class="report-tile-meta">
+        <span class="report-tile-meta-line">${escapeHtml(level)}</span>
+        ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
       </div>
-      ${chips.length ? `<div class="report-card-attention">${chips.join('')}</div>` : ''}
+      ${chips.length ? `<div class="report-tile-chips">${chips.join('')}</div>` : ''}
     </button>`;
-  }).join('') || `<p class="help-text" style="padding:14px 12px">No direct reports ${term ? 'match your search' : 'yet'}.</p>`;
-  return `
-    <div class="list-pane-head">
-      <span class="list-pane-eyebrow">Direct Reports</span>
-      <h2>${reports.length} total</h2>
-    </div>
-    <div class="list-pane-tools">
-      <input id="listPaneSearch" type="search" placeholder="Search reports" value="${escapeHtml(app.ui.searchTerm || '')}">
-      <button type="button" id="listPaneAddBtn" class="secondary" style="font-size:13px;padding:9px 12px">+ Add direct report</button>
-    </div>
-    <div class="list-pane-body" id="listPaneReportList">
-      ${cards}
-    </div>
-  `;
+  }).join('');
+
+  const addTile = `<button type="button" class="report-tile-add" data-report-add>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span>Add direct report</span>
+  </button>`;
+
+  mount.innerHTML = filtered.length === 0
+    ? (term
+        ? `<p class="help-text" style="grid-column:1/-1;padding:12px">No direct reports match "${escapeHtml(term)}".</p>`
+        : `${addTile}`)
+    : `${tiles}${addTile}`;
 }
 
 function supportLevelFill(level) {
@@ -5391,23 +5517,127 @@ function getSortedReports() {
   });
 }
 
-function renderListPaneSettings() {
-  return `
-    <div class="list-pane-head">
-      <span class="list-pane-eyebrow">Settings</span>
-      <h2>Preferences</h2>
-      <p>Rules, data, and backups.</p>
-    </div>
-    <div class="list-pane-body">
-      <div class="list-nav-group">
-        <div class="list-nav-group-label">Categories</div>
-        <button type="button" class="list-nav-item active" data-settings-open="rules">
-          <svg class="list-nav-icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h12"/></svg>
-          <span>Rules & data</span>
-        </button>
-      </div>
+// Renders a global "all meetings" view (flattened across every direct report).
+// Top toolbar: person filter + "Log meeting" button. Click a row to edit that meeting.
+function renderMeetingsView() {
+  const mount = document.getElementById('meetingsBody');
+  if (!mount) return;
+  const reports = getReports();
+  const filterId = app.ui.meetingsFilterReportId || '';
+  const validFilter = filterId && reports.some((r) => r.id === filterId) ? filterId : '';
+
+  const items = [];
+  reports.forEach((r) => {
+    if (validFilter && r.id !== validFilter) return;
+    (r.meetings || []).forEach((m) => {
+      items.push({ report: r, meeting: m });
+    });
+  });
+  items.sort((a, b) => (b.meeting.meetingDate || '').localeCompare(a.meeting.meetingDate || ''));
+
+  // Build the person filter options (sorted alphabetically).
+  const sortedReports = [...reports].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  const filterOptions = [`<option value="">Everyone</option>`]
+    .concat(sortedReports.map((r) => `<option value="${escapeHtml(r.id)}"${r.id === validFilter ? ' selected' : ''}>${escapeHtml(r.name || 'Unnamed')}</option>`))
+    .join('');
+
+  const canLog = reports.length > 0;
+  const toolbar = `
+    <div class="meetings-view-toolbar">
+      <label class="meetings-view-filter">
+        <span>Filter</span>
+        <select id="meetingsFilterSelect">${filterOptions}</select>
+      </label>
+      <button type="button" id="meetingsLogBtn"${canLog ? '' : ' disabled'}>+ Log meeting</button>
     </div>
   `;
+
+  if (reports.length === 0) {
+    mount.innerHTML = `${toolbar}<div class="sharp-panel"><div class="sharp-panel-body padded">
+      <p class="section-note" style="margin:0;">Add a direct report first — you'll be able to log meetings from here once there's someone to log them against.</p>
+    </div></div>`;
+    return;
+  }
+
+  if (items.length === 0) {
+    const empty = validFilter
+      ? `<p class="section-note" style="margin:0;">No meetings logged yet for this person. Click "Log meeting" to start.</p>`
+      : `<p class="section-note" style="margin:0;">No meetings logged across any direct report yet. Click "Log meeting" to start.</p>`;
+    mount.innerHTML = `${toolbar}<div class="sharp-panel"><div class="sharp-panel-body padded">${empty}</div></div>`;
+    return;
+  }
+
+  const monthName = (iso) => {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleString(undefined, { month: 'short' });
+    } catch (_) { return ''; }
+  };
+  const dayNum = (iso) => {
+    if (!iso) return '';
+    const m = iso.match(/^\d{4}-\d{2}-(\d{2})/);
+    return m ? String(Number(m[1])) : '';
+  };
+
+  mount.innerHTML = `${toolbar}<div class="meetings-view">
+    ${items.map(({ report, meeting }) => {
+      const snippet = firstMeaningfulLine(meeting.notes) || 'No notes captured.';
+      return `<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0">
+        <div class="meetings-view-date">
+          <span class="meetings-view-date-m">${escapeHtml(monthName(meeting.meetingDate))}</span>
+          <span class="meetings-view-date-d">${escapeHtml(dayNum(meeting.meetingDate))}</span>
+        </div>
+        <div class="meetings-view-main">
+          <span class="meetings-view-main-title">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}</span>
+          <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
+          <span class="meetings-view-main-snip">${escapeHtml(snippet)}</span>
+        </div>
+        <div class="meetings-view-main-sub">Edit →</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// Renders a global PDC Summary across all reports. Each report is a tile showing
+// their Development Focus and Promotion Readiness, with a "Open" link to their workspace.
+function renderPdcSummaryView() {
+  const mount = document.getElementById('pdcSummaryBody');
+  if (!mount) return;
+  const reports = getSortedReports();
+  if (reports.length === 0) {
+    mount.innerHTML = `<div class="sharp-panel"><div class="sharp-panel-body padded">
+      <p class="section-note" style="margin:0;">Add a direct report first — their PDC summaries will show up here.</p>
+    </div></div>`;
+    return;
+  }
+  mount.innerHTML = `<div class="pdc-summary-view">
+    ${reports.map((r) => {
+      const dev = normalizeText(r.developmentGoalSummary);
+      const prom = normalizeText(r.promotionReadiness);
+      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      return `<article class="pdc-summary-card">
+        <header class="pdc-summary-card-head">
+          <div class="pdc-summary-card-avatar">${escapeHtml(initials)}</div>
+          <div class="pdc-summary-card-title">
+            <h3>${escapeHtml(r.name || 'Unnamed')}</h3>
+            <span class="pdc-summary-card-meta">${escapeHtml(r.level || 'Level not set')}${r.pdcStatus ? ` · ${escapeHtml(r.pdcStatus)}` : ''}</span>
+          </div>
+          <button type="button" class="secondary pdc-summary-card-open" data-pdc-summary-open="${escapeHtml(r.id)}">Open profile →</button>
+        </header>
+        <div class="pdc-summary-card-body">
+          <div class="pdc-summary-block">
+            <span class="pdc-summary-block-label">Development goal summary</span>
+            ${dev ? `<p>${escapeHtml(dev)}</p>` : `<p class="pdc-summary-block-empty">Not set</p>`}
+          </div>
+          <div class="pdc-summary-block">
+            <span class="pdc-summary-block-label">Promotion readiness / growth area</span>
+            ${prom ? `<p>${escapeHtml(prom)}</p>` : `<p class="pdc-summary-block-empty">Not set</p>`}
+          </div>
+        </div>
+      </article>`;
+    }).join('')}
+  </div>`;
 }
 
 function collectWorkspaceVacations() {
@@ -6076,87 +6306,144 @@ function closeDataMenu() {
 function bindStaticEvents() {
   populateSelect(planFilterEl, PDC_STATUSES, true, 'All PDC statuses');
   if (appVersionEl) appVersionEl.textContent = APP_VERSION;
-  // Surface version on nav rail logo tooltip.
-  const logoEl = document.querySelector('.nav-rail-logo');
-  if (logoEl) logoEl.title = `Team Pulse ${APP_VERSION}`;
+  // Set version as sidebar brand tooltip.
+  const brandEl = document.querySelector('.sidebar-brand');
+  if (brandEl) brandEl.title = `Team Pulse ${APP_VERSION}`;
   searchInputEl.value = app.ui.searchTerm;
   planFilterEl.value = app.ui.planFilter;
   attentionFilterEl.value = app.ui.attentionFilter;
 
-  // Left rail: main-view navigation.
-  document.querySelectorAll('.nav-rail-btn[data-main-nav]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const nextView = btn.getAttribute('data-main-nav');
-      if (!MAIN_VIEWS.includes(nextView)) return;
-      if (app.ui.mainView === nextView) return;
-      // If user was editing a report, honor the workspace-close confirm flow.
-      if (!confirmWorkspaceClose()) return;
-      // Switching away from Reports clears selection so the right pane shows the list.
-      if (nextView !== 'reports') {
-        app.ui.selectedId = null;
-        app.ui.creatingReport = false;
-      }
-      app.ui.mainView = nextView;
-      // Settings view still opens the rules drawer for the actual form.
-      if (nextView === 'settings') {
-        render();
-        persistUiState();
-        openRulesDrawer();
-        return;
-      }
-      render();
-      persistUiState();
-    });
-  });
-
-  // Middle column: event delegation.
-  const listPaneEl = document.getElementById('listPane');
-  if (listPaneEl) {
-    listPaneEl.addEventListener('click', (event) => {
-      const teamHealthTabBtn = event.target.closest('[data-list-team-health-tab]');
-      if (teamHealthTabBtn) {
-        const nextTab = teamHealthTabBtn.getAttribute('data-list-team-health-tab');
+  // Unified sidebar: click delegation for main-view nav + Team Health sub-tabs.
+  const sidebarEl = document.getElementById('sidebar');
+  if (sidebarEl) {
+    sidebarEl.addEventListener('click', (event) => {
+      // Team Health sub-tab (Overview / Cadence / Attention / Support / Insights).
+      const thBtn = event.target.closest('[data-nav-team-health]');
+      if (thBtn) {
+        const nextTab = thBtn.getAttribute('data-nav-team-health');
         if (!TEAM_HEALTH_TABS.includes(nextTab)) return;
+        if (!confirmWorkspaceClose()) return;
+        // If we were on a non-Team-Health view, also switch main view.
+        const switchingView = app.ui.mainView !== 'teamHealth';
+        if (switchingView) {
+          app.ui.selectedId = null;
+          app.ui.creatingReport = false;
+          app.ui.mainView = 'teamHealth';
+        }
         app.ui.teamHealthTab = nextTab;
-        renderTeamHealth();
-        renderListPane();
         persistUiState();
+        render();
         return;
       }
-      const reportCard = event.target.closest('[data-report-card]');
-      if (reportCard) {
-        const id = reportCard.getAttribute('data-report-card');
-        selectReport(id);
-        const appShellEl = document.getElementById('appShell');
-        if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'content');
+      // Main-view nav (Direct Reports / Meetings / Settings).
+      const mainBtn = event.target.closest('[data-nav-main]');
+      if (mainBtn) {
+        const nextView = mainBtn.getAttribute('data-nav-main');
+        if (!MAIN_VIEWS.includes(nextView)) return;
+        if (app.ui.mainView === nextView) return;
+        if (!confirmWorkspaceClose()) return;
+        if (nextView !== 'reports') {
+          app.ui.selectedId = null;
+          app.ui.creatingReport = false;
+        }
+        app.ui.mainView = nextView;
+        persistUiState();
+        if (nextView === 'settings') {
+          render();
+          openRulesDrawer();
+          return;
+        }
+        render();
         return;
       }
-      const addBtn = event.target.closest('#listPaneAddBtn');
+    });
+  }
+
+  // Reports tile grid: click on tile opens the detail drawer; click on add-tile creates.
+  const reportsGridEl = document.getElementById('reportsGrid');
+  if (reportsGridEl) {
+    reportsGridEl.addEventListener('click', (event) => {
+      const addBtn = event.target.closest('[data-report-add]');
       if (addBtn) {
         openCreateWorkspace();
-        const appShellEl = document.getElementById('appShell');
-        if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'content');
         return;
       }
-      const settingsOpen = event.target.closest('[data-settings-open]');
-      if (settingsOpen) {
-        openRulesDrawer();
-        return;
+      const tile = event.target.closest('[data-report-card]');
+      if (tile) {
+        const id = tile.getAttribute('data-report-card');
+        selectReport(id);
       }
     });
-    listPaneEl.addEventListener('input', (event) => {
-      const searchEl = event.target.closest('#listPaneSearch');
-      if (searchEl) {
-        app.ui.searchTerm = searchEl.value || '';
-        // Only re-render the list body, not the header, to preserve focus.
-        const listEl = document.getElementById('listPaneReportList');
-        if (listEl) {
-          const temp = document.createElement('div');
-          temp.innerHTML = renderListPaneReports();
-          const nextList = temp.querySelector('#listPaneReportList');
-          if (nextList) listEl.innerHTML = nextList.innerHTML;
-        }
+  }
+
+  // Reports grid search input.
+  const reportsGridSearchEl = document.getElementById('reportsGridSearch');
+  if (reportsGridSearchEl) {
+    reportsGridSearchEl.addEventListener('input', (event) => {
+      app.ui.searchTerm = event.target.value || '';
+      renderReportsGrid();
+      persistUiState();
+    });
+  }
+
+  // Meetings view: filter change, Log Meeting button, edit existing meeting.
+  const meetingsBodyEl = document.getElementById('meetingsBody');
+  if (meetingsBodyEl) {
+    meetingsBodyEl.addEventListener('change', (event) => {
+      const filter = event.target.closest('#meetingsFilterSelect');
+      if (filter) {
+        app.ui.meetingsFilterReportId = filter.value || '';
         persistUiState();
+        renderMeetingsView();
+      }
+    });
+    const openEdit = (el) => {
+      const reportId = el.getAttribute('data-meetings-edit-report');
+      const meetingId = el.getAttribute('data-meetings-edit-meeting');
+      if (!reportId || !meetingId) return;
+      const report = getReportById(reportId);
+      const meeting = (report?.meetings || []).find((m) => m.id === meetingId);
+      if (!report || !meeting) return;
+      openMeetingModal(reportId, { meeting });
+    };
+    meetingsBodyEl.addEventListener('click', (event) => {
+      const logBtn = event.target.closest('#meetingsLogBtn');
+      if (logBtn) {
+        const filterId = app.ui.meetingsFilterReportId || '';
+        if (filterId && getReportById(filterId)) {
+          openMeetingModal(filterId);
+          return;
+        }
+        // No person picked — prompt them to select.
+        const reports = getReports();
+        if (reports.length === 0) return;
+        const sel = document.getElementById('meetingsFilterSelect');
+        if (sel) {
+          sel.focus();
+          sel.classList.add('meetings-filter-pulse');
+          window.setTimeout(() => sel.classList.remove('meetings-filter-pulse'), 900);
+        }
+        showToast('Choose a person to log a meeting for, then click Log meeting again.', 'info');
+        return;
+      }
+      const editItem = event.target.closest('[data-meetings-edit-meeting]');
+      if (editItem) openEdit(editItem);
+    });
+    meetingsBodyEl.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const editItem = event.target.closest('[data-meetings-edit-meeting]');
+      if (editItem) { event.preventDefault(); openEdit(editItem); }
+    });
+  }
+
+  // PDC Summary view: open the report's profile workspace when clicked.
+  const pdcSummaryBodyEl = document.getElementById('pdcSummaryBody');
+  if (pdcSummaryBodyEl) {
+    pdcSummaryBodyEl.addEventListener('click', (event) => {
+      const openBtn = event.target.closest('[data-pdc-summary-open]');
+      if (openBtn) {
+        const id = openBtn.getAttribute('data-pdc-summary-open');
+        if (id) selectReport(id);
       }
     });
   }
@@ -6170,12 +6457,15 @@ function bindStaticEvents() {
     });
   }
 
-  // Mobile: back button returns to list pane.
+  // Mobile: back button returns to list pane. (Legacy — may be no-op now.)
   const mobileBackBtn = document.getElementById('mobileBackBtn');
   if (mobileBackBtn) {
     mobileBackBtn.addEventListener('click', () => {
-      const appShellEl = document.getElementById('appShell');
-      if (appShellEl) appShellEl.setAttribute('data-mobile-pane', 'list');
+      if (!confirmWorkspaceClose()) return;
+      app.ui.selectedId = null;
+      app.ui.creatingReport = false;
+      persistUiState();
+      render();
     });
   }
 
@@ -6405,9 +6695,28 @@ async function initializeFolderRestore() {
     startupStoredFolderHandle = null;
   }
   updateStartupPrompt();
-  if (!app.folderHandle && !app.connectedFolderReady) {
-    openStartupPrompt();
+  if (app.folderHandle || app.connectedFolderReady) return;
+
+  // Silent reconnect path: if we have a saved folder handle AND the browser
+  // still holds 'granted' permission for it (no prompt required), connect
+  // immediately without showing the startup modal. queryPermission is a silent
+  // check — only requestPermission needs a user gesture.
+  if (startupStoredFolderHandle) {
+    try {
+      const opts = { mode: 'readwrite' };
+      if (startupStoredFolderHandle.queryPermission) {
+        const state = await startupStoredFolderHandle.queryPermission(opts);
+        if (state === 'granted') {
+          const connected = await connectFolderHandle(startupStoredFolderHandle);
+          if (connected) return;
+        }
+      }
+    } catch (error) {
+      console.warn('Silent folder reconnect failed, falling back to prompt', error);
+    }
   }
+
+  openStartupPrompt();
 }
 
 const THEMES_WINDOW_DEFAULT = 90;
@@ -6818,11 +7127,12 @@ function renderRecentThemesCard(reports) {
 }
 
 function currentTeamHealthTab() {
-  // Map legacy tab names to their new homes: tenure/themes -> insights, cadence/pdc-mix -> overview.
+  // Map legacy tab names to their new homes. Note: 'cadence' used to be a scroll
+  // target inside Overview but is now a top-level tab of its own, so it's valid.
   const raw = app.ui.teamHealthTab;
   let mapped = raw;
   if (raw === 'tenure' || raw === 'themes') mapped = 'insights';
-  else if (raw === 'cadence' || raw === 'pdc-mix') mapped = 'overview';
+  else if (raw === 'pdc-mix') mapped = 'overview';
   return TEAM_HEALTH_TABS.includes(mapped) ? mapped : 'overview';
 }
 
@@ -7083,12 +7393,33 @@ function renderOverviewTabHtml(reports) {
   return `
     <div class="overview-tab">
       ${renderHealthScoreSection(scoreInfo)}
-      ${renderCadenceBarsSection(reportStates)}
-      ${renderAttentionBreakdownSection(reportStates)}
-      ${renderSupportDistributionSection(reportStates)}
       ${renderUpcomingSection(reportStates)}
     </div>
   `;
+}
+
+function renderCadenceTabHtml(reports) {
+  const reportStates = [...reports].map((report) => ({
+    report,
+    metrics: getMetrics(report.id),
+  }));
+  return `<div class="overview-tab">${renderCadenceBarsSection(reportStates)}</div>`;
+}
+
+function renderAttentionTabHtml(reports) {
+  const reportStates = [...reports].map((report) => ({
+    report,
+    metrics: getMetrics(report.id),
+  }));
+  return `<div class="overview-tab">${renderAttentionBreakdownSection(reportStates)}</div>`;
+}
+
+function renderSupportTabHtml(reports) {
+  const reportStates = [...reports].map((report) => ({
+    report,
+    metrics: getMetrics(report.id),
+  }));
+  return `<div class="overview-tab">${renderSupportDistributionSection(reportStates)}</div>`;
 }
 
 function renderInsightsTabHtml(reports) {
@@ -7121,6 +7452,9 @@ function renderTeamHealth() {
   const tab = currentTeamHealthTab();
   let panelHtml = '';
   if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
+  else if (tab === 'cadence') panelHtml = renderCadenceTabHtml(reports);
+  else if (tab === 'attention') panelHtml = renderAttentionTabHtml(reports);
+  else if (tab === 'support') panelHtml = renderSupportTabHtml(reports);
   else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
 }
