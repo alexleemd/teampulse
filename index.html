@@ -915,6 +915,38 @@
       .ps-notes ul{margin:0 0 4px;padding-left:16px}
       .ps-footer{margin-top:16px;padding-top:6px;border-top:1px solid #ccc;font-size:9.5px;color:#777}
     }
+    /* === v0.43 additions ==================================================== */
+    /* Header search trigger */
+    .gs-trigger{appearance:none;display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:border-color 0.12s ease,color 0.12s ease,box-shadow 0.12s ease}
+    .gs-trigger:hover:not(:disabled),.gs-trigger:focus-visible{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);outline:none}
+    .gs-trigger:disabled{opacity:0.5;cursor:not-allowed}
+    .gs-kbd{font-family:inherit;font-size:10.5px;font-weight:800;color:var(--muted);background:#f0f3f9;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;line-height:1.4}
+    /* Search overlay */
+    .gs-overlay{display:none;position:fixed;inset:0;z-index:120;background:rgba(23,32,51,0.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:9vh 16px 16px}
+    .gs-overlay.open{display:flex}
+    .gs-panel{width:min(680px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(23,32,51,0.35);overflow:hidden;animation:gsIn 0.22s cubic-bezier(.2,.9,.3,1)}
+    @keyframes gsIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    .gs-input-row{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);color:var(--muted)}
+    .gs-input-row input{flex:1;border:none;outline:none;font:inherit;font-size:16.5px;color:var(--text);background:transparent}
+    .gs-input-row input::placeholder{color:var(--muted)}
+    .gs-results{max-height:min(58vh,520px);overflow-y:auto;padding:8px}
+    .gs-group{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);padding:10px 12px 4px}
+    .gs-row{appearance:none;border:none;background:transparent;font:inherit;width:100%;display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;cursor:pointer;text-align:left;color:var(--text)}
+    .gs-row:hover,.gs-row.active{background:var(--accent-soft)}
+    .gs-avatar{width:28px;height:28px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex:none;letter-spacing:-0.02em}
+    .gs-icon{width:28px;height:28px;border-radius:8px;background:#f0f3f9;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+    .gs-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+    .gs-title{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .gs-snippet{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .gs-snippet mark{background:var(--accent-soft);color:var(--accent);font-weight:800;border-radius:3px;padding:0 2px}
+    .gs-meta{flex:none;font-size:11.5px;font-weight:700;color:var(--muted)}
+    .gs-empty{padding:26px 16px;text-align:center;font-size:13.5px;color:var(--muted)}
+    @media (max-width:640px){
+      .gs-trigger span{display:none}
+      .gs-trigger .gs-kbd{display:none}
+      .gs-overlay{padding:5vh 10px 10px}
+    }
+    @media (prefers-reduced-motion: reduce){.gs-panel{animation:none}}
   </style>
 </head>
 <body>
@@ -963,6 +995,11 @@
             <p id="contentHeaderSubtitle"></p>
           </div>
           <div class="content-header-meta">
+            <button type="button" class="gs-trigger" id="globalSearchTrigger" title="Search everything">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <span>Search</span>
+              <kbd class="gs-kbd">/</kbd>
+            </button>
             <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
             <details class="toolbar-menu" id="dataMenu">
               <summary class="toolbar-menu-trigger">Data</summary>
@@ -1271,10 +1308,22 @@
   </div>
 
 
+  <!-- Global search overlay: click-first Spotlight over everything in the doc -->
+  <div id="globalSearch" class="gs-overlay" aria-hidden="true">
+    <div class="gs-panel" role="dialog" aria-modal="true" aria-label="Search everything">
+      <div class="gs-input-row">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="globalSearchInput" type="text" placeholder="Search people, meeting notes, follow-ups, views…" autocomplete="off" spellcheck="false">
+        <kbd class="gs-kbd">Esc</kbd>
+      </div>
+      <div class="gs-results" id="globalSearchResults"></div>
+    </div>
+  </div>
+
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.42.0';
+const APP_VERSION = 'v0.43.0';
 const CURRENT_SCHEMA_VERSION = 9;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -2971,7 +3020,8 @@ function undoLastDestructiveAction() {
 function syncBodyOverlayLock() {
   const locked = startupPromptOverlayEl.classList.contains('open')
     || meetingModalEl.classList.contains('open')
-    || rulesDrawerOverlayEl.classList.contains('open');
+    || rulesDrawerOverlayEl.classList.contains('open')
+    || globalSearchEl.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
 }
 
@@ -5245,7 +5295,7 @@ function render() {
   const sidebarEl = document.getElementById('sidebar');
   if (sidebarEl) sidebarEl.style.display = ready ? '' : 'none';
   if (contentHeaderEl) contentHeaderEl.hidden = !ready;
-  document.querySelectorAll('.sidebar-item[data-nav-main],.sidebar-item[data-nav-team-health]').forEach((btn) => { btn.disabled = !ready; });
+  document.querySelectorAll('.sidebar-item[data-nav-main],.sidebar-item[data-nav-team-health],#globalSearchTrigger').forEach((btn) => { btn.disabled = !ready; });
 
   updateFileUi();
   renderRuleInputs();
@@ -5778,7 +5828,254 @@ function openReportMeetingsAt(reportId, meetingId) {
   }, 0);
 }
 
-// Renders the global Follow-Ups view: every open [ ] line from meeting notes
+// ============================================================================
+// Global search: a second navigation dimension. One field searches people,
+// full meeting note text, follow-ups, development fields, evidence, and every
+// view and action, with grouped clickable results. Click-first by design; the
+// slash key and Ctrl/Cmd+K are optional accelerators.
+// ============================================================================
+const globalSearchEl = document.getElementById('globalSearch');
+const globalSearchInputEl = document.getElementById('globalSearchInput');
+const globalSearchResultsEl = document.getElementById('globalSearchResults');
+let gsResults = [];
+let gsActiveIndex = 0;
+let gsDebounce = 0;
+
+function personInitials(name) {
+  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+}
+
+// Escapes around a case-insensitive hit and wraps the hit in <mark>.
+function searchSnippet(text, query, radius = 46) {
+  const raw = normalizeText(text).replace(/\s+/g, ' ');
+  const idx = raw.toLowerCase().indexOf(query);
+  if (idx < 0) {
+    const head = raw.slice(0, radius * 2);
+    return escapeHtml(head) + (raw.length > head.length ? '…' : '');
+  }
+  const start = Math.max(0, idx - radius);
+  const end = Math.min(raw.length, idx + query.length + radius);
+  const pre = (start > 0 ? '…' : '') + raw.slice(start, idx);
+  const hit = raw.slice(idx, idx + query.length);
+  const post = raw.slice(idx + query.length, end) + (end < raw.length ? '…' : '');
+  return `${escapeHtml(pre)}<mark>${escapeHtml(hit)}</mark>${escapeHtml(post)}`;
+}
+
+// Opens a person's workspace on a specific tab (search deep links).
+function openWorkspaceTab(reportId, tab) {
+  if (!selectReport(reportId)) return;
+  if (DETAIL_DRAWER_TABS.includes(tab)) {
+    app.ui.detailDrawerTab = tab;
+    persistUiState();
+    renderDetailDrawer();
+  }
+}
+
+function gsGoMain(view, extra = {}) {
+  if (!MAIN_VIEWS.includes(view)) return;
+  if (extra.boardMode !== undefined) app.ui.pdcViewMode = extra.boardMode ? 'board' : 'list';
+  if (extra.teamHealthTab && TEAM_HEALTH_TABS.includes(extra.teamHealthTab)) app.ui.teamHealthTab = extra.teamHealthTab;
+  app.ui.mainView = view;
+  app.ui.selectedId = null;
+  app.ui.creatingReport = false;
+  persistUiState();
+  if (view === 'settings') {
+    render();
+    openRulesDrawer();
+    return;
+  }
+  navigateRender(() => render());
+}
+
+function buildGoToEntries() {
+  return [
+    { label: 'Overview', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'overview' }) },
+    { label: 'Cadence', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'cadence' }) },
+    { label: 'Attention', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'attention' }) },
+    { label: 'Support', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'support' }) },
+    { label: 'Insights', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'insights' }) },
+    { label: 'Direct Reports', meta: 'View', run: () => gsGoMain('reports') },
+    { label: 'Meetings', meta: 'View', run: () => gsGoMain('meetings') },
+    { label: 'Follow-Ups', meta: 'View', run: () => gsGoMain('followUps') },
+    { label: 'PDC Summary', meta: 'List view', run: () => gsGoMain('pdcSummary', { boardMode: false }) },
+    { label: 'PDC Board', meta: 'Kanban view', run: () => gsGoMain('pdcSummary', { boardMode: true }) },
+    { label: 'Settings', meta: 'View', run: () => gsGoMain('settings') },
+    { label: 'Add direct report', meta: 'Action', run: () => navigateRender(() => openCreateWorkspace()) },
+    { label: 'Export data now', meta: 'Action', run: () => exportPlainFiles() }
+  ];
+}
+
+function gsPersonResult(report, group) {
+  const metrics = getMetrics(report.id);
+  return {
+    group,
+    avatarId: report.id,
+    avatarName: report.name,
+    title: report.name || 'Unnamed',
+    meta: `${report.level || 'Level not set'} · PDC ${metrics.pdcStatus}`,
+    snippet: '',
+    run: () => navigateRender(() => selectReport(report.id))
+  };
+}
+
+function runGlobalSearch(rawQuery) {
+  const query = normalizeText(rawQuery).toLowerCase();
+  const results = [];
+  const reports = getReports();
+
+  if (!query) {
+    buildGoToEntries().forEach((entry) => results.push({ group: 'Jump to', title: entry.label, meta: entry.meta, snippet: '', run: entry.run }));
+    const recent = [...reports]
+      .filter((r) => getMetrics(r.id).lastInteraction)
+      .sort((a, b) => (getMetrics(b.id).lastInteraction || '').localeCompare(getMetrics(a.id).lastInteraction || ''))
+      .slice(0, 3);
+    recent.forEach((r) => results.push(gsPersonResult(r, 'Recently active')));
+    return results;
+  }
+
+  // People
+  reports
+    .filter((r) => `${r.name || ''} ${r.level || ''} ${r.mentors || ''}`.toLowerCase().includes(query))
+    .slice(0, 5)
+    .forEach((r) => results.push(gsPersonResult(r, 'People')));
+
+  // Meetings: full note text, newest first
+  const meetingHits = [];
+  reports.forEach((r) => {
+    (r.meetings || []).forEach((m) => {
+      const blob = `${r.name || ''} ${m.meetingType || ''} ${m.notes || ''}`.toLowerCase();
+      if (blob.includes(query)) meetingHits.push({ r, m });
+    });
+  });
+  meetingHits
+    .sort((a, b) => (b.m.meetingDate || '').localeCompare(a.m.meetingDate || ''))
+    .slice(0, 5)
+    .forEach(({ r, m }) => results.push({
+      group: 'Meetings',
+      avatarId: r.id,
+      avatarName: r.name,
+      title: `${r.name || 'Unnamed'} · ${m.meetingType || '1:1'}`,
+      meta: formatDate(m.meetingDate),
+      snippet: searchSnippet(m.notes || '', query),
+      run: () => openReportMeetingsAt(r.id, m.id)
+    }));
+
+  // Follow-ups: open first
+  const followUpHits = [];
+  reports.forEach((r) => {
+    (getMetrics(r.id).followUps || []).forEach((item) => {
+      if ((item.text || '').toLowerCase().includes(query)) followUpHits.push({ r, item });
+    });
+  });
+  followUpHits
+    .sort((a, b) => Number(a.item.done) - Number(b.item.done) || (b.item.meetingDate || '').localeCompare(a.item.meetingDate || ''))
+    .slice(0, 5)
+    .forEach(({ r, item }) => results.push({
+      group: 'Follow-ups',
+      avatarId: r.id,
+      avatarName: r.name,
+      title: `${item.done ? 'Done' : 'Open'} · ${r.name || 'Unnamed'}`,
+      meta: `${item.meetingType} · ${formatDate(item.meetingDate)}`,
+      snippet: searchSnippet(item.text || '', query),
+      run: () => openReportMeetingsAt(r.id, item.meetingId)
+    }));
+
+  // Development fields, manager notes, agenda, evidence
+  const fieldHits = [];
+  reports.forEach((r) => {
+    [
+      ['Development focus', r.developmentGoalSummary, 'pdc-summary'],
+      ['Promotion readiness', r.promotionReadiness, 'pdc-summary'],
+      ['Next 1:1 agenda', r.agenda, 'meetings'],
+      ['Manager notes', r.notes, 'pdc-summary']
+    ].forEach(([label, value, tab]) => {
+      if (normalizeText(value).toLowerCase().includes(query)) fieldHits.push({ r, label, value, tab });
+    });
+    (r.evidence || []).forEach((entry) => {
+      const blob = `${entry.summary || ''} ${entry.detail || ''}`.toLowerCase();
+      if (blob.includes(query)) fieldHits.push({ r, label: `Evidence · ${normalizeText(entry.category) || 'Uncategorized'}`, value: `${entry.summary || ''} ${entry.detail || ''}`, tab: 'pdc-summary' });
+    });
+  });
+  fieldHits.slice(0, 6).forEach(({ r, label, value, tab }) => results.push({
+    group: 'Development & notes',
+    avatarId: r.id,
+    avatarName: r.name,
+    title: `${label} · ${r.name || 'Unnamed'}`,
+    meta: '',
+    snippet: searchSnippet(value, query),
+    run: () => openWorkspaceTab(r.id, tab)
+  }));
+
+  // Views and actions
+  buildGoToEntries()
+    .filter((entry) => entry.label.toLowerCase().includes(query))
+    .slice(0, 4)
+    .forEach((entry) => results.push({ group: 'Go to', title: entry.label, meta: entry.meta, snippet: '', run: entry.run }));
+
+  return results;
+}
+
+function renderGlobalSearchResults() {
+  gsResults = runGlobalSearch(globalSearchInputEl.value);
+  gsActiveIndex = 0;
+  if (!gsResults.length) {
+    globalSearchResultsEl.innerHTML = `<div class="gs-empty">No matches for "${escapeHtml(normalizeText(globalSearchInputEl.value))}".</div>`;
+    return;
+  }
+  let html = '';
+  let lastGroup = '';
+  gsResults.forEach((res, i) => {
+    if (res.group !== lastGroup) {
+      html += `<div class="gs-group">${escapeHtml(res.group)}</div>`;
+      lastGroup = res.group;
+    }
+    const iconHtml = res.avatarId
+      ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
+      : `<span class="gs-icon" aria-hidden="true">→</span>`;
+    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" data-gs-index="${i}">
+      ${iconHtml}
+      <span class="gs-main">
+        <span class="gs-title">${escapeHtml(res.title)}</span>
+        ${res.snippet ? `<span class="gs-snippet">${res.snippet}</span>` : ''}
+      </span>
+      ${res.meta ? `<span class="gs-meta">${escapeHtml(res.meta)}</span>` : ''}
+    </button>`;
+  });
+  globalSearchResultsEl.innerHTML = html;
+}
+
+function gsUpdateActiveRow() {
+  globalSearchResultsEl.querySelectorAll('.gs-row').forEach((row) => {
+    row.classList.toggle('active', Number(row.getAttribute('data-gs-index')) === gsActiveIndex);
+  });
+  globalSearchResultsEl.querySelector('.gs-row.active')?.scrollIntoView({ block: 'nearest' });
+}
+
+function openGlobalSearch() {
+  if (!app.connectedFolderReady || !app.doc) return;
+  globalSearchEl.classList.add('open');
+  globalSearchEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  globalSearchInputEl.value = '';
+  renderGlobalSearchResults();
+  globalSearchInputEl.focus();
+}
+
+function closeGlobalSearch() {
+  globalSearchEl.classList.remove('open');
+  globalSearchEl.setAttribute('aria-hidden', 'true');
+  globalSearchInputEl.blur();
+  syncBodyOverlayLock();
+}
+
+function runGsResult(index) {
+  const res = gsResults[index];
+  if (!res) return;
+  closeGlobalSearch();
+  res.run();
+}
+
+// Renders the global Follow-Ups view// Renders the global Follow-Ups view: every open [ ] line from meeting notes
 // across the team, grouped by person, toggleable in place.
 function renderFollowUpsView() {
   const mount = document.getElementById('followUpsBody');
@@ -7255,10 +7552,46 @@ function bindStaticEvents() {
   // The workspace itself is left alone so unsaved edits can never be lost to
   // a stray keypress.
   document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    if (meetingModalEl.classList.contains('open')) { closeMeetingModal(); return; }
-    if (rulesDrawerOverlayEl.classList.contains('open')) { closeRulesDrawer(); return; }
-    if (dataMenuEl?.hasAttribute('open')) closeDataMenu();
+    if (event.key === 'Escape') {
+      if (globalSearchEl.classList.contains('open')) { closeGlobalSearch(); return; }
+      if (meetingModalEl.classList.contains('open')) { closeMeetingModal(); return; }
+      if (rulesDrawerOverlayEl.classList.contains('open')) { closeRulesDrawer(); return; }
+      if (dataMenuEl?.hasAttribute('open')) closeDataMenu();
+      return;
+    }
+    // Optional accelerators: '/' or Ctrl/Cmd+K open search when the person
+    // is not typing in a field and no other overlay is up. Purely a bonus,
+    // the header button is the primary entry.
+    const isSlash = event.key === '/';
+    const isK = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+    if (!isSlash && !isK) return;
+    const active = document.activeElement;
+    const typing = !!active && (/^(input|textarea|select)$/i.test(active.tagName) || active.isContentEditable);
+    if (typing) return;
+    if (globalSearchEl.classList.contains('open') || meetingModalEl.classList.contains('open') || rulesDrawerOverlayEl.classList.contains('open') || startupPromptOverlayEl.classList.contains('open')) return;
+    event.preventDefault();
+    openGlobalSearch();
+  });
+  document.getElementById('globalSearchTrigger')?.addEventListener('click', openGlobalSearch);
+  globalSearchEl.addEventListener('click', (event) => {
+    if (event.target === globalSearchEl) { closeGlobalSearch(); return; }
+    const row = event.target.closest('[data-gs-index]');
+    if (row) runGsResult(Number(row.getAttribute('data-gs-index')));
+  });
+  globalSearchInputEl.addEventListener('input', () => {
+    window.clearTimeout(gsDebounce);
+    gsDebounce = window.setTimeout(renderGlobalSearchResults, 120);
+  });
+  globalSearchInputEl.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!gsResults.length) return;
+      gsActiveIndex = (gsActiveIndex + (event.key === 'ArrowDown' ? 1 : -1) + gsResults.length) % gsResults.length;
+      gsUpdateActiveRow();
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      runGsResult(gsActiveIndex);
+    }
   });
   document.addEventListener('change', (event) => {
     if (event.target && event.target.id === 'stableModeToggle') {
