@@ -7,7 +7,7 @@
   <!-- No external resources: Team Pulse makes zero network requests. Fonts use the
        local system stack so no visitor data (IP, user agent) ever leaves the machine. -->
   <style>
-    :root{--bg:#f5f7fb;--card:#ffffff;--text:#172033;--muted:#5f6b85;--line:#dbe2ee;--line-strong:#c8d2e3;--accent:#2957d6;--accent-soft:#e8efff;--success:#0d7a48;--success-soft:#e7f7ee;--warning:#b06b00;--warning-soft:#fff4df;--danger:#b42318;--danger-soft:#ffebe9;--info:#115b9c;--info-soft:#e8f4ff;--sat-green:#00c875;--sat-amber:#fdab3d;--sat-red:#e2445c;--sat-blue:#579bfc;--sat-grey:#c4c4c4;--shadow:0 10px 35px rgba(23,32,51,0.08);--radius:18px;--radius-sm:12px;--radius-xs:8px}
+    :root{--bg:#f5f7fb;--card:#ffffff;--text:#172033;--muted:#5f6b85;--line:#dbe2ee;--line-strong:#c8d2e3;--accent:#2957d6;--accent-soft:#e8efff;--success:#0d7a48;--success-soft:#e7f7ee;--warning:#b06b00;--warning-soft:#fff4df;--danger:#b42318;--danger-soft:#ffebe9;--info:#115b9c;--info-soft:#e8f4ff;--sat-green:#00c875;--sat-amber:#fdab3d;--sat-red:#e2445c;--sat-blue:#579bfc;--sat-grey:#c4c4c4;--sat-purple:#a25ddc;--sat-orange:#ff642e;--shadow:0 10px 35px rgba(23,32,51,0.08);--radius:18px;--radius-sm:12px;--radius-xs:8px}
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
@@ -558,7 +558,7 @@
     .evidence-group-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
     .evidence-list{display:grid;gap:12px}
     .evidence-row{display:grid;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}
-    .evidence-row-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end}
+    .evidence-row-top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:10px;align-items:end}
     .evidence-row-bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,0.9fr);gap:10px;align-items:start}
     .evidence-row textarea{min-height:110px}
     .evidence-empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fafcff}
@@ -691,7 +691,7 @@
     .meetings-view-filter select.meetings-filter-pulse{animation:meetingsFilterPulse 0.9s ease}
     @keyframes meetingsFilterPulse{0%{box-shadow:0 0 0 0 rgba(41,87,214,0.4)}70%{box-shadow:0 0 0 8px rgba(41,87,214,0)}100%{box-shadow:0 0 0 0 rgba(41,87,214,0)}}
     .meetings-view{display:flex;flex-direction:column;gap:12px}
-    .meetings-view-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;cursor:pointer;transition:border-color 0.12s ease,box-shadow 0.12s ease}
+    .meetings-view-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:14px;align-items:center;cursor:pointer;transition:border-color 0.12s ease,box-shadow 0.12s ease}
     .meetings-view-item:hover{border-color:#c2cde0;box-shadow:0 2px 8px rgba(23,32,51,0.04)}
     .meetings-view-date{display:flex;flex-direction:column;text-align:center;width:52px;flex:none}
     .meetings-view-date-m{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase}
@@ -947,6 +947,225 @@
       .gs-overlay{padding:5vh 10px 10px}
     }
     @media (prefers-reduced-motion: reduce){.gs-panel{animation:none}}
+
+    /* ===================================================================
+       v0.44.0 — solid status pills, table view, 1:1 meeting room, goals,
+       pulse, talking points, timeline, density. Appended as one block so
+       earlier sections stay byte-identical.
+       =================================================================== */
+    .status-pill{display:inline-flex;align-items:center;justify-content:center;min-width:96px;padding:5px 12px;border-radius:6px;font-size:12.5px;font-weight:800;letter-spacing:0.01em;line-height:1.2;white-space:nowrap;background:#dfe4ee;color:#4a5670}
+    .status-pill[data-pill-value="In progress"]{background:var(--sat-blue);color:#fff}
+    .status-pill[data-pill-value="Blocked"]{background:var(--sat-red);color:#fff}
+    .status-pill[data-pill-value="Completed"]{background:var(--sat-green);color:#fff}
+    .status-pill[data-pill-value="Needs review"]{background:var(--sat-purple);color:#fff}
+    .status-pill[data-pill-value="Good"]{background:var(--sat-green);color:#fff}
+    .status-pill[data-pill-value="Monitor"]{background:var(--sat-amber);color:#5f3a00}
+    .status-pill[data-pill-value="Support needed"]{background:var(--sat-orange);color:#fff}
+    .status-pill[data-pill-value="Urgent"]{background:var(--sat-red);color:#fff}
+    select.pill-select{appearance:none;-webkit-appearance:none;border:none;border-radius:6px;min-width:118px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:800;text-align:center;text-align-last:center;cursor:pointer;background:#dfe4ee;color:#4a5670;transition:filter 0.12s ease,box-shadow 0.12s ease}
+    select.pill-select:hover{filter:brightness(0.96)}
+    select.pill-select:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(41,87,214,0.28)}
+    select.pill-select option{background:#fff;color:var(--text);font-weight:600}
+    select.pill-select[data-pill-value="In progress"]{background:var(--sat-blue);color:#fff}
+    select.pill-select[data-pill-value="Blocked"]{background:var(--sat-red);color:#fff}
+    select.pill-select[data-pill-value="Completed"]{background:var(--sat-green);color:#fff}
+    select.pill-select[data-pill-value="Needs review"]{background:var(--sat-purple);color:#fff}
+    select.pill-select[data-pill-value="Good"]{background:var(--sat-green);color:#fff}
+    select.pill-select[data-pill-value="Monitor"]{background:var(--sat-amber);color:#5f3a00}
+    select.pill-select[data-pill-value="Support needed"]{background:var(--sat-orange);color:#fff}
+    select.pill-select[data-pill-value="Urgent"]{background:var(--sat-red);color:#fff}
+    /* View switcher in the reports toolbar mirrors the PDC list/board toggle. */
+    .view-switch{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;flex:none}
+    .view-switch button{appearance:none;border:none;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:6px 14px;border-radius:8px;cursor:pointer;transition:background 0.12s ease,color 0.12s ease}
+    .view-switch button.active{background:var(--accent);color:#fff}
+    /* Table view */
+    .team-table-wrap{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:auto}
+    .team-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;min-width:960px}
+    .team-table th{position:sticky;top:0;background:#f7f9fd;z-index:2;text-align:left;font-size:11.5px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
+    .team-table td{padding:10px 14px;border-bottom:1px solid #edf1f8;vertical-align:middle}
+    .team-table tbody tr{transition:background 0.1s ease}
+    .team-table tbody tr:hover{background:#f7f9fd}
+    .team-table tbody tr:last-child td{border-bottom:none}
+    .team-table-group td{padding:9px 14px;border-bottom:1px solid var(--line);background:#fbfcfe}
+    .team-table-group-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:0.02em}
+    .team-table-group-label::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--sat-grey)}
+    .team-table-group[data-tone="danger"] .team-table-group-label{color:#8f2334}
+    .team-table-group[data-tone="danger"] .team-table-group-label::before{background:var(--sat-red)}
+    .team-table-group[data-tone="success"] .team-table-group-label{color:#0d6b41}
+    .team-table-group[data-tone="success"] .team-table-group-label::before{background:var(--sat-green)}
+    .team-table-group-count{color:var(--muted);font-weight:700}
+    .team-table .tt-person{display:inline-flex;align-items:center;gap:10px;appearance:none;border:none;background:transparent;font:inherit;font-weight:700;color:var(--text);cursor:pointer;padding:0;text-align:left}
+    .team-table .tt-person:hover .tt-person-name{text-decoration:underline;text-underline-offset:3px}
+    .tt-avatar{width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#fff;flex:none}
+    .tt-sub{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:1px}
+    .tt-date input[type="date"]{border:1px solid transparent;background:transparent;border-radius:8px;padding:5px 6px;font:inherit;font-size:13px;color:var(--text);width:132px;transition:border-color 0.12s ease,background 0.12s ease}
+    .tt-date input[type="date"]:hover{border-color:var(--line);background:#fff}
+    .tt-date input[type="date"]:focus-visible{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(41,87,214,0.16)}
+    .tt-overdue{color:var(--danger);font-weight:800}
+    .tt-count{display:inline-flex;align-items:center;justify-content:center;min-width:26px;padding:3px 8px;border-radius:999px;background:var(--info-soft);color:var(--info);font-size:12px;font-weight:800}
+    .tt-count.zero{background:#f2f5fb;color:var(--muted);font-weight:700}
+    .tt-actions{display:inline-flex;gap:6px}
+    .tt-action-btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;transition:color 0.12s ease,border-color 0.12s ease,background 0.12s ease}
+    .tt-action-btn:hover{color:var(--accent);border-color:#b9c7e6;background:var(--accent-soft)}
+    .tt-empty{color:var(--muted);font-size:12.5px}
+    /* Goal progress */
+    .goal-progress{display:flex;align-items:center;gap:8px;min-width:120px}
+    .goal-progress-track{flex:1;height:7px;border-radius:999px;background:#e8edf6;overflow:hidden;min-width:70px}
+    .goal-progress-fill{height:100%;border-radius:999px;background:var(--sat-green);transition:width 0.25s ease}
+    .goal-progress-fill[data-goal-status="At risk"]{background:var(--sat-red)}
+    .goal-progress-fill[data-goal-status="Paused"]{background:var(--sat-grey)}
+    .goal-progress-fill[data-goal-status="Done"]{background:var(--sat-blue)}
+    .goal-progress-pct{font-size:11.5px;font-weight:800;color:var(--muted);min-width:32px;text-align:right}
+    .goal-progress.compact{min-width:96px}
+    .goal-progress.compact .goal-progress-track{height:5px;min-width:56px}
+    /* Pulse dots + picker */
+    .pulse-dots{display:inline-flex;gap:4px;align-items:center}
+    .pulse-dot{width:10px;height:10px;border-radius:50%;background:var(--sat-grey);flex:none}
+    .pulse-dot[data-pulse="green"]{background:var(--sat-green)}
+    .pulse-dot[data-pulse="amber"]{background:var(--sat-amber)}
+    .pulse-dot[data-pulse="red"]{background:var(--sat-red)}
+    .pulse-dots-empty{color:var(--muted);font-size:12px}
+    .pulse-dot.lg{width:12px;height:12px}
+    .pulse-field > span{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+    .pulse-picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .pulse-option{position:relative;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:border-color 0.12s ease,background 0.12s ease,color 0.12s ease}
+    .pulse-option input{position:absolute;opacity:0;pointer-events:none}
+    .pulse-option::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--sat-grey)}
+    .pulse-option[data-pulse="green"]::before{background:var(--sat-green)}
+    .pulse-option[data-pulse="amber"]::before{background:var(--sat-amber)}
+    .pulse-option[data-pulse="red"]::before{background:var(--sat-red)}
+    .pulse-option:has(input:checked){border-color:transparent;color:#fff}
+    .pulse-option[data-pulse="green"]:has(input:checked){background:var(--sat-green)}
+    .pulse-option[data-pulse="amber"]:has(input:checked){background:var(--sat-amber);color:#5f3a00}
+    .pulse-option[data-pulse="red"]:has(input:checked){background:var(--sat-red)}
+    .pulse-option:has(input:checked)::before{background:#fff}
+    .pulse-option[data-pulse="amber"]:has(input:checked)::before{background:#5f3a00}
+    .pulse-option:has(input:focus-visible){box-shadow:0 0 0 3px rgba(41,87,214,0.25)}
+    .pulse-clear{appearance:none;border:none;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:6px 4px}
+    .pulse-clear:hover{color:var(--danger)}
+    /* Talking points panel (drawer + meeting room share these) */
+    .tp-list{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+    .tp-item{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;transition:border-color 0.12s ease,background 0.12s ease}
+    .tp-item:hover{border-color:#b9c7e6}
+    .tp-item input[type="checkbox"]{margin-top:2px;width:16px;height:16px;accent-color:var(--accent);flex:none;cursor:pointer}
+    .tp-item-text{flex:1;font-size:13.5px;line-height:1.45;word-break:break-word}
+    .tp-item.done .tp-item-text{color:var(--muted);text-decoration:line-through}
+    .tp-chip{display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;background:var(--warning-soft);color:var(--warning);flex:none;margin-top:1px}
+    .tp-meta{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+    .tp-delete{appearance:none;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;border-radius:6px;flex:none}
+    .tp-delete:hover{color:var(--danger);background:var(--danger-soft)}
+    .tp-add{display:flex;gap:8px;margin-top:10px}
+    .tp-add input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:13.5px}
+    .tp-add input:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(41,87,214,0.16)}
+    .tp-empty{color:var(--muted);font-size:13px;padding:6px 2px}
+    .tp-done-toggle{appearance:none;border:none;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:6px 2px;text-align:left}
+    .tp-done-toggle:hover{color:var(--accent)}
+    /* 1:1 meeting room */
+    .mr-shell{display:flex;flex-direction:column;gap:16px;animation:fadeSlideIn 0.25s ease}
+    @keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .mr-header{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;flex-wrap:wrap}
+    .mr-avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex:none}
+    .mr-header-title{flex:1;min-width:180px}
+    .mr-header-title h2{margin:0;font-size:20px;letter-spacing:-0.02em}
+    .mr-header-title p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .mr-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .mr-grid{display:grid;grid-template-columns:minmax(300px,5fr) minmax(340px,7fr);gap:16px;align-items:start}
+    @media (max-width:1100px){.mr-grid{grid-template-columns:1fr}}
+    .mr-col{display:flex;flex-direction:column;gap:14px}
+    .mr-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+    .mr-panel > h3{margin:0 0 4px;font-size:14.5px;letter-spacing:-0.01em}
+    .mr-panel .section-note{margin:0 0 12px;font-size:12.5px}
+    .mr-meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+    .mr-meta-row label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
+    .mr-meta-row select,.mr-meta-row input{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit;font-size:13.5px;background:#fff;color:var(--text)}
+    .mr-notes{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-size:14px;line-height:1.55}
+    .mr-notes:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(41,87,214,0.14)}
+    .mr-footer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .mr-footer .status-line{flex:1;min-width:160px;margin:0}
+    .mr-followups{display:flex;flex-direction:column;gap:6px}
+    .mr-goal-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #eef2f9}
+    .mr-goal-row:last-child{border-bottom:none}
+    .mr-goal-title{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    /* Timeline tab */
+    .tl-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+    .tl-filter button{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.12s ease}
+    .tl-filter button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .tl-stream{position:relative;display:flex;flex-direction:column;gap:0;padding-left:22px}
+    .tl-stream::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:#e4eaf5;border-radius:2px}
+    .tl-item{position:relative;padding:9px 0 9px 8px}
+    .tl-item::before{content:"";position:absolute;left:-21px;top:15px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--sat-grey)}
+    .tl-item[data-tl-kind="meeting"]::before{border-color:var(--sat-blue)}
+    .tl-item[data-tl-kind="feedback"]::before{border-color:var(--sat-green)}
+    .tl-item[data-tl-kind="goal"]::before{border-color:var(--sat-purple)}
+    .tl-item[data-tl-kind="note"]::before{border-color:var(--sat-amber)}
+    .tl-item[data-tl-kind="change"]::before{border-color:var(--sat-grey)}
+    .tl-item-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .tl-item-date{font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:0.03em;text-transform:uppercase}
+    .tl-item-title{font-size:13.5px;font-weight:700}
+    .tl-item-body{margin:3px 0 0;font-size:13px;color:var(--muted);line-height:1.5;word-break:break-word}
+    .tl-kind-badge{display:inline-flex;border-radius:6px;padding:2px 7px;font-size:10.5px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;background:#eef2f9;color:var(--muted)}
+    .tl-kind-badge[data-kind="praise"]{background:var(--success-soft);color:var(--success)}
+    .tl-kind-badge[data-kind="growth"]{background:var(--warning-soft);color:var(--warning)}
+    .tl-kind-badge[data-kind="observation"]{background:var(--info-soft);color:var(--info)}
+    .tl-jump{appearance:none;border:none;background:transparent;color:var(--accent);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:0}
+    .tl-jump:hover{text-decoration:underline;text-underline-offset:3px}
+    .tl-empty{color:var(--muted);font-size:13px;padding:8px 0}
+    /* Goals in the Development tab */
+    .goal-card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:8px}
+    .goal-card-head{display:flex;align-items:center;gap:10px}
+    .goal-card-title{flex:1;font-size:14px;font-weight:700;min-width:0}
+    .goal-card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+    .goal-card-detail{margin:0;font-size:13px;color:var(--muted);line-height:1.5;white-space:pre-wrap}
+    .goal-list{display:flex;flex-direction:column;gap:10px}
+    .goal-updates{margin:2px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+    .goal-updates li{font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:baseline}
+    .goal-updates li strong{color:var(--text);font-weight:700;flex:none;font-size:11.5px}
+    .goal-progress-field .goal-progress-inputs{display:flex;align-items:center;gap:12px}
+    .goal-progress-inputs input[type="range"]{flex:1;accent-color:var(--accent)}
+    .goal-progress-value{font-weight:800;font-size:14px;min-width:44px;text-align:right}
+    .feedback-shared-field{display:flex;flex-direction:row !important;align-items:center;gap:10px;font-weight:600}
+    .feedback-shared-field input{width:16px;height:16px;accent-color:var(--accent)}
+    .evidence-kind-shared{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+    .evidence-kind-shared input{width:15px;height:15px;accent-color:var(--accent)}
+    /* Kanban column tone rail (top edge) */
+    .pdc-board-col{position:relative;overflow:hidden}
+    .pdc-board-col::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--sat-grey)}
+    .pdc-board-col[data-tone="info"]::before{background:var(--sat-blue)}
+    .pdc-board-col[data-tone="warning"]::before{background:var(--sat-purple)}
+    .pdc-board-col[data-tone="danger"]::before{background:var(--sat-red)}
+    .pdc-board-col[data-tone="success"]::before{background:var(--sat-green)}
+    /* Meeting history + meetings view pulse markers */
+    .meeting-pulse-inline{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted)}
+    .tile-room-btn{flex:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;letter-spacing:0.01em;white-space:nowrap;cursor:pointer;transition:color 0.12s ease,border-color 0.12s ease,background 0.12s ease}
+    .report-tile:hover .tile-room-btn,.tile-room-btn:hover,.tile-room-btn:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;outline:none}
+    .report-tile-vitals{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:14px}
+    .report-tile-goal{flex:1;max-width:150px;margin-left:auto}
+    .meeting-covered-points{border:1px solid var(--line);background:#f8faff;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px}
+    .meeting-covered-points strong{display:block;font-size:11.5px;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .meeting-covered-points ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+    .pdc-summary-goal-row{display:flex;align-items:center;gap:10px;padding:5px 0}
+    .pdc-summary-goal-title{flex:1;min-width:0;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pdc-round-chip{display:inline-flex;align-items:center;margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:800;color:var(--muted);white-space:nowrap;cursor:default}
+    .pdc-view-toolbar{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap}
+    .oo-board-card{cursor:default}
+    .oo-plan{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:var(--muted);margin-top:2px}
+    .oo-plan input[type="date"]{flex:1;border:1px solid var(--line);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px;background:#fff;color:var(--text)}
+    .oo-card-actions{display:flex;gap:6px;margin-top:2px}
+    .oo-card-actions button{flex:1;font-size:12px;padding:6px 8px}
+    .tp-done-details{margin-top:10px}
+    .tp-done-details summary{cursor:pointer;list-style:none}
+    .tp-done-details summary::-webkit-details-marker{display:none}
+    /* Density: compact tightens the highest-frequency surfaces. */
+    body.density-compact .report-tile{padding:11px 14px;min-height:96px;gap:7px}
+    body.density-compact .reports-grid{gap:10px}
+    body.density-compact .team-table th{padding:8px 12px}
+    body.density-compact .team-table td{padding:7px 12px}
+    body.density-compact .drawer-panel-stack{gap:14px}
+    body.density-compact .drawer-section{padding:14px}
+    body.density-compact .mr-panel{padding:12px}
+    body.density-compact .mr-notes{min-height:220px}
+    body.density-compact .pdc-summary-card{padding:12px 14px}
+    @media (prefers-reduced-motion: reduce){.mr-shell{animation:none}.goal-progress-fill{transition:none}}
   </style>
 </head>
 <body>
@@ -1028,6 +1247,10 @@
             <div class="searchbox">
               <input id="reportsGridSearch" type="search" placeholder="Search direct reports…" autocomplete="off">
             </div>
+            <div class="view-switch" role="group" aria-label="Direct reports layout" id="reportsViewSwitch">
+              <button type="button" data-reports-view="tiles" aria-pressed="true">Tiles</button>
+              <button type="button" data-reports-view="table" aria-pressed="false">Table</button>
+            </div>
             <label class="reports-filter"><span>PDC</span><select id="reportsPlanFilter"></select></label>
             <label class="reports-filter"><span>Show</span>
               <select id="reportsAttentionFilter">
@@ -1063,6 +1286,11 @@
         <!-- PDC Summary section (across all reports) -->
         <section id="pdcSummarySection" hidden>
           <div id="pdcSummaryBody"></div>
+        </section>
+
+        <!-- 1:1 meeting room (per-person prep + run + wrap up) -->
+        <section id="meetingRoomSection" hidden>
+          <div id="meetingRoomBody"></div>
         </section>
 
         <!-- Detail drawer (now inline, not modal) -->
@@ -1156,6 +1384,15 @@
               <span class="suffix">min</span>
             </div>
           </label>
+          <div class="full pulse-field">
+            <span>How did it feel? (optional)</span>
+            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-label="Meeting pulse">
+              <label class="pulse-option" data-pulse="green"><input type="radio" name="meetingPulse" value="green"><span>Good</span></label>
+              <label class="pulse-option" data-pulse="amber"><input type="radio" name="meetingPulse" value="amber"><span>Mixed</span></label>
+              <label class="pulse-option" data-pulse="red"><input type="radio" name="meetingPulse" value="red"><span>Rough</span></label>
+              <button type="button" class="pulse-clear" id="meetingPulseClear" title="Clear pulse">Clear</button>
+            </div>
+          </div>
           <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
             <span>Notes</span>
             <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
@@ -1170,11 +1407,80 @@
         </div>
         <div class="actions" style="margin-top:16px;">
           <button type="submit" id="saveMeetingBtn">Save meeting</button>
-          <button type="button" id="insertAgendaBtn" class="secondary hidden">Insert 1:1 agenda</button>
+          <button type="button" id="insertAgendaBtn" class="secondary hidden">Insert talking points</button>
+          <button type="button" id="insertPdcTemplateBtn" class="secondary hidden">Insert PDC template</button>
           <button type="button" id="meetingImportIcsBtn" class="secondary">Import .ics</button>
           <button type="button" id="cancelMeetingModalBtn" class="secondary">Cancel</button>
         </div>
         <div id="meetingStatus" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="goalModal" class="overlay" aria-hidden="true">
+  <div class="modal goal-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="goalModalTitle">Add Goal</h2>
+        <p id="goalModalSubtitle">A concrete development goal with a status and progress.</p>
+      </div>
+      <button id="closeGoalModalBtn" class="secondary" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="goalForm">
+        <input type="hidden" id="goalReportId" name="goalReportId">
+        <input type="hidden" id="goalId" name="goalId">
+        <div class="form-grid">
+          <label class="full"><span>Goal title *</span><input id="goalTitle" name="goalTitle" placeholder="e.g. Lead a validation deliverable end to end" required></label>
+          <label><span>Status</span><select id="goalStatus" name="goalStatus"></select></label>
+          <label><span>Target date (optional)</span><input id="goalTargetDate" name="goalTargetDate" type="date"></label>
+          <label class="full goal-progress-field"><span>Progress</span>
+            <div class="goal-progress-inputs">
+              <input id="goalProgress" name="goalProgress" type="range" min="0" max="100" step="5" value="0">
+              <span class="goal-progress-value" id="goalProgressValue">0%</span>
+            </div>
+          </label>
+          <label class="full"><span>Detail (optional)</span><textarea id="goalDetail" name="goalDetail" placeholder="What good looks like, how it will be assessed"></textarea></label>
+          <label class="full"><span>Progress note (optional)</span><input id="goalUpdateNote" name="goalUpdateNote" placeholder="Short dated note added to the goal's progress log"></label>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveGoalBtn">Save goal</button>
+          <button type="button" class="secondary" id="cancelGoalModalBtn">Cancel</button>
+          <button type="button" class="danger-outline hidden" id="deleteGoalBtn">Remove goal</button>
+        </div>
+        <div id="goalStatusLine" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="feedbackModal" class="overlay" aria-hidden="true">
+  <div class="modal feedback-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="feedbackModalTitle">Log Feedback</h2>
+        <p id="feedbackModalSubtitle">A dated feedback entry stored in the evidence locker.</p>
+      </div>
+      <button id="closeFeedbackModalBtn" class="secondary" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="feedbackForm">
+        <input type="hidden" id="feedbackReportId" name="feedbackReportId">
+        <div class="form-grid">
+          <label><span>Kind</span><select id="feedbackKind" name="feedbackKind"></select></label>
+          <label><span>Category</span><select id="feedbackCategory" name="feedbackCategory"></select></label>
+          <label><span>Date</span><input id="feedbackDate" name="feedbackDate" type="date"></label>
+          <label><span>Linked meeting</span><select id="feedbackMeeting" name="feedbackMeeting"></select></label>
+          <label class="full"><span>Summary *</span><input id="feedbackSummary" name="feedbackSummary" placeholder="Short headline" required></label>
+          <label class="full"><span>Detail (optional)</span><textarea id="feedbackDetail" name="feedbackDetail" placeholder="What happened, why it mattered, who saw it"></textarea></label>
+          <label class="full feedback-shared-field"><input type="checkbox" id="feedbackShared" name="feedbackShared"><span>Shared with the person</span></label>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveFeedbackBtn">Log feedback</button>
+          <button type="button" class="secondary" id="cancelFeedbackModalBtn">Cancel</button>
+        </div>
+        <div id="feedbackStatusLine" class="status-line"></div>
       </form>
     </div>
   </div>
@@ -1258,6 +1564,60 @@
                     <span class="slider"></span>
                   </label>
                 </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Downward 1:1 pulse counts as attention</strong>
+                    <p>Flags a person when their latest logged pulse is Rough, or the last two are not Good.</p>
+                  </div>
+                  <label class="switch" aria-label="Downward 1:1 pulse counts as attention">
+                    <input id="pulseTrendCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>New PDC round resets the board</strong>
+                    <p>The year splits into rounds from the PDC cadence rule (90 days means quarterly). When a round ends, every card moves back to Not started, logged per person in the change log.</p>
+                  </div>
+                  <label class="switch" aria-label="New PDC round resets the board">
+                    <input id="pdcRoundAutoReset" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>PDC round start month</strong>
+                    <p>Anchors the round calendar. January with a 90 day cadence gives Jan to Mar, Apr to Jun, and so on. Changing this adopts the new calendar without resetting any cards.</p>
+                  </div>
+                  <label aria-label="PDC round start month">
+                    <select id="pdcRoundStartMonth">
+                      <option value="1">January</option>
+                      <option value="2">February</option>
+                      <option value="3">March</option>
+                      <option value="4">April</option>
+                      <option value="5">May</option>
+                      <option value="6">June</option>
+                      <option value="7">July</option>
+                      <option value="8">August</option>
+                      <option value="9">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Density</strong>
+                    <p>Comfortable keeps today's spacing. Compact tightens tiles, tables, and the workspace for more rows per screen.</p>
+                  </div>
+                  <label aria-label="Interface density">
+                    <select id="densitySetting">
+                      <option value="comfortable">Comfortable</option>
+                      <option value="compact">Compact</option>
+                    </select>
+                  </label>
+                </div>
               </div>
 
               <div class="actions full" style="margin-top: 4px;">
@@ -1323,8 +1683,8 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.43.0';
-const CURRENT_SCHEMA_VERSION = 9;
+const APP_VERSION = 'v0.44.2';
+const CURRENT_SCHEMA_VERSION = 10;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
 const UI_STATE_KEY = 'team-pulse-ui-state';
@@ -1356,6 +1716,24 @@ const LEVEL_ALIASES = Object.freeze({
   'senior proficient': 'Senior (Proficient)'
 });
 const MEETING_TYPES = ['1:1', 'PDC', 'CV review'];
+const GOAL_STATUSES = Object.freeze(['On track', 'At risk', 'Paused', 'Done']);
+const FEEDBACK_KINDS = Object.freeze(['observation', 'praise', 'growth']);
+const FEEDBACK_KIND_LABELS = Object.freeze({ observation: 'Observation', praise: 'Praise', growth: 'Growth area' });
+const PULSE_VALUES = Object.freeze(['green', 'amber', 'red']);
+const PULSE_LABELS = Object.freeze({ green: 'Good', amber: 'Mixed', red: 'Rough' });
+const PDC_TEMPLATE_MARKDOWN = [
+  '### Wins since last PDC',
+  '- ',
+  '',
+  '### Growth areas',
+  '- ',
+  '',
+  '### Focus for next period',
+  '- ',
+  '',
+  '### Support needed',
+  '- '
+].join('\n');
 const DEFAULT_THRESHOLDS = Object.freeze({
   oneOnOneDays: 14,
   pdcDays: 90,
@@ -1380,6 +1758,7 @@ const SNOOZE_RULE_LABELS = Object.freeze({
   supportLevel: 'Support level',
   oneOnOneDuringVacation: '1:1 planned during vacation',
   pdcDuringVacation: 'PDC planned during vacation',
+  pulseTrend: '1:1 pulse trending down',
   all: 'All attention items'
 });
 const DEFAULT_SETTINGS = Object.freeze({
@@ -1391,7 +1770,12 @@ const DEFAULT_SETTINGS = Object.freeze({
   themesWindowDays: 90,
   lastExportDate: '',
   stableMode: true,
-  latestExportFiles: []
+  latestExportFiles: [],
+  pulseTrendCounts: true,
+  density: 'comfortable',
+  pdcRoundAutoReset: true,
+  pdcRoundStartMonth: 1,
+  lastPdcRoundKey: ''
 });
 const DEFAULT_UI = Object.freeze({
   selectedId: null,
@@ -1413,10 +1797,14 @@ const DEFAULT_UI = Object.freeze({
   meetingsSearch: '',
   pdcSummaryEditId: '',
   pdcViewMode: 'list',
-  pdcBoardDateId: ''
+  pdcBoardDateId: '',
+  reportsViewMode: 'tiles',
+  meetingRoomReportId: '',
+  meetingRoomReturnView: 'reports',
+  timelineFilter: 'all'
 });
 
-const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'meetings', 'followUps', 'pdcSummary', 'settings']);
+const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'meetings', 'followUps', 'pdcSummary', 'meetingRoom', 'settings']);
 
 const TEAM_HEALTH_TABS = Object.freeze(['overview', 'cadence', 'attention', 'support', 'insights']);
 const TEAM_HEALTH_TAB_LABELS = Object.freeze({
@@ -1429,12 +1817,13 @@ const TEAM_HEALTH_TAB_LABELS = Object.freeze({
 // All three workspace tabs are visible. The top-level Meetings and PDC Summary
 // sidebar views are the cross-team rollups; these tabs are the per-person deep
 // dive (and the only place PDC focus, notes, evidence, and snoozes are edited).
-const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary']);
+const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary', 'timeline']);
 const VISIBLE_DETAIL_DRAWER_TABS = DETAIL_DRAWER_TABS;
 const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
   'profile': 'Profile',
-  'meetings': 'Meetings & Agenda',
-  'pdc-summary': 'Development'
+  'meetings': 'Meetings & Talking Points',
+  'pdc-summary': 'Development',
+  'timeline': 'Timeline'
 });
 
 const FORMATTERS = {
@@ -1564,9 +1953,12 @@ function loadUiState() {
       selectedId: null,
       activeThemeFilter: '',
       pdcSummaryEditId: '',
-      pdcBoardDateId: ''
+      pdcBoardDateId: '',
+      meetingRoomReportId: '',
+      meetingRoomReturnView: 'reports'
     };
-    if (!MAIN_VIEWS.includes(merged.mainView)) merged.mainView = 'teamHealth';
+    if (!MAIN_VIEWS.includes(merged.mainView) || merged.mainView === 'meetingRoom') merged.mainView = 'teamHealth';
+    if (merged.reportsViewMode !== 'table') merged.reportsViewMode = 'tiles';
     return merged;
   } catch (error) {
     console.error('Failed to load UI state', error);
@@ -1586,7 +1978,8 @@ function persistUiState() {
     startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder,
     meetingsFilterReportId: app.ui.meetingsFilterReportId || '',
     meetingsTypeFilter: app.ui.meetingsTypeFilter || '',
-    pdcViewMode: app.ui.pdcViewMode === 'board' ? 'board' : 'list'
+    pdcViewMode: ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list',
+    reportsViewMode: app.ui.reportsViewMode === 'table' ? 'table' : 'tiles'
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
 }
@@ -1975,16 +2368,93 @@ function resolveEvidenceCategories(settings = app.doc?.settings || normalizeSett
   return normalizeEvidenceCategories(settings?.evidenceCategories);
 }
 
+function normalizeFeedbackKind(value) {
+  const normalized = normalizeText(value).toLowerCase();
+  return FEEDBACK_KINDS.includes(normalized) ? normalized : 'observation';
+}
+
+function normalizePulse(value) {
+  const normalized = normalizeText(value).toLowerCase();
+  return PULSE_VALUES.includes(normalized) ? normalized : '';
+}
+
 function normalizeEvidenceEntry(entry = {}, fallbackId = '') {
   const safe = entry && typeof entry === 'object' ? entry : {};
   return {
     id: normalizeText(safe.id) || fallbackId,
     date: normalizeDate(safe.date || safe.evidenceDate),
     category: normalizeText(safe.category),
+    kind: normalizeFeedbackKind(safe.kind),
+    shared: !!safe.shared,
     summary: normalizeText(safe.summary),
     detail: normalizeText(safe.detail),
     linkedMeetingId: normalizeText(safe.linkedMeetingId || safe.meetingId)
   };
+}
+
+function normalizeTalkingPoint(point = {}, fallbackId = '') {
+  const safe = point && typeof point === 'object' ? point : {};
+  return {
+    id: normalizeText(safe.id) || fallbackId,
+    text: normalizeText(safe.text),
+    createdAt: normalizeText(safe.createdAt) || nowIso(),
+    done: !!safe.done,
+    doneAt: normalizeText(safe.doneAt),
+    meetingId: normalizeText(safe.meetingId)
+  };
+}
+
+function normalizeTalkingPoints(points = []) {
+  return (Array.isArray(points) ? points : [])
+    .map((point) => normalizeTalkingPoint(point, normalizeText(point?.id)))
+    .filter((point) => point.text)
+    .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+function normalizeGoalUpdate(update = {}, fallbackId = '') {
+  const safe = update && typeof update === 'object' ? update : {};
+  const clamped = Math.max(0, Math.min(100, Math.round(Number(safe.progress))));
+  return {
+    id: normalizeText(safe.id) || fallbackId,
+    date: normalizeDate(safe.date) || todayStamp(),
+    text: normalizeText(safe.text),
+    progress: Number.isFinite(clamped) ? clamped : 0
+  };
+}
+
+function normalizeGoalStatus(value) {
+  const normalized = normalizeText(value);
+  return GOAL_STATUSES.includes(normalized) ? normalized : GOAL_STATUSES[0];
+}
+
+function normalizeGoal(goal = {}, fallbackId = '') {
+  const safe = goal && typeof goal === 'object' ? goal : {};
+  const clamped = Math.max(0, Math.min(100, Math.round(Number(safe.progress))));
+  return {
+    id: normalizeText(safe.id) || fallbackId,
+    title: normalizeText(safe.title),
+    detail: normalizeText(safe.detail),
+    status: normalizeGoalStatus(safe.status),
+    targetDate: normalizeDate(safe.targetDate),
+    progress: Number.isFinite(clamped) ? clamped : 0,
+    createdAt: normalizeText(safe.createdAt) || nowIso(),
+    updates: (Array.isArray(safe.updates) ? safe.updates : [])
+      .map((update, index) => normalizeGoalUpdate(update, normalizeText(update?.id) || `${normalizeText(safe.id) || fallbackId}_u${index + 1}`))
+      .filter((update) => update.text || update.progress > 0)
+      .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)))
+  };
+}
+
+function normalizeGoals(goals = []) {
+  return (Array.isArray(goals) ? goals : [])
+    .map((goal) => normalizeGoal(goal, normalizeText(goal?.id)))
+    .filter((goal) => goal.title)
+    .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+function primaryGoalOf(source) {
+  const goals = normalizeGoals(source?.goals || []);
+  return goals.find((goal) => goal.status !== 'Done') || goals[0] || null;
 }
 
 function normalizeEvidenceEntries(entries = []) {
@@ -2287,6 +2757,8 @@ function comparableWorkspacePayload(source = {}) {
     promotionReadiness: normalizeText(source.promotionReadiness),
     agenda: normalizeText(source.agenda),
     notes: normalizeText(source.notes),
+    talkingPoints: normalizeTalkingPoints(source.talkingPoints),
+    goals: normalizeGoals(source.goals),
     cadenceOverrides: normalizeCadenceOverrides(source.cadenceOverrides),
     vacations: normalizeVacationEntries(source.vacations),
     evidence: normalizeEvidenceEntries(source.evidence),
@@ -2408,6 +2880,18 @@ function syncIdCounters(doc) {
     ...(doc.people || []).flatMap((person) => (person.evidence || []).map((item) => item.id)),
     ...eventSnapshots.flatMap((snapshot) => (snapshot.evidence || []).map((item) => item.id))
   ];
+  const talkingPointIds = [
+    ...(doc.people || []).flatMap((person) => (person.talkingPoints || []).map((item) => item.id)),
+    ...eventSnapshots.flatMap((snapshot) => (snapshot.talkingPoints || []).map((item) => item.id))
+  ];
+  const goalIds = [
+    ...(doc.people || []).flatMap((person) => (person.goals || []).map((item) => item.id)),
+    ...eventSnapshots.flatMap((snapshot) => (snapshot.goals || []).map((item) => item.id))
+  ];
+  const goalUpdateIds = [
+    ...(doc.people || []).flatMap((person) => (person.goals || []).flatMap((goal) => (goal.updates || []).map((item) => item.id))),
+    ...eventSnapshots.flatMap((snapshot) => (snapshot.goals || []).flatMap((goal) => (goal.updates || []).map((item) => item.id)))
+  ];
   const meetingIds = (doc.events || []).filter((event) => event.type === 'meeting_logged').map((event) => event.meetingId);
   const noteIds = (doc.events || []).filter((event) => event.type === 'note_added').map((event) => event.noteId);
   doc.idCounters = {
@@ -2417,7 +2901,10 @@ function syncIdCounters(doc) {
     vacation: Math.max(doc.idCounters?.vacation || 0, maxIdFromList(vacationIds, 'vac')),
     meeting: Math.max(doc.idCounters?.meeting || 0, maxIdFromList(meetingIds, 'mtg')),
     note: Math.max(doc.idCounters?.note || 0, maxIdFromList(noteIds, 'note')),
-    evidence: Math.max(doc.idCounters?.evidence || 0, maxIdFromList(evidenceIds, 'ev'))
+    evidence: Math.max(doc.idCounters?.evidence || 0, maxIdFromList(evidenceIds, 'ev')),
+    talkingPoint: Math.max(doc.idCounters?.talkingPoint || 0, maxIdFromList(talkingPointIds, 'tp')),
+    goal: Math.max(doc.idCounters?.goal || 0, maxIdFromList(goalIds, 'goal')),
+    goalUpdate: Math.max(doc.idCounters?.goalUpdate || 0, maxIdFromList(goalUpdateIds, 'gu'))
   };
   return doc;
 }
@@ -2439,6 +2926,8 @@ function normalizePersonRecord(person = {}) {
     promotionReadiness: normalizeText(person.promotionReadiness),
     agenda: normalizeText(person.agenda),
     notes: normalizeText(person.notes),
+    talkingPoints: normalizeTalkingPoints(person.talkingPoints),
+    goals: normalizeGoals(person.goals),
     cadenceOverrides: normalizeCadenceOverrides(person.cadenceOverrides),
     vacations: normalizeVacationEntries(person.vacations),
     snoozes: normalizeSnoozeEntries(person.snoozes),
@@ -2488,6 +2977,7 @@ function normalizeEventRecord(event = {}) {
       meetingDate: normalizeDate(safe.meetingDate) || todayStamp(),
       durationMinutes: Number.isFinite(Number(safe.durationMinutes)) ? Number(safe.durationMinutes) : null,
       notes: normalizeText(safe.notes),
+      pulse: normalizePulse(safe.pulse),
       source: normalizeText(safe.source || 'manual') || 'manual',
       externalUid: normalizeText(safe.externalUid)
     };
@@ -2518,6 +3008,8 @@ function normalizePersonChanges(changes = {}) {
   if ('developmentGoalSummary' in changes) normalized.developmentGoalSummary = normalizeText(changes.developmentGoalSummary);
   if ('promotionReadiness' in changes) normalized.promotionReadiness = normalizeText(changes.promotionReadiness);
   if ('agenda' in changes) normalized.agenda = normalizeText(changes.agenda);
+  if ('talkingPoints' in changes) normalized.talkingPoints = normalizeTalkingPoints(changes.talkingPoints);
+  if ('goals' in changes) normalized.goals = normalizeGoals(changes.goals);
   if ('notes' in changes) normalized.notes = normalizeText(changes.notes);
   if ('cadenceOverrides' in changes) normalized.cadenceOverrides = normalizeCadenceOverrides(changes.cadenceOverrides);
   if ('vacations' in changes) normalized.vacations = normalizeVacationEntries(changes.vacations);
@@ -2540,7 +3032,10 @@ function nextId(kind) {
     vacation: ['vacation', 'vac'],
     meeting: ['meeting', 'mtg'],
     note: ['note', 'note'],
-    evidence: ['evidence', 'ev']
+    evidence: ['evidence', 'ev'],
+    talkingPoint: ['talkingPoint', 'tp'],
+    goal: ['goal', 'goal'],
+    goalUpdate: ['goalUpdate', 'gu']
   };
   const [counterKey, prefix] = map[kind] || [kind, String(kind || 'id').slice(0, 3)];
   if (!app.doc.idCounters[counterKey]) app.doc.idCounters[counterKey] = 0;
@@ -2711,6 +3206,7 @@ function projectDoc(doc) {
       ...deepCopy(person),
       meetings: [],
       notesHistory: [],
+      changeLog: [],
       archived: false,
       updatedAt: person.createdAt,
       _meetingUidSet: new Set()
@@ -2726,6 +3222,7 @@ function projectDoc(doc) {
           id: event.personId,
           meetings: [],
           notesHistory: [],
+          changeLog: [],
           archived: false,
           updatedAt: event.createdAt,
           _meetingUidSet: new Set()
@@ -2738,7 +3235,23 @@ function projectDoc(doc) {
     if (!report) return;
 
     if (type === 'person_updated') {
-      Object.assign(report, deepCopy(event.changes || {}));
+      const changes = event.changes || {};
+      const TRACKED_CHANGE_FIELDS = { level: 'Level', supportLevel: 'Support level', pdcStatus: 'PDC status' };
+      Object.keys(TRACKED_CHANGE_FIELDS).forEach((field) => {
+        if (!(field in changes)) return;
+        const from = normalizeText(report[field]);
+        const to = normalizeText(changes[field]);
+        if (from === to) return;
+        if (!Array.isArray(report.changeLog)) report.changeLog = [];
+        report.changeLog.push({
+          date: normalizeDate(String(event.createdAt).slice(0, 10)) || todayStamp(),
+          createdAt: event.createdAt,
+          field: TRACKED_CHANGE_FIELDS[field],
+          from,
+          to
+        });
+      });
+      Object.assign(report, deepCopy(changes));
       report.updatedAt = event.createdAt;
       return;
     }
@@ -2764,6 +3277,7 @@ function projectDoc(doc) {
         meetingDate: normalizeDate(event.meetingDate) || todayStamp(),
         durationMinutes: event.durationMinutes,
         notes: normalizeText(event.notes),
+        pulse: normalizePulse(event.pulse),
         source: normalizeText(event.source) || 'manual',
         externalUid: normalizeText(event.externalUid),
         createdAt: event.createdAt
@@ -2797,6 +3311,9 @@ function projectDoc(doc) {
         vacations: normalizeVacationEntries(report.vacations),
         snoozes: normalizeSnoozeEntries(report.snoozes),
         evidence: normalizeEvidenceEntries(report.evidence),
+        talkingPoints: normalizeTalkingPoints(report.talkingPoints),
+        goals: normalizeGoals(report.goals),
+        changeLog: [...(report.changeLog || [])].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt))),
         customFields: Array.isArray(report.customFields) ? report.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.id || field.label || field.value) : [],
         meetings,
         notesHistory,
@@ -2832,6 +3349,7 @@ function getMetrics(id) {
     lastCvReview: '',
     lastInteraction: '',
     oneOnOneOverdue: false,
+    oneOnOneDueInDays: null,
     pdcOverdue: false,
     cvReviewOverdue: false,
     pdcStatus: PDC_STATUSES[0],
@@ -2843,7 +3361,12 @@ function getMetrics(id) {
     followUps: [],
     openFollowUps: [],
     vacationStatus: { active: false, current: null, upcoming: false, next: null },
-    thresholds: { oneOnOneDays: DEFAULT_THRESHOLDS.oneOnOneDays, pdcDays: DEFAULT_THRESHOLDS.pdcDays, cvReviewDays: DEFAULT_THRESHOLDS.cvReviewDays }
+    thresholds: { oneOnOneDays: DEFAULT_THRESHOLDS.oneOnOneDays, pdcDays: DEFAULT_THRESHOLDS.pdcDays, cvReviewDays: DEFAULT_THRESHOLDS.cvReviewDays },
+    pulseSeries: [],
+    pulseTrendDown: false,
+    goals: [],
+    primaryGoal: null,
+    openTalkingPoints: []
   };
 }
 
@@ -2906,10 +3429,26 @@ function buildReportMetrics(report, settings) {
   if (report.supportLevel === 'Support needed' || report.supportLevel === 'Urgent') potentialAttention.push({ rule: 'supportLevel', label: `Support level: ${report.supportLevel}` });
   if (report.nextOneOnOneDate && findVacationForDate(report, report.nextOneOnOneDate)) potentialAttention.push({ rule: 'oneOnOneDuringVacation', label: '1:1 planned during vacation' });
   if (report.nextPdcDate && findVacationForDate(report, report.nextPdcDate)) potentialAttention.push({ rule: 'pdcDuringVacation', label: 'PDC planned during vacation' });
+  const pulseSeries = (report.meetings || [])
+    .filter((meeting) => normalizePulse(meeting.pulse) && canonicalMeetingType(meeting.meetingType) !== 'CV review')
+    .slice(0, 6)
+    .map((meeting) => ({ meetingId: meeting.id, meetingDate: normalizeDate(meeting.meetingDate), meetingType: canonicalMeetingType(meeting.meetingType), pulse: normalizePulse(meeting.pulse) }));
+  const recentPulses = pulseSeries.map((item) => item.pulse);
+  const pulseTrendDown = recentPulses.length > 0 && (
+    recentPulses[0] === 'red'
+    || (recentPulses.length >= 2 && recentPulses[0] !== 'green' && recentPulses[1] !== 'green')
+  );
+  if (settings.pulseTrendCounts !== false && pulseTrendDown) potentialAttention.push({ rule: 'pulseTrend', label: '1:1 pulse trending down' });
+  const goals = normalizeGoals(report.goals || []);
+  const primaryGoal = goals.find((goal) => goal.status !== 'Done') || goals[0] || null;
+  const openTalkingPoints = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => !point.done);
   const attentionDetails = potentialAttention.filter((item) => !snoozedAll && !snoozedRules.has(item.rule));
   const attention = attentionDetails.map((item) => item.label);
   const snoozedAttentionCount = potentialAttention.length - attentionDetails.length;
+  const daysSinceOneOnOne = lastOneOnOne ? dateDiffInDays(lastOneOnOne) : null;
+  const oneOnOneDueInDays = daysSinceOneOnOne === null ? null : thresholds.oneOnOneDays - daysSinceOneOnOne;
   return {
+    oneOnOneDueInDays,
     lastOneOnOne,
     lastPdc,
     lastCvReview,
@@ -2930,7 +3469,12 @@ function buildReportMetrics(report, settings) {
     followUps,
     openFollowUps,
     vacationStatus,
-    thresholds
+    thresholds,
+    pulseSeries,
+    pulseTrendDown,
+    goals,
+    primaryGoal,
+    openTalkingPoints
   };
 }
 
@@ -3018,10 +3562,14 @@ function undoLastDestructiveAction() {
 }
 
 function syncBodyOverlayLock() {
+  const goalModalEl = document.getElementById('goalModal');
+  const feedbackModalEl = document.getElementById('feedbackModal');
   const locked = startupPromptOverlayEl.classList.contains('open')
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
-    || globalSearchEl.classList.contains('open');
+    || globalSearchEl.classList.contains('open')
+    || !!goalModalEl?.classList.contains('open')
+    || !!feedbackModalEl?.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
 }
 
@@ -3493,7 +4041,7 @@ async function refreshFileStats() {
 
 
 function buildMeetingsCsv() {
-  const rows = ['date,type,person,duration,notes,source,created_at'];
+  const rows = ['date,type,person,duration,pulse,notes,source,created_at'];
   const meetings = [];
   getReports().forEach((report) => {
     (report.meetings || []).forEach((meeting) => {
@@ -3507,6 +4055,7 @@ function buildMeetingsCsv() {
       csvCell(meeting.meetingType || ''),
       csvCell(meeting.personName || ''),
       csvCell(meeting.durationMinutes ?? ''),
+      csvCell(normalizePulse(meeting.pulse)),
       csvCell(meeting.notes || ''),
       csvCell(meeting.source || ''),
       csvCell(meeting.createdAt || '')
@@ -3516,7 +4065,7 @@ function buildMeetingsCsv() {
 }
 
 function buildPeopleCsv() {
-  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','next_agenda','notes','cadence_overrides','vacations','snoozes','additional_fields'];
+  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','next_agenda','goals','talking_points','notes','cadence_overrides','vacations','snoozes','additional_fields'];
   const rows = [headers.join(',')];
   [...getReports()].sort((a, b) => a.name.localeCompare(b.name)).forEach((report) => {
     rows.push([
@@ -3529,9 +4078,11 @@ function buildPeopleCsv() {
       csvCell(report.nextPdcDate || ''),
       csvCell(report.pdcStatus || ''),
       csvCell(report.supportLevel || ''),
-      csvCell(report.developmentGoalSummary || ''),
+      csvCell(primaryGoalOf(report)?.title || report.developmentGoalSummary || ''),
       csvCell(report.promotionReadiness || ''),
-      csvCell(report.agenda || ''),
+      csvCell(openTalkingPointsFor(report).map((point) => point.text).join('\n') || report.agenda || ''),
+      csvCell(JSON.stringify(normalizeGoals(report.goals || []))),
+      csvCell(JSON.stringify(normalizeTalkingPoints(report.talkingPoints || []))),
       csvCell(report.notes || ''),
       csvCell(serializeCadenceOverrides(report.cadenceOverrides)),
       csvCell(serializeVacations(report.vacations)),
@@ -3953,6 +4504,7 @@ function renderMeetingHistory(report) {
                 <div class="meeting-item-meta">
                   ${badge(meeting.meetingType, 'info')}
                   <span class="meeting-date">${escapeHtml(formatDate(meeting.meetingDate))}${Number.isFinite(Number(meeting.durationMinutes)) && Number(meeting.durationMinutes) > 0 ? escapeHtml(` · ${Number(meeting.durationMinutes)} min`) : ''}</span>
+                  ${normalizePulse(meeting.pulse) ? `<span class="meeting-pulse-inline"><span class="pulse-dot" data-pulse="${escapeHtml(normalizePulse(meeting.pulse))}"></span>${escapeHtml(PULSE_LABELS[normalizePulse(meeting.pulse)])}</span>` : ''}
                   ${followUpBadge}
                 </div>
                 <div class="meeting-summary-copy">${escapeHtml(summaryText)}</div>
@@ -3969,6 +4521,10 @@ function renderMeetingHistory(report) {
                   <button type="button" class="secondary" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
                 </div>
               </div>
+              ${(() => {
+                const covered = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => point.done && point.meetingId === meeting.id);
+                return covered.length ? `<div class="meeting-covered-points"><strong>Covered talking points</strong><ul>${covered.map((point) => `<li>${escapeHtml(point.text)}</li>`).join('')}</ul></div>` : '';
+              })()}
               ${meeting.notes ? `<div class="meeting-notes note-markdown">${renderNoteMarkdown(meeting.notes)}</div>` : '<p class="section-note">No meeting notes.</p>'}
             </div>
           </details>
@@ -4010,6 +4566,8 @@ function makeDraftReport() {
     promotionReadiness: '',
     agenda: '',
     notes: '',
+    talkingPoints: [],
+    goals: [],
     cadenceOverrides: {},
     vacations: [],
     snoozes: [],
@@ -4071,6 +4629,8 @@ function addEvidenceDraftRow(template = {}) {
       id: tempId,
       date: normalizeDate(template.date) || todayStamp(),
       category: normalizeText(template.category) || categories[0] || '',
+      kind: normalizeFeedbackKind(template.kind),
+      shared: !!template.shared,
       summary: normalizeText(template.summary),
       detail: normalizeText(template.detail),
       linkedMeetingId: normalizeText(template.linkedMeetingId)
@@ -4288,6 +4848,199 @@ function renderAttentionControlsMarkup(editorReport, metrics) {
   `;
 }
 
+// v0.44: talking points panel (Meetings tab). Non-form UI; every action
+// commits immediately through updateReport so the queue is never lost to an
+// unsaved form. Ticking marks a point discussed; the 1:1 room stages instead.
+function renderTalkingPointsPanel(report) {
+  const openPoints = openTalkingPointsFor(report);
+  const donePoints = normalizeTalkingPoints(report.talkingPoints || [])
+    .filter((point) => point.done)
+    .sort((a, b) => String(b.doneAt || b.createdAt).localeCompare(String(a.doneAt || a.createdAt)));
+  const meetings = report.meetings || [];
+  const openList = openPoints.length
+    ? `<ul class="tp-list">${openPoints.map((point) => `
+        <li class="tp-item">
+          <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" aria-label="Mark discussed">
+          <span class="tp-item-text">${escapeHtml(point.text)}
+            ${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}
+          </span>
+          <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
+        </li>`).join('')}</ul>`
+    : '<p class="tp-empty">Nothing queued for the next conversation yet.</p>';
+  const doneList = donePoints.length
+    ? `<details class="tp-done-details">
+        <summary class="tp-done-toggle">Discussed (${donePoints.length})</summary>
+        <ul class="tp-list" style="margin-top:8px;">${donePoints.map((point) => {
+          const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
+          const doneStamp = String(point.doneAt || '').slice(0, 10);
+          return `<li class="tp-item done">
+            <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point">
+            <span class="tp-item-text">${escapeHtml(point.text)}
+              <span class="tp-meta">${doneStamp ? `Discussed ${formatDate(doneStamp)}` : 'Discussed'}${linkedMeeting ? ` · <button type="button" class="tl-jump" data-jump-meeting="${escapeHtml(linkedMeeting.id)}">View meeting</button>` : ''}</span>
+            </span>
+            <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
+          </li>`;
+        }).join('')}</ul>
+      </details>`
+    : '';
+  return `
+    <div class="drawer-section" id="talkingPointsSection">
+      <div class="drawer-section-head">
+        <div>
+          <h3>Talking Points</h3>
+          <p class="section-note">The running queue for the next conversation. Saved instantly, no Save changes needed. Tick a point when it is covered, or run the whole meeting from the 1:1 room.</p>
+        </div>
+        <button type="button" class="secondary" data-open-room="${escapeHtml(report.id)}">Open 1:1 room</button>
+      </div>
+      ${openList}
+      <div class="tp-add">
+        <input type="text" id="drawerTpInput" placeholder="Add a talking point and press Enter" autocomplete="off">
+        <button type="button" class="secondary" id="drawerTpAddBtn">Add</button>
+      </div>
+      ${doneList}
+    </div>`;
+}
+
+// v0.44: development goals panel (Development tab). Goals are edited through
+// the goal modal and saved immediately, replacing the old free-text summary.
+function renderGoalsPanelMarkup(editorReport, options = {}) {
+  const isCreating = !!options.isCreating;
+  const goals = normalizeGoals(editorReport.goals || []);
+  const body = isCreating
+    ? '<p class="tp-empty">Goals become available after the direct report has been created.</p>'
+    : (goals.length
+      ? `<div class="goal-list">${goals.map((goal) => {
+          const recentUpdates = [...(goal.updates || [])].slice(-3).reverse();
+          return `<div class="goal-card">
+            <div class="goal-card-head">
+              <span class="goal-card-title">${escapeHtml(goal.title)}</span>
+              ${statusPillHtml('goal', goal.status)}
+              <button type="button" class="secondary" data-goal-edit="${escapeHtml(goal.id)}">Edit</button>
+            </div>
+            ${renderGoalProgressBar(goal)}
+            <div class="goal-card-meta">
+              ${goal.targetDate ? `<span>Target ${escapeHtml(formatDate(goal.targetDate))}</span>` : ''}
+              <span>${(goal.updates || []).length} update${(goal.updates || []).length === 1 ? '' : 's'}</span>
+            </div>
+            ${goal.detail ? `<p class="goal-card-detail">${escapeHtml(goal.detail)}</p>` : ''}
+            ${recentUpdates.length ? `<ul class="goal-updates">${recentUpdates.map((update) => `<li><strong>${escapeHtml(formatDate(update.date))}</strong><span>${escapeHtml(update.text)} (${update.progress}%)</span></li>`).join('')}</ul>` : ''}
+          </div>`;
+        }).join('')}</div>`
+      : '<p class="tp-empty">No goals yet. Add the first development goal to anchor PDCs and 1:1s.</p>');
+  return `
+    <div class="drawer-section" id="goalsSection">
+      <div class="drawer-section-head">
+        <div>
+          <h3>Development Goals</h3>
+          <p class="section-note">Concrete goals with status and progress. Saved instantly through the goal editor. The first active goal shows on tiles, the table, the PDC board, and the briefing.</p>
+        </div>
+        ${isCreating ? '' : '<button type="button" class="secondary" id="addGoalBtn">Add goal</button>'}
+      </div>
+      ${body}
+    </div>`;
+}
+
+// v0.44: per-person timeline (Timeline tab). One reverse-chronological stream
+// of meetings, feedback, goal updates, manager note snapshots, and tracked
+// field changes. Everything is derived, nothing here writes to the log.
+function buildTimelineItems(report) {
+  const items = [];
+  (report.meetings || []).forEach((meeting) => {
+    items.push({
+      kind: 'meeting',
+      date: normalizeDate(meeting.meetingDate),
+      sortKey: `${normalizeDate(meeting.meetingDate)}~2`,
+      title: `${canonicalMeetingType(meeting.meetingType)} meeting`,
+      pulse: normalizePulse(meeting.pulse),
+      body: firstMeaningfulLine(meeting.notes) || '',
+      meetingId: meeting.id
+    });
+  });
+  normalizeEvidenceEntries(report.evidence || []).forEach((entry) => {
+    items.push({
+      kind: 'feedback',
+      date: normalizeDate(entry.date),
+      sortKey: `${normalizeDate(entry.date)}~3`,
+      title: entry.summary || 'Feedback',
+      kindTag: entry.kind,
+      body: [entry.category, entry.shared ? 'Shared with them' : '', entry.detail].filter(Boolean).join(' · ')
+    });
+  });
+  normalizeGoals(report.goals || []).forEach((goal) => {
+    (goal.updates || []).forEach((update) => {
+      items.push({
+        kind: 'goal',
+        date: normalizeDate(update.date),
+        sortKey: `${normalizeDate(update.date)}~4`,
+        title: goal.title,
+        body: `${update.text} (${update.progress}%)`
+      });
+    });
+  });
+  (report.notesHistory || []).forEach((entry) => {
+    items.push({
+      kind: 'note',
+      date: normalizeDate(entry.noteDate),
+      sortKey: `${normalizeDate(entry.noteDate)}~1${String(entry.createdAt || '')}`,
+      title: 'Manager note updated',
+      body: firstMeaningfulLine(entry.noteText) || ''
+    });
+  });
+  (report.changeLog || []).forEach((entry) => {
+    items.push({
+      kind: 'change',
+      date: normalizeDate(entry.date),
+      sortKey: `${normalizeDate(entry.date)}~0${String(entry.createdAt || '')}`,
+      title: `${entry.field} changed`,
+      body: `${entry.from || 'Not set'} → ${entry.to || 'Not set'}`
+    });
+  });
+  return items
+    .filter((item) => item.date)
+    .sort((a, b) => String(b.sortKey).localeCompare(String(a.sortKey)));
+}
+
+function renderTimelinePanel(report, options = {}) {
+  if (options.isCreating) {
+    return '<div class="drawer-section"><p class="tp-empty">The timeline becomes available after the direct report has been created.</p></div>';
+  }
+  const FILTERS = [
+    ['all', 'All'],
+    ['meeting', 'Meetings'],
+    ['feedback', 'Feedback'],
+    ['goal', 'Goals'],
+    ['note', 'Notes'],
+    ['change', 'Changes']
+  ];
+  const activeFilter = FILTERS.some(([key]) => key === app.ui.timelineFilter) ? app.ui.timelineFilter : 'all';
+  const allItems = buildTimelineItems(report);
+  const items = activeFilter === 'all' ? allItems : allItems.filter((item) => item.kind === activeFilter);
+  const stream = items.length
+    ? `<div class="tl-stream">${items.map((item) => `
+        <div class="tl-item" data-tl-kind="${escapeHtml(item.kind)}">
+          <div class="tl-item-head">
+            <span class="tl-item-date">${escapeHtml(formatDate(item.date))}</span>
+            ${item.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(PULSE_LABELS[item.pulse] || item.pulse)}"></span>` : ''}
+            <span class="tl-item-title">${escapeHtml(item.title)}</span>
+            ${item.kindTag ? `<span class="tl-kind-badge" data-kind="${escapeHtml(item.kindTag)}">${escapeHtml(FEEDBACK_KIND_LABELS[item.kindTag] || item.kindTag)}</span>` : ''}
+            ${item.meetingId ? `<button type="button" class="tl-jump" data-tl-jump-meeting="${escapeHtml(item.meetingId)}">View meeting</button>` : ''}
+          </div>
+          ${item.body ? `<p class="tl-item-body">${escapeHtml(item.body)}</p>` : ''}
+        </div>`).join('')}</div>`
+    : '<p class="tl-empty">Nothing here yet for this filter.</p>';
+  return `
+    <div class="drawer-section" id="timelineSection">
+      <div class="drawer-section-head">
+        <div>
+          <h3>Timeline</h3>
+          <p class="section-note">Everything about this person in one stream: meetings with their pulse, feedback, goal progress, note updates, and status changes.</p>
+        </div>
+      </div>
+      <div class="tl-filter">${FILTERS.map(([key, label]) => `<button type="button" class="${key === activeFilter ? 'active' : ''}" data-tl-filter="${key}">${label}</button>`).join('')}</div>
+      ${stream}
+    </div>`;
+}
+
 function renderEvidenceLockerMarkup(editorReport) {
   const categories = resolveEvidenceCategories(app.doc?.settings);
   const evidence = normalizeEvidenceEntries(editorReport.evidence || []);
@@ -4314,7 +5067,10 @@ function renderEvidenceLockerMarkup(editorReport) {
           <h3>Evidence Locker</h3>
           <p class="section-note">Capture concrete promotion, performance, and growth evidence while it is fresh.</p>
         </div>
-        <button type="button" id="addEvidenceBtn" class="secondary">Add Evidence</button>
+        <div class="actions">
+          <button type="button" id="logFeedbackBtn" class="secondary">Log feedback</button>
+          <button type="button" id="addEvidenceBtn" class="secondary">Add Evidence</button>
+        </div>
       </div>
       <div class="evidence-summary">${summaryBadges}</div>
       <div id="evidenceGroups" class="evidence-groups">
@@ -4335,12 +5091,14 @@ function renderEvidenceLockerMarkup(editorReport) {
                     <div class="evidence-row-top">
                       <label><span>Date</span><input type="date" data-evidence-date value="${escapeHtml(entry.date || '')}"></label>
                       <label><span>Category</span><select data-evidence-category>${categoryOptions.map((category) => `<option value="${escapeHtml(category)}" ${category === entry.category ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('')}</select></label>
+                      <label><span>Kind</span><select data-evidence-kind>${FEEDBACK_KINDS.map((kind) => `<option value="${escapeHtml(kind)}" ${kind === (entry.kind || 'observation') ? 'selected' : ''}>${escapeHtml(FEEDBACK_KIND_LABELS[kind])}</option>`).join('')}</select></label>
                       <label><span>Linked meeting</span><select data-evidence-meeting>${meetingOptions}${entry.linkedMeetingId && !linkedMeeting ? `<option value="${escapeHtml(entry.linkedMeetingId)}" selected>Linked meeting no longer exists</option>` : ''}</select>${entry.linkedMeetingId && !linkedMeeting ? '<small class="field-hint">Linked meeting no longer exists.</small>' : ''}</label>
                       <button type="button" class="secondary" data-remove-evidence="${escapeHtml(entry.id)}">Remove</button>
                     </div>
                     <div class="evidence-row-bottom">
                       <label><span>Summary</span><input type="text" data-evidence-summary value="${escapeHtml(entry.summary || '')}" placeholder="Short headline"></label>
                       <label><span>Detail</span><textarea data-evidence-detail placeholder="What happened, why it mattered, who saw it">${escapeHtml(entry.detail || '')}</textarea></label>
+                      <label class="evidence-kind-shared"><input type="checkbox" data-evidence-shared ${entry.shared ? 'checked' : ''}><span>Shared with them</span></label>
                     </div>
                   </div>
                 `;
@@ -4798,8 +5556,12 @@ function printPdcOnePager(reportId) {
       ${fact('Next 1:1', formatDate(report.nextOneOnOneDate))}
       ${fact('Last 1:1', metrics.lastOneOnOne ? formatDate(metrics.lastOneOnOne) : '')}
     </div>
-    <h3>Development focus</h3>
-    ${para(report.developmentGoalSummary, 'No development goal captured.')}
+    <h3>Development goals</h3>
+    ${(() => {
+      const goals = normalizeGoals(report.goals || []);
+      if (!goals.length) return para('', 'No development goals captured.');
+      return goals.map((goal) => `${para(`${goal.title} · ${goal.status} · ${goal.progress}%${goal.targetDate ? ` · Target ${formatDate(goal.targetDate)}` : ''}`)}${goal.detail ? para(goal.detail) : ''}`).join('');
+    })()}
     <h3>Promotion readiness / growth area</h3>
     ${para(report.promotionReadiness, 'No readiness notes captured.')}
     <h3>Growth evidence</h3>
@@ -4912,6 +5674,7 @@ function renderDetailDrawer() {
           </div>
           <div class="actions">
             <button type="button" class="secondary" id="closeDetailDrawerBtn">Close</button>
+            ${isCreating ? '' : `<button type="button" class="secondary" data-open-room="${escapeHtml(report.id)}">1:1 room</button>`}
             ${isCreating ? '' : '<button type="button" class="secondary" id="printOnePagerBtn">One-pager</button>'}
             <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
             ${isCreating ? '' : '<button type="button" class="secondary" id="deleteSelectedBtn">Delete</button>'}
@@ -4946,15 +5709,13 @@ function renderDetailDrawer() {
                 </div>
                 <div class="development-focus-grid">
                   <label class="development-field">
-                    <span>Development goal summary</span>
-                    <textarea name="developmentGoalSummary" placeholder="What are they working toward?">${escapeHtml(editorReport.developmentGoalSummary || '')}</textarea>
-                  </label>
-                  <label class="development-field">
                     <span>Promotion readiness / growth area</span>
                     <textarea name="promotionReadiness" placeholder="Readiness notes, strengths, gaps, growth focus">${escapeHtml(editorReport.promotionReadiness || '')}</textarea>
                   </label>
                 </div>
               </div>
+
+              ${renderGoalsPanelMarkup(editorReport, { isCreating })}
 
               ${isCreating ? '' : renderEvidenceLockerMarkup(editorReport)}
 
@@ -4990,27 +5751,16 @@ function renderDetailDrawer() {
                   <p class="section-note" style="margin:0;">Meeting history becomes available after the direct report has been created.</p>
                 </div>
               </div>` : `
-              <div class="drawer-section" id="agendaSection">
-                <div class="drawer-section-head">
-                  <div>
-                    <h3>Next 1:1 Agenda</h3>
-                    <p class="section-note">Talking points to bring to the next conversation. Insert them into the notes when you log the meeting, then clear what got covered. Remember to Save changes.</p>
-                  </div>
-                </div>
-                <div class="md-shell" id="detailAgendaShell" data-md-active="write">
-                  <div class="md-tabs" role="tablist" aria-label="Agenda editor mode">
-                    <button type="button" class="md-tab active" data-md-target="detailAgendaShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
-                    <button type="button" class="md-tab" data-md-target="detailAgendaShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
-                  </div>
-                  <div class="md-panel-write" role="tabpanel">
-                    <textarea name="agenda" id="detailAgenda" class="notes-textarea" placeholder="- Topic to raise&#10;[] Action to agree on">${escapeHtml(editorReport.agenda || '')}</textarea>
-                  </div>
-                  <div class="md-panel-preview note-markdown" id="detailAgendaPreview" role="tabpanel">${renderNoteMarkdown(editorReport.agenda, { emptyHtml: '<p class="note-preview-empty">Nothing planned yet.</p>' })}</div>
-                </div>
-              </div>
+              ${renderTalkingPointsPanel(report)}
               ${renderCadencePulseSection(report)}
               ${renderOpenFollowUpsPanel(report, metrics)}
               ${renderMeetingHistory(report)}`}
+            </div>
+          </div>
+
+          <div class="drawer-tab-panel" data-drawer-panel="timeline" ${activeTab === 'timeline' ? '' : 'hidden'}>
+            <div class="drawer-panel-stack">
+              ${renderTimelinePanel(report, { isCreating })}
             </div>
           </div>
 
@@ -5137,13 +5887,6 @@ function renderDetailDrawer() {
   const syncDetailNotesPreview = () => updateRenderedNotePreview(detailNotesPreviewEl, detailNotesInputEl?.value || '');
   bindMarkdownShell('detailNotesShell', { textareaEl: detailNotesInputEl, previewEl: detailNotesPreviewEl, onSync: syncDetailNotesPreview });
   syncDetailNotesPreview();
-  const detailAgendaInputEl = document.getElementById('detailAgenda');
-  const detailAgendaPreviewEl = document.getElementById('detailAgendaPreview');
-  if (detailAgendaInputEl && detailAgendaPreviewEl) {
-    const syncDetailAgendaPreview = () => updateRenderedNotePreview(detailAgendaPreviewEl, detailAgendaInputEl.value || '', 'Nothing planned yet.');
-    bindMarkdownShell('detailAgendaShell', { textareaEl: detailAgendaInputEl, previewEl: detailAgendaPreviewEl, onSync: syncDetailAgendaPreview });
-    syncDetailAgendaPreview();
-  }
   document.getElementById('purgeReportBtn')?.addEventListener('click', () => purgeReportPermanently(report.id));
   document.getElementById('printOnePagerBtn')?.addEventListener('click', () => printPdcOnePager(report.id));
   document.getElementById('addVacationBtn')?.addEventListener('click', addVacationDraftRow);
@@ -5183,6 +5926,56 @@ function renderDetailDrawer() {
   });
   document.querySelectorAll('[data-remove-evidence]').forEach((button) => {
     button.addEventListener('click', () => removeEvidenceDraftRow(button.getAttribute('data-remove-evidence')));
+  });
+  // v0.44: talking points (instant-save), goals, feedback, timeline, 1:1 room.
+  document.querySelectorAll('#detailDrawer [data-tp-toggle]').forEach((input) => {
+    input.addEventListener('change', () => setTalkingPointDone(report.id, input.getAttribute('data-tp-toggle'), !!input.checked));
+  });
+  document.querySelectorAll('#detailDrawer [data-tp-delete]').forEach((button) => {
+    button.addEventListener('click', () => deleteTalkingPoint(report.id, button.getAttribute('data-tp-delete')));
+  });
+  const drawerTpInputEl = document.getElementById('drawerTpInput');
+  const submitDrawerTp = async () => {
+    const value = normalizeText(drawerTpInputEl?.value);
+    if (!value) return;
+    await addTalkingPoint(report.id, value, { silent: true });
+    document.getElementById('drawerTpInput')?.focus();
+  };
+  drawerTpInputEl?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    submitDrawerTp();
+  });
+  document.getElementById('drawerTpAddBtn')?.addEventListener('click', submitDrawerTp);
+  document.querySelectorAll('#detailDrawer [data-open-room]').forEach((button) => {
+    button.addEventListener('click', () => openMeetingRoom(button.getAttribute('data-open-room')));
+  });
+  document.getElementById('addGoalBtn')?.addEventListener('click', () => openGoalModal(report.id));
+  document.querySelectorAll('#detailDrawer [data-goal-edit]').forEach((button) => {
+    button.addEventListener('click', () => openGoalModal(report.id, button.getAttribute('data-goal-edit')));
+  });
+  document.getElementById('logFeedbackBtn')?.addEventListener('click', () => openFeedbackModal(report.id));
+  document.querySelectorAll('#detailDrawer [data-tl-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextFilter = button.getAttribute('data-tl-filter') || 'all';
+      if (app.ui.timelineFilter === nextFilter) return;
+      app.ui.timelineFilter = nextFilter;
+      renderDetailDrawer();
+    });
+  });
+  document.querySelectorAll('#detailDrawer [data-tl-jump-meeting]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const meetingId = button.getAttribute('data-tl-jump-meeting');
+      captureWorkspaceDraftFromDom(detailEditorFormEl);
+      app.ui.detailDrawerTab = 'meetings';
+      persistUiState();
+      renderDetailDrawer();
+      window.setTimeout(() => {
+        const target = [...document.querySelectorAll('[data-meeting-item]')].find((item) => item.getAttribute('data-meeting-item') === meetingId);
+        if (target && typeof target.open === 'boolean') target.open = true;
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 60);
+    });
   });
   document.querySelectorAll('[data-followup-toggle]').forEach((input) => {
     input.addEventListener('change', () => {
@@ -5281,7 +6074,9 @@ function navigateRender(update) {
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
+  if (ready) maybeResetPdcRoundOnRollover();
   document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
+  document.body.classList.toggle('density-compact', app.doc?.settings?.density === 'compact');
 
   // Inline startup gate is only used as a fallback when the modal flow isn't shown
   // (e.g. on browsers without File System Access API, where the modal's primary
@@ -5312,13 +6107,20 @@ function render() {
     if (followUpsSectionEl) followUpsSectionEl.setAttribute('hidden', '');
     const pdcSummarySectionEl = document.getElementById('pdcSummarySection');
     if (pdcSummarySectionEl) pdcSummarySectionEl.setAttribute('hidden', '');
+    const meetingRoomSectionEl = document.getElementById('meetingRoomSection');
+    if (meetingRoomSectionEl) meetingRoomSectionEl.setAttribute('hidden', '');
     const settingsSectionEl = document.getElementById('settingsSection');
     if (settingsSectionEl) settingsSectionEl.setAttribute('hidden', '');
     renderDetailDrawer();
     return;
   }
 
-  // Ready: route to the active main view.
+  // Ready: route to the active main view. The meeting room needs a valid
+  // person behind it; fall back if that person is gone.
+  if (app.ui.mainView === 'meetingRoom' && !getReportById(app.ui.meetingRoomReportId)) {
+    app.ui.mainView = MAIN_VIEWS.includes(app.ui.meetingRoomReturnView) && app.ui.meetingRoomReturnView !== 'meetingRoom' ? app.ui.meetingRoomReturnView : 'reports';
+    app.ui.meetingRoomReportId = '';
+  }
   const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
   if (appShellEl) {
     appShellEl.setAttribute('data-main-view', mainView);
@@ -5354,6 +6156,10 @@ function render() {
   } else if (mainView === 'pdcSummary') {
     if (headerTitleEl) headerTitleEl.textContent = 'PDC Summary';
     if (headerSubEl) headerSubEl.textContent = `PDC outcomes across ${reportCount} ${reportLabel} — edit development focus and readiness right here.`;
+  } else if (mainView === 'meetingRoom') {
+    const roomReport = getReportById(app.ui.meetingRoomReportId);
+    if (headerTitleEl) headerTitleEl.textContent = roomReport ? `1:1 room · ${roomReport.name}` : '1:1 meeting room';
+    if (headerSubEl) headerSubEl.textContent = 'Prep, run, and wrap up the conversation in one place.';
   } else if (mainView === 'settings') {
     if (headerTitleEl) headerTitleEl.textContent = 'Settings';
     if (headerSubEl) headerSubEl.textContent = 'Overdue rules, data health, exports, backups.';
@@ -5365,6 +6171,7 @@ function render() {
   const showMeetings = mainView === 'meetings';
   const showFollowUps = mainView === 'followUps';
   const showPdcSummary = mainView === 'pdcSummary';
+  const showMeetingRoom = mainView === 'meetingRoom';
   const showSettings = mainView === 'settings';
   teamHealthSectionEl.toggleAttribute('hidden', !showTeamHealth);
   reportsSectionEl.toggleAttribute('hidden', !showReports || !!app.ui.selectedId || app.ui.creatingReport);
@@ -5374,6 +6181,8 @@ function render() {
   if (followUpsSectionEl) followUpsSectionEl.toggleAttribute('hidden', !showFollowUps);
   const pdcSummarySectionEl = document.getElementById('pdcSummarySection');
   if (pdcSummarySectionEl) pdcSummarySectionEl.toggleAttribute('hidden', !showPdcSummary);
+  const meetingRoomSectionEl = document.getElementById('meetingRoomSection');
+  if (meetingRoomSectionEl) meetingRoomSectionEl.toggleAttribute('hidden', !showMeetingRoom);
   const settingsSectionEl = document.getElementById('settingsSection');
   if (settingsSectionEl) settingsSectionEl.toggleAttribute('hidden', !showSettings);
 
@@ -5396,6 +6205,7 @@ function render() {
   renderMeetingsView();
   renderFollowUpsView();
   renderPdcSummaryView();
+  renderMeetingRoomView();
   renderDetailDrawer();
   renderSettingsView();
 }
@@ -5409,6 +6219,208 @@ function renderSettingsView() {
     <div class="tile-link-row" data-settings-open="rules"><strong>Overdue rules, data health &amp; privacy</strong><span>Thresholds, toggles, exports, backups, Stable mode, and the disconnect &amp; wipe control.</span></div>
     <p class="help-text" style="margin-top:12px">Click the card above to open the full settings panel.</p>
   `;
+}
+
+// -----------------------------------------------------------------------
+// 1:1 meeting room: a full-screen per-person view for running the actual
+// conversation. Left side is prep (talking points, open follow-ups, goals),
+// right side is the live meeting (meta, pulse, notes, wrap up). Nothing is
+// written to the event log until Wrap up; the in-flight draft lives in the
+// module-level meetingRoomDraft.
+// -----------------------------------------------------------------------
+function renderMeetingRoomView() {
+  const sectionEl = document.getElementById('meetingRoomSection');
+  const mount = document.getElementById('meetingRoomBody');
+  if (!sectionEl || !mount) return;
+  if (sectionEl.hasAttribute('hidden')) return;
+  // Preserve whatever is currently typed before the innerHTML rewrite.
+  captureMeetingRoomDraftFromDom();
+  const report = getReportById(app.ui.meetingRoomReportId);
+  if (!report) { mount.innerHTML = ''; return; }
+  const metrics = getMetrics(report.id);
+  const draft = meetingRoomDraftFor(report.id);
+  const checkedIds = new Set(draft.checkedPointIds || []);
+  const openPoints = openTalkingPointsFor(report);
+  const donePoints = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => point.done);
+  const openFollowUps = metrics.openFollowUps || [];
+  const goals = metrics.goals || [];
+  const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+  const lastOneOnOneText = metrics.lastOneOnOne
+    ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${dateDiffInDays(metrics.lastOneOnOne) !== null ? ` · ${dateDiffInDays(metrics.lastOneOnOne)}d ago` : ''}`
+    : 'No 1:1 logged yet';
+  const chips = [
+    badge(lastOneOnOneText, metrics.oneOnOneOverdue ? 'warning' : 'neutral'),
+    statusPillHtml('pdc', metrics.pdcStatus),
+    openFollowUps.length ? badge(`${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}`, 'info') : '',
+    report.nextOneOnOneDate ? badge(`Next planned ${formatDate(report.nextOneOnOneDate)}`, 'neutral') : '',
+    metrics.vacationStatus?.active ? badge('On vacation', 'info') : '',
+    renderPulseDots(metrics.pulseSeries, { emptyHtml: '' })
+  ].filter(Boolean).join('');
+
+  const pointsHtml = openPoints.length
+    ? `<ul class="tp-list">${openPoints.map((point) => `
+        <li class="tp-item">
+          <input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} aria-label="Covered in this meeting">
+          <span class="tp-item-text">${escapeHtml(point.text)}
+            ${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}
+          </span>
+          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
+        </li>`).join('')}</ul>`
+    : '<p class="tp-empty">Nothing queued. Add the first talking point below.</p>';
+
+  const followUpsHtml = openFollowUps.length
+    ? `<div class="mr-followups">${openFollowUps.map((item) => `
+        <label class="tp-item">
+          <input type="checkbox" data-mr-followup="${escapeHtml(item.meetingId)}::${item.lineIndex}">
+          <span class="tp-item-text">${escapeHtml(item.text)}<span class="tp-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span></span>
+        </label>`).join('')}</div>`
+    : '<p class="tp-empty">No open follow-ups. Clean slate.</p>';
+
+  const goalsHtml = goals.length
+    ? goals.map((goal) => `
+        <div class="mr-goal-row">
+          <span class="mr-goal-title" title="${escapeHtml(goal.title)}">${escapeHtml(goal.title)}</span>
+          ${statusPillHtml('goal', goal.status)}
+          ${renderGoalProgressBar(goal, { compact: true })}
+          <button type="button" class="tt-action-btn" data-mr-goal-edit="${escapeHtml(goal.id)}" title="Edit goal">Edit</button>
+        </div>`).join('')
+    : '<p class="tp-empty">No goals yet. Add one to anchor the development conversation.</p>';
+
+  mount.innerHTML = `
+    <div class="mr-shell" data-mr-report="${escapeHtml(report.id)}">
+      <div class="mr-header">
+        <div class="mr-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
+        <div class="mr-header-title">
+          <h2>${escapeHtml(report.name || 'Unnamed')}</h2>
+          <p>${escapeHtml(report.level || 'Level not set')}${report.mentors ? ` · Mentor: ${escapeHtml(report.mentors)}` : ''}</p>
+        </div>
+        <div class="mr-chips">${chips}</div>
+      </div>
+      <div class="mr-grid">
+        <div class="mr-col">
+          <div class="mr-panel">
+            <h3>Talking Points</h3>
+            <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
+            ${pointsHtml}
+            <div class="tp-add">
+              <input type="text" id="mrTpInput" placeholder="Add a talking point and press Enter" autocomplete="off">
+              <button type="button" class="secondary" id="mrTpAddBtn">Add</button>
+            </div>
+            ${donePoints.length ? `<button type="button" class="tp-done-toggle" data-open-report-meetings="${escapeHtml(report.id)}">${donePoints.length} discussed point${donePoints.length === 1 ? '' : 's'} in the workspace →</button>` : ''}
+          </div>
+          <div class="mr-panel">
+            <h3>Open Follow-Ups</h3>
+            <p class="section-note">Ticking marks them complete immediately in the source meeting note.</p>
+            ${followUpsHtml}
+          </div>
+          <div class="mr-panel">
+            <h3>Goals</h3>
+            <p class="section-note">The development thread this conversation should touch.</p>
+            <div>${goalsHtml}</div>
+            <div class="actions" style="margin-top:10px;">
+              <button type="button" class="secondary" id="mrAddGoalBtn">Add goal</button>
+              <button type="button" class="secondary" id="mrLogFeedbackBtn">Log feedback</button>
+            </div>
+          </div>
+        </div>
+        <div class="mr-col">
+          <div class="mr-panel">
+            <h3>This Meeting</h3>
+            <div class="mr-meta-row">
+              <label><span>Type</span>
+                <select id="mrType">${MEETING_TYPES.map((type) => `<option value="${escapeHtml(type)}" ${type === draft.meetingType ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('')}</select>
+              </label>
+              <label><span>Date</span><input id="mrDate" type="date" value="${escapeHtml(draft.meetingDate || todayStamp())}"></label>
+              <label><span>Duration (min)</span><input id="mrDuration" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 45" value="${escapeHtml(String(draft.durationMinutes || ''))}"></label>
+            </div>
+            <div class="pulse-field">
+              <span>How did it feel?</span>
+              <div class="pulse-picker" role="radiogroup" aria-label="Meeting pulse">
+                ${PULSE_VALUES.map((value) => `<label class="pulse-option" data-pulse="${value}"><input type="radio" name="mrPulse" value="${value}" ${draft.pulse === value ? 'checked' : ''}><span>${PULSE_LABELS[value]}</span></label>`).join('')}
+                <button type="button" class="pulse-clear" id="mrPulseClear" title="Clear pulse">Clear</button>
+              </div>
+            </div>
+            <div style="margin-top:12px;">
+              <textarea id="mrNotes" class="mr-notes" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
+            </div>
+            <div class="actions" style="margin-top:10px;">
+              <button type="button" class="secondary" id="mrInsertPointsBtn" ${openPoints.length ? '' : 'disabled'}>Insert talking points</button>
+              <button type="button" class="secondary${draft.meetingType === 'PDC' ? '' : ' hidden'}" id="mrInsertPdcBtn">Insert PDC template</button>
+            </div>
+            <div class="mr-footer">
+              <div id="meetingRoomStatus" class="status-line"></div>
+              <button type="button" class="secondary" id="mrBackBtn">Back</button>
+              <button type="button" id="mrWrapUpBtn">Wrap up meeting</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Per-render wiring (same pattern the drawer uses).
+  const syncDraft = () => captureMeetingRoomDraftFromDom();
+  ['mrType', 'mrDate', 'mrDuration'].forEach((id) => document.getElementById(id)?.addEventListener('change', () => {
+    syncDraft();
+    if (id === 'mrType') {
+      document.getElementById('mrInsertPdcBtn')?.classList.toggle('hidden', meetingRoomDraft?.meetingType !== 'PDC');
+    }
+  }));
+  document.getElementById('mrNotes')?.addEventListener('input', syncDraft);
+  mount.querySelectorAll('input[name="mrPulse"]').forEach((input) => input.addEventListener('change', syncDraft));
+  document.getElementById('mrPulseClear')?.addEventListener('click', () => {
+    mount.querySelectorAll('input[name="mrPulse"]').forEach((input) => { input.checked = false; });
+    syncDraft();
+  });
+  mount.querySelectorAll('[data-mr-point]').forEach((input) => input.addEventListener('change', syncDraft));
+  mount.querySelectorAll('[data-mr-followup]').forEach((input) => input.addEventListener('change', () => {
+    const [meetingId, lineIndex] = String(input.getAttribute('data-mr-followup') || '').split('::');
+    toggleFollowUp(report.id, meetingId, Number(lineIndex), !!input.checked);
+  }));
+  mount.querySelectorAll('[data-mr-tp-delete]').forEach((button) => button.addEventListener('click', () => deleteTalkingPoint(report.id, button.getAttribute('data-mr-tp-delete'))));
+  const mrTpInput = document.getElementById('mrTpInput');
+  const submitTp = async () => {
+    const value = normalizeText(mrTpInput?.value);
+    if (!value) return;
+    await addTalkingPoint(report.id, value, { silent: true });
+    const restored = document.getElementById('mrTpInput');
+    if (restored) restored.focus();
+  };
+  mrTpInput?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    submitTp();
+  });
+  document.getElementById('mrTpAddBtn')?.addEventListener('click', submitTp);
+  document.getElementById('mrAddGoalBtn')?.addEventListener('click', () => openGoalModal(report.id));
+  mount.querySelectorAll('[data-mr-goal-edit]').forEach((button) => button.addEventListener('click', () => openGoalModal(report.id, button.getAttribute('data-mr-goal-edit'))));
+  document.getElementById('mrLogFeedbackBtn')?.addEventListener('click', () => openFeedbackModal(report.id));
+  mount.querySelector('[data-open-report-meetings]')?.addEventListener('click', () => {
+    const id = mount.querySelector('[data-open-report-meetings]').getAttribute('data-open-report-meetings');
+    closeMeetingRoom({ force: true });
+    app.ui.detailDrawerTab = 'meetings';
+    window.setTimeout(() => navigateRender(() => selectReport(id, { keepTab: true })), 0);
+  });
+  document.getElementById('mrInsertPointsBtn')?.addEventListener('click', () => {
+    const notesEl = document.getElementById('mrNotes');
+    const points = openTalkingPointsFor(getReportById(report.id));
+    if (!notesEl || !points.length) return;
+    const block = points.map((point) => `- ${point.text}`).join('\n');
+    const existing = notesEl.value;
+    notesEl.value = existing ? `${existing.replace(/\s+$/, '')}\n\n${block}` : block;
+    syncDraft();
+    notesEl.focus();
+  });
+  document.getElementById('mrInsertPdcBtn')?.addEventListener('click', () => {
+    const notesEl = document.getElementById('mrNotes');
+    if (!notesEl) return;
+    const existing = notesEl.value;
+    notesEl.value = existing ? `${existing.replace(/\s+$/, '')}\n\n${PDC_TEMPLATE_MARKDOWN}` : PDC_TEMPLATE_MARKDOWN;
+    syncDraft();
+    notesEl.focus();
+  });
+  document.getElementById('mrBackBtn')?.addEventListener('click', () => closeMeetingRoom());
+  document.getElementById('mrWrapUpBtn')?.addEventListener('click', () => wrapUpMeetingRoom());
 }
 
 // Unified sidebar renderer — replaces the old 3-pane list-pane system.
@@ -5456,7 +6468,7 @@ function renderSidebar() {
   const reportsBadge = reportCount > 0 ? `<span class="sidebar-item-badge">${reportCount}</span>` : '';
   const followUpsBadge = openFollowUpsTotal > 0 ? `<span class="sidebar-item-badge" data-tone="warning">${openFollowUpsTotal}</span>` : '';
   const isReports = mainView === 'reports';
-  const isMeetings = mainView === 'meetings';
+  const isMeetings = mainView === 'meetings' || mainView === 'meetingRoom';
   const isFollowUps = mainView === 'followUps';
   const isPdcSummary = mainView === 'pdcSummary';
   const isSettings = mainView === 'settings';
@@ -5518,6 +6530,23 @@ function renderReportsGrid() {
   const attentionEl = document.getElementById('reportsAttentionFilter');
   if (attentionEl && attentionEl.value !== (app.ui.attentionFilter || '')) attentionEl.value = app.ui.attentionFilter || '';
 
+  // Tiles vs Table lens. The switch lives in the toolbar; the mode is a
+  // persisted UI preference (localStorage), never part of the document.
+  const viewMode = app.ui.reportsViewMode === 'table' ? 'table' : 'tiles';
+  const switchEl = document.getElementById('reportsViewSwitch');
+  if (switchEl) {
+    switchEl.querySelectorAll('[data-reports-view]').forEach((btn) => {
+      const isActive = btn.getAttribute('data-reports-view') === viewMode;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+  mount.classList.toggle('reports-grid', viewMode !== 'table');
+  if (viewMode === 'table') {
+    mount.innerHTML = renderReportsTableHtml(filtered, total);
+    return;
+  }
+
   const tiles = filtered.map((report, tileIndex) => {
     const metrics = getMetrics(report.id);
     const fill = supportLevelFill(report.supportLevel);
@@ -5538,6 +6567,7 @@ function renderReportsGrid() {
       <div class="report-tile-head">
         <div class="report-tile-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
         <span class="report-tile-name">${escapeHtml(report.name || 'Unnamed')}</span>
+        <span class="tile-room-btn" data-open-room="${escapeHtml(report.id)}" role="button" tabindex="0" title="Open the 1:1 meeting room">1:1 room</span>
         <span class="report-tile-support-dot" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
       </div>
       <div class="report-tile-meta">
@@ -5545,6 +6575,10 @@ function renderReportsGrid() {
         ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
       </div>
       ${renderTileSparkline(report)}
+      ${(metrics.pulseSeries || []).length || metrics.primaryGoal ? `<div class="report-tile-vitals">
+        ${renderPulseDots(metrics.pulseSeries, { emptyHtml: '' })}
+        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBar(metrics.primaryGoal, { compact: true })}</span>` : ''}
+      </div>` : ''}
       ${chips.length ? `<div class="report-tile-chips">${chips.join('')}</div>` : ''}
     </button>`;
   }).join('');
@@ -5562,6 +6596,59 @@ function renderReportsGrid() {
     return;
   }
   mount.innerHTML = `${tiles}${addTile}`;
+}
+
+// Monday-style table lens for Direct Reports: grouped by attention state,
+// solid status pills editable inline, next 1:1 editable in place. Same
+// filtered set as the tiles, so search and toolbar filters apply here too.
+function renderReportsTableHtml(filtered, total) {
+  if (!filtered.length) {
+    const filtersActive = !!(app.ui.searchTerm || app.ui.planFilter || app.ui.attentionFilter || currentThemeFilter());
+    return total > 0 && filtersActive
+      ? '<p class="help-text" style="padding:12px">No direct reports match the current filters.</p>'
+      : '<p class="help-text" style="padding:12px">No direct reports yet. Use + Add direct report in the toolbar.</p>';
+  }
+  const needsAttention = filtered.filter((report) => (getMetrics(report.id).attentionDetails || []).length > 0);
+  const onTrack = filtered.filter((report) => (getMetrics(report.id).attentionDetails || []).length === 0);
+  const pillSelect = (attr, reportId, options, current, kind) => `<select class="pill-select" ${attr}="${escapeHtml(reportId)}" data-pill-kind="${kind}" data-pill-value="${escapeHtml(current)}" aria-label="${kind === 'pdc' ? 'PDC status' : 'Support level'}">${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select>`;
+  const row = (report) => {
+    const metrics = getMetrics(report.id);
+    const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    const pdcValue = normalizePdcStatus(report.rawPdcStatus !== undefined ? report.rawPdcStatus : report.pdcStatus);
+    const supportValue = normalizeSupportLevel(report.supportLevel);
+    const openFu = (metrics.openFollowUps || []).length;
+    const lastText = metrics.lastOneOnOne ? formatDate(metrics.lastOneOnOne) : 'Never';
+    const attentionTitle = (metrics.attentionDetails || []).map((item) => item.label).join(', ');
+    return `<tr data-table-row="${escapeHtml(report.id)}">
+      <td><button type="button" class="tt-person" data-table-person="${escapeHtml(report.id)}" ${attentionTitle ? `title="${escapeHtml(attentionTitle)}"` : ''}>
+        <span class="tt-avatar" style="${avatarGradient(report.id)}">${escapeHtml(initials)}</span>
+        <span><span class="tt-person-name">${escapeHtml(report.name || 'Unnamed')}</span><span class="tt-sub">${escapeHtml(report.level || 'Level not set')}</span></span>
+      </button></td>
+      <td>${pillSelect('data-table-pdc', report.id, PDC_STATUSES, pdcValue, 'pdc')}</td>
+      <td>${pillSelect('data-table-support', report.id, SUPPORT_LEVELS, supportValue, 'support')}</td>
+      <td><span class="${metrics.oneOnOneOverdue ? 'tt-overdue' : ''}">${escapeHtml(lastText)}</span></td>
+      <td class="tt-date"><input type="date" data-table-next="${escapeHtml(report.id)}" value="${escapeHtml(report.nextOneOnOneDate || '')}" aria-label="Next planned 1:1"></td>
+      <td><span class="tt-count${openFu ? '' : ' zero'}">${openFu}</span></td>
+      <td>${metrics.primaryGoal ? `<span title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBar(metrics.primaryGoal, { compact: true })}</span>` : '<span class="tt-empty">No goal</span>'}</td>
+      <td>${renderPulseDots(metrics.pulseSeries, { emptyHtml: '<span class="tt-empty">No pulse</span>' })}</td>
+      <td><span class="tt-actions">
+        <button type="button" class="tt-action-btn" data-open-room="${escapeHtml(report.id)}" title="Open the 1:1 meeting room">1:1 room</button>
+        <button type="button" class="tt-action-btn" data-table-log="${escapeHtml(report.id)}" title="Log a meeting without the room">Log meeting</button>
+      </span></td>
+    </tr>`;
+  };
+  const group = (label, tone, reports) => reports.length
+    ? `<tr class="team-table-group" data-tone="${tone}"><td colspan="9"><span class="team-table-group-label">${escapeHtml(label)} <span class="team-table-group-count">· ${reports.length}</span></span></td></tr>${reports.map(row).join('')}`
+    : '';
+  return `<div class="team-table-wrap"><table class="team-table">
+    <thead><tr>
+      <th>Person</th><th>PDC status</th><th>Support</th><th>Last 1:1</th><th>Next 1:1</th><th>Follow-ups</th><th>Goal</th><th>Pulse</th><th></th>
+    </tr></thead>
+    <tbody>
+      ${group('Needs attention', 'danger', needsAttention)}
+      ${group('On track', 'success', onTrack)}
+    </tbody>
+  </table></div>`;
 }
 
 function supportLevelFill(level) {
@@ -5802,7 +6889,7 @@ function renderMeetingsView() {
         </div>
         <div class="mv-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml(mInitials)}</div>
         <div class="meetings-view-main">
-          <span class="meetings-view-main-title">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}</span>
+          <span class="meetings-view-main-title">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}${normalizePulse(meeting.pulse) ? ` <span class="pulse-dot" data-pulse="${escapeHtml(normalizePulse(meeting.pulse))}" title="${escapeHtml(PULSE_LABELS[normalizePulse(meeting.pulse)])}"></span>` : ''}</span>
           <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
           <span class="meetings-view-main-snip">${escapeHtml(snippet)}</span>
           ${fuChip ? `<span class="meetings-view-chips">${fuChip}</span>` : ''}
@@ -5984,9 +7071,9 @@ function runGlobalSearch(rawQuery) {
   const fieldHits = [];
   reports.forEach((r) => {
     [
-      ['Development focus', r.developmentGoalSummary, 'pdc-summary'],
+      ['Development goals', normalizeGoals(r.goals || []).map((goal) => `${goal.title} ${goal.detail}`.trim()).join(' · '), 'pdc-summary'],
       ['Promotion readiness', r.promotionReadiness, 'pdc-summary'],
-      ['Next 1:1 agenda', r.agenda, 'meetings'],
+      ['Talking points', openTalkingPointsFor(r).map((point) => point.text).join(' · '), 'meetings'],
       ['Manager notes', r.notes, 'pdc-summary']
     ].forEach(([label, value, tab]) => {
       if (normalizeText(value).toLowerCase().includes(query)) fieldHits.push({ r, label, value, tab });
@@ -6154,6 +7241,81 @@ const PDC_BOARD_HINTS = Object.freeze({
 // to Completed offers to log the PDC meeting via a toast action, and moving
 // to In progress offers to plan the date. The card menu exposes the same
 // helpers directly ('plan-date' and 'log-pdc' pseudo-targets).
+// v0.44.1: PDC rounds. The year splits into equal rounds derived from the
+// PDC cadence rule (thresholds.pdcDays): 90 days gives 4 rounds, 180 gives 2,
+// 365 gives 1. Rounds are calendar aligned starting in January. When a new
+// round begins, every card can be moved back to Not started automatically
+// (settings.pdcRoundAutoReset, on by default). The reset writes normal
+// person_updated events, so the change log and timeline keep a full audit
+// trail per person, and the last handled round is remembered in
+// settings.lastPdcRoundKey so it runs exactly once per rollover.
+function pdcRoundInfo(settings = app.doc?.settings || normalizeSettings({}), stamp = todayStamp()) {
+  const pdcDays = safePositiveInteger(settings?.thresholds?.pdcDays, DEFAULT_THRESHOLDS.pdcDays);
+  const anchor0 = Math.min(12, Math.max(1, safePositiveInteger(settings?.pdcRoundStartMonth, 1))) - 1;
+  const options = [1, 2, 3, 4, 6, 12];
+  const ideal = 365 / pdcDays;
+  const roundsPerYear = options.reduce((best, option) => Math.abs(option - ideal) < Math.abs(best - ideal) ? option : best, options[0]);
+  const monthsPerRound = 12 / roundsPerYear;
+  const year = Number(stamp.slice(0, 4));
+  const month0 = Number(stamp.slice(5, 7)) - 1;
+  const anchorYear = month0 >= anchor0 ? year : year - 1;
+  const monthsSinceAnchor = (month0 - anchor0 + 12) % 12;
+  const index = Math.floor(monthsSinceAnchor / monthsPerRound) + 1;
+  const startAbs = anchor0 + (index - 1) * monthsPerRound;
+  const endAbs = startAbs + monthsPerRound - 1;
+  const startYear = anchorYear + Math.floor(startAbs / 12);
+  const startMonth0 = startAbs % 12;
+  const endYear = anchorYear + Math.floor(endAbs / 12);
+  const endMonth0 = endAbs % 12;
+  const startStamp = `${startYear}-${String(startMonth0 + 1).padStart(2, '0')}-01`;
+  const endStamp = new Date(Date.UTC(endYear, endMonth0 + 1, 0)).toISOString().slice(0, 10);
+  const monthLabel = (m0, y) => new Date(Date.UTC(y, m0, 1)).toLocaleString(undefined, { month: 'short' });
+  const rangeLabel = startYear === endYear
+    ? `${monthLabel(startMonth0, startYear)} to ${monthLabel(endMonth0, endYear)} ${endYear}`
+    : `${monthLabel(startMonth0, startYear)} ${startYear} to ${monthLabel(endMonth0, endYear)} ${endYear}`;
+  const daysLeft = Math.max(0, Math.round((Date.parse(`${endStamp}T00:00:00Z`) - Date.parse(`${stamp}T00:00:00Z`)) / 86400000));
+  return {
+    key: `${startYear}-R${index}`,
+    index,
+    roundsPerYear,
+    pdcDays,
+    startMonth: anchor0 + 1,
+    label: `Round ${index} of ${roundsPerYear}`,
+    rangeLabel,
+    startStamp,
+    endStamp,
+    daysLeft
+  };
+}
+
+function maybeResetPdcRoundOnRollover() {
+  if (!app.doc) return;
+  const settings = app.doc.settings;
+  const info = pdcRoundInfo(settings);
+  if (settings.lastPdcRoundKey === info.key) return;
+  const firstRun = !settings.lastPdcRoundKey;
+  settings.lastPdcRoundKey = info.key;
+  if (firstRun || !settings.pdcRoundAutoReset) {
+    scheduleAutosave();
+    return;
+  }
+  const toReset = getReports().filter((report) => getMetrics(report.id).pdcStatus !== 'Not started');
+  toReset.forEach((report) => {
+    appendEvent({
+      id: nextId('event'),
+      type: 'person_updated',
+      personId: report.id,
+      changes: { pdcStatus: 'Not started' },
+      createdAt: nowIso()
+    });
+  });
+  applyProjectedState();
+  scheduleAutosave();
+  if (toReset.length) {
+    showToast(`New PDC round: ${info.label} (${info.rangeLabel}). ${toReset.length} card${toReset.length === 1 ? '' : 's'} moved back to Not started.`, 'info');
+  }
+}
+
 async function performBoardMove(personId, targetStatus) {
   const report = getReportById(personId);
   if (!report) return;
@@ -6165,6 +7327,10 @@ async function performBoardMove(personId, targetStatus) {
   }
   if (targetStatus === 'log-pdc') {
     openMeetingModal(personId, { presetType: 'PDC' });
+    return;
+  }
+  if (targetStatus === 'open-room') {
+    openMeetingRoom(personId);
     return;
   }
   if (!PDC_STATUSES.includes(targetStatus)) return;
@@ -6191,13 +7357,14 @@ function renderPdcBoardHtml(reports, entering) {
     const cards = people.map((r) => {
       const metrics = getMetrics(r.id);
       const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-      const goal = firstMeaningfulLine(r.developmentGoalSummary) || 'No development focus set';
+      const primaryGoal = metrics.primaryGoal;
+      const goal = primaryGoal ? primaryGoal.title : 'No development goal set';
       const meta = `Last: ${metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never'} · Next: ${r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned'}`;
       const isDatePrompt = app.ui.pdcBoardDateId === r.id;
       const moveOptions = PDC_BOARD_COLUMNS
         .filter((s) => s !== status)
         .map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)
-        .join('') + `<option value="plan-date">Plan PDC date…</option><option value="log-pdc">Log PDC meeting…</option>`;
+        .join('') + `<option value="open-room">Open 1:1 room…</option><option value="plan-date">Plan PDC date…</option><option value="log-pdc">Log PDC meeting…</option>`;
       const nextPdc = normalizeDate(r.nextPdcDate);
       const cardChips = [];
       if (nextPdc && nextPdc < todayStamp()) cardChips.push('<span class="mv-chip" data-tone="warning">Planned date passed</span>');
@@ -6219,6 +7386,7 @@ function renderPdcBoardHtml(reports, entering) {
           <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(r.id)}" title="Open profile">${escapeHtml(r.name || 'Unnamed')}</button>
         </div>
         <span class="pdc-board-card-goal">${escapeHtml(goal)}</span>
+        ${primaryGoal ? renderGoalProgressBar(primaryGoal, { compact: true }) : ''}
         <span class="pdc-board-card-meta">${escapeHtml(meta)}</span>
         ${chipRow}
         ${dateBlock}
@@ -6242,6 +7410,77 @@ function renderPdcBoardHtml(reports, entering) {
   return `<div class="pdc-board${entering ? ' anim-entry' : ''}">${columns}</div>`;
 }
 
+// v0.44.1: a derived kanban for 1:1 hygiene. Columns are computed from the
+// cadence rules, planned dates, vacations, and snoozes, so cards cannot be
+// dragged. Every card carries the fastest paths to act: open the 1:1 room,
+// log a meeting, or set the next planned date inline.
+const ONE_ON_ONE_BOARD_COLUMNS = Object.freeze(['Overdue', 'Due soon', 'Planned', 'On track']);
+const ONE_ON_ONE_BOARD_TONES = Object.freeze({ 'Overdue': 'danger', 'Due soon': 'warning', 'Planned': 'info', 'On track': 'success' });
+const ONE_ON_ONE_BOARD_HINTS = Object.freeze({
+  'Overdue': 'Past the cadence rule with nothing planned',
+  'Due soon': 'Due within 7 days, nothing planned yet',
+  'Planned': 'A future 1:1 date is set',
+  'On track': 'Inside cadence, on vacation, or snoozed'
+});
+function renderOneOnOneBoardHtml(reports, entering) {
+  const today = todayStamp();
+  const buckets = new Map(ONE_ON_ONE_BOARD_COLUMNS.map((column) => [column, []]));
+  reports.forEach((report) => {
+    const metrics = getMetrics(report.id);
+    const planned = normalizeDate(report.nextOneOnOneDate);
+    let column = 'On track';
+    if (planned && planned >= today) column = 'Planned';
+    else if (metrics.oneOnOneOverdue) column = 'Overdue';
+    else if (Number.isFinite(metrics.oneOnOneDueInDays) && metrics.oneOnOneDueInDays <= 7) column = 'Due soon';
+    buckets.get(column).push(report);
+  });
+  let cardIndex = 0;
+  const columns = ONE_ON_ONE_BOARD_COLUMNS.map((column) => {
+    const people = buckets.get(column);
+    const cards = people.map((report) => {
+      const metrics = getMetrics(report.id);
+      const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const daysSince = metrics.lastOneOnOne ? dateDiffInDays(metrics.lastOneOnOne) : null;
+      const lastText = metrics.lastOneOnOne
+        ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${daysSince !== null ? ` · ${daysSince}d ago` : ''}`
+        : 'No 1:1 logged yet';
+      const planned = normalizeDate(report.nextOneOnOneDate);
+      const chips = [];
+      if (column === 'Planned' && planned) chips.push(`<span class="mv-chip" data-tone="info">${escapeHtml(formatDate(planned))}</span>`);
+      if (column === 'Due soon' && Number.isFinite(metrics.oneOnOneDueInDays)) chips.push(`<span class="mv-chip" data-tone="warning">Due in ${Math.max(0, metrics.oneOnOneDueInDays)}d</span>`);
+      const openFu = (metrics.openFollowUps || []).length;
+      if (openFu) chips.push(`<span class="mv-chip" data-tone="info">${openFu} follow-up${openFu === 1 ? '' : 's'}</span>`);
+      if (metrics.vacationStatus?.active) chips.push('<span class="mv-chip" data-tone="info">On vacation</span>');
+      const idx = Math.min(cardIndex, 14);
+      cardIndex += 1;
+      return `<div class="pdc-board-card oo-board-card" data-board-card="${escapeHtml(report.id)}" style="--i:${idx}">
+        <div class="pdc-board-card-top">
+          <div class="pdc-board-card-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml(initials)}</div>
+          <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(report.id)}" title="Open profile">${escapeHtml(report.name || 'Unnamed')}</button>
+        </div>
+        <span class="pdc-board-card-meta">${escapeHtml(lastText)}</span>
+        ${(metrics.pulseSeries || []).length ? renderPulseDots(metrics.pulseSeries, { emptyHtml: '' }) : ''}
+        ${chips.length ? `<div class="pdc-board-card-chips">${chips.join('')}</div>` : ''}
+        <label class="oo-plan"><span>Next 1:1</span><input type="date" data-oo-plan="${escapeHtml(report.id)}" value="${escapeHtml(planned || '')}" aria-label="Next planned 1:1 for ${escapeHtml(report.name || 'Unnamed')}"></label>
+        <div class="oo-card-actions">
+          <button type="button" data-open-room="${escapeHtml(report.id)}">1:1 room</button>
+          <button type="button" class="secondary" data-oo-log="${escapeHtml(report.id)}">Log 1:1</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="pdc-board-col" data-tone="${ONE_ON_ONE_BOARD_TONES[column]}">
+      <div class="pdc-board-col-head">
+        <span class="pdc-board-col-dot" aria-hidden="true"></span>
+        <h3>${escapeHtml(column)}</h3>
+        <span class="pdc-board-count">${people.length}</span>
+      </div>
+      <p class="pdc-board-col-hint">${escapeHtml(ONE_ON_ONE_BOARD_HINTS[column])}</p>
+      <div class="pdc-board-drop">${cards || '<div class="pdc-board-empty">No one here</div>'}</div>
+    </div>`;
+  }).join('');
+  return `<div class="pdc-board oo-board${entering ? ' anim-entry' : ''}">${columns}</div>`;
+}
+
 // Renders a global PDC Summary across all reports. Each card shows the derived
 // PDC status, last and next PDC dates, and the two focus fields — editable in
 // place so a whole PDC round can be captured from this one screen.
@@ -6257,21 +7496,30 @@ function renderPdcSummaryView() {
   }
   const editingId = app.ui.pdcSummaryEditId || '';
   const pdcEntering = viewJustEntered('pdcSummaryView', app.ui.mainView === 'pdcSummary');
-  const mode = app.ui.pdcViewMode === 'board' ? 'board' : 'list';
+  const mode = ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list';
+  const roundInfo = pdcRoundInfo(app.doc?.settings);
+  const roundChip = mode === 'oneOnOneBoard' ? '' : `<span class="pdc-round-chip" title="Derived from the PDC cadence rule (every ${roundInfo.pdcDays} days, so ${roundInfo.roundsPerYear} round${roundInfo.roundsPerYear === 1 ? '' : 's'} per year, anchored to month ${roundInfo.startMonth}).${app.doc?.settings?.pdcRoundAutoReset ? ' Cards move back to Not started when a new round begins.' : ' Automatic reset is off in Settings.'}">${escapeHtml(roundInfo.label)} · ${escapeHtml(roundInfo.rangeLabel)} · ${roundInfo.daysLeft} days left</span>`;
   const toolbar = `<div class="pdc-view-toolbar">
-    <div class="pdc-view-toggle" role="group" aria-label="PDC layout">
+    <div class="pdc-view-toggle" role="group" aria-label="Board layout">
       <button type="button" class="${mode === 'list' ? 'active' : ''}" data-pdc-view="list" aria-pressed="${mode === 'list'}">List</button>
-      <button type="button" class="${mode === 'board' ? 'active' : ''}" data-pdc-view="board" aria-pressed="${mode === 'board'}">Board</button>
+      <button type="button" class="${mode === 'board' ? 'active' : ''}" data-pdc-view="board" aria-pressed="${mode === 'board'}">PDC board</button>
+      <button type="button" class="${mode === 'oneOnOneBoard' ? 'active' : ''}" data-pdc-view="oneOnOneBoard" aria-pressed="${mode === 'oneOnOneBoard'}">1:1 board</button>
     </div>
+    ${roundChip}
   </div>`;
   if (mode === 'board') {
     mount.innerHTML = `${toolbar}${renderPdcBoardHtml(reports, pdcEntering)}`;
     return;
   }
+  if (mode === 'oneOnOneBoard') {
+    mount.innerHTML = `${toolbar}${renderOneOnOneBoardHtml(reports, pdcEntering)}`;
+    return;
+  }
   mount.innerHTML = `${toolbar}<div class="pdc-summary-view${pdcEntering ? ' anim-entry' : ''}">
     ${reports.map((r, cardIndex) => {
       const metrics = getMetrics(r.id);
-      const dev = normalizeText(r.developmentGoalSummary);
+      const cardGoals = metrics.goals || [];
+      const cardPrimaryGoal = metrics.primaryGoal;
       const prom = normalizeText(r.promotionReadiness);
       const isEditing = editingId === r.id;
       const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
@@ -6289,8 +7537,8 @@ function renderPdcSummaryView() {
       const body = isEditing
         ? `<div class="pdc-summary-card-body">
             <label class="pdc-summary-block pdc-summary-edit">
-              <span class="pdc-summary-block-label">Development goal summary</span>
-              <textarea data-pdc-dev placeholder="What are they working toward?">${escapeHtml(dev)}</textarea>
+              <span class="pdc-summary-block-label">Primary goal title</span>
+              <textarea data-pdc-dev placeholder="What are they working toward? Full goal editing lives in the workspace.">${escapeHtml(cardPrimaryGoal?.title || '')}</textarea>
             </label>
             <label class="pdc-summary-block pdc-summary-edit">
               <span class="pdc-summary-block-label">Promotion readiness / growth area</span>
@@ -6299,8 +7547,8 @@ function renderPdcSummaryView() {
           </div>`
         : `<div class="pdc-summary-card-body">
             <div class="pdc-summary-block">
-              <span class="pdc-summary-block-label">Development goal summary</span>
-              ${dev ? `<p>${escapeHtml(dev)}</p>` : `<p class="pdc-summary-block-empty">Not set</p>`}
+              <span class="pdc-summary-block-label">Development goals</span>
+              ${cardGoals.length ? cardGoals.map((goal) => `<div class="pdc-summary-goal-row"><span class="pdc-summary-goal-title">${escapeHtml(goal.title)}</span>${statusPillHtml('goal', goal.status)}${renderGoalProgressBar(goal, { compact: true })}</div>`).join('') : `<p class="pdc-summary-block-empty">Not set</p>`}
             </div>
             <div class="pdc-summary-block">
               <span class="pdc-summary-block-label">Promotion readiness / growth area</span>
@@ -6344,6 +7592,8 @@ function buildFullPayloadFromReport(report) {
     promotionReadiness: report.promotionReadiness || '',
     agenda: report.agenda || '',
     notes: report.notes || '',
+    talkingPoints: deepCopy(report.talkingPoints || []),
+    goals: deepCopy(report.goals || []),
     cadenceOverrides: deepCopy(report.cadenceOverrides || {}),
     vacations: deepCopy(report.vacations || []),
     evidence: deepCopy(report.evidence || []),
@@ -6371,6 +7621,8 @@ function collectWorkspaceEvidence() {
       id: fallbackId,
       date: row.querySelector('[data-evidence-date]')?.value,
       category: row.querySelector('[data-evidence-category]')?.value,
+      kind: row.querySelector('[data-evidence-kind]')?.value,
+      shared: !!row.querySelector('[data-evidence-shared]')?.checked,
       summary: row.querySelector('[data-evidence-summary]')?.value,
       detail: row.querySelector('[data-evidence-detail]')?.value,
       linkedMeetingId: row.querySelector('[data-evidence-meeting]')?.value
@@ -6404,11 +7656,15 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     pdcStatus: document.querySelector('[name="pdcStatus"]')
       ? normalizePdcStatus(formData.get('pdcStatus'))
       : normalizePdcStatus(existingReport?.rawPdcStatus !== undefined ? existingReport.rawPdcStatus : existingReport?.pdcStatus),
-    developmentGoalSummary: normalizeText(formData.get('developmentGoalSummary')),
+    developmentGoalSummary: document.querySelector('[name="developmentGoalSummary"]')
+      ? normalizeText(formData.get('developmentGoalSummary'))
+      : normalizeText(existingReport?.developmentGoalSummary),
     promotionReadiness: normalizeText(formData.get('promotionReadiness')),
     agenda: document.querySelector('[name="agenda"]')
       ? normalizeText(formData.get('agenda'))
       : normalizeText(existingReport?.agenda),
+    talkingPoints: normalizeTalkingPoints(existingReport?.talkingPoints || []),
+    goals: normalizeGoals(existingReport?.goals || []),
     notes: normalizeText(formData.get('notes')),
     cadenceOverrides: cadenceOverrideInputsPresent
       ? normalizeCadenceOverrides({
@@ -6475,12 +7731,12 @@ async function updateReport(reportId, payload, options = {}) {
   const createdAt = nowIso();
   const preparedPayload = { ...payload, vacations: assignVacationIds(payload.vacations), evidence: assignEvidenceIds(payload.evidence) };
   const changes = {};
-  ['name','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','nextPdcDate','pdcStatus','supportLevel','developmentGoalSummary','promotionReadiness','agenda','cadenceOverrides','vacations','evidence','customFields'].forEach((key) => {
+  ['name','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','nextPdcDate','pdcStatus','supportLevel','developmentGoalSummary','promotionReadiness','agenda','talkingPoints','goals','cadenceOverrides','vacations','evidence','customFields'].forEach((key) => {
     // report.pdcStatus holds the derived status after projection; the stored
     // (user-set) value lives in rawPdcStatus, so diff against that instead.
     const prevSource = key === 'pdcStatus' && report.rawPdcStatus !== undefined ? report.rawPdcStatus : report[key];
-    const nextValue = ['customFields','cadenceOverrides','vacations','evidence'].includes(key) ? JSON.stringify(preparedPayload[key] || (key === 'cadenceOverrides' ? {} : [])) : String(preparedPayload[key] || '');
-    const prevValue = ['customFields','cadenceOverrides','vacations','evidence'].includes(key) ? JSON.stringify(prevSource || (key === 'cadenceOverrides' ? {} : [])) : String(prevSource || '');
+    const nextValue = ['customFields','cadenceOverrides','vacations','evidence','talkingPoints','goals'].includes(key) ? JSON.stringify(preparedPayload[key] || (key === 'cadenceOverrides' ? {} : [])) : String(preparedPayload[key] || '');
+    const prevValue = ['customFields','cadenceOverrides','vacations','evidence','talkingPoints','goals'].includes(key) ? JSON.stringify(prevSource || (key === 'cadenceOverrides' ? {} : [])) : String(prevSource || '');
     if (nextValue !== prevValue) changes[key] = preparedPayload[key];
   });
   const notesChanged = preparedPayload.notes !== String(report.notes || '');
@@ -6561,6 +7817,7 @@ function toggleFollowUp(reportId, meetingId, lineIndex, done) {
     meetingDate: meeting.meetingDate,
     durationMinutes: meeting.durationMinutes ?? null,
     notes: lines.join('\n'),
+    pulse: normalizePulse(meeting.pulse),
     source: meeting.source || 'manual',
     externalUid: meeting.externalUid || '',
     createdAt: nowIso()
@@ -6570,6 +7827,269 @@ function toggleFollowUp(reportId, meetingId, lineIndex, done) {
   scheduleAutosave();
   showToast(done ? 'Follow-up marked complete.' : 'Follow-up reopened.', 'success');
   return true;
+}
+
+// ---------------------------------------------------------------------------
+// v0.44: talking points, goals, feedback, and the 1:1 meeting room.
+// Talking points and goals are person-level arrays saved wholesale through
+// updateReport (the same pattern vacations and evidence use), so every change
+// lands in the event log as a person_updated and replays cleanly.
+// ---------------------------------------------------------------------------
+
+async function addTalkingPoint(reportId, text, options = {}) {
+  const report = getReportById(reportId);
+  const cleanText = normalizeText(text);
+  if (!report || !cleanText) return false;
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  payload.talkingPoints = normalizeTalkingPoints([
+    ...(report.talkingPoints || []),
+    { id: nextId('talkingPoint'), text: cleanText, createdAt: nowIso(), done: false, doneAt: '', meetingId: '' }
+  ]);
+  const ok = await updateReport(reportId, payload, { silentToast: true });
+  if (ok && !options.silent) showToast('Talking point added.', 'success');
+  return ok;
+}
+
+async function setTalkingPointDone(reportId, pointId, done, meetingId = '') {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  payload.talkingPoints = normalizeTalkingPoints((report.talkingPoints || []).map((point) => point.id === pointId
+    ? { ...point, done: !!done, doneAt: done ? nowIso() : '', meetingId: done ? (meetingId || point.meetingId || '') : '' }
+    : point));
+  return updateReport(reportId, payload, { silentToast: true });
+}
+
+async function deleteTalkingPoint(reportId, pointId) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  payload.talkingPoints = normalizeTalkingPoints((report.talkingPoints || []).filter((point) => point.id !== pointId));
+  const ok = await updateReport(reportId, payload, { silentToast: true });
+  if (ok) showToast('Talking point removed.', 'success');
+  return ok;
+}
+
+function openTalkingPointsFor(report) {
+  return normalizeTalkingPoints(report?.talkingPoints || []).filter((point) => !point.done);
+}
+
+function talkingPointIsCarriedOver(report, point) {
+  const lastLogged = latestMeetingDate(report, '1:1') || '';
+  if (!lastLogged) return false;
+  const createdStamp = String(point.createdAt || '').slice(0, 10);
+  return !!createdStamp && createdStamp <= lastLogged;
+}
+
+async function saveGoal(reportId, goalInput) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  const cleanTitle = normalizeText(goalInput.title);
+  if (!cleanTitle) {
+    showToast('A goal needs a title.', 'warning');
+    return false;
+  }
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  const goals = normalizeGoals(report.goals || []);
+  const existing = goalInput.id ? goals.find((goal) => goal.id === goalInput.id) : null;
+  const merged = normalizeGoal({
+    ...(existing || { createdAt: nowIso() }),
+    id: existing ? existing.id : nextId('goal'),
+    title: cleanTitle,
+    detail: normalizeText(goalInput.detail),
+    status: normalizeGoalStatus(goalInput.status),
+    targetDate: normalizeDate(goalInput.targetDate),
+    progress: goalInput.progress,
+    updates: existing ? existing.updates : []
+  }, '');
+  const noteText = normalizeText(goalInput.updateNote);
+  const progressChanged = existing && Number(existing.progress) !== Number(merged.progress);
+  if (noteText || progressChanged) {
+    merged.updates = [...merged.updates, normalizeGoalUpdate({
+      id: nextId('goalUpdate'),
+      date: todayStamp(),
+      text: noteText || `Progress set to ${merged.progress}%`,
+      progress: merged.progress
+    }, '')];
+  }
+  payload.goals = normalizeGoals(existing ? goals.map((goal) => goal.id === merged.id ? merged : goal) : [...goals, merged]);
+  const ok = await updateReport(reportId, payload, { silentToast: true });
+  if (ok) showToast(existing ? 'Goal updated.' : 'Goal added.', 'success');
+  return ok;
+}
+
+async function deleteGoal(reportId, goalId) {
+  const report = getReportById(reportId);
+  const goal = normalizeGoals(report?.goals || []).find((item) => item.id === goalId);
+  if (!report || !goal) return false;
+  if (!window.confirm(`Remove the goal "${goal.title}"? Its progress notes go with it.`)) return false;
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  payload.goals = normalizeGoals((report.goals || []).filter((item) => item.id !== goalId));
+  const ok = await updateReport(reportId, payload, { silentToast: true });
+  if (ok) showToast('Goal removed.', 'success');
+  return ok;
+}
+
+async function saveFeedbackEntry(reportId, entryInput) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  const summary = normalizeText(entryInput.summary);
+  if (!summary) {
+    showToast('Feedback needs a short summary.', 'warning');
+    return false;
+  }
+  captureWorkspaceDraftFromDom();
+  const payload = buildFullPayloadFromReport(report);
+  payload.evidence = normalizeEvidenceEntries([
+    normalizeEvidenceEntry({
+      id: nextId('evidence'),
+      date: normalizeDate(entryInput.date) || todayStamp(),
+      category: normalizeText(entryInput.category),
+      kind: normalizeFeedbackKind(entryInput.kind),
+      shared: !!entryInput.shared,
+      summary,
+      detail: normalizeText(entryInput.detail),
+      linkedMeetingId: normalizeText(entryInput.linkedMeetingId)
+    }, ''),
+    ...(report.evidence || [])
+  ]);
+  const ok = await updateReport(reportId, payload, { silentToast: true });
+  if (ok) showToast('Feedback logged.', 'success');
+  return ok;
+}
+
+function goalStatusVariant(status) {
+  return { 'On track': 'success', 'At risk': 'danger', 'Paused': 'neutral', 'Done': 'info' }[status] || 'neutral';
+}
+
+function renderGoalProgressBar(goal, options = {}) {
+  const progress = Math.max(0, Math.min(100, Number(goal?.progress) || 0));
+  const compact = options.compact ? ' compact' : '';
+  return `<div class="goal-progress${compact}" role="img" aria-label="Goal progress ${progress}%">
+    <div class="goal-progress-track"><div class="goal-progress-fill" data-goal-status="${escapeHtml(goal?.status || 'On track')}" style="width:${progress}%"></div></div>
+    <span class="goal-progress-pct">${progress}%</span>
+  </div>`;
+}
+
+function renderPulseDots(pulseSeries = [], options = {}) {
+  const limit = options.limit || 5;
+  const items = [...(pulseSeries || [])].slice(0, limit).reverse();
+  if (!items.length) return options.emptyHtml !== undefined ? options.emptyHtml : '<span class="pulse-dots-empty">No pulse yet</span>';
+  return `<span class="pulse-dots" role="img" aria-label="Recent 1:1 pulse, oldest to newest">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
+}
+
+function statusPillHtml(kind, value) {
+  return `<span class="status-pill" data-pill-kind="${escapeHtml(kind)}" data-pill-value="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
+}
+
+// The 1:1 meeting room keeps its in-flight state (notes, staged talking
+// points, meta) in a module-level draft so nothing is written to the event
+// log until Wrap up. Navigating away keeps the draft for the same person.
+let meetingRoomDraft = null;
+
+function meetingRoomDraftFor(reportId) {
+  if (meetingRoomDraft && meetingRoomDraft.reportId === reportId) return meetingRoomDraft;
+  meetingRoomDraft = {
+    reportId,
+    meetingType: '1:1',
+    meetingDate: todayStamp(),
+    durationMinutes: '',
+    pulse: '',
+    notes: '',
+    checkedPointIds: []
+  };
+  return meetingRoomDraft;
+}
+
+function openMeetingRoom(reportId, options = {}) {
+  const report = getReportById(reportId);
+  if (!report) return;
+  if (!confirmWorkspaceClose()) return;
+  clearWorkspaceDraft();
+  app.ui.meetingRoomReturnView = MAIN_VIEWS.includes(app.ui.mainView) && app.ui.mainView !== 'meetingRoom' ? app.ui.mainView : 'reports';
+  app.ui.meetingRoomReportId = reportId;
+  app.ui.selectedId = null;
+  app.ui.creatingReport = false;
+  app.ui.mainView = 'meetingRoom';
+  meetingRoomDraftFor(reportId);
+  if (options.presetType && MEETING_TYPES.includes(options.presetType)) meetingRoomDraft.meetingType = options.presetType;
+  persistUiState();
+  navigateRender(() => render());
+}
+
+function closeMeetingRoom(options = {}) {
+  const draft = meetingRoomDraft;
+  if (!options.force && draft && (normalizeText(draft.notes) || draft.checkedPointIds.length)) {
+    if (!window.confirm('Leave the meeting room? The unlogged notes draft stays until you close the app.')) return;
+  }
+  if (options.discardDraft) meetingRoomDraft = null;
+  const returnView = MAIN_VIEWS.includes(app.ui.meetingRoomReturnView) && app.ui.meetingRoomReturnView !== 'meetingRoom'
+    ? app.ui.meetingRoomReturnView
+    : 'reports';
+  app.ui.meetingRoomReportId = '';
+  app.ui.mainView = returnView;
+  persistUiState();
+  navigateRender(() => render());
+}
+
+function captureMeetingRoomDraftFromDom() {
+  if (!meetingRoomDraft) return;
+  const root = document.getElementById('meetingRoomBody');
+  if (!root || root.closest('[hidden]')) return;
+  const shell = root.querySelector('.mr-shell');
+  if (!shell || shell.getAttribute('data-mr-report') !== meetingRoomDraft.reportId) return;
+  const typeEl = root.querySelector('#mrType');
+  const dateEl = root.querySelector('#mrDate');
+  const durationEl = root.querySelector('#mrDuration');
+  const notesEl = root.querySelector('#mrNotes');
+  const pulseEl = root.querySelector('input[name="mrPulse"]:checked');
+  if (typeEl) meetingRoomDraft.meetingType = canonicalMeetingType(typeEl.value);
+  if (dateEl) meetingRoomDraft.meetingDate = normalizeDate(dateEl.value) || todayStamp();
+  if (durationEl) meetingRoomDraft.durationMinutes = durationEl.value;
+  if (notesEl) meetingRoomDraft.notes = notesEl.value;
+  meetingRoomDraft.pulse = pulseEl ? normalizePulse(pulseEl.value) : '';
+  meetingRoomDraft.checkedPointIds = [...root.querySelectorAll('[data-mr-point]:checked')].map((input) => input.getAttribute('data-mr-point'));
+}
+
+async function wrapUpMeetingRoom() {
+  const draft = meetingRoomDraft;
+  const report = draft ? getReportById(draft.reportId) : null;
+  if (!draft || !report) return;
+  captureMeetingRoomDraftFromDom();
+  const checkedIds = new Set(draft.checkedPointIds || []);
+  const checkedPoints = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => !point.done && checkedIds.has(point.id));
+  if (!normalizeText(draft.notes) && !checkedPoints.length) {
+    showToast('Add notes or tick a talking point before wrapping up.', 'warning');
+    return;
+  }
+  const rawDuration = Number(draft.durationMinutes);
+  const meetingId = nextId('meeting');
+  const statusEl = document.getElementById('meetingRoomStatus');
+  const logged = await addMeeting(report.id, {
+    meetingType: canonicalMeetingType(draft.meetingType),
+    meetingDate: normalizeDate(draft.meetingDate) || todayStamp(),
+    durationMinutes: Number.isFinite(rawDuration) && rawDuration > 0 ? Math.round(rawDuration) : null,
+    notes: normalizeText(draft.notes),
+    pulse: normalizePulse(draft.pulse),
+    source: 'manual',
+    externalUid: ''
+  }, { meetingId, statusEl, successMessage: `Meeting wrapped up for ${report.name}.` });
+  if (!logged) return;
+  if (checkedPoints.length) {
+    const freshReport = getReportById(report.id);
+    const payload = buildFullPayloadFromReport(freshReport);
+    payload.talkingPoints = normalizeTalkingPoints((freshReport.talkingPoints || []).map((point) => checkedIds.has(point.id)
+      ? { ...point, done: true, doneAt: nowIso(), meetingId }
+      : point));
+    await updateReport(report.id, payload, { silentToast: true });
+  }
+  meetingRoomDraft = null;
+  closeMeetingRoom({ force: true });
 }
 
 async function saveWorkspaceChanges(event, reportId) {
@@ -6633,7 +8153,11 @@ function openMeetingModal(reportId, options = {}) {
     : `Log or import a meeting for ${report.name}.`;
   meetingImportIcsBtn.classList.toggle('hidden', !!meeting);
   const insertAgendaBtn = document.getElementById('insertAgendaBtn');
-  if (insertAgendaBtn) insertAgendaBtn.classList.toggle('hidden', !!meeting || !normalizeText(report.agenda));
+  if (insertAgendaBtn) insertAgendaBtn.classList.toggle('hidden', !!meeting || openTalkingPointsFor(report).length === 0);
+  const insertPdcTemplateBtn = document.getElementById('insertPdcTemplateBtn');
+  if (insertPdcTemplateBtn) insertPdcTemplateBtn.classList.toggle('hidden', canonicalMeetingType(document.getElementById('meetingType').value) !== 'PDC');
+  const meetingPulse = normalizePulse(meeting?.pulse);
+  document.querySelectorAll('input[name="meetingPulse"]').forEach((input) => { input.checked = input.value === meetingPulse; });
   setStatus(meetingStatusEl, '');
   syncMeetingNotesPreview();
   const meetingShell = document.getElementById('meetingNotesShell');
@@ -6658,12 +8182,93 @@ function closeMeetingModal() {
   syncBodyOverlayLock();
 }
 
+function openGoalModal(reportId, goalId = '') {
+  const report = getReportById(reportId);
+  const modalEl = document.getElementById('goalModal');
+  if (!report || !modalEl) return;
+  const goal = goalId ? normalizeGoals(report.goals || []).find((item) => item.id === goalId) || null : null;
+  document.getElementById('goalForm')?.reset();
+  document.getElementById('goalReportId').value = reportId;
+  document.getElementById('goalId').value = goal?.id || '';
+  const statusSelect = document.getElementById('goalStatus');
+  if (statusSelect) statusSelect.innerHTML = GOAL_STATUSES.map((status) => `<option value="${escapeHtml(status)}" ${status === (goal?.status || GOAL_STATUSES[0]) ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('');
+  document.getElementById('goalTitle').value = goal?.title || '';
+  document.getElementById('goalTargetDate').value = goal?.targetDate || '';
+  const progressEl = document.getElementById('goalProgress');
+  if (progressEl) progressEl.value = String(goal?.progress ?? 0);
+  const progressValueEl = document.getElementById('goalProgressValue');
+  if (progressValueEl) progressValueEl.textContent = `${goal?.progress ?? 0}%`;
+  document.getElementById('goalDetail').value = goal?.detail || '';
+  document.getElementById('goalUpdateNote').value = '';
+  document.getElementById('deleteGoalBtn')?.classList.toggle('hidden', !goal);
+  const titleEl = document.getElementById('goalModalTitle');
+  if (titleEl) titleEl.textContent = goal ? 'Edit Goal' : 'Add Goal';
+  const subtitleEl = document.getElementById('goalModalSubtitle');
+  if (subtitleEl) subtitleEl.textContent = goal
+    ? `Update the goal for ${report.name}. A progress note or changed progress is added to the goal's log.`
+    : `A concrete development goal for ${report.name}, with a status and progress.`;
+  setStatus(document.getElementById('goalStatusLine'), '');
+  modalEl.classList.add('open');
+  modalEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  document.getElementById('goalTitle')?.focus();
+}
+
+function closeGoalModal() {
+  const modalEl = document.getElementById('goalModal');
+  if (!modalEl) return;
+  modalEl.classList.remove('open');
+  modalEl.setAttribute('aria-hidden', 'true');
+  setStatus(document.getElementById('goalStatusLine'), '');
+  syncBodyOverlayLock();
+}
+
+function openFeedbackModal(reportId, template = {}) {
+  const report = getReportById(reportId);
+  const modalEl = document.getElementById('feedbackModal');
+  if (!report || !modalEl) return;
+  document.getElementById('feedbackForm')?.reset();
+  document.getElementById('feedbackReportId').value = reportId;
+  const kindSelect = document.getElementById('feedbackKind');
+  if (kindSelect) kindSelect.innerHTML = FEEDBACK_KINDS.map((kind) => `<option value="${escapeHtml(kind)}" ${kind === normalizeFeedbackKind(template.kind) ? 'selected' : ''}>${escapeHtml(FEEDBACK_KIND_LABELS[kind])}</option>`).join('');
+  const categories = resolveEvidenceCategories(app.doc?.settings);
+  const categorySelect = document.getElementById('feedbackCategory');
+  if (categorySelect) categorySelect.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}" ${category === normalizeText(template.category) ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('');
+  document.getElementById('feedbackDate').value = normalizeDate(template.date) || todayStamp();
+  const meetingSelect = document.getElementById('feedbackMeeting');
+  if (meetingSelect) {
+    const linkedId = normalizeText(template.linkedMeetingId);
+    meetingSelect.innerHTML = ['<option value="">Not linked</option>', ...(report.meetings || []).slice(0, 20).map((meeting) => `<option value="${escapeHtml(meeting.id)}" ${meeting.id === linkedId ? 'selected' : ''}>${escapeHtml(`${meeting.meetingType} · ${formatDate(meeting.meetingDate)}`)}</option>`)].join('');
+  }
+  document.getElementById('feedbackSummary').value = '';
+  document.getElementById('feedbackDetail').value = '';
+  const sharedEl = document.getElementById('feedbackShared');
+  if (sharedEl) sharedEl.checked = !!template.shared;
+  const subtitleEl = document.getElementById('feedbackModalSubtitle');
+  if (subtitleEl) subtitleEl.textContent = `A dated feedback entry for ${report.name}, stored in the evidence locker.`;
+  setStatus(document.getElementById('feedbackStatusLine'), '');
+  modalEl.classList.add('open');
+  modalEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  document.getElementById('feedbackSummary')?.focus();
+}
+
+function closeFeedbackModal() {
+  const modalEl = document.getElementById('feedbackModal');
+  if (!modalEl) return;
+  modalEl.classList.remove('open');
+  modalEl.setAttribute('aria-hidden', 'true');
+  setStatus(document.getElementById('feedbackStatusLine'), '');
+  syncBodyOverlayLock();
+}
+
 function buildMeetingPayloadFromForm(formData) {
   const rawDuration = Number(formData.get('meetingDuration'));
   return {
     meetingType: canonicalMeetingType(formData.get('meetingType')),
     meetingDate: normalizeDate(formData.get('meetingDate')),
     notes: normalizeText(formData.get('meetingNotes')),
+    pulse: normalizePulse(formData.get('meetingPulse')),
     source: normalizeText(formData.get('meetingSource') || 'manual') || 'manual',
     externalUid: normalizeText(formData.get('meetingExternalUid')),
     durationMinutes: Number.isFinite(rawDuration) && rawDuration > 0 ? Math.round(rawDuration) : null
@@ -6693,6 +8298,7 @@ async function addMeeting(reportId, meetingInput = null, options = {}) {
     meetingDate: payload.meetingDate,
     durationMinutes: payload.durationMinutes ?? null,
     notes: payload.notes || '',
+    pulse: normalizePulse(payload.pulse),
     source: payload.source || 'manual',
     externalUid: payload.externalUid || '',
     createdAt: nowIso()
@@ -6733,6 +8339,7 @@ async function updateMeeting(reportId, meetingId, meetingInput = null) {
     meetingDate: payload.meetingDate,
     durationMinutes: payload.durationMinutes ?? null,
     notes: payload.notes || '',
+    pulse: normalizePulse(payload.pulse),
     source: payload.source || 'manual',
     externalUid: payload.externalUid || '',
     createdAt: nowIso()
@@ -7090,11 +8697,84 @@ function bindStaticEvents() {
         navigateRender(() => openCreateWorkspace());
         return;
       }
+      const roomBtn = event.target.closest('[data-open-room]');
+      if (roomBtn) {
+        openMeetingRoom(roomBtn.getAttribute('data-open-room'));
+        return;
+      }
+      // (keyboard equivalent for the tile's role=button span is below)
+      const logBtn = event.target.closest('[data-table-log]');
+      if (logBtn) {
+        openMeetingModal(logBtn.getAttribute('data-table-log'));
+        return;
+      }
+      const personBtn = event.target.closest('[data-table-person]');
+      if (personBtn) {
+        navigateRender(() => selectReport(personBtn.getAttribute('data-table-person')));
+        return;
+      }
       const tile = event.target.closest('[data-report-card]');
       if (tile) {
         const id = tile.getAttribute('data-report-card');
         navigateRender(() => selectReport(id));
       }
+    });
+    reportsGridEl.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const roomSpan = event.target.closest('[data-open-room][role="button"]');
+      if (!roomSpan) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openMeetingRoom(roomSpan.getAttribute('data-open-room'));
+    });
+    // Table lens inline edits: PDC pill, Support pill, Next 1:1 date.
+    reportsGridEl.addEventListener('change', async (event) => {
+      const pdcSelect = event.target.closest('[data-table-pdc]');
+      if (pdcSelect) {
+        const id = pdcSelect.getAttribute('data-table-pdc');
+        const report = getReportById(id);
+        if (!report) return;
+        const payload = buildFullPayloadFromReport(report);
+        payload.pdcStatus = normalizePdcStatus(pdcSelect.value);
+        await updateReport(id, payload, { silentToast: true });
+        showToast(`PDC status set to ${payload.pdcStatus} for ${report.name}.`, 'success');
+        return;
+      }
+      const supportSelect = event.target.closest('[data-table-support]');
+      if (supportSelect) {
+        const id = supportSelect.getAttribute('data-table-support');
+        const report = getReportById(id);
+        if (!report) return;
+        const payload = buildFullPayloadFromReport(report);
+        payload.supportLevel = normalizeSupportLevel(supportSelect.value);
+        await updateReport(id, payload, { silentToast: true });
+        showToast(`Support level set to ${payload.supportLevel} for ${report.name}.`, 'success');
+        return;
+      }
+      const nextInput = event.target.closest('[data-table-next]');
+      if (nextInput) {
+        const id = nextInput.getAttribute('data-table-next');
+        const report = getReportById(id);
+        if (!report) return;
+        const payload = buildFullPayloadFromReport(report);
+        payload.nextOneOnOneDate = normalizeDate(nextInput.value);
+        await updateReport(id, payload, { silentToast: true });
+        showToast(payload.nextOneOnOneDate ? `Next 1:1 planned for ${formatDate(payload.nextOneOnOneDate)}.` : 'Next 1:1 date cleared.', 'success');
+      }
+    });
+  }
+
+  // Tiles vs Table switch in the reports toolbar.
+  const reportsViewSwitchEl = document.getElementById('reportsViewSwitch');
+  if (reportsViewSwitchEl) {
+    reportsViewSwitchEl.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-reports-view]');
+      if (!btn) return;
+      const nextMode = btn.getAttribute('data-reports-view') === 'table' ? 'table' : 'tiles';
+      if (nextMode === (app.ui.reportsViewMode === 'table' ? 'table' : 'tiles')) return;
+      app.ui.reportsViewMode = nextMode;
+      persistUiState();
+      navigateRender(() => renderReportsGrid());
     });
   }
 
@@ -7228,7 +8908,14 @@ function bindStaticEvents() {
         const report = getReportById(id);
         if (!card || !report) return;
         const payload = buildFullPayloadFromReport(report);
-        payload.developmentGoalSummary = normalizeText(card.querySelector('[data-pdc-dev]')?.value);
+        const nextGoalTitle = normalizeText(card.querySelector('[data-pdc-dev]')?.value);
+        const currentGoals = normalizeGoals(report.goals || []);
+        const currentPrimary = currentGoals.find((goal) => goal.status !== 'Done') || currentGoals[0] || null;
+        if (currentPrimary) {
+          payload.goals = normalizeGoals(currentGoals.map((goal) => goal.id === currentPrimary.id ? { ...goal, title: nextGoalTitle || goal.title } : goal));
+        } else if (nextGoalTitle) {
+          payload.goals = normalizeGoals([...currentGoals, { id: nextId('goal'), title: nextGoalTitle, detail: '', status: 'On track', targetDate: '', progress: 0, createdAt: nowIso(), updates: [] }]);
+        }
         payload.promotionReadiness = normalizeText(card.querySelector('[data-pdc-prom]')?.value);
         app.ui.pdcSummaryEditId = '';
         await updateReport(id, payload, { silentToast: true });
@@ -7241,10 +8928,21 @@ function bindStaticEvents() {
         if (id) navigateRender(() => selectReport(id));
         return;
       }
+      const roomBtn = event.target.closest('[data-open-room]');
+      if (roomBtn) {
+        openMeetingRoom(roomBtn.getAttribute('data-open-room'));
+        return;
+      }
+      const ooLogBtn = event.target.closest('[data-oo-log]');
+      if (ooLogBtn) {
+        openMeetingModal(ooLogBtn.getAttribute('data-oo-log'), { presetType: '1:1' });
+        return;
+      }
       const viewBtn = event.target.closest('[data-pdc-view]');
       if (viewBtn) {
-        const nextMode = viewBtn.getAttribute('data-pdc-view') === 'board' ? 'board' : 'list';
-        if (nextMode !== (app.ui.pdcViewMode === 'board' ? 'board' : 'list')) {
+        const requested = viewBtn.getAttribute('data-pdc-view');
+        const nextMode = ['board', 'oneOnOneBoard'].includes(requested) ? requested : 'list';
+        if (nextMode !== (['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list')) {
           app.ui.pdcViewMode = nextMode;
           app.ui.pdcBoardDateId = '';
           persistUiState();
@@ -7275,6 +8973,17 @@ function bindStaticEvents() {
       }
     });
     pdcSummaryBodyEl.addEventListener('change', (event) => {
+      const ooPlanInput = event.target.closest('[data-oo-plan]');
+      if (ooPlanInput) {
+        const id = ooPlanInput.getAttribute('data-oo-plan');
+        const report = getReportById(id);
+        if (!report) return;
+        const value = normalizeDate(ooPlanInput.value);
+        updateReport(id, { ...buildFullPayloadFromReport(report), nextOneOnOneDate: value }, { silentToast: true }).then(() => {
+          showToast(value ? `Next 1:1 with ${report.name} planned for ${formatDate(value)}.` : `Planned 1:1 date cleared for ${report.name}.`, 'success');
+        });
+        return;
+      }
       const moveSel = event.target.closest('[data-board-move]');
       if (!moveSel) return;
       const target = moveSel.value;
@@ -7413,16 +9122,89 @@ function bindStaticEvents() {
   });
   document.getElementById('insertAgendaBtn')?.addEventListener('click', () => {
     const reportId = normalizeText(document.getElementById('meetingReportId')?.value);
-    const agenda = normalizeText(getReportById(reportId)?.agenda);
-    if (!agenda) return;
+    const points = openTalkingPointsFor(getReportById(reportId));
+    if (!points.length) return;
+    const notesEl = document.getElementById('meetingNotes');
+    if (!notesEl) return;
+    const block = points.map((point) => `- ${point.text}`).join('\n');
+    const existing = notesEl.value;
+    notesEl.value = existing ? `${existing.replace(/\s+$/, '')}\n\n${block}` : block;
+    syncMeetingNotesPreview();
+    notesEl.focus();
+    showToast('Talking points inserted. They stay queued until ticked off in the workspace or the 1:1 room.', 'info');
+  });
+  document.getElementById('insertPdcTemplateBtn')?.addEventListener('click', () => {
     const notesEl = document.getElementById('meetingNotes');
     if (!notesEl) return;
     const existing = notesEl.value;
-    notesEl.value = existing ? `${existing.replace(/\s+$/, '')}\n\n${agenda}` : agenda;
+    notesEl.value = existing ? `${existing.replace(/\s+$/, '')}\n\n${PDC_TEMPLATE_MARKDOWN}` : PDC_TEMPLATE_MARKDOWN;
     syncMeetingNotesPreview();
     notesEl.focus();
-    showToast('Agenda inserted. Trim it down to what was actually covered.', 'info');
   });
+  document.getElementById('meetingType')?.addEventListener('change', (event) => {
+    document.getElementById('insertPdcTemplateBtn')?.classList.toggle('hidden', canonicalMeetingType(event.target.value) !== 'PDC');
+  });
+  document.getElementById('meetingPulseClear')?.addEventListener('click', () => {
+    document.querySelectorAll('input[name="meetingPulse"]').forEach((input) => { input.checked = false; });
+  });
+
+  // v0.44: goal modal + feedback modal open, close, and submit wiring.
+  const goalModalEl = document.getElementById('goalModal');
+  const goalFormEl = document.getElementById('goalForm');
+  const feedbackModalEl = document.getElementById('feedbackModal');
+  const feedbackFormEl = document.getElementById('feedbackForm');
+  const goalProgressEl = document.getElementById('goalProgress');
+  goalProgressEl?.addEventListener('input', () => {
+    const valueEl = document.getElementById('goalProgressValue');
+    if (valueEl) valueEl.textContent = `${goalProgressEl.value}%`;
+  });
+  goalFormEl?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(goalFormEl);
+    const reportId = normalizeText(formData.get('goalReportId'));
+    if (!reportId) return;
+    const ok = await saveGoal(reportId, {
+      id: normalizeText(formData.get('goalId')),
+      title: formData.get('goalTitle'),
+      status: formData.get('goalStatus'),
+      targetDate: formData.get('goalTargetDate'),
+      progress: Number(formData.get('goalProgress')),
+      detail: formData.get('goalDetail'),
+      updateNote: formData.get('goalUpdateNote')
+    });
+    if (ok) closeGoalModal();
+    else setStatus(document.getElementById('goalStatusLine'), 'Check the goal fields and try again.', 'error');
+  });
+  document.getElementById('closeGoalModalBtn')?.addEventListener('click', closeGoalModal);
+  document.getElementById('cancelGoalModalBtn')?.addEventListener('click', closeGoalModal);
+  document.getElementById('deleteGoalBtn')?.addEventListener('click', async () => {
+    const reportId = normalizeText(document.getElementById('goalReportId')?.value);
+    const goalId = normalizeText(document.getElementById('goalId')?.value);
+    if (!reportId || !goalId) return;
+    const ok = await deleteGoal(reportId, goalId);
+    if (ok) closeGoalModal();
+  });
+  goalModalEl?.addEventListener('click', (event) => { if (event.target === goalModalEl) closeGoalModal(); });
+  feedbackFormEl?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(feedbackFormEl);
+    const reportId = normalizeText(formData.get('feedbackReportId'));
+    if (!reportId) return;
+    const ok = await saveFeedbackEntry(reportId, {
+      kind: formData.get('feedbackKind'),
+      category: formData.get('feedbackCategory'),
+      date: formData.get('feedbackDate'),
+      linkedMeetingId: formData.get('feedbackMeeting'),
+      summary: formData.get('feedbackSummary'),
+      detail: formData.get('feedbackDetail'),
+      shared: !!formData.get('feedbackShared')
+    });
+    if (ok) closeFeedbackModal();
+    else setStatus(document.getElementById('feedbackStatusLine'), 'Check the feedback fields and try again.', 'error');
+  });
+  document.getElementById('closeFeedbackModalBtn')?.addEventListener('click', closeFeedbackModal);
+  document.getElementById('cancelFeedbackModalBtn')?.addEventListener('click', closeFeedbackModal);
+  feedbackModalEl?.addEventListener('click', (event) => { if (event.target === feedbackModalEl) closeFeedbackModal(); });
 
   closeRulesDrawerBtn.addEventListener('click', closeRulesDrawer);
   thresholdFormEl.addEventListener('submit', async (event) => {
@@ -7436,6 +9218,14 @@ function bindStaticEvents() {
       };
       app.doc.settings.missingMentorCounts = !!missingMentorCountsEl.checked;
       app.doc.settings.blockedPdcCounts = !!blockedPlanCountsEl.checked;
+      app.doc.settings.pulseTrendCounts = !!document.getElementById('pulseTrendCounts')?.checked;
+      app.doc.settings.density = document.getElementById('densitySetting')?.value === 'compact' ? 'compact' : 'comfortable';
+      app.doc.settings.pdcRoundAutoReset = !!document.getElementById('pdcRoundAutoReset')?.checked;
+      app.doc.settings.pdcRoundStartMonth = Math.min(12, Math.max(1, safePositiveInteger(document.getElementById('pdcRoundStartMonth')?.value, 1)));
+      // Reconfiguring the cadence or the start month changes the round key.
+      // Adopt the new calendar immediately so the next render never treats a
+      // settings change as a rollover and mass resets the board.
+      app.doc.settings.lastPdcRoundKey = pdcRoundInfo(app.doc.settings).key;
       if (evidenceCategoriesInputEl) {
         app.doc.settings.evidenceCategories = normalizeEvidenceCategories(evidenceCategoriesInputEl.value || DEFAULT_EVIDENCE_CATEGORIES);
       }
@@ -7554,6 +9344,8 @@ function bindStaticEvents() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       if (globalSearchEl.classList.contains('open')) { closeGlobalSearch(); return; }
+      if (document.getElementById('goalModal')?.classList.contains('open')) { closeGoalModal(); return; }
+      if (document.getElementById('feedbackModal')?.classList.contains('open')) { closeFeedbackModal(); return; }
       if (meetingModalEl.classList.contains('open')) { closeMeetingModal(); return; }
       if (rulesDrawerOverlayEl.classList.contains('open')) { closeRulesDrawer(); return; }
       if (dataMenuEl?.hasAttribute('open')) closeDataMenu();
@@ -7685,6 +9477,11 @@ function normalizeSettings(rawSettings = {}) {
   merged.promotionConversationMonths = safePositiveInteger(merged.promotionConversationMonths || rawSettings.promotionConversationMonths, DEFAULT_PROMOTION_CONVERSATION_MONTHS);
   merged.themesWindowDays = safePositiveInteger(merged.themesWindowDays || rawSettings.themesWindowDays, THEMES_WINDOW_DEFAULT);
   merged.stableMode = rawSettings.stableMode === undefined ? true : !!merged.stableMode;
+  merged.pulseTrendCounts = rawSettings.pulseTrendCounts === undefined ? true : !!merged.pulseTrendCounts;
+  merged.density = merged.density === 'compact' ? 'compact' : 'comfortable';
+  merged.pdcRoundAutoReset = rawSettings.pdcRoundAutoReset === undefined ? true : !!merged.pdcRoundAutoReset;
+  merged.pdcRoundStartMonth = Math.min(12, Math.max(1, safePositiveInteger(merged.pdcRoundStartMonth, 1)));
+  merged.lastPdcRoundKey = normalizeText(merged.lastPdcRoundKey || '');
   merged.lastExportDate = normalizeText(merged.lastExportDate);
   merged.latestExportFiles = Array.isArray(merged.latestExportFiles) ? merged.latestExportFiles.map((value) => normalizeText(value)).filter(Boolean) : [];
   return merged;
@@ -7704,7 +9501,10 @@ function makeEmptyDoc() {
       vacation: 0,
       meeting: 0,
       note: 0,
-      evidence: 0
+      evidence: 0,
+      talkingPoint: 0,
+      goal: 0,
+      goalUpdate: 0
     },
     people: [],
     events: [],
@@ -7803,6 +9603,114 @@ function migrateV8ToV9(docV8) {
   return syncIdCounters(safeDoc);
 }
 
+function migrateV9ToV10(docV9) {
+  const safeDoc = docV9 && typeof docV9 === 'object' ? deepCopy(docV9) : makeEmptyDoc();
+  // v10 introduces structured talking points (replacing the free-text agenda),
+  // development goals with progress (replacing the development goal summary
+  // text field), a per-meeting pulse, and feedback kind/shared flags on
+  // evidence. The agenda and summary fields survive in the schema for
+  // backwards compatibility but are drained here: their FINAL projected value
+  // (base snapshot plus every person_updated replayed in order) is converted,
+  // and the raw fields are then stripped from historical events so replays
+  // cannot resurrect the old text on top of the converted records.
+  syncIdCounters(safeDoc);
+  if (!safeDoc.idCounters || typeof safeDoc.idCounters !== 'object') safeDoc.idCounters = {};
+  const mint = (counterKey, prefix) => {
+    safeDoc.idCounters[counterKey] = (safeDoc.idCounters[counterKey] || 0) + 1;
+    return `${prefix}_${String(safeDoc.idCounters[counterKey]).padStart(3, '0')}`;
+  };
+  const events = Array.isArray(safeDoc.events) ? safeDoc.events : [];
+  const people = Array.isArray(safeDoc.people) ? safeDoc.people : [];
+  const finals = new Map();
+  people.forEach((person) => {
+    if (!person || !person.id) return;
+    finals.set(person.id, {
+      agenda: normalizeText(person.agenda),
+      developmentGoalSummary: normalizeText(person.developmentGoalSummary)
+    });
+  });
+  events.forEach((event) => {
+    if (!event || !event.personId) return;
+    if (event.type === 'person_created') {
+      if (!finals.has(event.personId)) {
+        finals.set(event.personId, {
+          agenda: normalizeText(event.snapshot?.agenda),
+          developmentGoalSummary: normalizeText(event.snapshot?.developmentGoalSummary)
+        });
+      }
+      if (event.snapshot && typeof event.snapshot === 'object') {
+        event.snapshot.agenda = '';
+        event.snapshot.developmentGoalSummary = '';
+      }
+      return;
+    }
+    if (event.type === 'person_updated' && event.changes && typeof event.changes === 'object') {
+      const final = finals.get(event.personId);
+      if (final) {
+        if ('agenda' in event.changes) final.agenda = normalizeText(event.changes.agenda);
+        if ('developmentGoalSummary' in event.changes) final.developmentGoalSummary = normalizeText(event.changes.developmentGoalSummary);
+      }
+      delete event.changes.agenda;
+      delete event.changes.developmentGoalSummary;
+    }
+  });
+  const agendaLineToPoint = (line) => {
+    let text = String(line || '').trim();
+    if (!text) return null;
+    let done = false;
+    const checkbox = text.match(/^\[(x|X| )?\]\s*(.*)$/);
+    if (checkbox) {
+      done = !!checkbox[1] && checkbox[1].toLowerCase() === 'x';
+      text = checkbox[2];
+    }
+    text = text.replace(/^[-*•]\s+/, '').trim();
+    if (!text || /^#+\s*$/.test(text)) return null;
+    text = text.replace(/^#+\s+/, '').trim();
+    return text ? { text, done } : null;
+  };
+  safeDoc.people = people.map((person) => {
+    if (!person || !person.id) return person;
+    const final = finals.get(person.id) || { agenda: '', developmentGoalSummary: '' };
+    const stamp = normalizeText(person.createdAt) || nowIso();
+    const migrated = { ...person, agenda: '', developmentGoalSummary: '' };
+    const existingPoints = Array.isArray(person.talkingPoints) ? person.talkingPoints : [];
+    if (!existingPoints.length && final.agenda) {
+      migrated.talkingPoints = final.agenda.split('\n')
+        .map((line) => agendaLineToPoint(line))
+        .filter(Boolean)
+        .map((point) => ({
+          id: mint('talkingPoint', 'tp'),
+          text: point.text,
+          createdAt: stamp,
+          done: point.done,
+          doneAt: point.done ? stamp : '',
+          meetingId: ''
+        }));
+    }
+    const existingGoals = Array.isArray(person.goals) ? person.goals : [];
+    if (!existingGoals.length && final.developmentGoalSummary) {
+      const lines = final.developmentGoalSummary.split('\n').map((line) => line.trim()).filter(Boolean);
+      const title = (lines[0] || '').replace(/^[-*•#]+\s*/, '').slice(0, 140);
+      const detail = lines.slice(1).join('\n');
+      if (title) {
+        migrated.goals = [{
+          id: mint('goal', 'goal'),
+          title,
+          detail,
+          status: 'On track',
+          targetDate: '',
+          progress: 0,
+          createdAt: stamp,
+          updates: []
+        }];
+      }
+    }
+    return migrated;
+  });
+  safeDoc.schemaVersion = 10;
+  return syncIdCounters(safeDoc);
+}
+
 function parsePortableJsonText(text) {
   const parsed = JSON.parse(text);
   if (!parsed || typeof parsed !== 'object') {
@@ -7810,11 +9718,11 @@ function parsePortableJsonText(text) {
   }
 
   if (!Object.prototype.hasOwnProperty.call(parsed, 'schemaVersion')) {
-    const migratedLegacy = migrateV8ToV9(migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed))))))));
+    const migratedLegacy = migrateV9ToV10(migrateV8ToV9(migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed)))))))));
     return {
       doc: ensureDocShape(migratedLegacy),
       migratedFromVersion: 0,
-      lastMigrationApplied: 'v0-to-v9'
+      lastMigrationApplied: 'v0-to-v10'
     };
   }
 
@@ -7834,7 +9742,8 @@ function parsePortableJsonText(text) {
     5: migrateV5ToV6,
     6: migrateV6ToV7,
     7: migrateV7ToV8,
-    8: migrateV8ToV9
+    8: migrateV8ToV9,
+    9: migrateV9ToV10
   };
 
   let working = deepCopy(parsed);
@@ -7887,12 +9796,23 @@ function generateSchemaMarkdown() {
   lines.push('## Changed in schema v9');
   lines.push('- **people[].pdcStatus** — Fully manual (kanban model): the stored value is exactly what every view shows, and only the user moves it (board drag, card menu, or the Development tab select). The v8->v9 migration baked each person\'s previously displayed, date-derived status into this field so boards did not shift at upgrade. Dates still power the attention rules and appear as chips on board cards, but never move a status by themselves.');
   lines.push('');
+  lines.push('## Added in schema v10');
+  lines.push('- **people[].talkingPoints[]** — Structured queue for the next conversation: { id, text, createdAt, done, doneAt, meetingId }. Replaces the free-text agenda; the v9->v10 migration converts each agenda line into an open talking point ([x] lines arrive as done) and blanks the agenda field everywhere, including inside historical events.');
+  lines.push('- **people[].goals[]** — Development goals: { id, title, detail, status (On track / At risk / Paused / Done), targetDate, progress 0-100, createdAt, updates[] }. Each update is { id, date, text, progress }. Replaces the development goal summary text; the migration converts the summary\'s first line into goal #1\'s title and the rest into its detail.');
+  lines.push('- **events meeting_logged.pulse** — Optional per-meeting pulse: green, amber, or red. Shown as dots on tiles, the table, meeting history, and the timeline; a downward trend can raise an attention flag (settings.pulseTrendCounts).');
+  lines.push('- **people[].evidence[].kind / .shared** — Every evidence entry now carries a feedback kind (observation, praise, growth) and a shared-with-them flag, powering the feedback log and timeline.');
+  lines.push('- **settings.pulseTrendCounts** — Whether a downward 1:1 pulse counts as attention (default true).');
+  lines.push('- **settings.density** — Interface density: comfortable or compact.');
+  lines.push('- **settings.pdcRoundAutoReset / settings.pdcRoundStartMonth / settings.lastPdcRoundKey** — PDC rounds derive from thresholds.pdcDays (90 days gives 4 rounds per year), anchored to pdcRoundStartMonth (default January). When a new round begins and auto reset is on, every person whose PDC status is not Not started gets a person_updated event resetting it, and the handled round key is stored so the reset runs once per rollover. Saving the rules re-adopts the current key so reconfiguring never triggers a reset.');
+  lines.push('- **people[].agenda / people[].developmentGoalSummary** — Still present for import compatibility but drained by the migration; the app no longer writes to them.');
+  lines.push('');
   lines.push('## Migration path');
-  lines.push('- **v0 -> v9** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
+  lines.push('- **v0 -> v10** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
   lines.push('- **v5 -> v6** — Adds settings.themesWindowDays. (Historically also seeded weeklySnapshots; that field no longer persists past v6->v7.)');
   lines.push('- **v6 -> v7** — Removes the weeklySnapshots field from the document root.');
   lines.push('- **v7 -> v8** — Adds the per-person agenda field (defaults to empty).');
   lines.push('- **v8 -> v9** — Bakes the previously derived PDC status into people[].pdcStatus; statuses are manual from v9 on.');
+  lines.push('- **v9 -> v10** — Converts agenda text into talkingPoints[] and the development goal summary into goals[0], stripping both raw fields from people records and from historical person_created/person_updated events so replays cannot resurrect the old text.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
@@ -7927,6 +9847,14 @@ function renderRuleInputs() {
   if (themesWindowDaysEl) themesWindowDaysEl.value = settings.themesWindowDays || THEMES_WINDOW_DEFAULT;
   missingMentorCountsEl.checked = !!settings.missingMentorCounts;
   blockedPlanCountsEl.checked = !!settings.blockedPdcCounts;
+  const pulseTrendCountsEl = document.getElementById('pulseTrendCounts');
+  if (pulseTrendCountsEl) pulseTrendCountsEl.checked = settings.pulseTrendCounts !== false;
+  const densitySettingEl = document.getElementById('densitySetting');
+  if (densitySettingEl) densitySettingEl.value = settings.density === 'compact' ? 'compact' : 'comfortable';
+  const pdcRoundAutoResetEl = document.getElementById('pdcRoundAutoReset');
+  if (pdcRoundAutoResetEl) pdcRoundAutoResetEl.checked = settings.pdcRoundAutoReset !== false;
+  const pdcRoundStartMonthEl = document.getElementById('pdcRoundStartMonth');
+  if (pdcRoundStartMonthEl) pdcRoundStartMonthEl.value = String(Math.min(12, Math.max(1, safePositiveInteger(settings.pdcRoundStartMonth, 1))));
   if (evidenceCategoriesInputEl) evidenceCategoriesInputEl.value = resolveEvidenceCategories(settings).join('\n');
 }
 
@@ -8042,6 +9970,8 @@ function getFilteredReports() {
       report.pdcStatus,
       report.supportLevel,
       report.developmentGoalSummary,
+      normalizeGoals(report.goals || []).map((goal) => `${goal.title} ${goal.detail}`).join(' '),
+      normalizeTalkingPoints(report.talkingPoints || []).map((point) => point.text).join(' '),
       report.promotionReadiness,
       report.notes,
       serializeCadenceOverrides(report.cadenceOverrides),
