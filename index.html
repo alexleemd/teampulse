@@ -778,6 +778,143 @@
       .pdc-summary-card-actions{margin-left:0;width:100%}
       .pdc-status-derived{max-width:none}
     }
+    /* === v0.39 additions ==================================================== */
+    /* View transitions: quick crossfade on navigation, morphing avatars. */
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.18s;animation-timing-function:ease}
+    @media (prefers-reduced-motion: reduce){
+      ::view-transition-group(*),::view-transition-image-pair(*),::view-transition-old(*),::view-transition-new(*){animation:none !important}
+      .anim-entry .report-tile,.anim-entry .report-tile-add,.anim-entry .pdc-summary-card,.anim-entry .followup-panel,.anim-entry .meetings-view-item,.overview-tab.anim-entry > .overview-section,.anim-entry .pdc-board-card,.report-tile-support-dot[data-fill="red"],.toast{animation:none !important}
+    }
+    /* Workspace header identity (avatar is the morph target from the grid tile). */
+    .drawer-header-identity{display:flex;align-items:center;gap:14px;min-width:0}
+    /* Daily briefing card on the Overview tab. */
+    .briefing-list{display:flex;flex-direction:column;gap:4px}
+    .briefing-row{display:flex;align-items:baseline;gap:10px;padding:8px 10px;border-radius:10px;font-size:14px;line-height:1.5;color:var(--text);text-align:left}
+    button.briefing-row{appearance:none;border:none;background:transparent;font:inherit;width:100%;cursor:pointer;transition:background 0.12s ease}
+    button.briefing-row:hover,button.briefing-row:focus-visible{background:var(--accent-soft);outline:none}
+    .briefing-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--muted);transform:translateY(-1px)}
+    .briefing-dot[data-tone="warning"]{background:var(--warning)}
+    .briefing-dot[data-tone="danger"]{background:var(--danger)}
+    .briefing-dot[data-tone="info"]{background:var(--info)}
+    .briefing-dot[data-tone="success"]{background:var(--sat-green)}
+    .briefing-text{flex:1;min-width:0}
+    .briefing-text strong{font-weight:700}
+    .briefing-go{flex:none;color:var(--accent);font-weight:700;opacity:0;transition:opacity 0.12s ease}
+    button.briefing-row:hover .briefing-go,button.briefing-row:focus-visible .briefing-go{opacity:1}
+    /* === v0.40 additions ==================================================== */
+    /* Staggered entry for collection views. The anim-entry class is gated in
+       JS to the first appearance of a view, so search keystrokes, filter
+       changes, and saves never re-trigger it. */
+    @keyframes riseIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    .anim-entry .report-tile,.anim-entry .report-tile-add,.anim-entry .pdc-summary-card,.anim-entry .followup-panel,.anim-entry .meetings-view-item{animation:riseIn .42s cubic-bezier(.22,.9,.28,1) both;animation-delay:calc(var(--i,0)*26ms)}
+    .overview-tab.anim-entry > .overview-section{animation:riseIn .46s cubic-bezier(.22,.9,.28,1) both}
+    .overview-tab.anim-entry > .overview-section:nth-child(2){animation-delay:70ms}
+    .overview-tab.anim-entry > .overview-section:nth-child(3){animation-delay:140ms}
+    .overview-tab.anim-entry > .overview-section:nth-child(4){animation-delay:210ms}
+    /* Tactile hover physics: tiles lift toward the cursor, press compresses. */
+    .report-tile{transition:border-color 0.15s ease,box-shadow 0.18s ease,transform 0.16s cubic-bezier(.2,.8,.3,1);will-change:transform}
+    .report-tile:hover,.report-tile:focus-visible{transform:translateY(-2px);border-color:#b9c7e6;box-shadow:0 10px 26px rgba(23,32,51,0.10);outline:none}
+    .report-tile:active{transform:translateY(0) scale(.985);box-shadow:0 4px 12px rgba(23,32,51,0.08)}
+    .pdc-summary-card{transition:box-shadow 0.18s ease,transform 0.18s ease,border-color 0.18s ease}
+    .pdc-summary-card:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(23,32,51,0.08)}
+    /* Urgent support level gets a slow heartbeat halo on the tile dot. */
+    @keyframes urgentPulse{0%,100%{box-shadow:0 0 0 0 rgba(226,68,92,0.45)}55%{box-shadow:0 0 0 7px rgba(226,68,92,0)}}
+    .report-tile-support-dot[data-fill="red"]{animation:urgentPulse 1.9s ease-out infinite}
+    /* Toast entrance: rise with a small spring. */
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+    .toast{animation:toastIn 0.3s cubic-bezier(.2,.85,.3,1.1)}
+    /* Floating glass header: sticks while the pane scrolls, blurs content
+       passing beneath it. Hidden anyway while the workspace drawer is open. */
+    .content-header{position:sticky;top:10px;z-index:40;background:rgba(255,255,255,0.66);backdrop-filter:blur(12px) saturate(1.35);-webkit-backdrop-filter:blur(12px) saturate(1.35);border:1px solid rgba(219,226,238,0.75);border-radius:16px;padding:12px 16px;box-shadow:0 10px 30px rgba(23,32,51,0.07)}
+    /* Health dial: tone-matched glow behind the gradient arc, steady digits. */
+    .health-score-dial[data-tone="success"] svg{filter:drop-shadow(0 0 10px rgba(13,122,72,0.22))}
+    .health-score-dial[data-tone="warning"] svg{filter:drop-shadow(0 0 10px rgba(176,107,0,0.22))}
+    .health-score-dial[data-tone="danger"] svg{filter:drop-shadow(0 0 10px rgba(180,35,24,0.25))}
+    .health-score-dial-value strong{font-variant-numeric:tabular-nums}
+    /* === v0.41 additions ==================================================== */
+    /* PDC layout toggle (List | Board). */
+    .pdc-view-toolbar{display:flex;justify-content:flex-end;margin-bottom:14px}
+    .pdc-view-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+    .pdc-view-toggle button{appearance:none;border:none;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--muted);padding:6px 14px;border-radius:8px;cursor:pointer;transition:background 0.12s ease,color 0.12s ease}
+    .pdc-view-toggle button.active{background:var(--accent);color:#fff}
+    .pdc-view-toggle button:not(.active):hover{background:var(--accent-soft);color:var(--accent)}
+    /* Board layout. */
+    .pdc-board{display:flex;gap:14px;align-items:flex-start;overflow-x:auto;padding-bottom:8px}
+    .pdc-board-col{flex:1 0 216px;max-width:300px;background:#f2f5fa;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:300px}
+    .pdc-board-col-head{display:flex;align-items:center;gap:8px}
+    .pdc-board-col-head h3{margin:0;font-size:13.5px;font-weight:800;letter-spacing:-0.01em;flex:1}
+    .pdc-board-col-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--sat-grey)}
+    .pdc-board-col[data-tone="info"] .pdc-board-col-dot{background:var(--info)}
+    .pdc-board-col[data-tone="warning"] .pdc-board-col-dot{background:var(--warning)}
+    .pdc-board-col[data-tone="danger"] .pdc-board-col-dot{background:var(--danger)}
+    .pdc-board-col[data-tone="success"] .pdc-board-col-dot{background:var(--sat-green)}
+    .pdc-board-count{font-size:11.5px;font-weight:800;background:#fff;border:1px solid var(--line);border-radius:999px;min-width:22px;text-align:center;padding:2px 7px;color:var(--muted)}
+    .pdc-board-col-hint{margin:0;font-size:11px;line-height:1.4;color:var(--muted)}
+    .pdc-board-drop{display:flex;flex-direction:column;gap:10px;flex:1;border-radius:10px;padding:4px;transition:background 0.12s ease,outline-color 0.12s ease;outline:2px dashed transparent;outline-offset:-2px}
+    .pdc-board-drop.drag-over{background:var(--accent-soft);outline-color:var(--accent)}
+    .pdc-board-drop.derived-only{opacity:0.92}
+    .pdc-board-empty{border:2px dashed var(--line-strong);border-radius:10px;padding:18px 10px;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+    /* Board cards. */
+    .pdc-board-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;cursor:grab;box-shadow:0 1px 3px rgba(23,32,51,0.05);transition:box-shadow 0.15s ease,transform 0.15s ease,border-color 0.15s ease}
+    .pdc-board-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(23,32,51,0.10);border-color:#c2cde0}
+    .pdc-board-card.dragging{opacity:0.55;transform:rotate(2deg) scale(0.98);cursor:grabbing}
+    .pdc-board-card-top{display:flex;align-items:center;gap:9px;min-width:0}
+    .pdc-board-card-avatar{width:26px;height:26px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10.5px;flex:none;letter-spacing:-0.02em}
+    .pdc-board-card-name{appearance:none;border:none;background:transparent;padding:0;font:inherit;font-size:13.5px;font-weight:800;color:var(--text);cursor:pointer;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pdc-board-card-name:hover,.pdc-board-card-name:focus-visible{color:var(--accent);text-decoration:underline;outline:none}
+    .pdc-board-card-goal{font-size:12.5px;line-height:1.45;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .pdc-board-card-meta{font-size:11px;font-weight:700;color:var(--muted)}
+    .pdc-board-move{font-size:12px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted)}
+    .pdc-board-date{display:flex;flex-direction:column;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px}
+    .pdc-board-date input{padding:7px 10px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .pdc-board-date-actions{display:flex;gap:8px}
+    .pdc-board-date-actions button{font-size:12.5px;padding:6px 12px}
+    .anim-entry .pdc-board-card{animation:riseIn .42s cubic-bezier(.22,.9,.28,1) both;animation-delay:calc(var(--i,0)*26ms)}
+    @media (max-width:900px){.pdc-board-col{flex:1 0 200px}}
+    /* === v0.42 additions ==================================================== */
+    /* Board card date chips */
+    .pdc-board-card-chips{display:flex;gap:6px;flex-wrap:wrap}
+    /* Identity avatars on the meetings list and Follow-Ups panels */
+    .mv-avatar{width:28px;height:28px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex:none;letter-spacing:-0.02em;align-self:center}
+    .fu-avatar{width:24px;height:24px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;flex:none;letter-spacing:-0.02em;margin-right:9px;vertical-align:-6px}
+    /* Tile sparkline */
+    .tile-spark{display:block;margin-top:2px}
+    /* Meeting heatmap */
+    .heatmap-panel{margin-bottom:16px}
+    .heatmap-scroll{overflow-x:auto}
+    .hm-label{font-size:9.5px;font-weight:700;fill:var(--muted)}
+    .hm-total{font-size:12px;font-weight:700;color:var(--muted)}
+    .hm-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--muted)}
+    .hm-legend span:first-child{margin-right:2px}
+    .hm-legend span:last-child{margin-left:2px}
+    .hm-swatch{width:11px;height:11px;border-radius:3px;display:inline-block}
+    /* PDC one-pager: hidden on screen, the only thing visible in print */
+    #printSheet{display:none}
+    @media print{
+      body > *:not(#printSheet){display:none !important}
+      #printSheet{display:block !important;color:#111;font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-size:11.5px;line-height:1.5}
+      @page{size:A4;margin:15mm}
+      .ps-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:12px}
+      .ps-header h1{margin:0;font-size:22px;letter-spacing:-0.02em}
+      .ps-sub{margin:3px 0 0;color:#444;font-size:12px}
+      .ps-brand{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#666}
+      .ps-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;margin-bottom:14px}
+      .ps-fact span{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#777}
+      .ps-fact strong{font-size:11.5px}
+      #printSheet h3{font-size:12.5px;margin:14px 0 5px;border-bottom:1px solid #ccc;padding-bottom:3px;text-transform:uppercase;letter-spacing:0.05em}
+      #printSheet h4{font-size:11px;margin:8px 0 3px}
+      .ps-para{margin:0 0 6px;white-space:pre-wrap}
+      .ps-empty{color:#888;font-style:italic}
+      .ps-list{margin:0 0 6px;padding-left:16px}
+      .ps-list li{margin-bottom:3px}
+      .ps-muted{color:#777}
+      .ps-meeting{margin-bottom:10px;break-inside:avoid}
+      .ps-meeting-head{margin-bottom:2px}
+      .ps-notes{padding-left:10px;border-left:2px solid #ddd}
+      .ps-notes p{margin:0 0 4px}
+      .ps-notes ul{margin:0 0 4px;padding-left:16px}
+      .ps-footer{margin-top:16px;padding-top:6px;border-top:1px solid #ccc;font-size:9.5px;color:#777}
+    }
   </style>
 </head>
 <body>
@@ -1134,9 +1271,11 @@
   </div>
 
 
+  <div id="printSheet" aria-hidden="true"></div>
+
   <script>
-const APP_VERSION = 'v0.38.0';
-const CURRENT_SCHEMA_VERSION = 8;
+const APP_VERSION = 'v0.42.0';
+const CURRENT_SCHEMA_VERSION = 9;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
 const UI_STATE_KEY = 'team-pulse-ui-state';
@@ -1223,7 +1362,9 @@ const DEFAULT_UI = Object.freeze({
   meetingsFilterReportId: '',
   meetingsTypeFilter: '',
   meetingsSearch: '',
-  pdcSummaryEditId: ''
+  pdcSummaryEditId: '',
+  pdcViewMode: 'list',
+  pdcBoardDateId: ''
 });
 
 const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'meetings', 'followUps', 'pdcSummary', 'settings']);
@@ -1373,7 +1514,8 @@ function loadUiState() {
       ...parsed,
       selectedId: null,
       activeThemeFilter: '',
-      pdcSummaryEditId: ''
+      pdcSummaryEditId: '',
+      pdcBoardDateId: ''
     };
     if (!MAIN_VIEWS.includes(merged.mainView)) merged.mainView = 'teamHealth';
     return merged;
@@ -1394,7 +1536,8 @@ function persistUiState() {
     mainView: MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth',
     startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder,
     meetingsFilterReportId: app.ui.meetingsFilterReportId || '',
-    meetingsTypeFilter: app.ui.meetingsTypeFilter || ''
+    meetingsTypeFilter: app.ui.meetingsTypeFilter || '',
+    pdcViewMode: app.ui.pdcViewMode === 'board' ? 'board' : 'list'
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
 }
@@ -2672,17 +2815,14 @@ function isMissingTouchpointOverdue(report, lastDate, thresholdDays) {
 }
 
 function derivePdcStatus(report, context = {}) {
-  const explicitStatus = normalizePdcStatus(report.pdcStatus);
-  const nextPdcDate = normalizeDate(report.nextPdcDate);
-  const lastPdc = normalizeDate(context.lastPdc);
-  const pdcOverdue = typeof context.pdcOverdue === 'boolean' ? context.pdcOverdue : false;
-  if (explicitStatus === 'Blocked') return 'Blocked';
-  if (nextPdcDate && nextPdcDate >= todayStamp()) return 'In progress';
-  if (lastPdc && !pdcOverdue) return 'Completed';
-  if (nextPdcDate && nextPdcDate < todayStamp()) return 'Needs review';
-  if (explicitStatus === 'In progress' || explicitStatus === 'Needs review' || explicitStatus === 'Completed') return explicitStatus;
-  if (lastPdc && pdcOverdue) return 'Needs review';
-  return 'Not started';
+  // v0.42: PDC status is fully manual, classic kanban. A card sits exactly
+  // where the user put it (board drag, card menu, or the Development tab
+  // select) and never moves on its own. Dates now inform instead of decide:
+  // they surface as chips on board cards and keep powering the attention
+  // rules, but they no longer override the stored status. The v8->v9
+  // migration baked each person's previously displayed status into the
+  // stored field so nothing jumped at upgrade.
+  return normalizePdcStatus(report.pdcStatus);
 }
 
 function buildReportMetrics(report, settings) {
@@ -4548,6 +4688,81 @@ function currentDetailDrawerTab() {
   return VISIBLE_DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
+// Composes a clean A4 one-pager for a person (profile facts, development
+// focus, evidence, recent meetings, open follow-ups) into #printSheet and
+// prints it. The print stylesheet hides everything else. Bring it to the
+// PDC itself or drop the PDF in the personnel file.
+function printPdcOnePager(reportId) {
+  const report = getReportById(reportId);
+  const sheet = document.getElementById('printSheet');
+  if (!report || !sheet) return;
+  const metrics = getMetrics(reportId);
+  const fact = (label, value) => `<div class="ps-fact"><span>${escapeHtml(label)}</span><strong>${escapeHtml(normalizeText(value) || 'Not set')}</strong></div>`;
+  const para = (value, emptyText) => normalizeText(value)
+    ? `<p class="ps-para">${escapeHtml(value)}</p>`
+    : `<p class="ps-para ps-empty">${escapeHtml(emptyText)}</p>`;
+  const evidence = Array.isArray(report.evidence) ? report.evidence : [];
+  const evidenceByCategory = new Map();
+  evidence.forEach((entry) => {
+    const category = normalizeText(entry.category) || 'Uncategorized';
+    if (!evidenceByCategory.has(category)) evidenceByCategory.set(category, []);
+    evidenceByCategory.get(category).push(entry);
+  });
+  const evidenceHtml = evidenceByCategory.size === 0
+    ? '<p class="ps-para ps-empty">No evidence captured.</p>'
+    : [...evidenceByCategory.entries()].map(([category, entries]) => `
+        <h4>${escapeHtml(category)}</h4>
+        <ul class="ps-list">${entries.map((entry) => `<li><strong>${escapeHtml(formatDate(entry.date) || 'Undated')}</strong> · ${escapeHtml(normalizeText(entry.summary) || 'No summary')}${normalizeText(entry.detail) ? ` · ${escapeHtml(entry.detail)}` : ''}</li>`).join('')}</ul>
+      `).join('');
+  const recentMeetings = [...(report.meetings || [])]
+    .sort((a, b) => (b.meetingDate || '').localeCompare(a.meetingDate || ''))
+    .slice(0, 5);
+  const meetingsHtml = recentMeetings.length === 0
+    ? '<p class="ps-para ps-empty">No meetings logged.</p>'
+    : recentMeetings.map((m) => {
+        const duration = Number.isFinite(Number(m.durationMinutes)) && Number(m.durationMinutes) > 0 ? ` · ${Number(m.durationMinutes)} min` : '';
+        return `<div class="ps-meeting">
+          <div class="ps-meeting-head"><strong>${escapeHtml(formatDate(m.meetingDate))}</strong> · ${escapeHtml(m.meetingType || '1:1')}${escapeHtml(duration)}</div>
+          <div class="ps-notes">${renderNoteMarkdown(m.notes, { emptyHtml: '<p class="ps-empty">No notes.</p>' })}</div>
+        </div>`;
+      }).join('');
+  const openFollowUps = metrics.openFollowUps || [];
+  const followUpsHtml = openFollowUps.length === 0
+    ? '<p class="ps-para ps-empty">Nothing open.</p>'
+    : `<ul class="ps-list">${openFollowUps.map((item) => `<li>${escapeHtml(item.text)} <span class="ps-muted">(${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)})</span></li>`).join('')}</ul>`;
+  sheet.innerHTML = `
+    <div class="ps-header">
+      <div>
+        <h1>${escapeHtml(report.name || 'Unnamed')}</h1>
+        <p class="ps-sub">${escapeHtml(report.level || 'Level not set')}${normalizeText(report.mentors) ? ` · Mentor: ${escapeHtml(report.mentors)}` : ''}</p>
+      </div>
+      <div class="ps-brand">PDC One-Pager</div>
+    </div>
+    <div class="ps-facts">
+      ${fact('PDC status', metrics.pdcStatus)}
+      ${fact('Support level', report.supportLevel)}
+      ${fact('Hire date', formatDate(report.hireDate))}
+      ${fact('Last promotion', formatDate(report.lastPromotionDate))}
+      ${fact('Last PDC', metrics.lastPdc ? formatDate(metrics.lastPdc) : '')}
+      ${fact('Next PDC', formatDate(report.nextPdcDate))}
+      ${fact('Next 1:1', formatDate(report.nextOneOnOneDate))}
+      ${fact('Last 1:1', metrics.lastOneOnOne ? formatDate(metrics.lastOneOnOne) : '')}
+    </div>
+    <h3>Development focus</h3>
+    ${para(report.developmentGoalSummary, 'No development goal captured.')}
+    <h3>Promotion readiness / growth area</h3>
+    ${para(report.promotionReadiness, 'No readiness notes captured.')}
+    <h3>Growth evidence</h3>
+    ${evidenceHtml}
+    <h3>Open follow-ups</h3>
+    ${followUpsHtml}
+    <h3>Recent meetings</h3>
+    ${meetingsHtml}
+    <div class="ps-footer">Generated ${escapeHtml(formatDate(todayStamp()))} · Team Pulse ${escapeHtml(APP_VERSION)} · Contains personal data, handle accordingly</div>
+  `;
+  window.print();
+}
+
 function renderDetailDrawerTabBar(metrics = null, isCreating = false) {
   if (VISIBLE_DETAIL_DRAWER_TABS.length <= 1) return '';
   const activeTab = currentDetailDrawerTab();
@@ -4634,16 +4849,20 @@ function renderDetailDrawer() {
     <div class="drawer-shell">
       <div class="drawer-header">
         <div class="drawer-header-top">
-          <div>
-            <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
-            <div class="detail-subhead">
-              <span class="detail-level">${escapeHtml(levelText)}</span>
-              ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
+          <div class="drawer-header-identity">
+            ${isCreating ? '' : `<div class="detail-page-header-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
+            <div>
+              <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
+              <div class="detail-subhead">
+                <span class="detail-level">${escapeHtml(levelText)}</span>
+                ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
+              </div>
+              ${!isCreating && normalizeText(editorReport.mentors) ? `<div class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</div>` : ''}
             </div>
-            ${!isCreating && normalizeText(editorReport.mentors) ? `<div class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</div>` : ''}
           </div>
           <div class="actions">
             <button type="button" class="secondary" id="closeDetailDrawerBtn">Close</button>
+            ${isCreating ? '' : '<button type="button" class="secondary" id="printOnePagerBtn">One-pager</button>'}
             <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
             ${isCreating ? '' : '<button type="button" class="secondary" id="deleteSelectedBtn">Delete</button>'}
           </div>
@@ -4673,11 +4892,7 @@ function renderDetailDrawer() {
                     <span>PDC status</span>
                     <select name="pdcStatus">${PDC_STATUSES.map((status) => `<option value="${escapeHtml(status)}" ${status === normalizePdcStatus(editorReport.rawPdcStatus !== undefined ? editorReport.rawPdcStatus : editorReport.pdcStatus) ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}</select>
                   </label>
-                  <div class="pdc-status-derived">
-                    <span class="label">Shown across the app</span>
-                    ${badge(metrics.pdcStatus, variantForPdcStatus(metrics.pdcStatus))}
-                    <span class="field-hint">Derived from PDC dates and cadence. Set Blocked here to override; other statuses follow the dates.</span>
-                  </div>
+                  <span class="field-hint pdc-status-hint">Fully manual, like a kanban card: shown on the board, the summary cards, and the briefing. Dragging on the PDC board changes it too. Dates never move it on their own.</span>
                 </div>
                 <div class="development-focus-grid">
                   <label class="development-field">
@@ -4819,7 +5034,7 @@ function renderDetailDrawer() {
     if (newContentEl) newContentEl.scrollTop = previousContentScroll;
   }
 
-  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => clearSelectedReport());
+  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => navigateRender(() => clearSelectedReport()));
   document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => deleteReport(report.id));
   document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
     document.getElementById('detailEditorForm')?.requestSubmit();
@@ -4864,7 +5079,7 @@ function renderDetailDrawer() {
       captureWorkspaceDraftFromDom(detailEditorFormEl);
       app.ui.detailDrawerTab = nextTab;
       persistUiState();
-      renderDetailDrawer();
+      navigateRender(() => renderDetailDrawer());
     });
   });
   const detailNotesInputEl = document.getElementById('detailNotes');
@@ -4880,6 +5095,7 @@ function renderDetailDrawer() {
     syncDetailAgendaPreview();
   }
   document.getElementById('purgeReportBtn')?.addEventListener('click', () => purgeReportPermanently(report.id));
+  document.getElementById('printOnePagerBtn')?.addEventListener('click', () => printPdcOnePager(report.id));
   document.getElementById('addVacationBtn')?.addEventListener('click', addVacationDraftRow);
   document.getElementById('addEvidenceBtn')?.addEventListener('click', () => {
     app.ui.detailDrawerTab = 'pdc-summary';
@@ -4972,6 +5188,45 @@ function renderDetailDrawer() {
 
 
 
+
+// Tracks which collection views were visible on the previous render so entry
+// animations (staggered tiles and cards) fire only when a view first appears,
+// never on in-place re-renders like search keystrokes, filter changes, or
+// saves. Each render function reports its visibility every pass.
+const viewEntryState = new Map();
+function viewJustEntered(viewKey, isVisibleNow) {
+  const wasVisible = viewEntryState.get(viewKey) === true;
+  viewEntryState.set(viewKey, isVisibleNow);
+  return isVisibleNow && !wasVisible;
+}
+
+// Deterministic per-person identity gradient derived from the stable person
+// id, so the grid tile, PDC card, and workspace header all share one color
+// and the app becomes scannable by color memory. Purely cosmetic, no data.
+function avatarGradient(personId) {
+  let hash = 5381;
+  const s = String(personId || '');
+  for (let i = 0; i < s.length; i += 1) hash = ((hash << 5) + hash + s.charCodeAt(i)) | 0;
+  const hue = ((hash % 360) + 360) % 360;
+  const hue2 = (hue + 42) % 360;
+  return `background:linear-gradient(135deg,hsl(${hue} 72% 56%),hsl(${hue2} 78% 46%))`;
+}
+
+// Wraps a navigation-level DOM update in the View Transitions API so view
+// switches crossfade and same-named elements morph between states. Only
+// user-gesture navigation goes through here: frequent in-place re-renders
+// (search debounce, draft typing) call render functions directly so text
+// entry never flickers. Falls back to a plain synchronous update when the
+// API is unavailable or the user prefers reduced motion. Callers must not
+// rely on the DOM being updated synchronously after this returns.
+function navigateRender(update) {
+  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (typeof document.startViewTransition === 'function' && !reduceMotion) {
+    document.startViewTransition(() => { update(); });
+  } else {
+    update();
+  }
+}
 
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
@@ -5195,6 +5450,8 @@ function renderSidebar() {
 function renderReportsGrid() {
   const mount = document.getElementById('reportsGrid');
   if (!mount) return;
+  const gridVisible = app.ui.mainView === 'reports' && !app.ui.selectedId && !app.ui.creatingReport;
+  mount.classList.toggle('anim-entry', viewJustEntered('reportsGrid', gridVisible));
   const total = getReports().length;
   // getFilteredReports applies search, PDC status, attention state, and the
   // Insights theme filter. The grid re-sorts alphabetically for scannability;
@@ -5211,7 +5468,7 @@ function renderReportsGrid() {
   const attentionEl = document.getElementById('reportsAttentionFilter');
   if (attentionEl && attentionEl.value !== (app.ui.attentionFilter || '')) attentionEl.value = app.ui.attentionFilter || '';
 
-  const tiles = filtered.map((report) => {
+  const tiles = filtered.map((report, tileIndex) => {
     const metrics = getMetrics(report.id);
     const fill = supportLevelFill(report.supportLevel);
     const level = report.level || 'Level not set';
@@ -5227,9 +5484,9 @@ function renderReportsGrid() {
     else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="info">Monitor</span>`);
     else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
     const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-    return `<button type="button" class="report-tile" data-report-card="${escapeHtml(report.id)}">
+    return `<button type="button" class="report-tile" data-report-card="${escapeHtml(report.id)}" style="--i:${Math.min(tileIndex, 14)}">
       <div class="report-tile-head">
-        <div class="report-tile-avatar">${escapeHtml(initials)}</div>
+        <div class="report-tile-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
         <span class="report-tile-name">${escapeHtml(report.name || 'Unnamed')}</span>
         <span class="report-tile-support-dot" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
       </div>
@@ -5237,11 +5494,12 @@ function renderReportsGrid() {
         <span class="report-tile-meta-line">${escapeHtml(level)}</span>
         ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
       </div>
+      ${renderTileSparkline(report)}
       ${chips.length ? `<div class="report-tile-chips">${chips.join('')}</div>` : ''}
     </button>`;
   }).join('');
 
-  const addTile = `<button type="button" class="report-tile-add" data-report-add>
+  const addTile = `<button type="button" class="report-tile-add" data-report-add style="--i:${Math.min(filtered.length, 14)}">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
     <span>Add direct report</span>
   </button>`;
@@ -5279,6 +5537,101 @@ function getSortedReports() {
 
 // Renders a global "all meetings" view (flattened across every direct report).
 // Top toolbar: person filter + "Log meeting" button. Click a row to edit that meeting.
+// Monday-anchored week start for a YYYY-MM-DD string (Danish weeks).
+function mondayOf(dateString) {
+  const d = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return '';
+  const shift = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - shift);
+  return d.toISOString().slice(0, 10);
+}
+
+// Buckets meetings into the trailing N weeks (oldest first), used by the
+// tile sparklines and, per day, mirrored by the heatmap.
+function buildWeeklyMeetingBuckets(meetings, weeksCount) {
+  const currentWeek = mondayOf(todayStamp());
+  const weeks = [];
+  for (let i = weeksCount - 1; i >= 0; i -= 1) weeks.push(addDays(currentWeek, -7 * i));
+  const counts = new Map(weeks.map((key) => [key, 0]));
+  (meetings || []).forEach((m) => {
+    const key = mondayOf(normalizeDate(m.meetingDate));
+    if (counts.has(key)) counts.set(key, counts.get(key) + 1);
+  });
+  return weeks.map((key) => ({ key, count: counts.get(key) }));
+}
+
+// GitHub-style contribution grid: one cell per day, trailing 52 weeks,
+// Monday rows on top. Reflects the person and type filters of the view.
+function renderMeetingHeatmapHtml(meetings) {
+  const WEEKS = 52;
+  const start = mondayOf(todayStamp());
+  const weekStarts = [];
+  for (let i = WEEKS - 1; i >= 0; i -= 1) weekStarts.push(addDays(start, -7 * i));
+  const rangeEnd = addDays(start, 6);
+  const dayCounts = new Map();
+  let total = 0;
+  (meetings || []).forEach((m) => {
+    const key = normalizeDate(m.meetingDate);
+    if (!key || key < weekStarts[0] || key > rangeEnd) return;
+    dayCounts.set(key, (dayCounts.get(key) || 0) + 1);
+    total += 1;
+  });
+  const level = (c) => (c === 0 ? 0 : c === 1 ? 1 : c === 2 ? 2 : c <= 4 ? 3 : 4);
+  const COLORS = ['#edf1f8', '#cfe0ff', '#9ec1ff', '#5b8ffb', '#2957d6'];
+  const CELL = 11;
+  const STEP = 14;
+  const GUTTER = 30;
+  const TOP = 16;
+  const width = GUTTER + WEEKS * STEP;
+  const height = TOP + 7 * STEP;
+  let monthLabels = '';
+  let prevMonth = '';
+  const cells = weekStarts.map((weekStart, col) => {
+    const monthName = new Date(`${weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    if (monthName !== prevMonth) {
+      monthLabels += `<text x="${GUTTER + col * STEP}" y="10" class="hm-label">${escapeHtml(monthName)}</text>`;
+      prevMonth = monthName;
+    }
+    let colCells = '';
+    for (let row = 0; row < 7; row += 1) {
+      const date = addDays(weekStart, row);
+      const count = dayCounts.get(date) || 0;
+      const title = `${count} meeting${count === 1 ? '' : 's'} · ${formatDate(date)}`;
+      colCells += `<rect x="${GUTTER + col * STEP}" y="${TOP + row * STEP}" width="${CELL}" height="${CELL}" rx="2.5" fill="${COLORS[level(count)]}" data-count="${count}"><title>${escapeHtml(title)}</title></rect>`;
+    }
+    return colCells;
+  }).join('');
+  const dayLabels = [['Mon', 0], ['Wed', 2], ['Fri', 4]].map(([label, row]) => `<text x="0" y="${TOP + row * STEP + 9}" class="hm-label">${label}</text>`).join('');
+  const legend = COLORS.map((c) => `<span class="hm-swatch" style="background:${c}"></span>`).join('');
+  return `
+    <div class="sharp-panel heatmap-panel">
+      <div class="sharp-panel-header">
+        <h3>Meeting rhythm · trailing 12 months</h3>
+        <div class="sharp-panel-header-meta"><span class="hm-total">${total} meeting${total === 1 ? '' : 's'}</span></div>
+      </div>
+      <div class="sharp-panel-body padded heatmap-scroll">
+        <svg id="meetingHeatmap" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Meetings per day over the trailing year">${monthLabels}${dayLabels}${cells}</svg>
+        <div class="hm-legend"><span>Less</span>${legend}<span>More</span></div>
+      </div>
+    </div>`;
+}
+
+// Tiny 12-week rhythm bars for a report tile.
+function renderTileSparkline(report) {
+  const buckets = buildWeeklyMeetingBuckets(report.meetings || [], 12);
+  const max = Math.max(1, ...buckets.map((b) => b.count));
+  const BAR = 4;
+  const GAP = 2;
+  const H = 16;
+  const width = buckets.length * (BAR + GAP) - GAP;
+  const bars = buckets.map((b, i) => {
+    const h = b.count === 0 ? 2 : Math.max(4, Math.round((b.count / max) * H));
+    const fill = b.count === 0 ? '#e3e9f4' : 'var(--accent)';
+    return `<rect x="${i * (BAR + GAP)}" y="${H - h}" width="${BAR}" height="${h}" rx="1" fill="${fill}"><title>${escapeHtml(`${b.count} meeting${b.count === 1 ? '' : 's'} · week of ${formatDate(b.key)}`)}</title></rect>`;
+  }).join('');
+  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="Meetings per week, last 12 weeks">${bars}</svg>`;
+}
+
 function renderMeetingsView() {
   const mount = document.getElementById('meetingsBody');
   if (!mount) return;
@@ -5287,9 +5640,11 @@ function renderMeetingsView() {
   const validFilter = filterId && reports.some((r) => r.id === filterId) ? filterId : '';
   const typeFilter = MEETING_TYPES.includes(app.ui.meetingsTypeFilter) ? app.ui.meetingsTypeFilter : '';
   const searchTerm = normalizeText(app.ui.meetingsSearch || '').toLowerCase();
+  const meetingsEntering = viewJustEntered('meetingsView', app.ui.mainView === 'meetings');
 
   const followUpsByMeeting = new Map();
   const items = [];
+  const heatmapMeetings = [];
   reports.forEach((r) => {
     if (validFilter && r.id !== validFilter) return;
     const followUps = extractFollowUps(r);
@@ -5301,6 +5656,7 @@ function renderMeetingsView() {
     });
     (r.meetings || []).forEach((m) => {
       if (typeFilter && canonicalMeetingType(m.meetingType) !== typeFilter) return;
+      heatmapMeetings.push(m);
       if (searchTerm) {
         const blob = `${r.name || ''} ${m.meetingType || ''} ${m.notes || ''}`.toLowerCase();
         if (!blob.includes(searchTerm)) return;
@@ -5309,6 +5665,7 @@ function renderMeetingsView() {
     });
   });
   items.sort((a, b) => (b.meeting.meetingDate || '').localeCompare(a.meeting.meetingDate || ''));
+  const heatmapHtml = renderMeetingHeatmapHtml(heatmapMeetings);
 
   // Build the person filter options (sorted alphabetically).
   const sortedReports = [...reports].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -5349,7 +5706,7 @@ function renderMeetingsView() {
     const empty = hasActiveFilter
       ? `<p class="section-note" style="margin:0;">No meetings match the current filters.</p>`
       : `<p class="section-note" style="margin:0;">No meetings logged across any direct report yet. Click "Log meeting" to start.</p>`;
-    mount.innerHTML = `${toolbar}<div class="sharp-panel"><div class="sharp-panel-body padded">${empty}</div></div>`;
+    mount.innerHTML = `${toolbar}${heatmapHtml}<div class="sharp-panel"><div class="sharp-panel-body padded">${empty}</div></div>`;
     return;
   }
 
@@ -5374,24 +5731,26 @@ function renderMeetingsView() {
   };
 
   let lastMonthKey = '';
-  const rows = items.map(({ report, meeting }) => {
+  const rows = items.map(({ report, meeting }, rowIndex) => {
     const monthKey = (meeting.meetingDate || '').slice(0, 7) || 'undated';
     const divider = monthKey !== lastMonthKey
       ? `<div class="meetings-month-divider">${escapeHtml(monthHeading(meeting.meetingDate))}</div>`
       : '';
     lastMonthKey = monthKey;
     const snippet = firstMeaningfulLine(meeting.notes) || 'No notes captured.';
+    const mInitials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
     const fu = followUpsByMeeting.get(meeting.id);
     const fuChip = fu && fu.open
       ? `<span class="mv-chip" data-tone="warning">${fu.open} open follow-up${fu.open === 1 ? '' : 's'}</span>`
       : (fu && fu.total ? `<span class="mv-chip" data-tone="good">Follow-ups done</span>` : '');
     const duration = Number.isFinite(Number(meeting.durationMinutes)) && Number(meeting.durationMinutes) > 0
       ? ` · ${Number(meeting.durationMinutes)} min` : '';
-    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0">
+    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0" style="--i:${Math.min(rowIndex, 12)}">
         <div class="meetings-view-date">
           <span class="meetings-view-date-m">${escapeHtml(monthName(meeting.meetingDate))}</span>
           <span class="meetings-view-date-d">${escapeHtml(dayNum(meeting.meetingDate))}</span>
         </div>
+        <div class="mv-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml(mInitials)}</div>
         <div class="meetings-view-main">
           <span class="meetings-view-main-title">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}</span>
           <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
@@ -5402,7 +5761,7 @@ function renderMeetingsView() {
       </div>`;
   }).join('');
 
-  mount.innerHTML = `${toolbar}<div class="meetings-view">${rows}</div>`;
+  mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view${meetingsEntering ? ' anim-entry' : ''}">${rows}</div>`;
 }
 
 // Opens a report's workspace on the Meetings & Agenda tab and scrolls to a
@@ -5431,6 +5790,7 @@ function renderFollowUpsView() {
     </div></div>`;
     return;
   }
+  const followUpsEntering = viewJustEntered('followUpsView', app.ui.mainView === 'followUps');
   const groups = reports.map((report) => {
     const metrics = getMetrics(report.id);
     return { report, items: metrics.openFollowUps || [] };
@@ -5451,11 +5811,11 @@ function renderFollowUpsView() {
 
   mount.innerHTML = `
     <div class="followups-summary">${badge(`${totalOpen} open across ${groups.length} ${groups.length === 1 ? 'person' : 'people'}`, 'warning')}</div>
-    <div class="followups-view">
-      ${groups.map(({ report, items }) => `
-        <div class="sharp-panel followup-panel">
+    <div class="followups-view${followUpsEntering ? ' anim-entry' : ''}">
+      ${groups.map(({ report, items }, panelIndex) => `
+        <div class="sharp-panel followup-panel" style="--i:${Math.min(panelIndex, 14)}">
           <div class="sharp-panel-header">
-            <h3><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
+            <h3><span class="fu-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
             <div class="sharp-panel-header-meta">${badge(`${items.length} open`, 'warning')}</div>
           </div>
           <div class="sharp-panel-body">
@@ -5481,6 +5841,110 @@ function renderFollowUpsView() {
   `;
 }
 
+// Kanban lanes in workflow order. Every lane accepts drops and a card stays
+// exactly where it is dropped. Dates never move cards; they show as chips.
+const PDC_BOARD_COLUMNS = Object.freeze(['Not started', 'In progress', 'Needs review', 'Blocked', 'Completed']);
+const PDC_BOARD_HINTS = Object.freeze({
+  'Not started': 'Nothing planned yet.',
+  'In progress': 'Conversation planned or underway.',
+  'Needs review': 'Outcome or follow-up needs a look.',
+  'Blocked': 'Stuck. Needs unblocking.',
+  'Completed': 'PDC held for this round.'
+});
+
+// Moves a card, kanban style: the drop sets the stored status and the card
+// stays put. Two follow-through helpers are offered but never forced: moving
+// to Completed offers to log the PDC meeting via a toast action, and moving
+// to In progress offers to plan the date. The card menu exposes the same
+// helpers directly ('plan-date' and 'log-pdc' pseudo-targets).
+async function performBoardMove(personId, targetStatus) {
+  const report = getReportById(personId);
+  if (!report) return;
+  if (targetStatus === 'plan-date') {
+    app.ui.pdcBoardDateId = personId;
+    renderPdcSummaryView();
+    document.querySelector(`[data-board-date-input="${CSS.escape(personId)}"]`)?.focus();
+    return;
+  }
+  if (targetStatus === 'log-pdc') {
+    openMeetingModal(personId, { presetType: 'PDC' });
+    return;
+  }
+  if (!PDC_STATUSES.includes(targetStatus)) return;
+  if (targetStatus === getMetrics(personId).pdcStatus) return;
+  await updateReport(personId, { ...buildFullPayloadFromReport(report), pdcStatus: targetStatus }, { silentToast: true });
+  if (targetStatus === 'Completed') {
+    showToast(`${report.name} moved to Completed.`, 'success', { actionLabel: 'Log the PDC', duration: 7000, onAction: () => openMeetingModal(personId, { presetType: 'PDC' }) });
+  } else if (targetStatus === 'In progress') {
+    showToast(`${report.name} moved to In progress.`, 'success', { actionLabel: 'Plan date', duration: 7000, onAction: () => performBoardMove(personId, 'plan-date') });
+  } else {
+    showToast(`${report.name} moved to ${targetStatus}.`, 'success');
+  }
+}
+
+function renderPdcBoardHtml(reports, entering) {
+  const grouped = new Map(PDC_BOARD_COLUMNS.map((status) => [status, []]));
+  reports.forEach((r) => {
+    const status = getMetrics(r.id).pdcStatus;
+    (grouped.get(status) || grouped.get('Not started')).push(r);
+  });
+  let cardIndex = 0;
+  const columns = PDC_BOARD_COLUMNS.map((status) => {
+    const people = grouped.get(status);
+    const cards = people.map((r) => {
+      const metrics = getMetrics(r.id);
+      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const goal = firstMeaningfulLine(r.developmentGoalSummary) || 'No development focus set';
+      const meta = `Last: ${metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never'} · Next: ${r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned'}`;
+      const isDatePrompt = app.ui.pdcBoardDateId === r.id;
+      const moveOptions = PDC_BOARD_COLUMNS
+        .filter((s) => s !== status)
+        .map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)
+        .join('') + `<option value="plan-date">Plan PDC date…</option><option value="log-pdc">Log PDC meeting…</option>`;
+      const nextPdc = normalizeDate(r.nextPdcDate);
+      const cardChips = [];
+      if (nextPdc && nextPdc < todayStamp()) cardChips.push('<span class="mv-chip" data-tone="warning">Planned date passed</span>');
+      else if (metrics.pdcOverdue) cardChips.push('<span class="mv-chip" data-tone="warning">PDC overdue</span>');
+      const chipRow = cardChips.length ? `<div class="pdc-board-card-chips">${cardChips.join('')}</div>` : '';
+      const dateBlock = isDatePrompt ? `
+        <div class="pdc-board-date">
+          <input type="date" data-board-date-input="${escapeHtml(r.id)}" value="${escapeHtml(addDays(todayStamp(), 14))}" min="${escapeHtml(todayStamp())}" aria-label="Planned PDC date">
+          <div class="pdc-board-date-actions">
+            <button type="button" data-board-date-save="${escapeHtml(r.id)}">Plan</button>
+            <button type="button" class="secondary" data-board-date-cancel="${escapeHtml(r.id)}">Cancel</button>
+          </div>
+        </div>` : '';
+      const idx = Math.min(cardIndex, 14);
+      cardIndex += 1;
+      return `<div class="pdc-board-card${isDatePrompt ? ' date-open' : ''}" draggable="${isDatePrompt ? 'false' : 'true'}" data-board-card="${escapeHtml(r.id)}" style="--i:${idx}">
+        <div class="pdc-board-card-top">
+          <div class="pdc-board-card-avatar" style="${avatarGradient(r.id)}" aria-hidden="true">${escapeHtml(initials)}</div>
+          <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(r.id)}" title="Open profile">${escapeHtml(r.name || 'Unnamed')}</button>
+        </div>
+        <span class="pdc-board-card-goal">${escapeHtml(goal)}</span>
+        <span class="pdc-board-card-meta">${escapeHtml(meta)}</span>
+        ${chipRow}
+        ${dateBlock}
+        <select class="pdc-board-move" data-board-move="${escapeHtml(r.id)}" aria-label="Move ${escapeHtml(r.name || 'Unnamed')}">
+          <option value="">Move…</option>
+          ${moveOptions}
+        </select>
+      </div>`;
+    }).join('');
+    const emptyBody = '<div class="pdc-board-empty">Drop here</div>';
+    return `<div class="pdc-board-col" data-tone="${escapeHtml(variantForPdcStatus(status))}">
+      <div class="pdc-board-col-head">
+        <span class="pdc-board-col-dot" aria-hidden="true"></span>
+        <h3>${escapeHtml(status)}</h3>
+        <span class="pdc-board-count">${people.length}</span>
+      </div>
+      <p class="pdc-board-col-hint">${escapeHtml(PDC_BOARD_HINTS[status])}</p>
+      <div class="pdc-board-drop" data-board-drop="${escapeHtml(status)}">${cards || emptyBody}</div>
+    </div>`;
+  }).join('');
+  return `<div class="pdc-board${entering ? ' anim-entry' : ''}">${columns}</div>`;
+}
+
 // Renders a global PDC Summary across all reports. Each card shows the derived
 // PDC status, last and next PDC dates, and the two focus fields — editable in
 // place so a whole PDC round can be captured from this one screen.
@@ -5495,8 +5959,20 @@ function renderPdcSummaryView() {
     return;
   }
   const editingId = app.ui.pdcSummaryEditId || '';
-  mount.innerHTML = `<div class="pdc-summary-view">
-    ${reports.map((r) => {
+  const pdcEntering = viewJustEntered('pdcSummaryView', app.ui.mainView === 'pdcSummary');
+  const mode = app.ui.pdcViewMode === 'board' ? 'board' : 'list';
+  const toolbar = `<div class="pdc-view-toolbar">
+    <div class="pdc-view-toggle" role="group" aria-label="PDC layout">
+      <button type="button" class="${mode === 'list' ? 'active' : ''}" data-pdc-view="list" aria-pressed="${mode === 'list'}">List</button>
+      <button type="button" class="${mode === 'board' ? 'active' : ''}" data-pdc-view="board" aria-pressed="${mode === 'board'}">Board</button>
+    </div>
+  </div>`;
+  if (mode === 'board') {
+    mount.innerHTML = `${toolbar}${renderPdcBoardHtml(reports, pdcEntering)}`;
+    return;
+  }
+  mount.innerHTML = `${toolbar}<div class="pdc-summary-view${pdcEntering ? ' anim-entry' : ''}">
+    ${reports.map((r, cardIndex) => {
       const metrics = getMetrics(r.id);
       const dev = normalizeText(r.developmentGoalSummary);
       const prom = normalizeText(r.promotionReadiness);
@@ -5534,9 +6010,9 @@ function renderPdcSummaryView() {
               ${prom ? `<p>${escapeHtml(prom)}</p>` : `<p class="pdc-summary-block-empty">Not set</p>`}
             </div>
           </div>`;
-      return `<article class="pdc-summary-card${isEditing ? ' editing' : ''}" data-pdc-card="${escapeHtml(r.id)}">
+      return `<article class="pdc-summary-card${isEditing ? ' editing' : ''}" data-pdc-card="${escapeHtml(r.id)}" style="--i:${Math.min(cardIndex, 14)}">
         <header class="pdc-summary-card-head">
-          <div class="pdc-summary-card-avatar">${escapeHtml(initials)}</div>
+          <div class="pdc-summary-card-avatar" style="${avatarGradient(r.id)}">${escapeHtml(initials)}</div>
           <div class="pdc-summary-card-title">
             <h3>${escapeHtml(r.name || 'Unnamed')}</h3>
             <span class="pdc-summary-card-meta">${escapeHtml(r.level || 'Level not set')}</span>
@@ -6281,7 +6757,7 @@ function bindStaticEvents() {
         }
         app.ui.teamHealthTab = nextTab;
         persistUiState();
-        render();
+        navigateRender(() => render());
         return;
       }
       // Main-view nav (Direct Reports / Meetings / Settings).
@@ -6302,7 +6778,7 @@ function bindStaticEvents() {
           openRulesDrawer();
           return;
         }
-        render();
+        navigateRender(() => render());
         return;
       }
     });
@@ -6314,13 +6790,13 @@ function bindStaticEvents() {
     reportsGridEl.addEventListener('click', (event) => {
       const addBtn = event.target.closest('[data-report-add]');
       if (addBtn) {
-        openCreateWorkspace();
+        navigateRender(() => openCreateWorkspace());
         return;
       }
       const tile = event.target.closest('[data-report-card]');
       if (tile) {
         const id = tile.getAttribute('data-report-card');
-        selectReport(id);
+        navigateRender(() => selectReport(id));
       }
     });
   }
@@ -6427,7 +6903,7 @@ function bindStaticEvents() {
         return;
       }
       const profileBtn = event.target.closest('[data-followup-open-profile]');
-      if (profileBtn) selectReport(profileBtn.getAttribute('data-followup-open-profile'));
+      if (profileBtn) navigateRender(() => selectReport(profileBtn.getAttribute('data-followup-open-profile')));
     });
   }
 
@@ -6465,8 +6941,85 @@ function bindStaticEvents() {
       const openBtn = event.target.closest('[data-pdc-summary-open]');
       if (openBtn) {
         const id = openBtn.getAttribute('data-pdc-summary-open');
-        if (id) selectReport(id);
+        if (id) navigateRender(() => selectReport(id));
+        return;
       }
+      const viewBtn = event.target.closest('[data-pdc-view]');
+      if (viewBtn) {
+        const nextMode = viewBtn.getAttribute('data-pdc-view') === 'board' ? 'board' : 'list';
+        if (nextMode !== (app.ui.pdcViewMode === 'board' ? 'board' : 'list')) {
+          app.ui.pdcViewMode = nextMode;
+          app.ui.pdcBoardDateId = '';
+          persistUiState();
+          navigateRender(() => renderPdcSummaryView());
+        }
+        return;
+      }
+      const dateSaveBtn = event.target.closest('[data-board-date-save]');
+      if (dateSaveBtn) {
+        const id = dateSaveBtn.getAttribute('data-board-date-save');
+        const input = pdcSummaryBodyEl.querySelector(`[data-board-date-input="${CSS.escape(id)}"]`);
+        const value = normalizeDate(input?.value);
+        const report = getReportById(id);
+        if (!report) return;
+        if (!value) {
+          showToast('Pick a date for the PDC.', 'warning');
+          return;
+        }
+        app.ui.pdcBoardDateId = '';
+        await updateReport(id, { ...buildFullPayloadFromReport(report), nextPdcDate: value }, { silentToast: true });
+        showToast(`PDC planned for ${formatDate(value)}.`, 'success');
+        return;
+      }
+      const dateCancelBtn = event.target.closest('[data-board-date-cancel]');
+      if (dateCancelBtn) {
+        app.ui.pdcBoardDateId = '';
+        renderPdcSummaryView();
+      }
+    });
+    pdcSummaryBodyEl.addEventListener('change', (event) => {
+      const moveSel = event.target.closest('[data-board-move]');
+      if (!moveSel) return;
+      const target = moveSel.value;
+      moveSel.value = '';
+      if (target) performBoardMove(moveSel.getAttribute('data-board-move'), target);
+    });
+    // Native drag and drop between board columns.
+    let boardDragId = null;
+    pdcSummaryBodyEl.addEventListener('dragstart', (event) => {
+      const card = event.target.closest('[data-board-card]');
+      if (!card) return;
+      boardDragId = card.getAttribute('data-board-card');
+      card.classList.add('dragging');
+      if (event.dataTransfer) {
+        event.dataTransfer.setData('text/plain', boardDragId);
+        event.dataTransfer.effectAllowed = 'move';
+      }
+    });
+    pdcSummaryBodyEl.addEventListener('dragover', (event) => {
+      const zone = event.target.closest('[data-board-drop]');
+      if (!zone) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+    });
+    pdcSummaryBodyEl.addEventListener('dragleave', (event) => {
+      const zone = event.target.closest('[data-board-drop]');
+      if (zone && !zone.contains(event.relatedTarget)) zone.classList.remove('drag-over');
+    });
+    pdcSummaryBodyEl.addEventListener('drop', (event) => {
+      const zone = event.target.closest('[data-board-drop]');
+      if (!zone) return;
+      event.preventDefault();
+      zone.classList.remove('drag-over');
+      const id = (event.dataTransfer && event.dataTransfer.getData('text/plain')) || boardDragId;
+      boardDragId = null;
+      if (id) performBoardMove(id, zone.getAttribute('data-board-drop'));
+    });
+    pdcSummaryBodyEl.addEventListener('dragend', () => {
+      boardDragId = null;
+      pdcSummaryBodyEl.querySelectorAll('.dragging').forEach((el) => el.classList.remove('dragging'));
+      pdcSummaryBodyEl.querySelectorAll('.drag-over').forEach((el) => el.classList.remove('drag-over'));
     });
   }
 
@@ -6487,11 +7040,11 @@ function bindStaticEvents() {
       app.ui.selectedId = null;
       app.ui.creatingReport = false;
       persistUiState();
-      render();
+      navigateRender(() => render());
     });
   }
 
-  addReportBtn.addEventListener('click', () => openCreateWorkspace());
+  addReportBtn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
   startupChooseFolderBtn?.addEventListener('click', async () => {
     const connected = await chooseFolderAndConnect();
     if (connected) closeStartupPrompt();
@@ -6619,9 +7172,31 @@ function bindStaticEvents() {
     if (currentTeamHealthTab() === nextTab) return;
     app.ui.teamHealthTab = nextTab;
     persistUiState();
-    renderTeamHealth();
+    navigateRender(() => renderTeamHealth());
   });
   teamHealthBodyEl.addEventListener('click', (event) => {
+    const briefBtn = event.target.closest('[data-briefing-go]');
+    if (briefBtn) {
+      const target = briefBtn.getAttribute('data-briefing-go') || '';
+      if (target.startsWith('view:')) {
+        const nextView = target.slice(5);
+        if (MAIN_VIEWS.includes(nextView)) {
+          app.ui.mainView = nextView;
+          app.ui.selectedId = null;
+          app.ui.creatingReport = false;
+          persistUiState();
+          navigateRender(() => render());
+        }
+      } else if (target.startsWith('tab:')) {
+        const nextTab = target.slice(4);
+        if (TEAM_HEALTH_TABS.includes(nextTab)) {
+          app.ui.teamHealthTab = nextTab;
+          persistUiState();
+          navigateRender(() => renderTeamHealth());
+        }
+      }
+      return;
+    }
     const modeBtn = event.target.closest('[data-tenure-mode]');
     if (modeBtn) {
       const nextMode = modeBtn.getAttribute('data-tenure-mode') === 'promotion' ? 'promotion' : 'tenure';
@@ -6634,12 +7209,12 @@ function bindStaticEvents() {
     }
     const reportTrigger = event.target.closest('[data-tenure-open]');
     if (reportTrigger) {
-      selectReport(reportTrigger.getAttribute('data-tenure-open'));
+      navigateRender(() => selectReport(reportTrigger.getAttribute('data-tenure-open')));
       return;
     }
     const glyphBtn = event.target.closest('[data-glyph-open]');
     if (glyphBtn) {
-      selectReport(glyphBtn.getAttribute('data-glyph-open'));
+      navigateRender(() => selectReport(glyphBtn.getAttribute('data-glyph-open')));
       return;
     }
     const themeBtn = event.target.closest('[data-theme-filter]');
@@ -6653,7 +7228,7 @@ function bindStaticEvents() {
         app.ui.creatingReport = false;
       }
       persistUiState();
-      render();
+      navigateRender(() => render());
       return;
     }
   });
@@ -6663,7 +7238,7 @@ function bindStaticEvents() {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       const id = trigger.getAttribute('data-tenure-open') || trigger.getAttribute('data-glyph-open');
-      if (id) selectReport(id);
+      if (id) navigateRender(() => selectReport(id));
     }
   });
 
@@ -6849,6 +7424,52 @@ function migrateV7ToV8(docV7) {
   return syncIdCounters(safeDoc);
 }
 
+function migrateV8ToV9(docV8) {
+  const safeDoc = docV8 && typeof docV8 === 'object' ? deepCopy(docV8) : makeEmptyDoc();
+  // v9 makes pdcStatus fully manual. To keep boards visually identical at
+  // cutover, bake the status each person DISPLAYED under the old date-driven
+  // derivation into the stored field, replicating the old precedence here
+  // against the raw document (event log plus any embedded meeting arrays).
+  const today = todayStamp();
+  const settingsThresholds = safeDoc.settings?.thresholds || {};
+  const events = Array.isArray(safeDoc.events) ? safeDoc.events : [];
+  safeDoc.people = (Array.isArray(safeDoc.people) ? safeDoc.people : []).map((person) => {
+    const explicit = normalizePdcStatus(person.pdcStatus);
+    const nextPdcDate = normalizeDate(person.nextPdcDate);
+    const deleted = new Set(events.filter((e) => e.personId === person.id && e.type === 'meeting_deleted').map((e) => e.meetingId));
+    let lastPdc = '';
+    events.forEach((e) => {
+      if (e.personId !== person.id || e.type !== 'meeting_logged') return;
+      if (deleted.has(e.meetingId)) return;
+      if (canonicalMeetingType(e.meetingType) !== 'PDC') return;
+      const d = normalizeDate(e.meetingDate);
+      if (d && d > lastPdc) lastPdc = d;
+    });
+    if (!lastPdc && Array.isArray(person.meetings)) {
+      person.meetings.forEach((m) => {
+        if (canonicalMeetingType(m.meetingType) !== 'PDC') return;
+        const d = normalizeDate(m.meetingDate);
+        if (d && d > lastPdc) lastPdc = d;
+      });
+    }
+    const overrides = normalizeCadenceOverrides(person.cadenceOverrides || {});
+    const pdcThreshold = overrides.pdcDays || settingsThresholds.pdcDays || DEFAULT_THRESHOLDS.pdcDays;
+    const anchor = lastPdc || normalizeDate(person.hireDate);
+    const pdcOverdue = anchor ? daysBetween(anchor, today) > pdcThreshold : true;
+    let baked;
+    if (explicit === 'Blocked') baked = 'Blocked';
+    else if (nextPdcDate && nextPdcDate >= today) baked = 'In progress';
+    else if (lastPdc && !pdcOverdue) baked = 'Completed';
+    else if (nextPdcDate && nextPdcDate < today) baked = 'Needs review';
+    else if (explicit === 'In progress' || explicit === 'Needs review' || explicit === 'Completed') baked = explicit;
+    else if (lastPdc && pdcOverdue) baked = 'Needs review';
+    else baked = 'Not started';
+    return { ...person, pdcStatus: baked };
+  });
+  safeDoc.schemaVersion = 9;
+  return syncIdCounters(safeDoc);
+}
+
 function parsePortableJsonText(text) {
   const parsed = JSON.parse(text);
   if (!parsed || typeof parsed !== 'object') {
@@ -6856,11 +7477,11 @@ function parsePortableJsonText(text) {
   }
 
   if (!Object.prototype.hasOwnProperty.call(parsed, 'schemaVersion')) {
-    const migratedLegacy = migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed)))))));
+    const migratedLegacy = migrateV8ToV9(migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed))))))));
     return {
       doc: ensureDocShape(migratedLegacy),
       migratedFromVersion: 0,
-      lastMigrationApplied: 'v0-to-v8'
+      lastMigrationApplied: 'v0-to-v9'
     };
   }
 
@@ -6879,7 +7500,8 @@ function parsePortableJsonText(text) {
     4: migrateV4ToV5,
     5: migrateV5ToV6,
     6: migrateV6ToV7,
-    7: migrateV7ToV8
+    7: migrateV7ToV8,
+    8: migrateV8ToV9
   };
 
   let working = deepCopy(parsed);
@@ -6929,11 +7551,15 @@ function generateSchemaMarkdown() {
   lines.push('## Added in schema v8');
   lines.push('- **people[].agenda** — Markdown talking points for the next 1:1, edited on the Meetings & Agenda tab of the person workspace.');
   lines.push('');
+  lines.push('## Changed in schema v9');
+  lines.push('- **people[].pdcStatus** — Fully manual (kanban model): the stored value is exactly what every view shows, and only the user moves it (board drag, card menu, or the Development tab select). The v8->v9 migration baked each person\'s previously displayed, date-derived status into this field so boards did not shift at upgrade. Dates still power the attention rules and appear as chips on board cards, but never move a status by themselves.');
+  lines.push('');
   lines.push('## Migration path');
-  lines.push('- **v0 -> v8** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
+  lines.push('- **v0 -> v9** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
   lines.push('- **v5 -> v6** — Adds settings.themesWindowDays. (Historically also seeded weeklySnapshots; that field no longer persists past v6->v7.)');
   lines.push('- **v6 -> v7** — Removes the weeklySnapshots field from the document root.');
   lines.push('- **v7 -> v8** — Adds the per-person agenda field (defaults to empty).');
+  lines.push('- **v8 -> v9** — Bakes the previously derived PDC status into people[].pdcStatus; statuses are manual from v9 on.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
@@ -7244,18 +7870,31 @@ function renderHealthScoreSection(scoreInfo) {
   const { score, tone, headline, sub } = scoreInfo;
   const r = 52;
   const circ = 2 * Math.PI * r;
-  const offset = circ - (circ * score) / 100;
-  const strokeColor = tone === 'success' ? 'var(--success)' : tone === 'warning' ? 'var(--warning)' : tone === 'danger' ? 'var(--danger)' : 'var(--muted)';
+  // Paint the dial at the last value it showed so re-renders never flash to
+  // zero. animateHealthRing() then eases it to the new target.
+  const shown = healthRingShownScore === null ? 0 : healthRingShownScore;
+  const initialOffset = circ - (circ * shown) / 100;
+  const gradStops = tone === 'success'
+    ? ['#3fd68f', 'var(--success)']
+    : tone === 'warning'
+      ? ['#ffc65c', 'var(--warning)']
+      : ['#ff8a7e', 'var(--danger)'];
   return `
     <div class="overview-section health-score">
-      <div class="health-score-dial" role="img" aria-label="Team health score ${score} of 100">
+      <div class="health-score-dial" data-tone="${escapeHtml(tone)}" role="img" aria-label="Team health score ${score} of 100">
         <svg viewBox="0 0 120 120">
+          <defs>
+            <linearGradient id="healthRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:${gradStops[0]}"></stop>
+              <stop offset="100%" style="stop-color:${gradStops[1]}"></stop>
+            </linearGradient>
+          </defs>
           <circle cx="60" cy="60" r="${r}" fill="none" stroke="#ecf1f9" stroke-width="10"></circle>
-          <circle cx="60" cy="60" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"></circle>
+          <circle id="healthRingProgress" cx="60" cy="60" r="${r}" fill="none" stroke="url(#healthRingGradient)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${initialOffset.toFixed(2)}" data-circ="${circ.toFixed(2)}"></circle>
         </svg>
         <div class="health-score-dial-value">
           <div>
-            <strong>${score}</strong>
+            <strong id="healthScoreValue" data-target="${score}">${Math.round(shown)}</strong>
             <span>of 100</span>
           </div>
         </div>
@@ -7267,6 +7906,40 @@ function renderHealthScoreSection(scoreInfo) {
       </div>
     </div>
   `;
+}
+
+// Eases the health dial from whatever it last displayed to the freshly
+// computed score: arc sweep and number count-up together. Snaps instantly
+// when the value is unchanged, motion is reduced, or rAF is unavailable.
+let healthRingShownScore = null;
+let healthRingRaf = 0;
+function animateHealthRing() {
+  const progressEl = document.getElementById('healthRingProgress');
+  const valueEl = document.getElementById('healthScoreValue');
+  if (!progressEl || !valueEl) return;
+  const target = Number(valueEl.getAttribute('data-target')) || 0;
+  const circ = Number(progressEl.getAttribute('data-circ')) || 0;
+  const setTo = (value) => {
+    progressEl.setAttribute('stroke-dashoffset', (circ - (circ * value) / 100).toFixed(2));
+    valueEl.textContent = String(Math.round(value));
+  };
+  window.cancelAnimationFrame(healthRingRaf);
+  const from = healthRingShownScore === null ? 0 : healthRingShownScore;
+  healthRingShownScore = target;
+  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || typeof window.requestAnimationFrame !== 'function' || from === target) {
+    setTo(target);
+    return;
+  }
+  const duration = 750;
+  const start = performance.now();
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / duration);
+    setTo(from + (target - from) * ease(t));
+    if (t < 1) healthRingRaf = window.requestAnimationFrame(step);
+  };
+  healthRingRaf = window.requestAnimationFrame(step);
 }
 
 function renderCadenceBarsSection(reportStates) {
@@ -7413,7 +8086,114 @@ function daysBetween(a, b) {
   return Math.round((d2.getTime() - d1.getTime()) / 86400000);
 }
 
-function renderOverviewTabHtml(reports) {
+// Builds the daily briefing lines from current state. Each item carries a
+// tone (dot color), pre-escaped HTML text, and an optional navigation target
+// ('view:<mainView>' or 'tab:<teamHealthTab>') that makes the row clickable.
+function buildBriefingItems(reportStates) {
+  const items = [];
+  const today = todayStamp();
+  const joinNames = (names) => names.length <= 1 ? (names[0] || '') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+
+  // 1. Overdue touchpoints (respects snoozes and vacation suppression).
+  const overdueEntries = [];
+  reportStates.forEach(({ report, metrics }) => {
+    const kinds = [];
+    if (metrics.oneOnOneOverdue) kinds.push('1:1');
+    if (metrics.pdcOverdue) kinds.push('PDC');
+    if (metrics.cvReviewOverdue) kinds.push('CV review');
+    if (kinds.length) overdueEntries.push({ name: report.name || 'Unnamed', kinds });
+  });
+  const overdueTotal = overdueEntries.reduce((sum, e) => sum + e.kinds.length, 0);
+  if (overdueTotal > 0) {
+    let text;
+    if (overdueEntries.length <= 3) {
+      text = `Overdue: ${joinNames(overdueEntries.map((e) => `${escapeHtml(e.name)} (${escapeHtml(joinNames(e.kinds))})`))}.`;
+    } else {
+      text = `${overdueTotal} touchpoints overdue across ${overdueEntries.length} people.`;
+    }
+    items.push({ tone: 'warning', html: text, go: 'tab:attention' });
+  }
+
+  // 2. Vacations: active now, and starting within the next 7 days.
+  const activeVacations = reportStates.filter(({ metrics }) => metrics.vacationStatus.active);
+  if (activeVacations.length) {
+    const text = activeVacations.length <= 3
+      ? `On vacation: ${joinNames(activeVacations.map(({ report, metrics }) => `${escapeHtml(report.name || 'Unnamed')} (back ${escapeHtml(formatDate(vacationBackDate(metrics.vacationStatus.current)))})`))}.`
+      : `${activeVacations.length} people are on vacation right now.`;
+    items.push({ tone: 'info', html: text });
+  }
+  const startingSoon = reportStates.filter(({ metrics }) => {
+    const next = metrics.vacationStatus.next;
+    return next && normalizeDate(next.startDate) && daysBetween(today, normalizeDate(next.startDate)) <= 7;
+  });
+  if (startingSoon.length) {
+    const text = startingSoon.length <= 3
+      ? `Vacation ahead: ${joinNames(startingSoon.map(({ report, metrics }) => `${escapeHtml(report.name || 'Unnamed')} from ${escapeHtml(formatDate(metrics.vacationStatus.next.startDate))}`))}.`
+      : `${startingSoon.length} vacations start within a week.`;
+    items.push({ tone: 'info', html: text });
+  }
+
+  // 3. Open follow-ups, flagging the ones going stale.
+  let openTotal = 0;
+  let staleTotal = 0;
+  reportStates.forEach(({ metrics }) => {
+    (metrics.openFollowUps || []).forEach((item) => {
+      openTotal += 1;
+      const d = normalizeDate(item.meetingDate);
+      if (d && daysBetween(d, today) > 30) staleTotal += 1;
+    });
+  });
+  if (openTotal > 0) {
+    const staleText = staleTotal > 0 ? `, ${staleTotal} older than 30 days` : '';
+    items.push({
+      tone: staleTotal > 0 ? 'warning' : 'info',
+      html: `${openTotal} open follow-up${openTotal === 1 ? '' : 's'}${staleText}.`,
+      go: 'view:followUps'
+    });
+  }
+
+  // 4. PDC round progress across the team.
+  const completed = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Completed').length;
+  const blocked = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Blocked').length;
+  const blockedText = blocked > 0 ? `, ${blocked} blocked` : '';
+  items.push({
+    tone: blocked > 0 ? 'warning' : (completed === reportStates.length ? 'success' : 'info'),
+    html: `PDC round: ${completed} of ${reportStates.length} completed${blockedText}.`,
+    go: 'view:pdcSummary'
+  });
+
+  // 5. All clear, the line worth working toward.
+  if (overdueTotal === 0 && openTotal === 0) {
+    items.unshift({ tone: 'success', html: 'All clear. No overdue touchpoints and no open follow-ups.' });
+  }
+  return items;
+}
+
+// Always-on daily briefing at the top of the Overview tab: a short narrated
+// digest of what needs a manager's eyes today, computed fresh on every render.
+function renderBriefingSection(reportStates) {
+  if (!reportStates.length) return '';
+  const items = buildBriefingItems(reportStates);
+  if (!items.length) return '';
+  const dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  const rows = items.map((item) => {
+    const inner = `<span class="briefing-dot" data-tone="${escapeHtml(item.tone)}" aria-hidden="true"></span><span class="briefing-text">${item.html}</span>`;
+    return item.go
+      ? `<button type="button" class="briefing-row" data-briefing-go="${escapeHtml(item.go)}">${inner}<span class="briefing-go" aria-hidden="true">→</span></button>`
+      : `<div class="briefing-row">${inner}</div>`;
+  }).join('');
+  return `
+    <div class="overview-section briefing" id="dailyBriefing">
+      <div class="overview-section-head">
+        <h3>Briefing</h3>
+        <span class="overview-section-note">${escapeHtml(dateLabel)}</span>
+      </div>
+      <div class="briefing-list">${rows}</div>
+    </div>
+  `;
+}
+
+function renderOverviewTabHtml(reports, entering = false) {
   const reportStates = [...reports].map((report) => {
     const metrics = getMetrics(report.id);
     return {
@@ -7424,7 +8204,8 @@ function renderOverviewTabHtml(reports) {
   });
   const scoreInfo = computeTeamHealthScore(reportStates);
   return `
-    <div class="overview-tab">
+    <div class="overview-tab${entering ? ' anim-entry' : ''}">
+      ${renderBriefingSection(reportStates)}
       ${renderHealthScoreSection(scoreInfo)}
       ${renderUpcomingSection(reportStates)}
     </div>
@@ -7476,20 +8257,22 @@ function renderTeamHealth() {
     const btn = document.createElement('button');
     btn.id = 'teamHealthEmptyAddBtn';
     btn.textContent = 'Add your first direct report';
-    btn.addEventListener('click', () => openCreateWorkspace());
+    btn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
     empty.append(msg, btn);
     teamHealthBodyEl.replaceChildren(empty);
     return;
   }
   renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
+  const overviewEntering = viewJustEntered('overviewTab', app.ui.mainView === 'teamHealth' && tab === 'overview');
   let panelHtml = '';
-  if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
+  if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports, overviewEntering);
   else if (tab === 'cadence') panelHtml = renderCadenceTabHtml(reports);
   else if (tab === 'attention') panelHtml = renderAttentionTabHtml(reports);
   else if (tab === 'support') panelHtml = renderSupportTabHtml(reports);
   else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
+  animateHealthRing();
 }
 
 function updateThemeWindowSettingFromForm() {
