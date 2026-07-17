@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Team Pulse</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232f5be0'/%3E%3Cstop offset='.58' stop-color='%236d5df6'/%3E%3Cstop offset='1' stop-color='%2300b3e6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1' y='1' width='38' height='38' rx='11' fill='url(%23g)'/%3E%3Cpath d='M7 22h6l3.2-9 5.6 16 4.2-12 2.2 5h5.8' fill='none' stroke='%23fff' stroke-width='2.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <!-- No external resources: Team Pulse makes zero network requests. Fonts use the
        local system stack so no visitor data (IP, user agent) ever leaves the machine. -->
   <style>
@@ -168,45 +169,6 @@
     .health-score-headline[data-tone="warning"]{color:var(--warning)}
     .health-score-headline[data-tone="danger"]{color:var(--danger)}
     .health-score-sub{color:var(--muted);font-size:13px;margin:0;font-weight:600}
-    /* Cadence bars */
-    .cadence-bars{display:grid;gap:14px}
-    .health-metric{display:grid;gap:8px}
-    .health-metric-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-    .health-metric-top strong{font-size:15px}
-    .health-metric-top span,.health-subtext{color:var(--muted);font-size:13px}
-    .health-progress{height:10px;border-radius:999px;background:#ecf1f9;overflow:hidden;border:1px solid #e4ebf5}
-    .health-progress > span{display:block;height:100%;width:0;border-radius:inherit;background:var(--accent);transition:width 0.4s ease}
-    .health-progress.warning > span{background:var(--warning)}
-    .health-progress.success > span{background:var(--success)}
-    .health-progress.danger > span{background:var(--danger)}
-    /* Attention breakdown */
-    .attention-breakdown-empty{color:var(--muted);font-size:13px;margin:0}
-    .attention-breakdown-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-    .attention-breakdown-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
-    .attention-breakdown-count{font-size:17px;font-weight:800;color:var(--text);min-width:20px;text-align:right}
-    .attention-breakdown-meter{height:8px;border-radius:999px;background:#ecf1f9;overflow:hidden;border:1px solid #e4ebf5;position:relative}
-    .attention-breakdown-meter > span{display:block;height:100%;width:0;border-radius:inherit;background:var(--warning);transition:width 0.4s ease}
-    .attention-breakdown-meter[data-tone="danger"] > span{background:var(--danger)}
-    .attention-breakdown-meter[data-tone="warning"] > span{background:var(--warning)}
-    .attention-breakdown-meter[data-tone="info"] > span{background:var(--info)}
-    .attention-breakdown-label{font-size:13px;font-weight:700;color:var(--text)}
-    /* Support level distribution */
-    .support-strip{display:flex;height:28px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#f5f7fb}
-    .support-strip-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;transition:filter 0.12s ease;min-width:0}
-    .support-strip-seg[data-empty="true"]{display:none}
-    .support-strip-seg[data-fill="green"]{background:var(--sat-green)}
-    .support-strip-seg[data-fill="blue"]{background:var(--sat-blue)}
-    .support-strip-seg[data-fill="amber"]{background:var(--sat-amber)}
-    .support-strip-seg[data-fill="red"]{background:var(--sat-red)}
-    .support-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
-    .support-legend-item{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text)}
-    .support-legend-item[data-dim="true"]{color:var(--muted)}
-    .support-legend-item .swatch{width:10px;height:10px;border-radius:3px;flex:none}
-    .support-legend-item .swatch[data-fill="green"]{background:var(--sat-green)}
-    .support-legend-item .swatch[data-fill="blue"]{background:var(--sat-blue)}
-    .support-legend-item .swatch[data-fill="amber"]{background:var(--sat-amber)}
-    .support-legend-item .swatch[data-fill="red"]{background:var(--sat-red)}
-    .support-legend-item .count{color:var(--muted);font-weight:700;margin-left:2px}
     /* Upcoming list */
     .upcoming-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
     .upcoming-row{appearance:none;background:transparent;border:none;width:100%;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;transition:background 0.12s ease}
@@ -662,12 +624,17 @@
     .reports-toolbar .searchbox input{width:100%;padding:10px 14px 10px 38px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
     .reports-toolbar .searchbox::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:14px;height:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235f6b85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");background-repeat:no-repeat;pointer-events:none}
     .reports-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;justify-content:start;align-content:start}
-    .report-tile{appearance:none;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color 0.15s ease,box-shadow 0.15s ease,transform 0.04s ease;min-height:120px;font-family:inherit;color:inherit}
+    /* align-items:stretch is load-bearing: the Chromium UA stylesheet gives
+       <button> elements a non-stretch align-items default, so without it the
+       head row sizes to max-content, centers, and spills the avatar off the
+       left edge and the 1:1 room pill + support dot past the right edge. */
+    .report-tile{appearance:none;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;align-items:stretch;gap:10px;cursor:pointer;transition:border-color 0.15s ease,box-shadow 0.15s ease,transform 0.04s ease;min-height:120px;font-family:inherit;color:inherit}
     .report-tile:hover,.report-tile:focus-visible{border-color:#c2cde0;box-shadow:0 4px 14px rgba(23,32,51,0.06);outline:none}
     .report-tile:active{transform:translateY(1px)}
     .report-tile-head{display:flex;align-items:center;gap:10px}
     .report-tile-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;letter-spacing:-0.02em}
     .report-tile-name{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+    .initials-tag{flex:none;font-size:10.5px;font-weight:800;letter-spacing:0.05em;color:var(--muted);background:#f1f4fa;border:1px solid var(--line);border-radius:5px;padding:2px 5px;line-height:1;font-variant-numeric:tabular-nums}
     .report-tile-support-dot{width:10px;height:10px;border-radius:50%;flex:none}
     .report-tile-support-dot[data-fill="green"]{background:var(--sat-green)}
     .report-tile-support-dot[data-fill="blue"]{background:var(--sat-blue)}
@@ -676,6 +643,7 @@
     .report-tile-support-dot[data-fill="grey"]{background:var(--sat-grey)}
     .report-tile-meta{color:var(--muted);font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:2px}
     .report-tile-meta-line{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .report-tile-fullname{color:var(--text);font-weight:700}
     .report-tile-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
     .report-tile-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:3px 7px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
     .report-tile-chip[data-tone="danger"]{background:var(--danger-soft);color:var(--danger)}
@@ -801,6 +769,17 @@
     .briefing-text strong{font-weight:700}
     .briefing-go{flex:none;color:var(--accent);font-weight:700;opacity:0;transition:opacity 0.12s ease}
     button.briefing-row:hover .briefing-go,button.briefing-row:focus-visible .briefing-go{opacity:1}
+    /* Person chips inside briefing rows: each one is a direct link to that
+       person's profile, so every line names names instead of giving counts. */
+    .briefing-row.has-people{align-items:flex-start}
+    .briefing-row.has-people .briefing-dot{margin-top:5px;transform:none}
+    .briefing-people{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .briefing-person{appearance:none;display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;font-weight:700;color:var(--text);cursor:pointer;transition:border-color 0.12s ease,background 0.12s ease,color 0.12s ease}
+    .briefing-person:hover,.briefing-person:focus-visible{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);outline:none}
+    .briefing-person .bp-extra{font-size:11px;font-weight:600;color:var(--muted)}
+    .briefing-person:hover .bp-extra,.briefing-person:focus-visible .bp-extra{color:var(--accent)}
+    .briefing-link{appearance:none;border:none;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:2px 4px;border-radius:6px;flex:none;align-self:center}
+    .briefing-link:hover,.briefing-link:focus-visible{background:var(--accent-soft);outline:none}
     /* === v0.40 additions ==================================================== */
     /* Staggered entry for collection views. The anim-entry class is gated in
        JS to the first appearance of a view, so search keystrokes, filter
@@ -1166,9 +1145,497 @@
     body.density-compact .mr-notes{min-height:220px}
     body.density-compact .pdc-summary-card{padding:12px 14px}
     @media (prefers-reduced-motion: reduce){.mr-shell{animation:none}.goal-progress-fill{transition:none}}
+    /* ===================================================================
+       v0.46.0 — Insights health trend, keyboard view shortcuts, "Last
+       time" recap in the 1:1 room, illustrated empty states, tabular
+       numerals, focus-visible rings, and motion polish. Appended as one
+       block so earlier sections stay byte-identical.
+       =================================================================== */
+    /* Tabular numerals app-wide: stats, tables, countdowns, and badges stop
+       jittering when digits change. */
+    body{font-variant-numeric:tabular-nums}
+    /* Focus rings for keyboard users. Type-level selectors keep specificity
+       below component rules, so elements with a deliberate custom focus
+       style (tiles, sidebar items, tabs) keep their own treatment and this
+       fills the gaps everywhere else. */
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .sidebar .sidebar-item:focus-visible{outline:2px solid #8aa8ff;outline-offset:-2px}
+    /* Insights: health trend card */
+    .trend-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
+    .trend-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 4px}
+    .trend-head h3{margin:0;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+    .trend-note{color:var(--muted);font-size:12px;font-weight:600;white-space:nowrap}
+    .trend-sub{margin:0 0 12px;color:var(--muted);font-size:13px;max-width:640px}
+    .trend-chart{width:100%;height:auto;display:block}
+    .trend-grid-line{stroke:#eef2f8;stroke-width:1}
+    .trend-axis-label,.trend-month-label{font-size:10px;font-weight:700;fill:#8a97b2}
+    .trend-line{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+    .trend-dot{fill:#fff;stroke:var(--accent);stroke-width:2}
+    .trend-dot.current{fill:var(--accent)}
+    .trend-empty{border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted);font-size:13.5px;text-align:center;background:#fafcff}
+    /* Illustrated empty states */
+    .empty-hero{border:1px dashed var(--line);border-radius:14px;background:#fff;padding:38px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;color:var(--muted)}
+    .empty-hero-icon{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+    .empty-hero-icon svg{width:30px;height:30px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .empty-hero h3{margin:0;color:var(--text);font-size:17px;font-weight:800}
+    .empty-hero p{margin:0;max-width:400px;font-size:14px}
+    .empty-hero button{margin-top:12px}
+    .empty-hero.celebrate .empty-hero-icon{background:var(--success-soft);color:var(--success)}
+    /* 1:1 room: "Last time" recap */
+    .mr-prev{padding:0;overflow:hidden}
+    .mr-prev-summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;user-select:none}
+    .mr-prev-summary::-webkit-details-marker{display:none}
+    .mr-prev-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);flex:none}
+    .mr-prev-meta{color:var(--muted);font-size:12.5px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .mr-prev-chevron{color:var(--muted);font-size:11px;flex:none;transition:transform 0.15s ease}
+    .mr-prev[open] .mr-prev-chevron{transform:rotate(180deg)}
+    .mr-prev-note{margin:0 16px 14px;max-height:260px;overflow-y:auto;border-top:1px solid var(--line);padding-top:12px}
+    .mr-prev-empty{margin:0 16px 14px;border-top:1px solid var(--line);padding-top:12px}
+    /* Motion polish, all gated behind reduced-motion */
+    @media (prefers-reduced-motion: no-preference) and (hover: hover){
+      .report-tile{transition:border-color 0.15s ease,box-shadow 0.18s ease,transform 0.14s ease}
+      .report-tile:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(23,32,51,0.10)}
+      .report-tile:active{transform:translateY(0)}
+    }
+    @media (prefers-reduced-motion: no-preference){
+      .tp-item input[type="checkbox"],.followup-item input[type="checkbox"]{transition:transform 0.12s ease}
+      .tp-item input[type="checkbox"]:active,.followup-item input[type="checkbox"]:active{transform:scale(1.2)}
+      .tick-pop input[type="checkbox"]{animation:tickPop 0.3s cubic-bezier(0.2,0.8,0.3,1.25)}
+      .tick-pop{animation:tickRowFlash 0.55s ease}
+    }
+    @keyframes tickPop{0%{transform:scale(0.55)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
+    @keyframes tickRowFlash{0%{background:var(--accent-soft)}100%{background:transparent}}
+    /* ===================================================================
+       v0.47.0 — Consultant Development Path: drawer section (radar, stage
+       pills, capability checklist), Insights team card (heatmap + web
+       overlay), and a timeline color for capability entries. Appended as
+       one block so earlier sections stay byte-identical.
+       =================================================================== */
+    .cdp-layout{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+    .cdp-radar-wrap{flex:0 0 340px;max-width:340px}
+    .cdp-radar{width:100%;height:auto;display:block}
+    .cdp-radar-ring{fill:none;stroke:#eef2f8;stroke-width:1}
+    .cdp-radar-axis{stroke:#e4ebf5;stroke-width:1}
+    .cdp-radar-label{font-size:10px;font-weight:700;fill:#8a97b2}
+    .cdp-radar-label.current{fill:var(--accent);font-weight:800}
+    .cdp-radar-shape{fill-opacity:0.14;stroke-width:2;stroke-linejoin:round}
+    .cdp-radar-dot{fill:#fff;stroke-width:2}
+    .cdp-side{flex:1;min-width:220px;display:flex;flex-direction:column;gap:12px}
+    .cdp-summary{display:flex;flex-direction:column;gap:4px}
+    .cdp-summary strong{font-size:15px;font-weight:800;color:var(--text)}
+    .cdp-summary span{font-size:13px;color:var(--muted)}
+    .cdp-stage-pills{display:flex;flex-wrap:wrap;gap:6px}
+    .cdp-stage-pill{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.12s ease}
+    .cdp-stage-pill:hover{border-color:#cfd9ec;color:var(--text)}
+    .cdp-stage-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .cdp-stage-pill.current:not(.active){border-color:var(--accent);color:var(--accent)}
+    .cdp-stage-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin:4px 0 8px}
+    .cdp-implied-note{margin:0 0 10px;font-size:12.5px;color:var(--muted);background:#f5f7fb;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+    .cdp-group{margin-bottom:12px}
+    .cdp-group-title{font-size:12px;font-weight:800;letter-spacing:0.03em;color:var(--text);margin:0 0 6px;text-transform:uppercase}
+    .cdp-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:6px;transition:border-color 0.12s ease,background 0.12s ease}
+    .cdp-item:hover{border-color:#cfd9ec}
+    .cdp-item-main{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;cursor:pointer}
+    .cdp-item input[type="checkbox"]{margin-top:2px;flex:none}
+    .cdp-item-side{flex:none;display:flex;align-items:center;gap:6px;padding-left:6px}
+    .cdp-date-label{font-size:11px;font-weight:800;color:var(--success)}
+    .cdp-date{font:inherit;font-size:12px;font-weight:700;color:var(--success);background:var(--success-soft);border:1px solid transparent;border-radius:6px;padding:2px 6px;cursor:pointer}
+    .cdp-date:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+    .cdp-item.done{background:#f7faf7;border-color:#d7e8d9}
+    .cdp-item-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .cdp-item-text{font-size:13.5px;color:var(--text);line-height:1.45}
+    .cdp-item.done .cdp-item-text{color:#4a5670}
+    .cdp-chip{align-self:flex-start;font-size:11px;font-weight:800;color:var(--success);background:var(--success-soft);border-radius:6px;padding:2px 7px}
+    .cdp-hint{font-size:12px;color:var(--muted);font-style:italic}
+    /* Insights team card */
+    .cdp-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
+    .cdp-hm-scroll{overflow-x:auto}
+    .cdp-hm-table{width:100%;border-collapse:separate;border-spacing:4px}
+    .cdp-hm-table th{font-size:11px;font-weight:800;letter-spacing:0.04em;color:var(--muted);text-transform:uppercase;padding:4px 6px;text-align:center;white-space:nowrap}
+    .cdp-hm-cell{min-width:64px;text-align:center;font-size:12.5px;font-weight:800;color:#3c4a66;border-radius:8px;padding:9px 6px}
+    .cdp-hm-cell.dark{color:#fff}
+    .cdp-hm-cell.implied{background:var(--success-soft);color:var(--success)}
+    .cdp-hm-cell.current{box-shadow:0 0 0 2px var(--accent) inset}
+    .cdp-hm-person-cell{text-align:left;white-space:nowrap}
+    .cdp-hm-person{appearance:none;border:none;background:transparent;display:flex;align-items:center;gap:8px;font:inherit;font-size:13.5px;font-weight:700;color:var(--text);cursor:pointer;padding:2px 4px;border-radius:8px}
+    .cdp-hm-person:hover{background:#f5f7fb}
+    .cdp-hm-name{overflow:hidden;text-overflow:ellipsis;max-width:180px}
+    .cdp-web-wrap{display:flex;justify-content:center;padding:6px 0}
+    .cdp-web-wrap .cdp-radar{max-width:470px}
+    .cdp-legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
+    .cdp-legend-chip{appearance:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:12.5px;font-weight:700;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+    .cdp-legend-chip:hover{border-color:#cfd9ec}
+    .cdp-legend-swatch{width:10px;height:10px;border-radius:50%;flex:none}
+    .cdp-card-footnote{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center}
+    .tl-item[data-tl-kind="capability"]::before{border-color:var(--sat-orange)}
+    @media (max-width:720px){.cdp-radar-wrap{flex-basis:100%;max-width:340px;margin:0 auto}}
+    /* ===================================================================
+       v0.48.0 — Two layout fixes + the futurist UI pass. Appended as one
+       block so earlier sections stay byte-identical. Later rules win the
+       cascade at equal specificity, which is how the overrides work.
+
+       FIX 1 — The header ribbon no longer follows the scroll. It used to
+       be position:sticky and floated over content (kanban column heads,
+       insights cards). It now scrolls away with the page like a normal
+       heading and loses its floating-card chrome.
+
+       FIX 2 — Horizontal overflow containment. The content pane clips
+       horizontal overflow, and grid items default to min-width:auto, so
+       a wide child (the CDP heatmap) could grow its card past the pane
+       and get clipped with no scrollbar anywhere. Guards below let cards
+       shrink so inner scrollers (overflow-x:auto) take over, matching
+       how the PDC board already behaves.
+       =================================================================== */
+    .content-header{position:static;top:auto;z-index:auto;background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;padding:6px 0 0;margin-bottom:22px}
+    #teamHealthBody{min-width:0}
+    .content-pane-inner{min-width:0}
+    .insights-tab{min-width:0}
+    .insights-tab > *{min-width:0;max-width:100%}
+    .overview-tab > *{min-width:0;max-width:100%}
+    .cdp-card{min-width:0}
+    .cdp-hm-scroll{max-width:100%}
+
+    /* --- Tokens for the pass --- */
+    :root{--accent-2:#6d5df6;--accent-3:#00b3e6;--grad-accent:linear-gradient(120deg,#2f5be0,#6d5df6 60%,#00b3e6);--glow-ring:0 0 0 1px rgba(94,120,255,0.28);--glow-soft:0 14px 40px -18px rgba(84,104,255,0.45)}
+    ::selection{background:rgba(94,120,255,0.24)}
+
+    /* --- Ambient canvas: aurora blobs + a faint dot grid behind content --- */
+    .content-pane{background:
+      radial-gradient(circle at 1px 1px, rgba(41,60,110,0.05) 1px, transparent 1.6px),
+      radial-gradient(1100px 640px at 88% -12%, rgba(109,93,246,0.075), transparent 62%),
+      radial-gradient(950px 620px at -12% 28%, rgba(0,179,230,0.06), transparent 58%),
+      radial-gradient(900px 640px at 42% 118%, rgba(41,87,214,0.055), transparent 60%),
+      var(--bg);
+      background-size:26px 26px, auto, auto, auto, auto}
+
+    /* --- Hero title: quiet gradient ink --- */
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+      .content-header-title h1{background:linear-gradient(110deg,var(--text) 45%,#3752c8 74%,#7a5cf0 96%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--text);letter-spacing:-0.025em}
+    }
+
+    /* --- Sidebar: depth gradient, edge glow, gradient active pill --- */
+    .sidebar{background:linear-gradient(180deg,#0c1326,#0f172a 42%,#111c38);box-shadow:inset -1px 0 0 rgba(99,132,255,0.12)}
+    .sidebar-item{transition:background 0.15s ease,color 0.15s ease,transform 0.15s ease}
+    .sidebar-item:hover{transform:translateX(2px)}
+    .sidebar-item.active,.sidebar-item.active:hover{background:linear-gradient(120deg,#2f5be0,#5b46e0);box-shadow:0 6px 18px -6px rgba(80,96,235,0.6),inset 0 1px 0 rgba(255,255,255,0.18);transform:none}
+
+    /* --- Card system: layered light, cool borders, soft accent bloom --- */
+    .overview-section,.recent-themes-card,.tenure-river-card,.trend-card,.cdp-card,.pdc-summary-card,.followup-panel,.report-tile{border-color:#dfe6f3;background-image:linear-gradient(180deg,#ffffff,#fdfdff);box-shadow:0 1px 2px rgba(23,32,51,0.03),0 16px 36px -26px rgba(41,87,214,0.30)}
+
+    /* --- Tiles: lift, glow ring, and a sheen sweep on hover --- */
+    .report-tile{position:relative;overflow:hidden;transition:border-color 0.16s ease,box-shadow 0.22s ease,transform 0.16s cubic-bezier(0.3,0.7,0.3,1)}
+    .report-tile::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,0.5) 48%,transparent 62%);transform:translateX(-135%);transition:transform 0.7s ease;pointer-events:none}
+    .report-tile:hover::after,.report-tile:focus-visible::after{transform:translateX(135%)}
+    .report-tile:hover,.report-tile:focus-visible{border-color:rgba(94,120,255,0.55);box-shadow:var(--glow-ring),var(--glow-soft);transform:translateY(-2px)}
+    .report-tile:active{transform:translateY(0) scale(0.99)}
+    .tile-room-btn{background:linear-gradient(120deg,#2f5be0,#6d5df6);color:#fff;box-shadow:0 4px 14px -5px rgba(84,104,255,0.6);transition:filter 0.15s ease,box-shadow 0.15s ease}
+    .tile-room-btn:hover{filter:brightness(1.07);box-shadow:0 6px 18px -5px rgba(84,104,255,0.7)}
+
+    /* --- PDC board cards: gentle lift --- */
+    .pdc-board-card{transition:border-color 0.15s ease,box-shadow 0.2s ease,transform 0.15s ease}
+    .pdc-board-card:hover{transform:translateY(-2px);border-color:rgba(94,120,255,0.5);box-shadow:var(--glow-ring),0 12px 30px -18px rgba(84,104,255,0.5)}
+
+    /* --- CDP heatmap: row focus glow, charged current cell --- */
+    .cdp-hm-cell{transition:box-shadow 0.15s ease,filter 0.15s ease}
+    .cdp-hm-table tbody tr:hover .cdp-hm-cell{box-shadow:inset 0 0 0 1px rgba(94,120,255,0.25)}
+    .cdp-hm-table tbody tr:hover .cdp-hm-cell.current{box-shadow:inset 0 0 0 2px var(--accent),0 8px 18px -10px rgba(41,87,214,0.55)}
+
+    /* --- Insights web radar: bloom in, glow on hover --- */
+    @keyframes cdpBloom{from{opacity:0;transform:scale(0.62)}to{opacity:1;transform:none}}
+    .cdp-web-wrap .cdp-radar-shape{transform-box:fill-box;transform-origin:center;animation:cdpBloom 0.55s cubic-bezier(0.22,0.9,0.3,1) both}
+    .cdp-radar-shape{transition:fill-opacity 0.2s ease,filter 0.2s ease}
+    .cdp-radar-shape:hover{fill-opacity:0.3;filter:drop-shadow(0 4px 10px rgba(41,87,214,0.4))}
+
+    /* --- Insights cards: staggered entrance, matching the other views --- */
+    .insights-tab.anim-entry > *{animation:riseIn 0.46s cubic-bezier(0.22,0.9,0.28,1) both}
+    .insights-tab.anim-entry > *:nth-child(2){animation-delay:70ms}
+    .insights-tab.anim-entry > *:nth-child(3){animation-delay:140ms}
+    .insights-tab.anim-entry > *:nth-child(4){animation-delay:210ms}
+    .insights-tab.anim-entry > *:nth-child(5){animation-delay:280ms}
+
+    /* --- Focus and input glow (additive to the v0.46 rings) --- */
+    button:focus-visible,.gs-trigger:focus-visible,.sidebar-item:focus-visible{box-shadow:0 0 0 4px rgba(94,120,255,0.20)}
+    input:focus-visible,select:focus-visible,textarea:focus-visible{box-shadow:0 0 0 4px rgba(94,120,255,0.14)}
+
+    /* --- Slim luminous scrollbars --- */
+    .content-pane,.pdc-board,.cdp-hm-scroll,.tenure-river-svg-wrap{scrollbar-width:thin;scrollbar-color:#a9b8dc transparent}
+    .content-pane::-webkit-scrollbar{width:10px;height:10px}
+    .pdc-board::-webkit-scrollbar,.cdp-hm-scroll::-webkit-scrollbar,.tenure-river-svg-wrap::-webkit-scrollbar{height:9px;width:9px}
+    .content-pane::-webkit-scrollbar-track,.pdc-board::-webkit-scrollbar-track,.cdp-hm-scroll::-webkit-scrollbar-track,.tenure-river-svg-wrap::-webkit-scrollbar-track{background:transparent}
+    .content-pane::-webkit-scrollbar-thumb,.pdc-board::-webkit-scrollbar-thumb,.cdp-hm-scroll::-webkit-scrollbar-thumb,.tenure-river-svg-wrap::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#bcc9e6,#9fb0d8);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+    .content-pane::-webkit-scrollbar-thumb:hover,.pdc-board::-webkit-scrollbar-thumb:hover,.cdp-hm-scroll::-webkit-scrollbar-thumb:hover,.tenure-river-svg-wrap::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#9fb0d8,#8194c6);background-clip:padding-box;border:2px solid transparent}
+
+    /* --- Chrome overlays: glass --- */
+    .toast{background:rgba(255,255,255,0.8);backdrop-filter:blur(10px) saturate(1.35);-webkit-backdrop-filter:blur(10px) saturate(1.35);border-left-width:4px;box-shadow:0 18px 44px -14px rgba(15,23,42,0.3)}
+    .gs-panel{background:rgba(255,255,255,0.86);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(219,226,238,0.85);box-shadow:0 30px 80px -22px rgba(15,23,42,0.5)}
+    .toolbar-menu-popover{background:rgba(255,255,255,0.88);backdrop-filter:blur(12px) saturate(1.35);-webkit-backdrop-filter:blur(12px) saturate(1.35);border-color:rgba(219,226,238,0.85);box-shadow:0 22px 60px -18px rgba(15,23,42,0.35);animation:gsIn 0.16s ease both}
+
+    /* --- Empty state icons: gentle float --- */
+    @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .empty-hero-icon{animation:heroFloat 6s ease-in-out infinite}
+
+    /* --- Reduced motion: everything above stays calm --- */
+    @media (prefers-reduced-motion: reduce){
+      .report-tile::after{display:none}
+      .report-tile:hover,.report-tile:focus-visible{transform:none}
+      .sidebar-item:hover{transform:none}
+      .pdc-board-card:hover{transform:none}
+      .cdp-web-wrap .cdp-radar-shape{animation:none}
+      .empty-hero-icon{animation:none}
+      .insights-tab.anim-entry > *{animation:none !important}
+      .toolbar-menu-popover{animation:none}
+    }
+    /* ===================================================================
+       v0.49.0 — Title fix + the depth pass. Appended block, cascade wins.
+
+       TITLE FIX — The gradient ink previously ran across the full-width
+       heading box, so short titles stayed dark while long ones faded to
+       light purple wherever the box said so, and the tight tracking plus
+       transparent text fill shaved the ink off the final glyph. The
+       heading now shrinks to its text (width:fit-content) so every title
+       gets the same deliberate dark-to-violet ramp, and a small right
+       padding catches the glyph overhang so nothing gets cut.
+       v0.49.1 — The real clip was vertical: the global h1 rule sets
+       line-height:1.04, giving a 29px paint box for glyphs whose ink
+       spans about 37px. Plain text paints outside its line box freely,
+       but background-clip:text erases anything outside the box, so
+       descenders and bottom curves vanished on every page. The title
+       now carries line-height:1.2 plus symmetric padding with
+       compensating negative margins, so no font metric on any platform
+       can clip it again.
+
+       DEPTH PASS — Boxes-in-boxes replaced by a surface system: sections
+       become translucent panels with luminous gradient borders that
+       charge up on hover, inner decoration boxes are flattened to soft
+       tints, section headings get a gradient signal dash and indigo ink,
+       the page header grows a drifting aurora bloom and a gradient
+       hairline, the health dial breathes, heatmap cells pop and the
+       current stage cell charges, primary buttons go gradient with glow,
+       and the sheen sweep extends to PDC cards and the room button.
+       =================================================================== */
+
+    /* --- Titles: consistent gradient ink, no shaved glyphs --- */
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+      .content-header-title h1{width:fit-content;max-width:100%;line-height:1.2;padding:0.14em 0.16em;margin:-0.14em -0.16em;letter-spacing:-0.02em;background:linear-gradient(100deg,#1a2440 0%,#2c3f9a 55%,#5b46e0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#1a2440}
+    }
+
+    /* --- Page header: aurora bloom + gradient hairline --- */
+    .content-header{position:relative}
+    .content-header::before{content:'';position:absolute;width:460px;height:200px;left:-70px;top:-60px;background:radial-gradient(closest-side,rgba(109,93,246,0.16),transparent 70%);filter:blur(28px);pointer-events:none;z-index:-1;animation:auroraDrift 16s ease-in-out infinite alternate}
+    .content-header::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:1px;background:linear-gradient(90deg,rgba(94,120,255,0),rgba(94,120,255,0.4) 16%,rgba(0,179,230,0.28) 55%,transparent 88%);pointer-events:none}
+    @keyframes auroraDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(70px,12px,0)}}
+
+    /* --- Section headings: gradient signal dash + indigo ink --- */
+    .overview-section-head h3,.trend-card h3,.tenure-river-head h3,.recent-themes-card h3,.followup-panel h3{color:#2b3a75}
+    .overview-section-head h3::before,.trend-card h3::before,.tenure-river-head h3::before,.recent-themes-card h3::before,.followup-panel h3::before{content:'';display:inline-block;width:18px;height:4px;border-radius:99px;background:var(--grad-accent);margin-right:9px;transform:translateY(-2px)}
+
+    /* --- Surface system: translucent panels with luminous borders --- */
+    .overview-section,.trend-card,.recent-themes-card,.tenure-river-card,.cdp-card,.pdc-summary-card,.followup-panel,.report-tile{position:relative;border:1px solid transparent;background:linear-gradient(180deg,rgba(255,255,255,0.82),rgba(255,255,255,0.95)) padding-box,linear-gradient(135deg,rgba(148,163,255,0.6),rgba(219,226,238,0.95) 38%,rgba(219,226,238,0.95) 62%,rgba(0,179,230,0.4)) border-box;box-shadow:0 1px 2px rgba(23,32,51,0.03),0 26px 54px -34px rgba(41,87,214,0.45)}
+
+    /* --- Charge ring: gradient border lights up on hover --- */
+    .overview-section::before,.trend-card::before,.recent-themes-card::before,.tenure-river-card::before,.cdp-card::before,.pdc-summary-card::before,.followup-panel::before,.report-tile::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:var(--grad-accent);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity 0.25s ease;pointer-events:none}
+    .overview-section:hover::before,.trend-card:hover::before,.recent-themes-card:hover::before,.tenure-river-card:hover::before,.cdp-card:hover::before,.pdc-summary-card:hover::before,.followup-panel:hover::before,.report-tile:hover::before,.report-tile:focus-visible::before{opacity:0.85}
+
+    /* --- Flatten inner decoration boxes into soft tints --- */
+    .trend-empty{border:0;background:rgba(41,60,110,0.045)}
+    .tenure-river-svg-wrap,.tenure-mini-wrap{border:0;background:rgba(41,60,110,0.035)}
+    .cdp-implied-note{border:0;background:rgba(41,60,110,0.05)}
+    .overview-tab{gap:20px}
+    .insights-tab{gap:20px}
+
+    /* --- Health dial: breathing glow behind the ring --- */
+    .health-score-dial{position:relative}
+    .health-score-dial::before{content:'';position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,200,117,0.26),transparent 72%);z-index:-1;animation:dialBreath 4.6s ease-in-out infinite;pointer-events:none}
+    .health-score-dial[data-tone="warning"]::before{background:radial-gradient(closest-side,rgba(253,171,61,0.3),transparent 72%)}
+    .health-score-dial[data-tone="danger"]::before{background:radial-gradient(closest-side,rgba(226,68,92,0.26),transparent 72%)}
+    @keyframes dialBreath{0%,100%{opacity:0.55;transform:scale(0.96)}50%{opacity:1;transform:scale(1.03)}}
+
+    /* --- Heatmap: cells pop, current stage charges --- */
+    .cdp-hm-cell{position:relative;transition:transform 0.16s cubic-bezier(0.3,0.7,0.3,1),box-shadow 0.16s ease,filter 0.15s ease}
+    .cdp-hm-cell:hover{transform:scale(1.07);z-index:1;box-shadow:0 8px 20px -8px rgba(41,87,214,0.45),inset 0 0 0 1px rgba(94,120,255,0.35)}
+    @keyframes cellCharge{0%,100%{box-shadow:inset 0 0 0 2px var(--accent)}50%{box-shadow:inset 0 0 0 2px var(--accent),0 0 16px -2px rgba(41,87,214,0.6)}}
+    .cdp-hm-cell.current{animation:cellCharge 3.6s ease-in-out infinite}
+
+    /* --- Briefing chips: lift and ring on hover --- */
+    .briefing-person{transition:border-color 0.12s ease,background 0.12s ease,color 0.12s ease,transform 0.14s ease,box-shadow 0.14s ease}
+    .briefing-person:hover,.briefing-person:focus-visible{transform:translateY(-1px);box-shadow:0 6px 14px -8px rgba(84,104,255,0.6),0 0 0 1px rgba(94,120,255,0.3)}
+
+    /* --- Primary buttons: gradient, glow, press (zero specificity so
+           classed buttons like tiles and cards keep their own styles) --- */
+    :where(.button,button,input[type="submit"]){background:linear-gradient(120deg,#2f5be0,#5b46e0 70%,#6d5df6)}
+    :where(.button,button,input[type="submit"]):hover{box-shadow:0 8px 20px -8px rgba(84,104,255,0.55)}
+    :where(.button,button,input[type="submit"]):active{transform:translateY(1px) scale(0.99)}
+
+    /* --- More sheen: PDC cards and the room button --- */
+    .pdc-board-card{position:relative;overflow:hidden}
+    .pdc-board-card::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,0.45) 48%,transparent 62%);transform:translateX(-135%);transition:transform 0.65s ease;pointer-events:none}
+    .pdc-board-card:hover::after{transform:translateX(135%)}
+    .tile-room-btn{position:relative;overflow:hidden}
+    .tile-room-btn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.55) 48%,transparent 64%);transform:translateX(-140%);transition:transform 0.5s ease;pointer-events:none}
+    .tile-room-btn:hover::after{transform:translateX(140%)}
+
+    /* --- Reduced motion: the pass stays calm --- */
+    @media (prefers-reduced-motion: reduce){
+      .content-header::before{animation:none}
+      .health-score-dial::before{animation:none;opacity:0.7}
+      .cdp-hm-cell.current{animation:none;box-shadow:inset 0 0 0 2px var(--accent)}
+      .cdp-hm-cell:hover{transform:none}
+      .briefing-person:hover,.briefing-person:focus-visible{transform:none}
+      .pdc-board-card::after,.tile-room-btn::after{display:none}
+      :where(.button,button,input[type="submit"]):active{transform:none}
+    }
+    /* ===================================================================
+       v0.50.0 — Depth pass for the development web (shared renderer, so
+       this upgrades both the Insights overlay and the drawer radar).
+       The grid sits on a dished plate with a soft lift shadow, shapes
+       are gradient-filled with a colored glow, the outer ring and axis
+       dots frame the web, and in single mode a charge current flows
+       along the shape perimeter. Reduced motion stills the current.
+       =================================================================== */
+    .cdp-radar-plate{filter:drop-shadow(0 12px 20px rgba(41,60,110,0.12))}
+    .cdp-radar-band{fill:rgba(148,163,255,0.055);stroke:none}
+    .cdp-radar-ring{fill:none;stroke:#e9eef9;stroke-width:1}
+    .cdp-radar-ring.outer{stroke:#d6dff2;stroke-width:1.3}
+    .cdp-radar-axis{stroke:#e2e9f6;stroke-width:1}
+    .cdp-radar-axis-dot{fill:#ccd8ee}
+    .cdp-radar-shape{fill-opacity:1;stroke-width:2.25;stroke-linejoin:round;transition:fill-opacity 0.2s ease,stroke-width 0.2s ease}
+    .cdp-radar-shape:hover{fill-opacity:1;stroke-width:3.1}
+    .cdp-radar-flow{fill:none;stroke-width:1.5;stroke-dasharray:5 16;stroke-linecap:round;opacity:0.75;animation:cdpFlow 7s linear infinite;pointer-events:none}
+    @keyframes cdpFlow{to{stroke-dashoffset:-210}}
+    .cdp-radar-dot{fill:#fff;stroke-width:2.4;filter:drop-shadow(0 1px 3px rgba(23,32,51,0.25))}
+    .cdp-radar-label{font-size:9.5px;font-weight:800;letter-spacing:0.08em;fill:#8a97b2;text-transform:uppercase}
+    .cdp-radar-label.current{fill:var(--accent);font-weight:800}
+    @media (prefers-reduced-motion: reduce){
+      .cdp-radar-flow{animation:none;opacity:0.4}
+    }
+    /* ===================================================================
+       v0.50.1 — Title clipping ended for good. The gradient ink relied
+       on background-clip:text, which erases any glyph ink outside the
+       element's paint box. After fixing the vertical clip, Windows
+       fractional display scaling produced a horizontal one: the measured
+       box ends a few pixels before the text run does, so the final
+       letterform lost its right side (the w reading as a v). Rather than
+       chase paint box metrics per platform, the clipping mechanism is
+       removed entirely. Titles are now solid deep indigo, so they keep
+       color without any erasure being possible, and page titles stay on
+       one line except on narrow screens where wrapping beats clipping.
+       =================================================================== */
+    .content-header-title h1{width:auto;max-width:none;padding:0;margin:0;line-height:1.15;letter-spacing:-0.02em;white-space:nowrap;background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:#2a3878}
+    @media (max-width:700px){
+      .content-header-title h1{white-space:normal}
+    }
+    /* ===================================================================
+       v0.51.0 — Final polish. The TP lettermark becomes the Team Pulse
+       brand mark: a gradient badge with a white pulse trace that sweeps
+       continuously like a heartbeat monitor and quickens when hovered.
+       The same mark ships as an inline SVG favicon so the browser tab
+       carries the identity too, and the tab title follows the current
+       view. Form controls adopt the accent (checkboxes, radios, text
+       carets), and the content pane scrolls smoothly for people without
+       reduced motion set.
+       =================================================================== */
+    .sidebar-brand-mark{background:none;filter:drop-shadow(0 4px 12px rgba(109,93,246,0.5))}
+    .sidebar-brand-mark svg{width:100%;height:100%;display:block}
+    .brand-pulse{stroke-dasharray:100;stroke-dashoffset:0;animation:brandDraw 3.4s ease-in-out infinite}
+    .sidebar-brand:hover .brand-pulse{animation-duration:1.4s}
+    @keyframes brandDraw{0%{stroke-dashoffset:100}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-100}}
+    :root{accent-color:var(--accent)}
+    input,textarea{caret-color:var(--accent)}
+    @media (prefers-reduced-motion: no-preference){
+      .content-pane{scroll-behavior:smooth}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .brand-pulse{animation:none;stroke-dashoffset:0}
+    }
+    /* ===================================================================
+       v0.52.0 — The continuous surface + a living atmosphere.
+
+       CONTINUOUS SURFACE — Navigation stops swapping screens and starts
+       moving one material. Stable chrome (sidebar, toasts, save dock,
+       ambient canvas, page title) opts out of the root transition with
+       its own view-transition-names, so only the content pane travels:
+       the old view sinks out of focus (blur + desaturate), the new one
+       rises into focus with a 40ms stagger. Person cards make the trip
+       between views: a report tile grows into the workspace header and
+       into the meeting room header (avatars have morphed since v0.39;
+       now the whole card travels), and the sidebar's gradient active
+       pill glides to the clicked item instead of teleporting. Cards
+       that exist on only one side of a transition (.vt-card groups
+       whose old/new snapshot is an :only-child) ride the pane's
+       focus-pull motion so nothing fades detached in place. The v0.39
+       reduced-motion rule already zeroes every transition animation,
+       and navigateRender now also falls back to a plain synchronous
+       update in Stable mode.
+       v0.52.3 — Most of the paragraph above is history. The card morphs,
+       focus pull, and .vt-card rules proved to be too much motion in use
+       and were removed; the section switch is now a bare fade. What
+       remains: the stable-chrome isolation, the v0.39 avatar morph, and
+       the nav pill glide. See the rules below for the current truth.
+       v0.52.4 — The bare fade is gone too. Section switches are back on
+       the original v0.39 root crossfade; only the avatar morph and the
+       nav pill glide animate. See the section-switch comment below.
+
+       LIVING ATMOSPHERE — The static aurora backdrop becomes a canvas
+       flow field painted by the TP_AMBIENT module at the end of the
+       script: four drifting gradient orbs plus a field of motes riding
+       a layered-sine flow. Calm teams get slow indigo and cyan drift;
+       open attention items and Urgent or Support-needed levels pull
+       warmth, speed, and turbulence into the field; logging a meeting
+       or note sends a soft ripple through it. The canvas sits fixed at
+       z-index 0 behind the shell, and the content pane keeps only its
+       dot grid and goes transparent so the field shows through the
+       glass overlays. DPR capped, pauses when the tab is hidden, one
+       calm static frame under reduced motion, gone in Stable mode.
+       =================================================================== */
+    /* --- Atmosphere canvas + layering --- */
+    .ambient-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;display:block;view-transition-name:vt-ambient}
+    .app-shell{position:relative;z-index:1}
+    .content-pane{background:radial-gradient(circle at 1px 1px, rgba(41,60,110,0.05) 1px, transparent 1.6px) 0 0/26px 26px}
+    body.stable-mode .ambient-canvas{display:none}
+    /* v0.52.1: retire the v0.49 static header bloom. It was a 16s CSS drift
+       that read as a frozen purple blob next to the live canvas orbs, which
+       now own all atmosphere. The gradient hairline on the header stays. */
+    .content-header::before{content:none}
+    /* v0.52.1: cursor canvas. A second fixed canvas above the UI (pointer
+       events off) painted by TP_AMBIENT. v0.52.3: it now carries a faint
+       mist that blooms and dissipates behind the mouse instead of a
+       comet. Hidden in Stable mode; reduced motion never draws it. */
+    .cursor-canvas{position:fixed;inset:0;z-index:9999;pointer-events:none;display:block;view-transition-name:vt-cursor}
+    body.stable-mode .cursor-canvas{display:none}
+    /* v0.52.1: the snooze confirmation uses the info kind, which had no
+       accent rule. Same pattern as success / warning / error above. */
+    .toast.info{border-left-color:var(--info)}
+    /* --- Stable chrome: opts out of the root transition --- */
+    .sidebar{view-transition-name:vt-sidebar}
+    .toast-stack{view-transition-name:vt-toasts}
+    .save-dock{view-transition-name:vt-savedock}
+    /* --- Section switches, v0.52.4: no custom animation ---
+       The custom content-pane fade is gone entirely. With vt-content and
+       vt-page-title removed, the pane rejoins the root snapshot, so
+       section switches ride the original v0.39 root crossfade (0.18s,
+       plus-lighter blended), the same behaviour this app shipped with
+       from v0.39 through v0.51. Lesson from four rounds of tuning: a
+       separately named pane fade cannot keep old plus new opacity
+       summing to one, so the backdrop glinted through mid-fade and every
+       switch read as a flip. The root image pair blends correctly by
+       construction. Only the v0.39 avatar morph and the nav pill glide
+       remain as animated groups. For fully instant switches, set the two
+       .18s durations in the v0.39 root rule near the top of this
+       stylesheet to 0s. --- */
+    ::view-transition-group(*){animation-duration:.18s;animation-timing-function:ease}
+    /* --- Active nav pill glides between sidebar items --- */
+    .sidebar-item.active{view-transition-name:vt-nav-active}
   </style>
 </head>
 <body>
+  <!-- v0.52.0: living atmosphere. A fixed canvas behind the app shell that the
+       TP_AMBIENT module (end of the script) paints with a slow flow field.
+       Purely decorative: pointer-events none, aria-hidden, and it disappears
+       under Stable mode or prefers-reduced-motion (one calm static frame). -->
+  <canvas id="ambientCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
+  <!-- v0.52.1: cursor comet trail. Painted by the same TP_AMBIENT loop,
+       mouse pointers only, sits above the UI with pointer-events none. -->
+  <canvas id="cursorCanvas" class="cursor-canvas" aria-hidden="true"></canvas>
   <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
 
   <div class="app-shell" id="appShell" data-main-view="teamHealth" data-mobile-pane="content">
@@ -1176,7 +1643,19 @@
     <!-- UNIFIED SIDEBAR — app-level nav with full names -->
     <nav class="sidebar" id="sidebar" aria-label="Main navigation">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-mark">TP</div>
+        <div class="sidebar-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img" aria-label="Team Pulse">
+            <defs>
+              <linearGradient id="brandMarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2f5be0"></stop>
+                <stop offset="58%" stop-color="#6d5df6"></stop>
+                <stop offset="100%" stop-color="#00b3e6"></stop>
+              </linearGradient>
+            </defs>
+            <rect x="1" y="1" width="38" height="38" rx="11" fill="url(#brandMarkGrad)"></rect>
+            <path class="brand-pulse" pathLength="100" d="M7 22h6l3.2-9 5.6 16 4.2-12 2.2 5h5.8" fill="none" stroke="#ffffff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
         <div class="sidebar-brand-text">
           <span class="sidebar-brand-name">Team Pulse</span>
           <span class="sidebar-brand-version" id="appVersion">v0.0.0</span>
@@ -1683,8 +2162,8 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.44.2';
-const CURRENT_SCHEMA_VERSION = 10;
+const APP_VERSION = 'v0.52.4';
+const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
 const UI_STATE_KEY = 'team-pulse-ui-state';
@@ -1783,6 +2262,7 @@ const DEFAULT_UI = Object.freeze({
   searchTerm: '',
   planFilter: '',
   attentionFilter: '',
+  exportReminderSnoozedUntil: '',
   startupHasConnectedFolder: false,
   creatingReport: false,
   detailDrawerTab: 'profile',
@@ -1790,6 +2270,8 @@ const DEFAULT_UI = Object.freeze({
   vacationEditMode: false,
   cadenceEditMode: false,
   teamTenureMode: 'tenure',
+  cdpTeamMode: 'heatmap',
+  cdpDrawerStage: '',
   teamHealthTab: 'overview',
   mainView: 'teamHealth',
   meetingsFilterReportId: '',
@@ -1806,12 +2288,9 @@ const DEFAULT_UI = Object.freeze({
 
 const MAIN_VIEWS = Object.freeze(['teamHealth', 'reports', 'meetings', 'followUps', 'pdcSummary', 'meetingRoom', 'settings']);
 
-const TEAM_HEALTH_TABS = Object.freeze(['overview', 'cadence', 'attention', 'support', 'insights']);
+const TEAM_HEALTH_TABS = Object.freeze(['overview', 'insights']);
 const TEAM_HEALTH_TAB_LABELS = Object.freeze({
   'overview': 'Overview',
-  'cadence': 'Cadence',
-  'attention': 'Attention',
-  'support': 'Support Levels',
   'insights': 'Insights'
 });
 // All three workspace tabs are visible. The top-level Meetings and PDC Summary
@@ -1959,6 +2438,7 @@ function loadUiState() {
     };
     if (!MAIN_VIEWS.includes(merged.mainView) || merged.mainView === 'meetingRoom') merged.mainView = 'teamHealth';
     if (merged.reportsViewMode !== 'table') merged.reportsViewMode = 'tiles';
+    if (merged.exportReminderSnoozedUntil && !Number.isFinite(Date.parse(merged.exportReminderSnoozedUntil))) merged.exportReminderSnoozedUntil = '';
     return merged;
   } catch (error) {
     console.error('Failed to load UI state', error);
@@ -1979,7 +2459,9 @@ function persistUiState() {
     meetingsFilterReportId: app.ui.meetingsFilterReportId || '',
     meetingsTypeFilter: app.ui.meetingsTypeFilter || '',
     pdcViewMode: ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list',
-    reportsViewMode: app.ui.reportsViewMode === 'table' ? 'table' : 'tiles'
+    reportsViewMode: app.ui.reportsViewMode === 'table' ? 'table' : 'tiles',
+    cdpTeamMode: app.ui.cdpTeamMode === 'web' ? 'web' : 'heatmap',
+    exportReminderSnoozedUntil: app.ui.exportReminderSnoozedUntil || ''
   };
   localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
 }
@@ -2184,6 +2666,22 @@ function syncMeetingNotesPreview() {
 
 function normalizeText(value) {
   return String(value ?? '').trim();
+}
+
+// Company-style person initials (e.g. MAMO, TOBA): letters and digits only,
+// uppercased, capped at 8 characters. Empty stays empty.
+function normalizeInitials(value) {
+  return normalizeText(value).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
+}
+
+// Splits a trailing parenthesized initials token off a name, the pattern used
+// before initials became a first-class field ("Maria Moreira (MAMO)"). Returns
+// { name, initials } with initials empty when the pattern does not match.
+function splitLegacyInitialsFromName(rawName) {
+  const name = normalizeText(rawName);
+  const match = name.match(/^(.*\S)\s*\(([A-Za-z0-9]{2,8})\)$/);
+  if (!match) return { name, initials: '' };
+  return { name: normalizeText(match[1]), initials: normalizeInitials(match[2]) };
 }
 
 function normalizeLevel(value) {
@@ -2914,6 +3412,7 @@ function normalizePersonRecord(person = {}) {
   return {
     id: normalizeText(person.id),
     name: normalizeText(person.name),
+    initials: normalizeInitials(person.initials),
     level: normalizeLevel(person.level),
     mentors: normalizeText(person.mentors),
     hireDate: normalizeDate(person.hireDate),
@@ -2932,6 +3431,7 @@ function normalizePersonRecord(person = {}) {
     vacations: normalizeVacationEntries(person.vacations),
     snoozes: normalizeSnoozeEntries(person.snoozes),
     evidence: normalizeEvidenceEntries(person.evidence),
+    capabilities: normalizeCapabilityTicks(person.capabilities),
     customFields: Array.isArray(person.customFields)
       ? person.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.label || field.value)
       : [],
@@ -2997,6 +3497,7 @@ function normalizeEventRecord(event = {}) {
 function normalizePersonChanges(changes = {}) {
   const normalized = {};
   if ('name' in changes) normalized.name = normalizeText(changes.name);
+  if ('initials' in changes) normalized.initials = normalizeInitials(changes.initials);
   if ('level' in changes) normalized.level = normalizeLevel(changes.level);
   if ('mentors' in changes) normalized.mentors = normalizeText(changes.mentors);
   if ('hireDate' in changes) normalized.hireDate = normalizeDate(changes.hireDate);
@@ -3015,6 +3516,7 @@ function normalizePersonChanges(changes = {}) {
   if ('vacations' in changes) normalized.vacations = normalizeVacationEntries(changes.vacations);
   if ('snoozes' in changes) normalized.snoozes = normalizeSnoozeEntries(changes.snoozes);
   if ('evidence' in changes) normalized.evidence = normalizeEvidenceEntries(changes.evidence);
+  if ('capabilities' in changes) normalized.capabilities = normalizeCapabilityTicks(changes.capabilities);
   if ('customFields' in changes) {
     normalized.customFields = Array.isArray(changes.customFields)
       ? changes.customFields.map((field) => normalizeCustomField(field)).filter((field) => field.id || field.label || field.value)
@@ -3311,6 +3813,7 @@ function projectDoc(doc) {
         vacations: normalizeVacationEntries(report.vacations),
         snoozes: normalizeSnoozeEntries(report.snoozes),
         evidence: normalizeEvidenceEntries(report.evidence),
+        capabilities: normalizeCapabilityTicks(report.capabilities),
         talkingPoints: normalizeTalkingPoints(report.talkingPoints),
         goals: normalizeGoals(report.goals),
         changeLog: [...(report.changeLog || [])].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt))),
@@ -3476,11 +3979,6 @@ function buildReportMetrics(report, settings) {
     primaryGoal,
     openTalkingPoints
   };
-}
-
-function teamPct(value, total) {
-  if (!total) return 0;
-  return Math.round((value / total) * 100);
 }
 
 function variantForPdcStatus(status) {
@@ -4065,11 +4563,12 @@ function buildMeetingsCsv() {
 }
 
 function buildPeopleCsv() {
-  const headers = ['name','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','next_agenda','goals','talking_points','notes','cadence_overrides','vacations','snoozes','additional_fields'];
+  const headers = ['name','initials','level','mentors','hire_date','last_promotion_date','next_planned_one_on_one','next_planned_pdc','pdc_status','support_level','development_goal_summary','promotion_readiness','next_agenda','goals','talking_points','notes','cadence_overrides','vacations','snoozes','additional_fields'];
   const rows = [headers.join(',')];
   [...getReports()].sort((a, b) => a.name.localeCompare(b.name)).forEach((report) => {
     rows.push([
       csvCell(report.name),
+      csvCell(report.initials || ''),
       csvCell(report.level || ''),
       csvCell(report.mentors || ''),
       csvCell(report.hireDate || ''),
@@ -4224,6 +4723,17 @@ function ensureConnectedOrToast() {
   return false;
 }
 
+// v0.52.1: the banner can be snoozed for 7 days. The snooze lives in the UI
+// state (localStorage, per browser), never in the document: it is a personal
+// "not now", not a property of the data. Exporting clears the underlying
+// condition anyway, so the snooze only matters while the export stays due.
+function exportReminderSnoozed() {
+  const until = app.ui?.exportReminderSnoozedUntil;
+  if (!until) return false;
+  const parsed = Date.parse(until);
+  return Number.isFinite(parsed) && parsed > Date.now();
+}
+
 function renderExportReminderBanner() {
   let mount = document.getElementById('exportReminderMount');
   if (!mount) {
@@ -4232,7 +4742,7 @@ function renderExportReminderBanner() {
     startupGateEl.insertAdjacentElement('afterend', mount);
   }
   mount.replaceChildren();
-  if (!app.folderHandle || !app.connectedFolderReady || !quarterlyExportDue()) return;
+  if (!app.folderHandle || !app.connectedFolderReady || !quarterlyExportDue() || exportReminderSnoozed()) return;
   const wrapper = document.createElement('section');
   wrapper.className = 'card callout';
   // innerHTML kept: complex static markup with inline styles; no dynamic inputs.
@@ -4243,12 +4753,19 @@ function renderExportReminderBanner() {
         <p>It has been more than 90 days since the last plain-format export.</p>
       </div>
       <div class="actions">
+        <button type="button" class="secondary" id="bannerExportDismissBtn" title="Hide this reminder for 7 days">Remind me later</button>
         <button type="button" id="bannerExportNowBtn">Export now</button>
       </div>
     </div>
   `;
   mount.appendChild(wrapper);
   document.getElementById('bannerExportNowBtn')?.addEventListener('click', () => exportPlainFiles());
+  document.getElementById('bannerExportDismissBtn')?.addEventListener('click', () => {
+    app.ui.exportReminderSnoozedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    persistUiState();
+    renderExportReminderBanner();
+    showToast('Backup reminder snoozed for 7 days.', 'info');
+  });
 }
 
 function renderSettingsPanel() {
@@ -4365,21 +4882,6 @@ function meetingTone(report, type, thresholdDays) {
 }
 
 
-
-function healthProgressRow(label, count, total, thresholdLabel) {
-  const pct = teamPct(count, total);
-  const tone = pct >= 80 ? 'success' : pct >= 55 ? 'warning' : 'danger';
-  return `
-    <div class="health-metric">
-      <div class="health-metric-top">
-        <strong>${escapeHtml(label)}</strong>
-        <span>${count}/${total} on cadence</span>
-      </div>
-      <div class="health-progress ${tone}"><span style="width:${pct}%"></span></div>
-      <div class="health-subtext">${pct}% on cadence · ${escapeHtml(thresholdLabel)}</div>
-    </div>
-  `;
-}
 
 
 
@@ -4572,6 +5074,7 @@ function makeDraftReport() {
     vacations: [],
     snoozes: [],
     evidence: [],
+    capabilities: [],
     meetings: [],
     customFields: []
   };
@@ -4859,7 +5362,7 @@ function renderTalkingPointsPanel(report) {
   const meetings = report.meetings || [];
   const openList = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
-        <li class="tp-item">
+        <li class="tp-item${tickPopClass(`tp:${point.id}`)}">
           <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" aria-label="Mark discussed">
           <span class="tp-item-text">${escapeHtml(point.text)}
             ${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}
@@ -4873,7 +5376,7 @@ function renderTalkingPointsPanel(report) {
         <ul class="tp-list" style="margin-top:8px;">${donePoints.map((point) => {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
           const doneStamp = String(point.doneAt || '').slice(0, 10);
-          return `<li class="tp-item done">
+          return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
             <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point">
             <span class="tp-item-text">${escapeHtml(point.text)}
               <span class="tp-meta">${doneStamp ? `Discussed ${formatDate(doneStamp)}` : 'Discussed'}${linkedMeeting ? ` · <button type="button" class="tl-jump" data-jump-meeting="${escapeHtml(linkedMeeting.id)}">View meeting</button>` : ''}</span>
@@ -4966,6 +5469,19 @@ function buildTimelineItems(report) {
       body: [entry.category, entry.shared ? 'Shared with them' : '', entry.detail].filter(Boolean).join(' · ')
     });
   });
+  normalizeCapabilityTicks(report.capabilities || []).forEach((tick) => {
+    const found = cdpCapabilityById(tick.id);
+    if (!found) return;
+    const date = normalizeDate(String(tick.achievedAt || '').slice(0, 10));
+    if (!date) return;
+    items.push({
+      kind: 'capability',
+      date,
+      sortKey: `${date}~6`,
+      title: 'Capability achieved',
+      body: `${found.stage.level} · ${found.item.text}`
+    });
+  });
   normalizeGoals(report.goals || []).forEach((goal) => {
     (goal.updates || []).forEach((update) => {
       items.push({
@@ -5009,6 +5525,7 @@ function renderTimelinePanel(report, options = {}) {
     ['meeting', 'Meetings'],
     ['feedback', 'Feedback'],
     ['goal', 'Goals'],
+    ['capability', 'Capabilities'],
     ['note', 'Notes'],
     ['change', 'Changes']
   ];
@@ -5270,6 +5787,7 @@ function buildTeamTenureRiverContext(reports, settings = app.doc?.settings || no
     return {
       id: report.id,
       name: report.name,
+      initials: report.initials || '',
       hireDate,
       lastPromotionDate,
       lastPdcDate,
@@ -5328,10 +5846,18 @@ function renderTeamTenureCard(reports) {
   }
   const leftGutter = 176;
   const plotWidth = 880;
-  const rightPad = 24;
   const topPad = 42;
   const rowHeight = 32;
   const height = topPad + (context.rows.length * rowHeight) + 18;
+  const durationTextFor = (row) => mode === 'promotion'
+    ? (row.lastPromotionDate ? `${formatMonthSpan(row.promotionMonths, { compact: true })} since promotion` : 'No promotion date')
+    : `${formatMonthSpan(row.tenureMonths, { compact: true })} tenure`;
+  // The duration label is drawn to the right of the plot at endX + 8, so the
+  // viewBox must reserve room for the longest one or the SVG edge clips it
+  // (the old fixed 24-unit pad cut "3m tenure" down to "3m"). 12px 700-weight
+  // glyphs run about 7.6 viewBox units wide.
+  const maxLabelChars = context.rows.reduce((max, row) => Math.max(max, durationTextFor(row).length), 0);
+  const rightPad = 16 + Math.ceil(maxLabelChars * 7.6);
   const svgWidth = leftGutter + plotWidth + rightPad;
   const yearLines = context.yearBoundaries.map((boundary) => {
     const ratio = safeAxisRatio(localDateStamp(boundary), context.axisStart, context.axisEnd);
@@ -5352,9 +5878,12 @@ function renderTeamTenureCard(reports) {
     const promotionX = promotionRatio === null ? null : leftGutter + (promotionRatio * plotWidth);
     const stroke = mode === 'promotion' && row.promotionOverdue ? 'var(--warning)' : row.levelColor;
     const dash = mode === 'promotion' && row.missingPromotion ? '7 5' : '';
-    const durationText = mode === 'promotion'
-      ? (row.lastPromotionDate ? `${formatMonthSpan(row.promotionMonths, { compact: true })} since promotion` : 'No promotion date')
-      : `${formatMonthSpan(row.tenureMonths, { compact: true })} tenure`;
+    const durationText = durationTextFor(row);
+    // The 176-unit gutter fits about 19 characters at 13px/700, so prefer the
+    // short company initials and truncate long fallback names instead of
+    // letting them run under the track. The full name stays in the tooltip.
+    const rawGutterLabel = row.initials || row.name || '';
+    const gutterLabel = rawGutterLabel.length > 19 ? `${rawGutterLabel.slice(0, 18)}…` : rawGutterLabel;
     const tooltip = [
       row.name,
       `Hire date: ${formatDate(row.hireDate)}`,
@@ -5365,7 +5894,7 @@ function renderTeamTenureCard(reports) {
       <g data-tenure-open="${escapeHtml(row.id)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(row.name)}">
         <title>${escapeHtml(tooltip)}</title>
         <rect x="0" y="${y - 16}" width="${svgWidth}" height="30" rx="8" fill="transparent"></rect>
-        <text x="8" y="${y + 4}" font-size="13" font-weight="700" fill="#172033">${escapeHtml(row.name)}</text>
+        <text x="8" y="${y + 4}" font-size="13" font-weight="700" fill="#172033">${escapeHtml(gutterLabel)}</text>
         <line x1="${lineStartX}" x2="${endX}" y1="${y}" y2="${y}" stroke="${stroke}" stroke-width="5" stroke-linecap="round" ${dash ? `stroke-dasharray="${dash}"` : ''}></line>
         <circle cx="${lineStartX}" cy="${y}" r="4.5" fill="#ffffff" stroke="${stroke}" stroke-width="2"></circle>
         ${promotionX === null ? '' : `<circle cx="${promotionX}" cy="${y}" r="5" fill="#ffffff" stroke="${stroke}" stroke-width="2"></circle>`}
@@ -5666,6 +6195,7 @@ function renderDetailDrawer() {
             <div>
               <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
               <div class="detail-subhead">
+                ${!isCreating && editorReport.initials ? `<span class="initials-tag">${escapeHtml(editorReport.initials)}</span>` : ''}
                 <span class="detail-level">${escapeHtml(levelText)}</span>
                 ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
               </div>
@@ -5693,6 +6223,7 @@ function renderDetailDrawer() {
             <form id="detailEditorForm" class="workspace-form-grid">
           <div class="drawer-tab-panel" data-drawer-panel="pdc-summary" ${activeTab === 'pdc-summary' ? '' : 'hidden'}>
             <div class="drawer-panel-stack">
+              ${isCreating ? '' : renderDevelopmentPathPanel(editorReport)}
               <div class="drawer-section">
                 <div class="drawer-section-head">
                   <div>
@@ -5779,6 +6310,7 @@ function renderDetailDrawer() {
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. MAMO" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
@@ -5790,6 +6322,7 @@ function renderDetailDrawer() {
                 ` : `
                 <div class="profile-readonly-grid">
                   ${renderProfileReadonlyField('Name', editorReport.name)}
+                  ${renderProfileReadonlyField('Initials', editorReport.initials)}
                   ${renderProfileReadonlyField('Level', editorReport.level)}
                   ${renderProfileReadonlyField('Mentor(s)', editorReport.mentors)}
                   ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0], supportFillForLevel(editorReport.supportLevel || SUPPORT_LEVELS[0]))}
@@ -5931,6 +6464,18 @@ function renderDetailDrawer() {
   document.querySelectorAll('#detailDrawer [data-tp-toggle]').forEach((input) => {
     input.addEventListener('change', () => setTalkingPointDone(report.id, input.getAttribute('data-tp-toggle'), !!input.checked));
   });
+  document.querySelectorAll('#detailDrawer [data-cdp-toggle]').forEach((input) => {
+    input.addEventListener('change', () => setCapabilityAchieved(report.id, input.getAttribute('data-cdp-toggle'), !!input.checked));
+  });
+  document.querySelectorAll('#detailDrawer [data-cdp-stage]').forEach((button) => {
+    button.addEventListener('click', () => {
+      app.ui.cdpDrawerStage = button.getAttribute('data-cdp-stage') || '';
+      renderDetailDrawer();
+    });
+  });
+  document.querySelectorAll('#detailDrawer [data-cdp-date]').forEach((input) => {
+    input.addEventListener('change', () => setCapabilityAchievedDate(report.id, input.getAttribute('data-cdp-date'), input.value));
+  });
   document.querySelectorAll('#detailDrawer [data-tp-delete]').forEach((button) => {
     button.addEventListener('click', () => deleteTalkingPoint(report.id, button.getAttribute('data-tp-delete')));
   });
@@ -6064,14 +6609,25 @@ function avatarGradient(personId) {
 // rely on the DOM being updated synchronously after this returns.
 function navigateRender(update) {
   const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (typeof document.startViewTransition === 'function' && !reduceMotion) {
-    document.startViewTransition(() => { update(); });
+  const stableMode = !!app.doc?.settings?.stableMode;
+  if (typeof document.startViewTransition === 'function' && !reduceMotion && !stableMode) {
+    // v0.52.2: park the ambient canvas while the transition plays. The rAF
+    // loop was competing with snapshot compositing for frame budget, and
+    // the canvas is frozen behind its own vt-ambient snapshot during the
+    // transition anyway, so pausing costs nothing visually.
+    window.TP_AMBIENT?.pause?.();
+    const transition = document.startViewTransition(() => { update(); });
+    const resume = () => window.TP_AMBIENT?.resume?.();
+    if (transition?.finished?.finally) transition.finished.finally(resume); else resume();
   } else {
     update();
   }
 }
 
 function render() {
+  // v0.52.0: let the ambient atmosphere read the latest team state on every
+  // render pass. Cheap (counts over app.doc.people) and safe pre-connection.
+  window.TP_AMBIENT?.syncFromState();
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
   if (ready) maybeResetPdcRoundOnRollover();
@@ -6208,6 +6764,14 @@ function render() {
   renderMeetingRoomView();
   renderDetailDrawer();
   renderSettingsView();
+
+  // Keep the browser tab in sync with the current view. Before a folder is
+  // connected the header is hidden, so the tab shows the plain app name.
+  const tabTitleEl = document.getElementById('contentHeaderTitle');
+  const tabHeaderHidden = document.getElementById('contentHeader')?.hidden;
+  document.title = !tabHeaderHidden && tabTitleEl?.textContent
+    ? `${tabTitleEl.textContent} · Team Pulse`
+    : 'Team Pulse';
 }
 
 function renderSettingsView() {
@@ -6324,6 +6888,7 @@ function renderMeetingRoomView() {
           </div>
         </div>
         <div class="mr-col">
+          ${renderPrevMeetingPanelHtml(report, draft)}
           <div class="mr-panel">
             <h3>This Meeting</h3>
             <div class="mr-meta-row">
@@ -6360,6 +6925,11 @@ function renderMeetingRoomView() {
 
   // Per-render wiring (same pattern the drawer uses).
   const syncDraft = () => captureMeetingRoomDraftFromDom();
+  // v0.46: remember whether the "Last time" recap is expanded so re-renders
+  // (follow-up toggles, goal edits) do not collapse it mid-meeting.
+  document.getElementById('mrPrevDetails')?.addEventListener('toggle', (event) => {
+    if (meetingRoomDraft && meetingRoomDraft.reportId === report.id) meetingRoomDraft.prevNoteOpen = !!event.target.open;
+  });
   ['mrType', 'mrDate', 'mrDuration'].forEach((id) => document.getElementById(id)?.addEventListener('change', () => {
     syncDraft();
     if (id === 'mrType') {
@@ -6452,13 +7022,13 @@ function renderSidebar() {
     }
   };
 
-  const teamHealthItems = TEAM_HEALTH_TABS.map((tab) => {
+  const teamHealthItems = TEAM_HEALTH_TABS.map((tab, tabIndex) => {
     const isActive = mainView === 'teamHealth' && tab === thTab;
     let badge = '';
     if (tab === 'attention' && attentionCount > 0) {
       badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
     }
-    return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}" aria-pressed="${isActive}">
+    return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}" aria-pressed="${isActive}" title="${escapeHtml(`${TEAM_HEALTH_TAB_LABELS[tab]} · press ${tabIndex + 1}`)}">
       ${thIcon(tab)}
       <span>${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
       ${badge}
@@ -6480,28 +7050,28 @@ function renderSidebar() {
     </div>
     <div class="sidebar-group">
       <div class="sidebar-group-label">People</div>
-      <button type="button" class="sidebar-item${isReports ? ' active' : ''}" data-nav-main="reports" aria-pressed="${isReports}">
+      <button type="button" class="sidebar-item${isReports ? ' active' : ''}" data-nav-main="reports" aria-pressed="${isReports}" title="Direct Reports · press 3">
         <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
         <span>Direct Reports</span>
         ${reportsBadge}
       </button>
-      <button type="button" class="sidebar-item${isMeetings ? ' active' : ''}" data-nav-main="meetings" aria-pressed="${isMeetings}">
+      <button type="button" class="sidebar-item${isMeetings ? ' active' : ''}" data-nav-main="meetings" aria-pressed="${isMeetings}" title="Meetings · press 4">
         <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
         <span>Meetings</span>
       </button>
-      <button type="button" class="sidebar-item${isFollowUps ? ' active' : ''}" data-nav-main="followUps" aria-pressed="${isFollowUps}">
+      <button type="button" class="sidebar-item${isFollowUps ? ' active' : ''}" data-nav-main="followUps" aria-pressed="${isFollowUps}" title="Follow-Ups · press 5">
         <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         <span>Follow-Ups</span>
         ${followUpsBadge}
       </button>
-      <button type="button" class="sidebar-item${isPdcSummary ? ' active' : ''}" data-nav-main="pdcSummary" aria-pressed="${isPdcSummary}">
+      <button type="button" class="sidebar-item${isPdcSummary ? ' active' : ''}" data-nav-main="pdcSummary" aria-pressed="${isPdcSummary}" title="PDC Summary · press 6">
         <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
         <span>PDC Summary</span>
       </button>
     </div>
     <div class="sidebar-spacer"></div>
     <div class="sidebar-group">
-      <button type="button" class="sidebar-item${isSettings ? ' active' : ''}" data-nav-main="settings" aria-pressed="${isSettings}">
+      <button type="button" class="sidebar-item${isSettings ? ' active' : ''}" data-nav-main="settings" aria-pressed="${isSettings}" title="Settings · press 7">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
         <span>Settings</span>
       </button>
@@ -6563,14 +7133,21 @@ function renderReportsGrid() {
     else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="info">Monitor</span>`);
     else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
     const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    // Company initials are the tile title when present: short, uniform, and
+    // immune to the truncation that crushed long names next to the 1:1 room
+    // pill. The full name moves to its own full-width line underneath, where
+    // it has the whole tile to itself. People without initials keep the name
+    // as the title, exactly as before.
+    const tileTitle = report.initials || report.name || 'Unnamed';
     return `<button type="button" class="report-tile" data-report-card="${escapeHtml(report.id)}" style="--i:${Math.min(tileIndex, 14)}">
       <div class="report-tile-head">
         <div class="report-tile-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
-        <span class="report-tile-name">${escapeHtml(report.name || 'Unnamed')}</span>
+        <span class="report-tile-name" ${report.initials && report.name ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
         <span class="tile-room-btn" data-open-room="${escapeHtml(report.id)}" role="button" tabindex="0" title="Open the 1:1 meeting room">1:1 room</span>
         <span class="report-tile-support-dot" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
       </div>
       <div class="report-tile-meta">
+        ${report.initials && report.name ? `<span class="report-tile-meta-line report-tile-fullname">${escapeHtml(report.name)}</span>` : ''}
         <span class="report-tile-meta-line">${escapeHtml(level)}</span>
         ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
       </div>
@@ -6622,7 +7199,7 @@ function renderReportsTableHtml(filtered, total) {
     return `<tr data-table-row="${escapeHtml(report.id)}">
       <td><button type="button" class="tt-person" data-table-person="${escapeHtml(report.id)}" ${attentionTitle ? `title="${escapeHtml(attentionTitle)}"` : ''}>
         <span class="tt-avatar" style="${avatarGradient(report.id)}">${escapeHtml(initials)}</span>
-        <span><span class="tt-person-name">${escapeHtml(report.name || 'Unnamed')}</span><span class="tt-sub">${escapeHtml(report.level || 'Level not set')}</span></span>
+        <span><span class="tt-person-name">${escapeHtml(report.name || 'Unnamed')}</span><span class="tt-sub">${escapeHtml(`${report.initials ? `${report.initials} · ` : ''}${report.level || 'Level not set'}`)}</span></span>
       </button></td>
       <td>${pillSelect('data-table-pdc', report.id, PDC_STATUSES, pdcValue, 'pdc')}</td>
       <td>${pillSelect('data-table-support', report.id, SUPPORT_LEVELS, supportValue, 'support')}</td>
@@ -6832,18 +7409,25 @@ function renderMeetingsView() {
   `;
 
   if (reports.length === 0) {
-    mount.innerHTML = `${toolbar}<div class="sharp-panel"><div class="sharp-panel-body padded">
-      <p class="section-note" style="margin:0;">Add a direct report first — you'll be able to log meetings from here once there's someone to log them against.</p>
-    </div></div>`;
+    mount.innerHTML = `${toolbar}${emptyHeroHtml(
+      'inbox',
+      'No one to meet with yet',
+      'Add a direct report first. Every meeting you log will collect here across the whole team.'
+    )}`;
     return;
   }
 
   if (items.length === 0) {
     const hasActiveFilter = validFilter || typeFilter || searchTerm;
-    const empty = hasActiveFilter
-      ? `<p class="section-note" style="margin:0;">No meetings match the current filters.</p>`
-      : `<p class="section-note" style="margin:0;">No meetings logged across any direct report yet. Click "Log meeting" to start.</p>`;
-    mount.innerHTML = `${toolbar}${heatmapHtml}<div class="sharp-panel"><div class="sharp-panel-body padded">${empty}</div></div>`;
+    if (hasActiveFilter) {
+      mount.innerHTML = `${toolbar}${heatmapHtml}<div class="sharp-panel"><div class="sharp-panel-body padded"><p class="section-note" style="margin:0;">No meetings match the current filters.</p></div></div>`;
+      return;
+    }
+    mount.innerHTML = `${toolbar}${heatmapHtml}${emptyHeroHtml(
+      'calendar',
+      'No meetings logged yet',
+      'Log the first one and it shows up here, on the heatmap, and in the person\u2019s history.'
+    )}`;
     return;
   }
 
@@ -6977,9 +7561,6 @@ function gsGoMain(view, extra = {}) {
 function buildGoToEntries() {
   return [
     { label: 'Overview', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'overview' }) },
-    { label: 'Cadence', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'cadence' }) },
-    { label: 'Attention', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'attention' }) },
-    { label: 'Support', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'support' }) },
     { label: 'Insights', meta: 'Team Health', run: () => gsGoMain('teamHealth', { teamHealthTab: 'insights' }) },
     { label: 'Direct Reports', meta: 'View', run: () => gsGoMain('reports') },
     { label: 'Meetings', meta: 'View', run: () => gsGoMain('meetings') },
@@ -6999,7 +7580,7 @@ function gsPersonResult(report, group) {
     avatarId: report.id,
     avatarName: report.name,
     title: report.name || 'Unnamed',
-    meta: `${report.level || 'Level not set'} · PDC ${metrics.pdcStatus}`,
+    meta: `${report.initials ? `${report.initials} · ` : ''}${report.level || 'Level not set'} · PDC ${metrics.pdcStatus}`,
     snippet: '',
     run: () => navigateRender(() => selectReport(report.id))
   };
@@ -7022,7 +7603,7 @@ function runGlobalSearch(rawQuery) {
 
   // People
   reports
-    .filter((r) => `${r.name || ''} ${r.level || ''} ${r.mentors || ''}`.toLowerCase().includes(query))
+    .filter((r) => `${r.name || ''} ${r.initials || ''} ${r.level || ''} ${r.mentors || ''}`.toLowerCase().includes(query))
     .slice(0, 5)
     .forEach((r) => results.push(gsPersonResult(r, 'People')));
 
@@ -7169,9 +7750,11 @@ function renderFollowUpsView() {
   if (!mount) return;
   const reports = getReports();
   if (reports.length === 0) {
-    mount.innerHTML = `<div class="sharp-panel"><div class="sharp-panel-body padded">
-      <p class="section-note" style="margin:0;">Add a direct report first — open follow-ups from their meeting notes will collect here.</p>
-    </div></div>`;
+    mount.innerHTML = emptyHeroHtml(
+      'inbox',
+      'Nothing to follow up on yet',
+      'Add a direct report first. Open follow-ups from their meeting notes will collect here.'
+    );
     return;
   }
   const followUpsEntering = viewJustEntered('followUpsView', app.ui.mainView === 'followUps');
@@ -7186,10 +7769,11 @@ function renderFollowUpsView() {
   const helpNote = `<p class="followups-help">Follow-ups are captured inside meeting notes: start a line with <code>[]</code> to create one, and it becomes checkable here and in the person's workspace. Ticking a box updates the note itself.</p>`;
 
   if (!groups.length) {
-    mount.innerHTML = `<div class="sharp-panel"><div class="sharp-panel-body padded">
-      <p class="section-note" style="margin:0 0 10px;">Nothing open — every follow-up across the team is done.</p>
-      ${helpNote}
-    </div></div>`;
+    mount.innerHTML = `${emptyHeroHtml(
+      'clear',
+      'All clear',
+      'Every follow-up across the team is done. Nice work.'
+    )}${helpNote}`;
     return;
   }
 
@@ -7580,6 +8164,7 @@ function renderPdcSummaryView() {
 function buildFullPayloadFromReport(report) {
   return {
     name: report.name || '',
+    initials: report.initials || '',
     level: report.level || '',
     mentors: report.mentors || '',
     hireDate: report.hireDate || '',
@@ -7597,6 +8182,7 @@ function buildFullPayloadFromReport(report) {
     cadenceOverrides: deepCopy(report.cadenceOverrides || {}),
     vacations: deepCopy(report.vacations || []),
     evidence: deepCopy(report.evidence || []),
+    capabilities: deepCopy(report.capabilities || []),
     customFields: deepCopy(report.customFields || [])
   };
 }
@@ -7642,8 +8228,22 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     if (profileInputsPresent) return normalizer(formData.get(key));
     return existingReport && existingReport[key] !== undefined ? existingReport[key] : fallback;
   };
+  // Muscle-memory guard: initials used to be typed into the name as a
+  // parenthesized suffix ("Maria Moreira (MAMO)"). If that pattern arrives in
+  // the name while the initials field is empty, split it the same way the
+  // v10->v11 migration does so no new parenthesized names enter the data.
+  let profileName = pickProfileField('name', normalizeText);
+  let profileInitials = pickProfileField('initials', normalizeInitials);
+  if (!profileInitials) {
+    const split = splitLegacyInitialsFromName(profileName);
+    if (split.initials) {
+      profileName = split.name;
+      profileInitials = split.initials;
+    }
+  }
   return {
-    name: pickProfileField('name', normalizeText),
+    name: profileName,
+    initials: profileInitials,
     level: pickProfileField('level', normalizeLevel),
     mentors: pickProfileField('mentors', normalizeText),
     hireDate: pickProfileField('hireDate', normalizeDate),
@@ -7696,6 +8296,8 @@ function collectWorkspaceCustomFields(existingFields = []) {
 
 function appendEvent(event) {
   app.doc.events.push(normalizeEventRecord(event));
+  // v0.52.0: every write sends a soft ripple through the ambient atmosphere.
+  window.TP_AMBIENT?.eventPulse(event?.type || '');
 }
 
 async function createReport(payload, options = {}) {
@@ -7729,17 +8331,23 @@ async function updateReport(reportId, payload, options = {}) {
   const report = getReportById(reportId);
   if (!report) return false;
   const createdAt = nowIso();
-  const preparedPayload = { ...payload, vacations: assignVacationIds(payload.vacations), evidence: assignEvidenceIds(payload.evidence) };
+  const preparedPayload = { ...payload };
+  if ('vacations' in preparedPayload) preparedPayload.vacations = assignVacationIds(preparedPayload.vacations);
+  if ('evidence' in preparedPayload) preparedPayload.evidence = assignEvidenceIds(preparedPayload.evidence);
   const changes = {};
-  ['name','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','nextPdcDate','pdcStatus','supportLevel','developmentGoalSummary','promotionReadiness','agenda','talkingPoints','goals','cadenceOverrides','vacations','evidence','customFields'].forEach((key) => {
+  ['name','initials','level','mentors','hireDate','lastPromotionDate','nextOneOnOneDate','nextPdcDate','pdcStatus','supportLevel','developmentGoalSummary','promotionReadiness','agenda','talkingPoints','goals','cadenceOverrides','vacations','evidence','capabilities','customFields'].forEach((key) => {
+    // Absent key = the caller makes no claim about that field. Diffing it
+    // anyway would compare an empty value against stored data and wipe it,
+    // which is exactly how instant saves used to erase initials. Skip.
+    if (!(key in preparedPayload)) return;
     // report.pdcStatus holds the derived status after projection; the stored
     // (user-set) value lives in rawPdcStatus, so diff against that instead.
     const prevSource = key === 'pdcStatus' && report.rawPdcStatus !== undefined ? report.rawPdcStatus : report[key];
-    const nextValue = ['customFields','cadenceOverrides','vacations','evidence','talkingPoints','goals'].includes(key) ? JSON.stringify(preparedPayload[key] || (key === 'cadenceOverrides' ? {} : [])) : String(preparedPayload[key] || '');
-    const prevValue = ['customFields','cadenceOverrides','vacations','evidence','talkingPoints','goals'].includes(key) ? JSON.stringify(prevSource || (key === 'cadenceOverrides' ? {} : [])) : String(prevSource || '');
+    const nextValue = ['customFields','cadenceOverrides','vacations','evidence','capabilities','talkingPoints','goals'].includes(key) ? JSON.stringify(preparedPayload[key] || (key === 'cadenceOverrides' ? {} : [])) : String(preparedPayload[key] || '');
+    const prevValue = ['customFields','cadenceOverrides','vacations','evidence','capabilities','talkingPoints','goals'].includes(key) ? JSON.stringify(prevSource || (key === 'cadenceOverrides' ? {} : [])) : String(prevSource || '');
     if (nextValue !== prevValue) changes[key] = preparedPayload[key];
   });
-  const notesChanged = preparedPayload.notes !== String(report.notes || '');
+  const notesChanged = ('notes' in preparedPayload) && preparedPayload.notes !== String(report.notes || '');
   const anyChange = Object.keys(changes).length > 0 || notesChanged;
   if (!anyChange) {
     return true;
@@ -7854,6 +8462,7 @@ async function addTalkingPoint(reportId, text, options = {}) {
 async function setTalkingPointDone(reportId, pointId, done, meetingId = '') {
   const report = getReportById(reportId);
   if (!report) return false;
+  markTickPop(`tp:${pointId}`);
   captureWorkspaceDraftFromDom();
   const payload = buildFullPayloadFromReport(report);
   payload.talkingPoints = normalizeTalkingPoints((report.talkingPoints || []).map((point) => point.id === pointId
@@ -8001,7 +8610,8 @@ function meetingRoomDraftFor(reportId) {
     durationMinutes: '',
     pulse: '',
     notes: '',
-    checkedPointIds: []
+    checkedPointIds: [],
+    prevNoteOpen: false
   };
   return meetingRoomDraft;
 }
@@ -9284,6 +9894,22 @@ function bindStaticEvents() {
       }
       return;
     }
+    const cdpModeBtn = event.target.closest('[data-cdp-team-mode]');
+    if (cdpModeBtn) {
+      const nextMode = cdpModeBtn.getAttribute('data-cdp-team-mode') === 'web' ? 'web' : 'heatmap';
+      if (app.ui.cdpTeamMode !== nextMode) {
+        app.ui.cdpTeamMode = nextMode;
+        persistUiState();
+        renderTeamHealth();
+      }
+      return;
+    }
+    const cdpOpenBtn = event.target.closest('[data-cdp-open]');
+    if (cdpOpenBtn) {
+      app.ui.detailDrawerTab = 'pdc-summary';
+      navigateRender(() => selectReport(cdpOpenBtn.getAttribute('data-cdp-open')));
+      return;
+    }
     const modeBtn = event.target.closest('[data-tenure-mode]');
     if (modeBtn) {
       const nextMode = modeBtn.getAttribute('data-tenure-mode') === 'promotion' ? 'promotion' : 'tenure';
@@ -9349,6 +9975,25 @@ function bindStaticEvents() {
       if (meetingModalEl.classList.contains('open')) { closeMeetingModal(); return; }
       if (rulesDrawerOverlayEl.classList.contains('open')) { closeRulesDrawer(); return; }
       if (dataMenuEl?.hasAttribute('open')) closeDataMenu();
+      return;
+    }
+    // v0.46: plain digits 1-7 jump between views in sidebar order (Overview,
+    // Insights, Direct Reports, Meetings, Follow-Ups, PDC Summary, Settings).
+    // Skipped while typing, while any overlay is up, or when a modifier is
+    // held so browser tab shortcuts like Cmd+1 keep working.
+    if (/^[1-7]$/.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      const activeNow = document.activeElement;
+      const typingNow = !!activeNow && (/^(input|textarea|select)$/i.test(activeNow.tagName) || activeNow.isContentEditable);
+      const overlayUp = globalSearchEl.classList.contains('open')
+        || meetingModalEl.classList.contains('open')
+        || rulesDrawerOverlayEl.classList.contains('open')
+        || startupPromptOverlayEl.classList.contains('open')
+        || document.getElementById('goalModal')?.classList.contains('open')
+        || document.getElementById('feedbackModal')?.classList.contains('open');
+      if (!typingNow && !overlayUp && app.doc && app.connectedFolderReady) {
+        event.preventDefault();
+        keyboardNavigateToSlot(Number(event.key));
+      }
       return;
     }
     // Optional accelerators: '/' or Ctrl/Cmd+K open search when the person
@@ -9711,6 +10356,68 @@ function migrateV9ToV10(docV9) {
   return syncIdCounters(safeDoc);
 }
 
+function migrateV10ToV11(docV10) {
+  const safeDoc = docV10 && typeof docV10 === 'object' ? deepCopy(docV10) : makeEmptyDoc();
+  // v11 introduces people[].initials as a first-class field. Before it existed
+  // the convention was to append company initials to the name in parentheses
+  // ("Maria Moreira (MAMO)"), so this migration extracts that pattern: the
+  // token from each person's FINAL projected name becomes their initials, and
+  // the parenthesized suffix is stripped from the name everywhere it appears
+  // (base records, person_created snapshots, and person_updated name changes)
+  // so event replay cannot resurrect the old form. Names without the pattern
+  // and people who already carry initials are left untouched.
+  const events = Array.isArray(safeDoc.events) ? safeDoc.events : [];
+  const people = Array.isArray(safeDoc.people) ? safeDoc.people : [];
+  const finalNames = new Map();
+  people.forEach((person) => {
+    if (!person || !person.id) return;
+    finalNames.set(person.id, normalizeText(person.name));
+  });
+  events.forEach((event) => {
+    if (!event || !event.personId) return;
+    if (event.type === 'person_created') {
+      if (!finalNames.has(event.personId)) finalNames.set(event.personId, normalizeText(event.snapshot?.name));
+      if (event.snapshot && typeof event.snapshot === 'object' && event.snapshot.name) {
+        event.snapshot.name = splitLegacyInitialsFromName(event.snapshot.name).name;
+      }
+      return;
+    }
+    if (event.type === 'person_updated' && event.changes && typeof event.changes === 'object' && 'name' in event.changes) {
+      if (finalNames.has(event.personId)) finalNames.set(event.personId, normalizeText(event.changes.name));
+      event.changes.name = splitLegacyInitialsFromName(event.changes.name).name;
+    }
+  });
+  safeDoc.people = people.map((person) => {
+    if (!person || !person.id) return person;
+    const finalSplit = splitLegacyInitialsFromName(finalNames.get(person.id) || '');
+    const ownSplit = splitLegacyInitialsFromName(person.name);
+    return {
+      ...person,
+      name: ownSplit.name,
+      initials: normalizeInitials(person.initials) || finalSplit.initials
+    };
+  });
+  safeDoc.schemaVersion = 11;
+  return safeDoc;
+}
+
+function migrateV11ToV12(docV11) {
+  const safeDoc = docV11 && typeof docV11 === 'object' ? deepCopy(docV11) : makeEmptyDoc();
+  // v12 introduces people[].capabilities — Consultant Development Path ticks
+  // mirrored from the Devote PDP template ({ id, achievedAt }). The migration
+  // only guarantees the array exists on base records and person_created
+  // snapshots. No data is transformed, so this is additive and lossless.
+  (Array.isArray(safeDoc.people) ? safeDoc.people : []).forEach((person) => {
+    if (person && typeof person === 'object' && !Array.isArray(person.capabilities)) person.capabilities = [];
+  });
+  (Array.isArray(safeDoc.events) ? safeDoc.events : []).forEach((event) => {
+    if (event && event.type === 'person_created' && event.snapshot && typeof event.snapshot === 'object' && !Array.isArray(event.snapshot.capabilities)) {
+      event.snapshot.capabilities = [];
+    }
+  });
+  return safeDoc;
+}
+
 function parsePortableJsonText(text) {
   const parsed = JSON.parse(text);
   if (!parsed || typeof parsed !== 'object') {
@@ -9718,7 +10425,7 @@ function parsePortableJsonText(text) {
   }
 
   if (!Object.prototype.hasOwnProperty.call(parsed, 'schemaVersion')) {
-    const migratedLegacy = migrateV9ToV10(migrateV8ToV9(migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed)))))))));
+    const migratedLegacy = migrateV11ToV12(migrateV10ToV11(migrateV9ToV10(migrateV8ToV9(migrateV7ToV8(migrateV6ToV7(migrateV5ToV6(migrateV4ToV5(migrateV3ToV4(migrateV2ToV3(migrateLegacyStateToV2(parsed)))))))))));
     return {
       doc: ensureDocShape(migratedLegacy),
       migratedFromVersion: 0,
@@ -9743,7 +10450,9 @@ function parsePortableJsonText(text) {
     6: migrateV6ToV7,
     7: migrateV7ToV8,
     8: migrateV8ToV9,
-    9: migrateV9ToV10
+    9: migrateV9ToV10,
+    10: migrateV10ToV11,
+    11: migrateV11ToV12
   };
 
   let working = deepCopy(parsed);
@@ -9806,13 +10515,21 @@ function generateSchemaMarkdown() {
   lines.push('- **settings.pdcRoundAutoReset / settings.pdcRoundStartMonth / settings.lastPdcRoundKey** — PDC rounds derive from thresholds.pdcDays (90 days gives 4 rounds per year), anchored to pdcRoundStartMonth (default January). When a new round begins and auto reset is on, every person whose PDC status is not Not started gets a person_updated event resetting it, and the handled round key is stored so the reset runs once per rollover. Saving the rules re-adopts the current key so reconfiguring never triggers a reset.');
   lines.push('- **people[].agenda / people[].developmentGoalSummary** — Still present for import compatibility but drained by the migration; the app no longer writes to them.');
   lines.push('');
+  lines.push('## Added in schema v11');
+  lines.push('- **people[].initials** — Company-style initials (e.g. MAMO), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Maria Moreira (MAMO)" becomes name "Maria Moreira" + initials "MAMO") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
+  lines.push('');
+  lines.push('## Added in schema v12');
+  lines.push('- **people[].capabilities[]** — Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Devote Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view; the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
+  lines.push('');
   lines.push('## Migration path');
-  lines.push('- **v0 -> v10** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
+  lines.push('- **v0 -> v11** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
   lines.push('- **v5 -> v6** — Adds settings.themesWindowDays. (Historically also seeded weeklySnapshots; that field no longer persists past v6->v7.)');
   lines.push('- **v6 -> v7** — Removes the weeklySnapshots field from the document root.');
   lines.push('- **v7 -> v8** — Adds the per-person agenda field (defaults to empty).');
   lines.push('- **v8 -> v9** — Bakes the previously derived PDC status into people[].pdcStatus; statuses are manual from v9 on.');
   lines.push('- **v9 -> v10** — Converts agenda text into talkingPoints[] and the development goal summary into goals[0], stripping both raw fields from people records and from historical person_created/person_updated events so replays cannot resurrect the old text.');
+  lines.push('- **v10 -> v11** — Extracts trailing parenthesized initials from person names into people[].initials and cleans the suffix out of names in people records and historical events.');
+  lines.push('- **v11 -> v12** — Adds empty capabilities[] arrays to people records and person_created snapshots. Additive and lossless.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
@@ -9962,6 +10679,7 @@ function getFilteredReports() {
     const metrics = getMetrics(report.id);
     const blob = [
       report.name,
+      report.initials,
       report.level,
       report.mentors,
       report.hireDate,
@@ -10049,12 +10767,13 @@ function renderRecentThemesCard(reports) {
 }
 
 function currentTeamHealthTab() {
-  // Map legacy tab names to their new homes. Note: 'cadence' used to be a scroll
-  // target inside Overview but is now a top-level tab of its own, so it's valid.
+  // Map legacy tab names to their new homes. Cadence, Attention, and Support
+  // Levels were folded into the Overview briefing in v0.45, so any UI state
+  // saved while they existed resolves back to Overview.
   const raw = app.ui.teamHealthTab;
   let mapped = raw;
   if (raw === 'tenure' || raw === 'themes') mapped = 'insights';
-  else if (raw === 'pdc-mix') mapped = 'overview';
+  else if (raw === 'pdc-mix' || raw === 'cadence' || raw === 'attention' || raw === 'support') mapped = 'overview';
   return TEAM_HEALTH_TABS.includes(mapped) ? mapped : 'overview';
 }
 
@@ -10070,35 +10789,29 @@ function renderTeamHealthTabBar() {
 // Overview dashboard (Team Health > Overview tab)
 // ============================================================================
 //
-// The dashboard is an at-a-glance aggregate view. It is NOT a per-report list —
-// that's what the reports table below is for. Five sections, top to bottom:
+// The dashboard is an at-a-glance view. Three sections, top to bottom:
 //
-//   1. Health score          - single composite number (0-100) + headline
-//   2. Cadence adherence     - three progress bars (1:1 / PDC / CV Review)
-//   3. Attention breakdown   - what is actually driving attention (by rule)
-//   4. Support distribution  - horizontal stacked bar of support levels
-//   5. Upcoming              - forward-looking list of next touchpoints
+//   1. Briefing     - named, per-person digest of everything that needs a
+//                     manager's eyes today (overdue touchpoints, elevated
+//                     support levels, vacations, follow-ups, PDC round).
+//                     Every person mentioned is a chip that opens their
+//                     profile. This absorbed the former Cadence, Attention,
+//                     and Support Levels tabs in v0.45: counts by rule and
+//                     aggregate bars told you less than names do.
+//   2. Health score - single composite number (0-100) + headline
+//   3. Upcoming     - forward-looking list of next touchpoints
 //
 // Design notes:
 //   - Composite score weights each cadence equally, plus a support-level penalty.
 //     Rationale: all three touchpoints are management obligations with roughly
 //     equal weight. Support level is a separate signal but affects overall team
 //     health meaningfully, so we dock points when reports are flagged.
-//   - Attention breakdown groups by the underlying `rule` (not label text), so
-//     counts are accurate even if labels change.
 //   - Upcoming horizon is 14 days. Long enough to catch "this sprint" planning,
 //     short enough to stay actionable.
 //   - We keep `data-glyph-open` on clickable elements so existing click handlers
 //     (drawer open, keyboard activation) keep working without new wiring.
 
 const UPCOMING_HORIZON_DAYS = 14;
-
-// Map an attention rule to a tone for its meter bar.
-function attentionRuleTone(rule) {
-  if (rule === 'supportLevel' || rule === 'blockedPlans') return 'danger';
-  if (rule === 'noMentor' || rule === 'oneOnOneDuringVacation' || rule === 'pdcDuringVacation') return 'info';
-  return 'warning';
-}
 
 // Compose a single 0–100 health score from cadence adherence + support levels.
 // Kept in one place so the score, the headline, and the dial stay in sync.
@@ -10205,97 +10918,6 @@ function animateHealthRing() {
   healthRingRaf = window.requestAnimationFrame(step);
 }
 
-function renderCadenceBarsSection(reportStates) {
-  const total = reportStates.length;
-  const oneOnOneOn = reportStates.filter((item) => !item.metrics.oneOnOneOverdue).length;
-  const pdcOn = reportStates.filter((item) => !item.metrics.pdcOverdue).length;
-  const cvOn = reportStates.filter((item) => !item.metrics.cvReviewOverdue).length;
-  return `
-    <div class="overview-section">
-      <div class="overview-section-head">
-        <h3>Cadence adherence</h3>
-        <span class="overview-section-note">effective cadence rule per report</span>
-      </div>
-      <div class="cadence-bars">
-        ${healthProgressRow('1:1 Cadence', oneOnOneOn, total, 'on cadence')}
-        ${healthProgressRow('PDC Cadence', pdcOn, total, 'on cadence')}
-        ${healthProgressRow('CV Review Cadence', cvOn, total, 'on cadence')}
-      </div>
-    </div>
-  `;
-}
-
-function renderAttentionBreakdownSection(reportStates) {
-  // Aggregate attention items by rule across the team.
-  const ruleCounts = new Map();
-  let maxCount = 0;
-  reportStates.forEach((item) => {
-    (item.metrics.attentionDetails || []).forEach((detail) => {
-      const key = detail.rule;
-      const entry = ruleCounts.get(key) || { rule: key, label: detail.label, count: 0 };
-      // For supportLevel, collapse into a single bucket with a generic label.
-      if (key === 'supportLevel') entry.label = 'Support level elevated';
-      entry.count += 1;
-      ruleCounts.set(key, entry);
-      if (entry.count > maxCount) maxCount = entry.count;
-    });
-  });
-  const ordered = [...ruleCounts.values()].sort((a, b) => b.count - a.count);
-  const body = ordered.length === 0
-    ? '<p class="attention-breakdown-empty">Nothing is flagging right now. Nice.</p>'
-    : `<ul class="attention-breakdown-list">${ordered.map((item) => {
-        const pct = maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
-        const tone = attentionRuleTone(item.rule);
-        return `
-          <li class="attention-breakdown-row">
-            <span class="attention-breakdown-count">${item.count}</span>
-            <div>
-              <div class="attention-breakdown-label">${escapeHtml(item.label)}</div>
-              <div class="attention-breakdown-meter" data-tone="${escapeHtml(tone)}"><span style="width:${pct}%"></span></div>
-            </div>
-          </li>
-        `;
-      }).join('')}</ul>`;
-  return `
-    <div class="overview-section">
-      <div class="overview-section-head">
-        <h3>What's driving attention</h3>
-        <span class="overview-section-note">by rule, across the team</span>
-      </div>
-      ${body}
-    </div>
-  `;
-}
-
-function renderSupportDistributionSection(reportStates) {
-  const total = reportStates.length;
-  const counts = SUPPORT_LEVELS.reduce((acc, level) => {
-    acc[level] = reportStates.filter((item) => (item.report.supportLevel || SUPPORT_LEVELS[0]) === level).length;
-    return acc;
-  }, {});
-  const segs = SUPPORT_LEVELS.map((level) => {
-    const count = counts[level];
-    const pct = total > 0 ? (count / total) * 100 : 0;
-    const fill = supportFillForLevel(level);
-    return `<div class="support-strip-seg" data-fill="${escapeHtml(fill)}" data-empty="${count === 0 ? 'true' : 'false'}" style="width:${pct.toFixed(2)}%" title="${escapeHtml(`${level}: ${count}`)}">${count > 0 && pct >= 10 ? count : ''}</div>`;
-  }).join('');
-  const legend = SUPPORT_LEVELS.map((level) => {
-    const count = counts[level];
-    const fill = supportFillForLevel(level);
-    return `<span class="support-legend-item" data-dim="${count === 0 ? 'true' : 'false'}"><span class="swatch" data-fill="${escapeHtml(fill)}"></span>${escapeHtml(level)}<span class="count">${count}</span></span>`;
-  }).join('');
-  return `
-    <div class="overview-section">
-      <div class="overview-section-head">
-        <h3>Support levels</h3>
-        <span class="overview-section-note">${total} ${total === 1 ? 'report' : 'reports'}</span>
-      </div>
-      <div class="support-strip" role="img" aria-label="Support level distribution">${segs}</div>
-      <div class="support-legend">${legend}</div>
-    </div>
-  `;
-}
-
 function renderUpcomingSection(reportStates) {
   const today = todayStamp();
   const horizon = addDays(today, UPCOMING_HORIZON_DAYS);
@@ -10349,97 +10971,147 @@ function daysBetween(a, b) {
   return Math.round((d2.getTime() - d1.getTime()) / 86400000);
 }
 
-// Builds the daily briefing lines from current state. Each item carries a
-// tone (dot color), pre-escaped HTML text, and an optional navigation target
-// ('view:<mainView>' or 'tab:<teamHealthTab>') that makes the row clickable.
+// Builds the daily briefing lines from current state. Each line names names:
+// an item carries a tone (dot color), a label, and a list of people rendered
+// as chips that open the person's profile directly (data-glyph-open, handled
+// by the existing teamHealthBody delegation). Aggregate-only lines may carry
+// plain html plus an optional navigation target instead. This briefing is the
+// single home for cadence, attention, and support-level signals since v0.45,
+// so it stays specific: who, not how many.
 function buildBriefingItems(reportStates) {
   const items = [];
   const today = todayStamp();
-  const joinNames = (names) => names.length <= 1 ? (names[0] || '') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+  const chip = (report, extra = '') => ({ id: report.id, name: report.name || 'Unnamed', extra });
 
-  // 1. Overdue touchpoints (respects snoozes and vacation suppression).
-  const overdueEntries = [];
-  reportStates.forEach(({ report, metrics }) => {
-    const kinds = [];
-    if (metrics.oneOnOneOverdue) kinds.push('1:1');
-    if (metrics.pdcOverdue) kinds.push('PDC');
-    if (metrics.cvReviewOverdue) kinds.push('CV review');
-    if (kinds.length) overdueEntries.push({ name: report.name || 'Unnamed', kinds });
+  // 1. Overdue touchpoints, one line per kind (respects snoozes and vacation
+  //    suppression via the metrics flags). The chip subtext shows the last
+  //    logged date of that touchpoint so the line is actionable at a glance.
+  const overdueLine = (label, flagKey, lastKey) => {
+    const hit = reportStates.filter(({ metrics }) => metrics[flagKey]);
+    if (!hit.length) return 0;
+    items.push({
+      tone: 'warning',
+      label: `${label} overdue`,
+      people: hit.map(({ report, metrics }) => chip(report, metrics[lastKey] ? `last ${formatDate(metrics[lastKey])}` : 'never held'))
+    });
+    return hit.length;
+  };
+  let overdueTotal = 0;
+  overdueTotal += overdueLine('1:1', 'oneOnOneOverdue', 'lastOneOnOne');
+  overdueTotal += overdueLine('PDC', 'pdcOverdue', 'lastPdc');
+  overdueTotal += overdueLine('CV review', 'cvReviewOverdue', 'lastCvReview');
+
+  // 2. Elevated support levels. This absorbed the Support Levels tab: instead
+  //    of a distribution bar, name the people and their exact level.
+  const flagged = reportStates.filter(({ report }) => {
+    const level = normalizeSupportLevel(report.supportLevel);
+    return level && level !== 'Good';
   });
-  const overdueTotal = overdueEntries.reduce((sum, e) => sum + e.kinds.length, 0);
-  if (overdueTotal > 0) {
-    let text;
-    if (overdueEntries.length <= 3) {
-      text = `Overdue: ${joinNames(overdueEntries.map((e) => `${escapeHtml(e.name)} (${escapeHtml(joinNames(e.kinds))})`))}.`;
-    } else {
-      text = `${overdueTotal} touchpoints overdue across ${overdueEntries.length} people.`;
-    }
-    items.push({ tone: 'warning', html: text, go: 'tab:attention' });
+  if (flagged.length) {
+    const rank = { 'Urgent': 0, 'Support needed': 1, 'Monitor': 2 };
+    const sorted = [...flagged].sort((a, b) => (rank[normalizeSupportLevel(a.report.supportLevel)] ?? 9) - (rank[normalizeSupportLevel(b.report.supportLevel)] ?? 9));
+    const hasUrgent = sorted.some(({ report }) => normalizeSupportLevel(report.supportLevel) === 'Urgent');
+    const hasNeeded = sorted.some(({ report }) => normalizeSupportLevel(report.supportLevel) === 'Support needed');
+    items.push({
+      tone: hasUrgent ? 'danger' : hasNeeded ? 'warning' : 'info',
+      label: 'Support level elevated',
+      people: sorted.map(({ report }) => chip(report, normalizeSupportLevel(report.supportLevel)))
+    });
   }
 
-  // 2. Vacations: active now, and starting within the next 7 days.
+  // 3. Vacations: active now, and starting within the next 7 days.
   const activeVacations = reportStates.filter(({ metrics }) => metrics.vacationStatus.active);
   if (activeVacations.length) {
-    const text = activeVacations.length <= 3
-      ? `On vacation: ${joinNames(activeVacations.map(({ report, metrics }) => `${escapeHtml(report.name || 'Unnamed')} (back ${escapeHtml(formatDate(vacationBackDate(metrics.vacationStatus.current)))})`))}.`
-      : `${activeVacations.length} people are on vacation right now.`;
-    items.push({ tone: 'info', html: text });
+    items.push({
+      tone: 'info',
+      label: 'On vacation',
+      people: activeVacations.map(({ report, metrics }) => chip(report, `back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`))
+    });
   }
   const startingSoon = reportStates.filter(({ metrics }) => {
     const next = metrics.vacationStatus.next;
     return next && normalizeDate(next.startDate) && daysBetween(today, normalizeDate(next.startDate)) <= 7;
   });
   if (startingSoon.length) {
-    const text = startingSoon.length <= 3
-      ? `Vacation ahead: ${joinNames(startingSoon.map(({ report, metrics }) => `${escapeHtml(report.name || 'Unnamed')} from ${escapeHtml(formatDate(metrics.vacationStatus.next.startDate))}`))}.`
-      : `${startingSoon.length} vacations start within a week.`;
-    items.push({ tone: 'info', html: text });
+    items.push({
+      tone: 'info',
+      label: 'Vacation ahead',
+      people: startingSoon.map(({ report, metrics }) => chip(report, `from ${formatDate(metrics.vacationStatus.next.startDate)}`))
+    });
   }
 
-  // 3. Open follow-ups, flagging the ones going stale.
+  // 4. Open follow-ups per person, flagging the ones going stale.
   let openTotal = 0;
-  let staleTotal = 0;
-  reportStates.forEach(({ metrics }) => {
-    (metrics.openFollowUps || []).forEach((item) => {
-      openTotal += 1;
+  const followUpPeople = [];
+  reportStates.forEach(({ report, metrics }) => {
+    const open = metrics.openFollowUps || [];
+    if (!open.length) return;
+    openTotal += open.length;
+    const stale = open.filter((item) => {
       const d = normalizeDate(item.meetingDate);
-      if (d && daysBetween(d, today) > 30) staleTotal += 1;
-    });
+      return d && daysBetween(d, today) > 30;
+    }).length;
+    followUpPeople.push(chip(report, `${open.length} open${stale ? `, ${stale} stale` : ''}`));
   });
   if (openTotal > 0) {
-    const staleText = staleTotal > 0 ? `, ${staleTotal} older than 30 days` : '';
     items.push({
-      tone: staleTotal > 0 ? 'warning' : 'info',
-      html: `${openTotal} open follow-up${openTotal === 1 ? '' : 's'}${staleText}.`,
-      go: 'view:followUps'
+      tone: followUpPeople.some((person) => person.extra.includes('stale')) ? 'warning' : 'info',
+      label: `${openTotal} open follow-up${openTotal === 1 ? '' : 's'}`,
+      people: followUpPeople,
+      go: 'view:followUps',
+      goLabel: 'All follow-ups'
     });
   }
 
-  // 4. PDC round progress across the team.
+  // 5. PDC round progress across the team. Blocked people get named chips.
   const completed = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Completed').length;
-  const blocked = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Blocked').length;
-  const blockedText = blocked > 0 ? `, ${blocked} blocked` : '';
-  items.push({
-    tone: blocked > 0 ? 'warning' : (completed === reportStates.length ? 'success' : 'info'),
-    html: `PDC round: ${completed} of ${reportStates.length} completed${blockedText}.`,
-    go: 'view:pdcSummary'
-  });
+  const blocked = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Blocked');
+  if (blocked.length) {
+    items.push({
+      tone: 'warning',
+      label: `PDC round: ${completed} of ${reportStates.length} completed, blocked`,
+      people: blocked.map(({ report }) => chip(report)),
+      go: 'view:pdcSummary',
+      goLabel: 'PDC summary'
+    });
+  } else {
+    items.push({
+      tone: completed === reportStates.length ? 'success' : 'info',
+      html: `PDC round: ${completed} of ${reportStates.length} completed.`,
+      go: 'view:pdcSummary'
+    });
+  }
 
-  // 5. All clear, the line worth working toward.
-  if (overdueTotal === 0 && openTotal === 0) {
-    items.unshift({ tone: 'success', html: 'All clear. No overdue touchpoints and no open follow-ups.' });
+  // 6. All clear, the line worth working toward.
+  if (overdueTotal === 0 && openTotal === 0 && !flagged.length) {
+    items.unshift({ tone: 'success', html: 'All clear. No overdue touchpoints, no open follow-ups, nobody flagged.' });
   }
   return items;
 }
 
 // Always-on daily briefing at the top of the Overview tab: a short narrated
 // digest of what needs a manager's eyes today, computed fresh on every render.
+// Rows with people render as plain containers holding one profile chip per
+// person (buttons cannot nest, so the row itself stays a div); aggregate rows
+// without people keep the original full-row button behavior.
 function renderBriefingSection(reportStates) {
   if (!reportStates.length) return '';
   const items = buildBriefingItems(reportStates);
   if (!items.length) return '';
   const dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   const rows = items.map((item) => {
+    if (item.people && item.people.length) {
+      const chips = item.people.map((person) => `
+        <button type="button" class="briefing-person" data-glyph-open="${escapeHtml(person.id)}" title="${escapeHtml(`Open ${person.name}`)}">
+          <span class="bp-name">${escapeHtml(person.name)}</span>${person.extra ? `<span class="bp-extra">${escapeHtml(person.extra)}</span>` : ''}
+        </button>`).join('');
+      const trailing = item.go ? `<button type="button" class="briefing-link" data-briefing-go="${escapeHtml(item.go)}">${escapeHtml(item.goLabel || 'Open')} →</button>` : '';
+      return `<div class="briefing-row has-people">
+        <span class="briefing-dot" data-tone="${escapeHtml(item.tone)}" aria-hidden="true"></span>
+        <span class="briefing-text"><strong>${escapeHtml(item.label)}</strong><span class="briefing-people">${chips}</span></span>
+        ${trailing}
+      </div>`;
+    }
     const inner = `<span class="briefing-dot" data-tone="${escapeHtml(item.tone)}" aria-hidden="true"></span><span class="briefing-text">${item.html}</span>`;
     return item.go
       ? `<button type="button" class="briefing-row" data-briefing-go="${escapeHtml(item.go)}">${inner}<span class="briefing-go" aria-hidden="true">→</span></button>`
@@ -10475,33 +11147,11 @@ function renderOverviewTabHtml(reports, entering = false) {
   `;
 }
 
-function renderCadenceTabHtml(reports) {
-  const reportStates = [...reports].map((report) => ({
-    report,
-    metrics: getMetrics(report.id),
-  }));
-  return `<div class="overview-tab">${renderCadenceBarsSection(reportStates)}</div>`;
-}
-
-function renderAttentionTabHtml(reports) {
-  const reportStates = [...reports].map((report) => ({
-    report,
-    metrics: getMetrics(report.id),
-  }));
-  return `<div class="overview-tab">${renderAttentionBreakdownSection(reportStates)}</div>`;
-}
-
-function renderSupportTabHtml(reports) {
-  const reportStates = [...reports].map((report) => ({
-    report,
-    metrics: getMetrics(report.id),
-  }));
-  return `<div class="overview-tab">${renderSupportDistributionSection(reportStates)}</div>`;
-}
-
-function renderInsightsTabHtml(reports) {
+function renderInsightsTabHtml(reports, entering = false) {
   return `
-    <div class="insights-tab">
+    <div class="insights-tab${entering ? ' anim-entry' : ''}">
+      ${renderHealthTrendCard(reports)}
+      ${renderCdpTeamCard(reports)}
       ${renderTeamTenureCard(reports)}
       ${renderRecentThemesCard(reports)}
     </div>
@@ -10513,27 +11163,22 @@ function renderTeamHealth() {
   const reports = getReports();
   teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
   if (!reports.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    const msg = document.createElement('p');
-    msg.textContent = 'No direct reports yet.';
-    const btn = document.createElement('button');
-    btn.id = 'teamHealthEmptyAddBtn';
-    btn.textContent = 'Add your first direct report';
-    btn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
-    empty.append(msg, btn);
-    teamHealthBodyEl.replaceChildren(empty);
+    teamHealthBodyEl.innerHTML = emptyHeroHtml(
+      'people',
+      'No direct reports yet',
+      'Add your first direct report and Team Pulse starts tracking 1:1 cadence, development, and follow-ups from day one.',
+      '<button id="teamHealthEmptyAddBtn" type="button">Add your first direct report</button>'
+    );
+    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
     return;
   }
   renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
   const overviewEntering = viewJustEntered('overviewTab', app.ui.mainView === 'teamHealth' && tab === 'overview');
+  const insightsEntering = viewJustEntered('insightsTab', app.ui.mainView === 'teamHealth' && tab === 'insights');
   let panelHtml = '';
   if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports, overviewEntering);
-  else if (tab === 'cadence') panelHtml = renderCadenceTabHtml(reports);
-  else if (tab === 'attention') panelHtml = renderAttentionTabHtml(reports);
-  else if (tab === 'support') panelHtml = renderSupportTabHtml(reports);
-  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
+  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports, insightsEntering);
   teamHealthBodyEl.innerHTML = panelHtml;
   animateHealthRing();
 }
@@ -10544,6 +11189,1059 @@ function updateThemeWindowSettingFromForm() {
   const nextValue = safePositiveInteger(input?.value || app.doc.settings?.themesWindowDays || THEMES_WINDOW_DEFAULT, THEMES_WINDOW_DEFAULT);
   app.doc.settings.themesWindowDays = nextValue;
 }
+
+/* =====================================================================
+   v0.46.0 — appended helpers: keyboard view shortcuts, illustrated empty
+   states, the "Last time" recap in the 1:1 room, tick feedback, and the
+   Insights health trend recomputed from the event log. New functions only;
+   earlier sections stay byte-identical apart from their own call sites.
+   ===================================================================== */
+
+// --- Keyboard view shortcuts (digits 1-7, sidebar order) ---------------
+// Mirrors the sidebar click delegation exactly: same workspace-close guard,
+// same selection reset, same settings drawer behavior. Kept as a separate
+// function so the click handler stays untouched.
+function keyboardNavigateToSlot(slot) {
+  const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
+  if (!ready) return;
+  if (slot === 1 || slot === 2) {
+    const nextTab = slot === 1 ? 'overview' : 'insights';
+    if (app.ui.mainView === 'teamHealth' && currentTeamHealthTab() === nextTab) return;
+    if (!confirmWorkspaceClose()) return;
+    if (app.ui.mainView !== 'teamHealth') {
+      app.ui.selectedId = null;
+      app.ui.creatingReport = false;
+      app.ui.mainView = 'teamHealth';
+    }
+    app.ui.teamHealthTab = nextTab;
+    persistUiState();
+    navigateRender(() => render());
+    return;
+  }
+  const viewBySlot = { 3: 'reports', 4: 'meetings', 5: 'followUps', 6: 'pdcSummary', 7: 'settings' };
+  const nextView = viewBySlot[slot];
+  if (!nextView || !MAIN_VIEWS.includes(nextView)) return;
+  if (app.ui.mainView === nextView) return;
+  if (!confirmWorkspaceClose()) return;
+  if (nextView !== 'reports') {
+    app.ui.selectedId = null;
+    app.ui.creatingReport = false;
+  }
+  app.ui.mainView = nextView;
+  persistUiState();
+  if (nextView === 'settings') {
+    render();
+    openRulesDrawer();
+    return;
+  }
+  navigateRender(() => render());
+}
+
+// --- Tick feedback ------------------------------------------------------
+// Full renders rebuild the DOM, so an animation started on the clicked node
+// dies immediately. Instead the toggle handler stamps a key here and the
+// next render adds a one-shot .tick-pop class to the matching row. The
+// 700ms window means unrelated later renders never replay the animation.
+let lastTickPop = null;
+function markTickPop(key) {
+  lastTickPop = { key, at: Date.now() };
+}
+function tickPopClass(key) {
+  return lastTickPop && lastTickPop.key === key && (Date.now() - lastTickPop.at) < 700 ? ' tick-pop' : '';
+}
+
+// --- Illustrated empty states -------------------------------------------
+// Inline stroke icons in the same style as the sidebar set, so the zero
+// network promise holds. Used by the big first-run and all-clear states;
+// small filter-result notes keep their plain text.
+const EMPTY_HERO_ICONS = Object.freeze({
+  people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
+  clear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg>',
+  inbox: '<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
+});
+
+function emptyHeroHtml(kind, title, body, actionHtml = '') {
+  const icon = EMPTY_HERO_ICONS[kind] || EMPTY_HERO_ICONS.inbox;
+  return `
+    <div class="empty-hero${kind === 'clear' ? ' celebrate' : ''}">
+      <div class="empty-hero-icon" aria-hidden="true">${icon}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(body)}</p>
+      ${actionHtml}
+    </div>`;
+}
+
+// --- "Last time" recap in the 1:1 room -----------------------------------
+// The most recent logged meeting of any type, collapsed above the editor so
+// twenty seconds of prep replaces digging through the workspace. Open state
+// lives on the meeting room draft so mid-meeting re-renders keep it as is.
+function renderPrevMeetingPanelHtml(report, draft) {
+  const prev = (report.meetings || [])[0] || null;
+  if (!prev) return '';
+  const ago = dateDiffInDays(prev.meetingDate);
+  const metaText = `${canonicalMeetingType(prev.meetingType)} · ${formatDate(prev.meetingDate)}${ago !== null && ago >= 0 ? ` · ${ago}d ago` : ''}`;
+  const noteHtml = normalizeText(prev.notes)
+    ? `<div class="note-markdown mr-prev-note">${renderNoteMarkdown(prev.notes)}</div>`
+    : '<p class="tp-empty mr-prev-empty">No notes were written for that meeting.</p>';
+  return `
+    <details class="mr-panel mr-prev" id="mrPrevDetails"${draft.prevNoteOpen ? ' open' : ''}>
+      <summary class="mr-prev-summary">
+        <span class="mr-prev-title">Last time</span>
+        ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
+        <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
+        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
+      </summary>
+      ${noteHtml}
+    </details>`;
+}
+
+// --- Insights: health trend recomputed from the event log ----------------
+// weeklySnapshots were removed in the v7 migration because storing them was
+// waste. This takes the other path: since every meeting, vacation, and
+// support level change carries a date, the same score the Overview dial
+// shows can be recomputed for any past week at render time with zero stored
+// data. Deliberate simplifications, stated in the card copy: thresholds and
+// cadence overrides are today's values, and snoozes (transient by design)
+// only affect the newest point, which is taken straight from the live dial
+// so the trend always lands exactly on the number the Overview shows.
+const HEALTH_TREND_WEEKS = 26;
+
+function supportLevelAsOf(report, dateStamp) {
+  const entries = (report.changeLog || []).filter((entry) => entry.field === 'Support level');
+  if (!entries.length) return normalizeSupportLevel(report.supportLevel);
+  let level = normalizeSupportLevel(entries[0].from);
+  entries.forEach((entry) => {
+    if ((entry.date || '') <= dateStamp) level = normalizeSupportLevel(entry.to);
+  });
+  return level;
+}
+
+function latestMeetingDateAsOf(report, type, dateStamp) {
+  const wanted = canonicalMeetingType(type);
+  let best = '';
+  (report.meetings || []).forEach((meeting) => {
+    const date = normalizeDate(meeting.meetingDate);
+    if (!date || date > dateStamp) return;
+    if (canonicalMeetingType(meeting.meetingType) !== wanted) return;
+    if (date > best) best = date;
+  });
+  return best;
+}
+
+// Same rule as isMissingTouchpointOverdue, evaluated against an arbitrary
+// reference date instead of today.
+function touchpointOverdueAsOf(report, lastDate, thresholdDays, dateStamp) {
+  const anchor = lastDate || normalizeDate(report.hireDate);
+  if (!anchor) return true;
+  return daysBetween(anchor, dateStamp) > thresholdDays;
+}
+
+function healthScoreAsOf(reports, settings, dateStamp) {
+  const cohort = reports.filter((report) => {
+    const created = normalizeDate(String(report.createdAt || '').slice(0, 10));
+    return created && created <= dateStamp;
+  });
+  if (!cohort.length) return null;
+  let onTime = 0;
+  let urgent = 0;
+  let needsSupport = 0;
+  cohort.forEach((report) => {
+    if (getVacationStatus(report, dateStamp).active) {
+      // Mirrors cadenceSuppressed in the live metrics: a vacation week never
+      // counts a touchpoint as overdue.
+      onTime += 3;
+    } else {
+      [
+        ['1:1', effectiveThreshold(report, '1:1', settings)],
+        ['PDC', effectiveThreshold(report, 'PDC', settings)],
+        ['CV review', effectiveThreshold(report, 'CV review', settings)]
+      ].forEach(([type, thresholdDays]) => {
+        const last = latestMeetingDateAsOf(report, type, dateStamp);
+        if (!touchpointOverdueAsOf(report, last, thresholdDays, dateStamp)) onTime += 1;
+      });
+    }
+    const level = supportLevelAsOf(report, dateStamp);
+    if (level === 'Urgent') urgent += 1;
+    else if (level === 'Support needed') needsSupport += 1;
+  });
+  const cadenceScore = (onTime / (cohort.length * 3)) * 100;
+  const supportPenalty = Math.min(30, urgent * 8 + needsSupport * 4);
+  return {
+    score: Math.max(0, Math.min(100, Math.round(cadenceScore - supportPenalty))),
+    count: cohort.length
+  };
+}
+
+function buildHealthTrendSeries(reports, settings) {
+  const points = [];
+  const thisMonday = mondayOf(todayStamp());
+  for (let back = HEALTH_TREND_WEEKS - 1; back >= 1; back -= 1) {
+    const weekStart = addDays(thisMonday, -7 * back);
+    const result = healthScoreAsOf(reports, settings, weekStart);
+    points.push({
+      weekStart,
+      score: result ? result.score : null,
+      count: result ? result.count : 0,
+      current: false
+    });
+  }
+  const reportStates = reports.map((report) => {
+    const metrics = getMetrics(report.id);
+    return { report, metrics, attentionCount: metrics.attention.length };
+  });
+  const live = computeTeamHealthScore(reportStates);
+  points.push({ weekStart: thisMonday, score: reports.length ? live.score : null, count: reports.length, current: true });
+  const firstIdx = points.findIndex((point) => point.score !== null);
+  return firstIdx <= 0 ? points : points.slice(firstIdx);
+}
+
+function renderHealthTrendCard(reports) {
+  const settings = app.doc?.settings || normalizeSettings({});
+  const series = reports.length ? buildHealthTrendSeries(reports, settings) : [];
+  const drawable = series.filter((point) => point.score !== null);
+  const head = `
+    <div class="trend-head">
+      <h3>Health Trend</h3>
+      <span class="trend-note">Weekly · last ${HEALTH_TREND_WEEKS} weeks</span>
+    </div>
+    <p class="trend-sub">The Overview score recomputed for each past week from logged meetings, vacations, and support level changes. Uses today's cadence thresholds. Snoozes only affect the newest point.</p>`;
+  if (!reports.length || drawable.length < 2) {
+    const emptyCopy = reports.length
+      ? 'Not enough history yet. The trend appears once the team has been tracked for at least two weeks.'
+      : 'Add a direct report to start building trend history.';
+    return `
+    <div class="trend-card">
+      ${head}
+      <div class="trend-empty">${emptyCopy}</div>
+    </div>`;
+  }
+  const W = 660;
+  const H = 170;
+  const padL = 34;
+  const padR = 14;
+  const padT = 12;
+  const padB = 24;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const n = series.length;
+  const x = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const y = (score) => padT + ((100 - score) / 100) * plotH;
+  const gridLines = [0, 25, 50, 75, 100]
+    .map((v) => `<line class="trend-grid-line" x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}"></line>`)
+    .join('');
+  const axisLabels = [0, 50, 100]
+    .map((v) => `<text class="trend-axis-label" x="${padL - 8}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${v}</text>`)
+    .join('');
+  let monthLabels = '';
+  let prevMonth = '';
+  series.forEach((point, i) => {
+    const monthName = new Date(`${point.weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    if (monthName !== prevMonth) {
+      monthLabels += `<text class="trend-month-label" x="${x(i).toFixed(1)}" y="${H - 8}">${escapeHtml(monthName)}</text>`;
+      prevMonth = monthName;
+    }
+  });
+  const coords = series
+    .map((point, i) => (point.score === null ? null : `${x(i).toFixed(1)},${y(point.score).toFixed(1)}`))
+    .filter(Boolean);
+  const linePath = `M ${coords.join(' L ')}`;
+  const firstDrawn = Math.max(0, series.findIndex((point) => point.score !== null));
+  const areaPath = `${linePath} L ${x(n - 1).toFixed(1)},${(padT + plotH).toFixed(1)} L ${x(firstDrawn).toFixed(1)},${(padT + plotH).toFixed(1)} Z`;
+  const dots = series
+    .map((point, i) => {
+      if (point.score === null) return '';
+      const tip = `Week of ${formatDate(point.weekStart)} · ${point.score} of 100 · ${point.count} ${point.count === 1 ? 'person' : 'people'} tracked`;
+      return `<circle class="trend-dot${point.current ? ' current' : ''}" cx="${x(i).toFixed(1)}" cy="${y(point.score).toFixed(1)}" r="${point.current ? 4 : 3}"><title>${escapeHtml(tip)}</title></circle>`;
+    })
+    .join('');
+  const latest = drawable[drawable.length - 1];
+  return `
+    <div class="trend-card">
+      ${head}
+      <svg class="trend-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Team health score by week for the last ${HEALTH_TREND_WEEKS} weeks, currently ${latest.score} of 100">
+        <defs>
+          <linearGradient id="trendFillGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(41,87,214,0.16)"></stop>
+            <stop offset="100%" stop-color="rgba(41,87,214,0)"></stop>
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        ${axisLabels}
+        ${monthLabels}
+        <path d="${areaPath}" fill="url(#trendFillGradient)"></path>
+        <path class="trend-line" d="${linePath}"></path>
+        ${dots}
+      </svg>
+    </div>`;
+}
+
+/* =====================================================================
+   v0.47.0 — Consultant Development Path. The framework below is seeded
+   verbatim from the Devote Personal Development Plan template (six
+   stages, 40 capabilities, coaching hints from the Notes column). Ticks
+   live on people[].capabilities as { id, achievedAt } and are the line
+   manager's calibration view; the PDP document remains the consultant's
+   own copy, so the two can legitimately differ. Stages earlier than a
+   person's current level count as complete implicitly, which keeps
+   backfill optional. Appended as one block, new functions only.
+   v0.47.1 — updateReport now skips fields the payload does not carry
+   (instant saves used to wipe initials this way), payloads carry
+   initials, and achieved dates are date-only and editable so KPIs can
+   be backdated.
+   ===================================================================== */
+
+const CDP_FRAMEWORK = Object.freeze([
+  {
+    level: 'Consultant (Developing)',
+    docTitle: 'Associate Consultant · Developing stage',
+    short: 'C · Dev',
+    groups: [
+      {
+        title: 'Getting the basics of Devote execution',
+        items: [
+          { id: 'cd-b1', text: 'Contribute to project deliverables based on Devote Project Manager guidance and prepare for client review' },
+          { id: 'cd-b2', text: 'Prepare meetings under Devote Project Manager guidance', hint: 'Proactively focus on getting integrated in project team' },
+          { id: 'cd-b3', text: 'Drive selected meetings under Devote PM support', hint: 'Proactively seek experience and learn from other Devotees' },
+          { id: 'cd-b4', text: '1:1 meeting with clients under Devote PM guidance' },
+          { id: 'cd-b5', text: 'Utilize Devote methodology for deliverables' }
+        ]
+      },
+      {
+        title: 'Getting things done',
+        items: [
+          { id: 'cd-g1', text: 'Contribute to project deliverables under Devote Project Manager support and drive review with clients', hint: 'Proactively seek to expand relationships within project team and be known as a person of choice and for business analysis skills' },
+          { id: 'cd-g2', text: '1:1 meeting with clients without Devote Project Manager' },
+          { id: 'cd-g3', text: 'Contribute to the plan for timely delivery of selected tasks under Devote Project Manager guidance' }
+        ]
+      },
+      {
+        title: 'Getting things done and plan for next steps',
+        items: [
+          { id: 'cd-n1', text: 'Drive project deliverables on their own', hint: 'Proactively suggest to your Devote PM which deliverables you can drive' },
+          { id: 'cd-n2', text: 'Plan for timely delivery of selected tasks', hint: 'Proactively think how you can do better with each deliverable' },
+          { id: 'cd-n3', text: 'Support PM in the planning of deliverables', hint: 'Identify a specialty for which you would like to be known for' },
+          { id: 'cd-n4', text: 'Raise risks for project deliverables to Devote Project Manager' }
+        ]
+      }
+    ]
+  },
+  {
+    level: 'Consultant (Skilled)',
+    docTitle: 'Consultant · Skilled stage',
+    short: 'C · Skilled',
+    groups: [
+      {
+        title: 'Execute "right way forward" by following a plan',
+        items: [
+          { id: 'cs-e1', text: 'Actively completing deliverables from E2E', hint: 'Proactively seek guidance from Devote experts' },
+          { id: 'cs-e2', text: 'Delegate assignments to other consultants', hint: 'Proactively teach other Devote consultants the Devote methods' },
+          { id: 'cs-e3', text: 'Support Project Team in defining/mitigating project risks' },
+          { id: 'cs-e4', text: 'Support Devote Project Manager in leading projects and/or tracks while applying Devote methodology for deliverables' }
+        ]
+      },
+      {
+        title: 'Questioning & outlining the "right way forward"',
+        items: [
+          { id: 'cs-q1', text: 'Outline deliverables and project/activity plans', hint: 'Identify a specialty to be known for outside of Devote' },
+          { id: 'cs-q2', text: 'Apply "Root Cause Analysis" thinking to each deliverable (are we solving the right problem?)' },
+          { id: 'cs-q3', text: 'Lead projects and analytical tracks under limited guidance from Devote Project Manager' },
+          { id: 'cs-q4', text: 'Delegate assignments to other consultants while taking accountability for quality and timelines' }
+        ]
+      }
+    ]
+  },
+  {
+    level: 'Consultant (Proficient)',
+    docTitle: 'Consultant · Proficient stage',
+    short: 'C · Prof',
+    groups: [
+      {
+        title: 'Driving the "right way forward"',
+        items: [
+          { id: 'cp-d1', text: 'Lead projects and/or analytical tracks on their own incl. accountability of individual risks and addressing the risks on a project level, deliverables and possibly project management on client level while applying Devote methodology', hint: 'Proactively seek guidance from Devote experts' },
+          { id: 'cp-d2', text: 'Understands and pick up on conversations that relate to needs for the client beyond the project scope or boundaries (e.g. potential engagement leads to Devote) and understand how to deliver this information to the Devote Account Lead', hint: 'Proactively seek leads and gaps for which Devote could support client' },
+          { id: 'cp-d3', text: 'Ability to coach the way of consultancy excellence to new Devote Consultants incl. onboarding to new projects, being the Devote quality governance on deliverables and ability to delegate and oversee other consultants working full-time within their project' }
+        ]
+      },
+      {
+        title: 'Creating client value beyond delivery',
+        items: [
+          { id: 'cp-v1', text: "Understands and can articulate Devote Consulting's broader value contribution to clients beyond individual project delivery within their domain" },
+          { id: 'cp-v2', text: 'Can frame their professional knowledge and insights in a way that helps clients see broader implications, opportunities, or perspectives relevant to their situation' }
+        ]
+      },
+      {
+        title: 'Client-recognised seniority & independence',
+        items: [
+          { id: 'cp-s1', text: 'Have the profile and competencies (Devote CV) that justifies the hourly rate for Senior Consultant in the eyes of our clients' },
+          { id: 'cp-s2', text: 'Can change to another client without significant reduction in independence and ability to drive projects' },
+          { id: 'cp-s3', text: 'Can handle allocation on different projects on different clients in parallel' }
+        ]
+      }
+    ]
+  },
+  {
+    level: 'Senior (Developing)',
+    docTitle: 'Senior Consultant · Developing stage',
+    short: 'S · Dev',
+    groups: [
+      {
+        title: 'Establishing independent project leadership & actively contributing to client relationship development',
+        items: [
+          { id: 'sd-pl', text: 'Project Leadership: Leads project(s) with consistent excellence, effectively handling project risks, managing timelines, and ensuring coordination between team members to meet client expectations for deliverables' },
+          { id: 'sd-tl', text: 'Team Leadership: Seamlessly onboards consultants of all levels to project teams, demonstrating strong people management skills, especially during peak periods or through handovers, and resolving conflicts efficiently within the team' },
+          { id: 'sd-cr', text: 'Client Relationship Development: Builds and manages relationships with client representatives, supporting stakeholder management efforts by understanding client needs and maintaining trust' },
+          { id: 'sd-bd', text: 'Business Development: Contributes to the development of Statements of Work (SoW) and assists in the creation of sales proposals for the clients they work with, as well as other clients within their area of expertise' }
+        ]
+      }
+    ]
+  },
+  {
+    level: 'Senior (Skilled)',
+    docTitle: 'Senior Consultant · Skilled stage',
+    short: 'S · Skilled',
+    groups: [
+      {
+        title: 'Deepening BD involvement, expanding leadership, and managing senior client relationships',
+        items: [
+          { id: 'ss-pl', text: 'Project Leadership: Leads complex project(s) independently, consistently ensuring project risks are mitigated, deliverables are met, and team coordination is effective to meet and exceed client expectations' },
+          { id: 'ss-tl', text: 'Team Leadership: Manages resource allocation efficiently, especially during time-sensitive project phases, ensuring optimal utilization and prioritization of team members across multiple projects' },
+          { id: 'ss-cr', text: 'Client Relationship Development: Manages relationships with senior client representatives, demonstrating the ability to engage with key stakeholders at the senior management level relative to the size and structure of the organization' },
+          { id: 'ss-bd', text: 'Business Development: Actively contributor in the outlining proposals for both potential and current clients, being recognized as a key contributor during client-facing engagement meetings alongside Account Managers or Business Development (BD) Leads' }
+        ]
+      }
+    ]
+  },
+  {
+    level: 'Senior (Proficient)',
+    docTitle: 'Senior Consultant · Proficient stage',
+    short: 'S · Prof',
+    groups: [
+      {
+        title: 'Coaching excellence, leading entire teams, and driving business growth independently',
+        items: [
+          { id: 'sp-pl', text: 'Project Leadership: Fully accountable for all aspects of project delivery, including quality assurance, risk management, and ensuring client satisfaction, driving projects to completion without oversight' },
+          { id: 'sp-tl', text: 'Team Leadership: Coaches multiple consultants across all levels, fostering a culture of excellence, while ensuring high-quality project management and stakeholder engagement within the team they lead' },
+          { id: 'sp-cr', text: 'Client Relationship Development: Leads executive-level stakeholder management, building and sustaining strong relationships with senior decision-makers (including executive management and steering committees), ensuring alignment with high-level business objectives and long-term client satisfaction' },
+          { id: 'sp-bd', text: 'Business Development: Independently creates and completes proposals from end to end (E2E) for new projects (beyond extensions or expansions), guiding the proposal process with limited input from BD Leads or Account Managers, and contributing directly to business growth' }
+        ]
+      }
+    ]
+  }
+]);
+
+let cdpCapabilityIndex = null;
+function cdpCapabilityById(capabilityId) {
+  if (!cdpCapabilityIndex) {
+    cdpCapabilityIndex = new Map();
+    CDP_FRAMEWORK.forEach((stage) => {
+      stage.groups.forEach((group) => {
+        group.items.forEach((item) => cdpCapabilityIndex.set(item.id, { stage, group, item }));
+      });
+    });
+  }
+  return cdpCapabilityIndex.get(capabilityId) || null;
+}
+
+function normalizeCapabilityTick(entry = {}) {
+  const safe = entry && typeof entry === 'object' ? entry : {};
+  return {
+    id: normalizeText(safe.id || safe.capabilityId),
+    achievedAt: normalizeDate(String(safe.achievedAt || '').slice(0, 10)) || todayStamp()
+  };
+}
+
+function normalizeCapabilityTicks(entries = []) {
+  const seen = new Set();
+  return (Array.isArray(entries) ? entries : [])
+    .map((entry) => normalizeCapabilityTick(entry))
+    .filter((entry) => {
+      if (!entry.id || seen.has(entry.id)) return false;
+      seen.add(entry.id);
+      return true;
+    })
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
+function capabilityTickMap(report) {
+  const map = new Map();
+  normalizeCapabilityTicks(report?.capabilities || []).forEach((tick) => map.set(tick.id, tick));
+  return map;
+}
+
+function cdpStageIndexForLevel(level) {
+  const normalized = normalizeLevel(level);
+  return CDP_FRAMEWORK.findIndex((stage) => stage.level === normalized);
+}
+
+// Per stage stats for one person. Stages earlier than the current level are
+// complete by definition (their level proves it), so pct is forced to 100
+// there and the implied flag lets the UI say so instead of demanding
+// 28 backfill ticks for every senior.
+function cdpStageStats(report, stageIndex) {
+  const stage = CDP_FRAMEWORK[stageIndex];
+  const ticks = capabilityTickMap(report);
+  const total = stage.groups.reduce((sum, group) => sum + group.items.length, 0);
+  const done = stage.groups.reduce((sum, group) => sum + group.items.filter((item) => ticks.has(item.id)).length, 0);
+  const currentIndex = cdpStageIndexForLevel(report.level);
+  const isEarlier = currentIndex > -1 && stageIndex < currentIndex;
+  const explicitPct = total ? Math.round((done / total) * 100) : 0;
+  return {
+    stage,
+    total,
+    done,
+    pct: isEarlier ? 100 : explicitPct,
+    explicitPct,
+    implied: isEarlier && done < total,
+    current: stageIndex === currentIndex
+  };
+}
+
+function cdpSeriesForReport(report) {
+  return CDP_FRAMEWORK.map((stage, index) => cdpStageStats(report, index));
+}
+
+const CDP_OVERLAY_COLORS = Object.freeze(['#2957d6', '#7c3aed', '#0d9488', '#d97706', '#dc2626', '#0284c7', '#65a30d', '#c026d3', '#475569', '#be185d', '#4d7c0f', '#b45309']);
+
+// Shared radar renderer. seriesList = [{ name, color, values: [6 x 0-100],
+// currentIndex }]. Single mode draws value dots with tooltips; overlay mode
+// keeps just the polygons so shapes stay readable.
+// Shared radar renderer, upgraded in v0.50.0 for depth: a dished plate
+// under the grid, per-series gradient fills with a colored glow filter,
+// axis endpoint dots, and in single mode a charge current flowing along
+// the shape perimeter (CSS animated, reduced-motion aware). Gradient and
+// filter ids are namespaced per instance so several radars can coexist
+// in the DOM without collisions. seriesList = [{ name, color,
+// values: [6 x 0-100], currentIndex }].
+let cdpRadarUid = 0;
+function renderCdpRadarSvg(seriesList, options = {}) {
+  const size = options.size || 320;
+  const width = size + 96;
+  const cx = width / 2;
+  const cy = size / 2 + 4;
+  const R = size / 2 - 44;
+  const axes = CDP_FRAMEWORK.length;
+  const uid = `cdpg${++cdpRadarUid}`;
+  const angleFor = (i) => (-90 + i * (360 / axes)) * (Math.PI / 180);
+  const pointFor = (i, value) => {
+    const r = (R * Math.max(0, Math.min(100, value))) / 100;
+    return [cx + r * Math.cos(angleFor(i)), cy + r * Math.sin(angleFor(i))];
+  };
+  const ringPoints = (v) => CDP_FRAMEWORK.map((stage, i) => pointFor(i, v).map((n) => n.toFixed(1)).join(',')).join(' ');
+  const defs = `
+    <defs>
+      <radialGradient id="${uid}-plate" cx="50%" cy="44%" r="64%">
+        <stop offset="0%" stop-color="#ffffff"></stop>
+        <stop offset="76%" stop-color="#f4f7fd"></stop>
+        <stop offset="100%" stop-color="#e8eefb"></stop>
+      </radialGradient>
+      ${seriesList.map((series, i) => `
+      <linearGradient id="${uid}-s${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${series.color}" stop-opacity="0.42"></stop>
+        <stop offset="100%" stop-color="${series.color}" stop-opacity="0.08"></stop>
+      </linearGradient>
+      <filter id="${uid}-g${i}" x="-45%" y="-45%" width="190%" height="190%">
+        <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${series.color}" flood-opacity="0.38"></feDropShadow>
+      </filter>`).join('')}
+    </defs>`;
+  const plate = `<polygon class="cdp-radar-plate" points="${ringPoints(100)}" fill="url(#${uid}-plate)"></polygon>`;
+  const band = `<polygon class="cdp-radar-band" points="${ringPoints(50)}"></polygon>`;
+  const ringPolys = [25, 50, 75, 100].map((v) => `<polygon class="cdp-radar-ring${v === 100 ? ' outer' : ''}" points="${ringPoints(v)}"></polygon>`).join('');
+  const axisLines = CDP_FRAMEWORK.map((stage, i) => {
+    const [x, y] = pointFor(i, 100);
+    return `<line class="cdp-radar-axis" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"></line><circle class="cdp-radar-axis-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.1"></circle>`;
+  }).join('');
+  const currentIndexSingle = seriesList.length === 1 ? seriesList[0].currentIndex : -1;
+  const labels = CDP_FRAMEWORK.map((stage, i) => {
+    const angle = angleFor(i);
+    const lx = cx + (R + 16) * Math.cos(angle);
+    const ly = cy + (R + 16) * Math.sin(angle);
+    const anchor = Math.abs(Math.cos(angle)) < 0.35 ? 'middle' : (Math.cos(angle) > 0 ? 'start' : 'end');
+    const isCurrent = i === currentIndexSingle;
+    return `<text class="cdp-radar-label${isCurrent ? ' current' : ''}" x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(stage.short)}</text>`;
+  }).join('');
+  const polygons = seriesList.map((series, i) => {
+    const pts = series.values.map((value, ax) => pointFor(ax, value).map((n) => n.toFixed(1)).join(',')).join(' ');
+    return `<polygon class="cdp-radar-shape" points="${pts}" stroke="${series.color}" fill="url(#${uid}-s${i})" style="filter:url(#${uid}-g${i})" data-name="${escapeHtml(series.name || '')}"><title>${escapeHtml(series.name || '')}</title></polygon>`;
+  }).join('');
+  const flow = seriesList.length === 1
+    ? `<polygon class="cdp-radar-flow" points="${seriesList[0].values.map((value, ax) => pointFor(ax, value).map((n) => n.toFixed(1)).join(',')).join(' ')}" stroke="${seriesList[0].color}"></polygon>`
+    : '';
+  const dots = seriesList.length === 1
+    ? seriesList[0].values.map((value, i) => {
+      const [x, y] = pointFor(i, value);
+      return `<circle class="cdp-radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" style="stroke:${seriesList[0].color}"><title>${escapeHtml(`${CDP_FRAMEWORK[i].docTitle} · ${Math.round(value)}%`)}</title></circle>`;
+    }).join('')
+    : '';
+  return `
+    <svg class="cdp-radar" viewBox="0 0 ${width} ${size}" role="img" aria-label="Development path web across the six stages">
+      ${defs}
+      ${plate}
+      ${band}
+      ${ringPolys}
+      ${axisLines}
+      ${polygons}
+      ${flow}
+      ${dots}
+      ${labels}
+    </svg>`;
+}
+async function setCapabilityAchieved(reportId, capabilityId, achieved) {
+  const report = getReportById(reportId);
+  if (!report || !cdpCapabilityById(capabilityId)) return false;
+  const ticks = normalizeCapabilityTicks(report.capabilities || []).filter((tick) => tick.id !== capabilityId);
+  if (achieved) ticks.push({ id: capabilityId, achievedAt: todayStamp() });
+  const payload = buildFullPayloadFromReport(report);
+  payload.capabilities = normalizeCapabilityTicks(ticks);
+  markTickPop(`cdp:${capabilityId}`);
+  return updateReport(reportId, payload, { silentToast: true });
+}
+
+async function setCapabilityAchievedDate(reportId, capabilityId, date) {
+  const report = getReportById(reportId);
+  if (!report) return false;
+  const normalized = normalizeDate(date);
+  if (!normalized) {
+    renderDetailDrawer();
+    return false;
+  }
+  const ticks = normalizeCapabilityTicks(report.capabilities || []);
+  const index = ticks.findIndex((tick) => tick.id === capabilityId);
+  if (index === -1) return false;
+  ticks[index] = { ...ticks[index], achievedAt: normalized };
+  const payload = buildFullPayloadFromReport(report);
+  payload.capabilities = normalizeCapabilityTicks(ticks);
+  return updateReport(reportId, payload, { silentToast: true });
+}
+
+// The Development tab section: radar, stage pills, and the checklist for the
+// viewed stage. Ticks save instantly through the same event path as every
+// other person update, so they land in the JSON and the timeline.
+function renderDevelopmentPathPanel(editorReport) {
+  const report = getReportById(editorReport.id);
+  if (!report) return '';
+  const series = cdpSeriesForReport(report);
+  const currentIndex = cdpStageIndexForLevel(report.level);
+  const requestedIndex = cdpStageIndexForLevel(app.ui.cdpDrawerStage);
+  const viewedIndex = requestedIndex > -1 ? requestedIndex : (currentIndex > -1 ? currentIndex : 0);
+  const viewed = series[viewedIndex];
+  const ticks = capabilityTickMap(report);
+  const radar = renderCdpRadarSvg([
+    { name: report.name, color: '#2957d6', values: series.map((s) => s.pct), currentIndex }
+  ], { size: 300 });
+  const summary = currentIndex > -1
+    ? `<strong>${escapeHtml(series[currentIndex].stage.docTitle)}</strong><span>${series[currentIndex].done} of ${series[currentIndex].total} capabilities ticked${series[currentIndex].done === series[currentIndex].total ? ' · stage complete, worth a next stage conversation' : ''}</span>`
+    : '<strong>No level set</strong><span>Set a level on the Profile tab to anchor the current stage. Ticks still work.</span>';
+  const pills = CDP_FRAMEWORK.map((stage, index) => {
+    const stat = series[index];
+    const state = stat.current ? ' current' : (index === viewedIndex ? ' viewing' : '');
+    const marker = stat.pct >= 100 ? ' ✓' : '';
+    return `<button type="button" class="cdp-stage-pill${state}${index === viewedIndex ? ' active' : ''}" data-cdp-stage="${escapeHtml(stage.level)}" title="${escapeHtml(`${stage.docTitle} · ${stat.pct}%${stat.implied ? ' (implied by level)' : ''}`)}">${escapeHtml(stage.short)}${marker}</button>`;
+  }).join('');
+  const impliedNote = viewed.implied
+    ? '<p class="cdp-implied-note">Earlier stage. It counts as complete because their level is beyond it, so ticking here is optional backfill.</p>'
+    : '';
+  const checklist = viewed.stage.groups.map((group) => `
+    <div class="cdp-group">
+      <div class="cdp-group-title">${escapeHtml(group.title)}</div>
+      ${group.items.map((item) => {
+        const tick = ticks.get(item.id);
+        return `
+          <div class="cdp-item${tick ? ' done' : ''}${tickPopClass(`cdp:${item.id}`)}">
+            <label class="cdp-item-main">
+              <input type="checkbox" data-cdp-toggle="${escapeHtml(item.id)}" ${tick ? 'checked' : ''}>
+              <span class="cdp-item-copy">
+                <span class="cdp-item-text">${escapeHtml(item.text)}</span>
+                ${item.hint ? `<span class="cdp-hint">${escapeHtml(item.hint)}</span>` : ''}
+              </span>
+            </label>
+            ${tick ? `
+            <span class="cdp-item-side">
+              <span class="cdp-date-label">Achieved</span>
+              <input type="date" class="cdp-date" data-cdp-date="${escapeHtml(item.id)}" value="${escapeHtml(String(tick.achievedAt).slice(0, 10))}" title="Edit the achieved date, backdating is fine">
+            </span>` : ''}
+          </div>`;
+      }).join('')}
+    </div>`).join('');
+  return `
+    <div class="drawer-section cdp-section">
+      <div class="drawer-section-head">
+        <div>
+          <h3>Consultant Development Path</h3>
+          <p class="section-note">Mirrors the capability grid from the Devote PDP template. These ticks are your manager view and save instantly. The consultant's own PDP document stays theirs, and a gap between the two is PDC conversation material.</p>
+        </div>
+      </div>
+      <div class="cdp-layout">
+        <div class="cdp-radar-wrap">${radar}</div>
+        <div class="cdp-side">
+          <div class="cdp-summary">${summary}</div>
+          <div class="cdp-stage-pills">${pills}</div>
+        </div>
+      </div>
+      <div class="cdp-stage-title">${escapeHtml(viewed.stage.docTitle)} · ${viewed.done} of ${viewed.total} ticked</div>
+      ${impliedNote}
+      ${checklist}
+    </div>`;
+}
+
+// Insights: the team card. Heatmap mode is the scanner (people by stages,
+// shaded by completion), web mode overlays everyone on one radar since the
+// axes are identical for all.
+function renderCdpTeamCard(reports) {
+  const mode = app.ui.cdpTeamMode === 'web' ? 'web' : 'heatmap';
+  const head = `
+    <div class="tenure-river-head">
+      <div>
+        <h3>Development Path</h3>
+        <p>Progress across the six CDP stages. Earlier stages count as complete once a person's level is beyond them.</p>
+      </div>
+      <div class="tenure-mode-toggle" role="tablist" aria-label="Development path view">
+        <button type="button" class="tenure-mode-btn ${mode === 'heatmap' ? 'active' : ''}" data-cdp-team-mode="heatmap" aria-pressed="${mode === 'heatmap' ? 'true' : 'false'}">Heatmap</button>
+        <span class="tenure-mode-sep" aria-hidden="true">·</span>
+        <button type="button" class="tenure-mode-btn ${mode === 'web' ? 'active' : ''}" data-cdp-team-mode="web" aria-pressed="${mode === 'web' ? 'true' : 'false'}">Web</button>
+      </div>
+    </div>`;
+  if (!reports.length) {
+    return `<div class="cdp-card">${head}<div class="trend-empty">Add a direct report to start tracking the development path.</div></div>`;
+  }
+  const rows = reports.map((report, index) => ({
+    report,
+    series: cdpSeriesForReport(report),
+    currentIndex: cdpStageIndexForLevel(report.level),
+    color: CDP_OVERLAY_COLORS[index % CDP_OVERLAY_COLORS.length]
+  }));
+  let body = '';
+  if (mode === 'heatmap') {
+    const headerCells = CDP_FRAMEWORK.map((stage) => `<th title="${escapeHtml(stage.docTitle)}">${escapeHtml(stage.short)}</th>`).join('');
+    const bodyRows = rows.map(({ report, series, currentIndex }) => {
+      const cells = series.map((stat, index) => {
+        if (stat.implied || (stat.pct >= 100 && index < currentIndex)) {
+          return `<td class="cdp-hm-cell implied${index === currentIndex ? ' current' : ''}" title="${escapeHtml(`${stat.stage.docTitle} · complete (implied by level)`)}">✓</td>`;
+        }
+        const alpha = stat.pct === 0 ? 0.04 : 0.10 + (stat.pct / 100) * 0.78;
+        const dark = stat.pct >= 60;
+        return `<td class="cdp-hm-cell${index === currentIndex ? ' current' : ''}${dark ? ' dark' : ''}" style="background:rgba(41,87,214,${alpha.toFixed(2)})" title="${escapeHtml(`${stat.stage.docTitle} · ${stat.done} of ${stat.total} ticked`)}">${stat.pct}%</td>`;
+      }).join('');
+      return `
+        <tr>
+          <td class="cdp-hm-person-cell">
+            <button type="button" class="cdp-hm-person" data-cdp-open="${escapeHtml(report.id)}">
+              <span class="fu-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span>
+              <span class="cdp-hm-name">${escapeHtml(report.name || 'Unnamed')}</span>
+            </button>
+          </td>
+          ${cells}
+        </tr>`;
+    }).join('');
+    body = `
+      <div class="cdp-hm-scroll">
+        <table class="cdp-hm-table">
+          <thead><tr><th class="cdp-hm-person-cell"></th>${headerCells}</tr></thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </div>
+      <p class="cdp-card-footnote">Click a person to open their Development tab. ✓ means the stage is behind their current level.</p>`;
+  } else {
+    const overlay = renderCdpRadarSvg(rows.map(({ report, series, color }) => ({
+      name: report.name || 'Unnamed',
+      color,
+      values: series.map((stat) => stat.pct)
+    })), { size: 380 });
+    const legend = rows.map(({ report, color }) => `
+      <button type="button" class="cdp-legend-chip" data-cdp-open="${escapeHtml(report.id)}">
+        <span class="cdp-legend-swatch" style="background:${color}"></span>${escapeHtml(report.name || 'Unnamed')}
+      </button>`).join('');
+    body = `
+      <div class="cdp-web-wrap">${overlay}</div>
+      <div class="cdp-legend">${legend}</div>
+      <p class="cdp-card-footnote">Each shape is one person. The polygon grows along the path as stages fill. Click a name to open their Development tab.</p>`;
+  }
+  return `<div class="cdp-card">${head}${body}</div>`;
+}
+
+// -----------------------------------------------------------------------
+// v0.52.0 — Living atmosphere. Paints #ambientCanvas with a slow flow
+// field that reads the team's state: four drifting gradient orbs plus a
+// field of motes riding a layered-sine flow. syncFromState() (called at
+// the top of every render) eases a tension value derived from open
+// attention items and Urgent / Support-needed levels: tension warms the
+// palette, dilates time, and adds turbulence. eventPulse() (called from
+// appendEvent) ripples the field on every write: warm violet for people
+// events (meetings, notes, follow-ups, goals), cyan for everything else.
+// Honors Stable mode (canvas hidden by CSS, loop parked), honors
+// prefers-reduced-motion (one calm static frame, no loop), pauses when
+// the tab is hidden, and caps devicePixelRatio at 1.5 to keep the fill
+// cheap. Zero network, zero dependencies, ~2ms a frame on a laptop.
+// v0.52.1 — Orb drift raised to perceptible, and the module now also
+// paints #cursorCanvas with a cursor trail.
+// v0.52.3 — The trail is a mist: soft vapour puffs that bloom, drift, and
+// dissipate (drawMist) instead of a stroked ribbon.
+// -----------------------------------------------------------------------
+window.TP_AMBIENT = (() => {
+  const canvas = document.getElementById('ambientCanvas');
+  const noop = { syncFromState() {}, eventPulse() {} };
+  if (!canvas || typeof canvas.getContext !== 'function') return noop;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return noop;
+
+  // v0.52.1: cursor trail on an optional second canvas above the UI; if it
+  // is missing, the atmosphere still runs and the trail is simply skipped.
+  // Mouse pointers only (no trail while dragging a touch screen), never
+  // under reduced motion or Stable mode.
+  // v0.52.3: the trail is a mist. Movement sheds tiny vapour puffs that
+  // bloom and dissipate; see drawMist below.
+  const cursorCanvas = document.getElementById('cursorCanvas');
+  const cursorCtx = cursorCanvas && typeof cursorCanvas.getContext === 'function' ? cursorCanvas.getContext('2d') : null;
+  const puffs = [];
+  const MIST_LIFE = 780;
+  const MIST_MAX = 26;
+  const MIST_COLS = [[122, 116, 220], [86, 150, 214]];
+
+  const COOL = [[109, 93, 246], [0, 179, 230], [41, 87, 214], [138, 92, 255]];
+  const WARM = [226, 68, 92];
+  // Orbs are placed in viewport fractions so they frame the content pane the
+  // same way the old static radial-gradients did: upper right, left edge,
+  // lower middle, upper left. warmable controls how much of the tension
+  // colour shift each orb accepts so the field never goes uniformly red.
+  // v0.52.1: amplitudes and frequencies raised ~1.5x. The old values gave a
+  // full drift cycle of 3+ minutes, which read as frozen next to the motes.
+  const ORBS = [
+    { cx: 0.86, cy: -0.05, r: 0.52, c: COOL[0], a: 0.100, fx: 0.075, fy: 0.062, ax: 105, ay: 66, warmable: 1.0 },
+    { cx: -0.06, cy: 0.30, r: 0.46, c: COOL[1], a: 0.085, fx: 0.058, fy: 0.078, ax: 95, ay: 80, warmable: 0.35 },
+    { cx: 0.45, cy: 1.05, r: 0.50, c: COOL[2], a: 0.080, fx: 0.066, fy: 0.055, ax: 120, ay: 64, warmable: 1.0 },
+    { cx: 0.20, cy: -0.10, r: 0.34, c: COOL[3], a: 0.070, fx: 0.090, fy: 0.072, ax: 85, ay: 90, warmable: 0.35 },
+  ];
+
+  const state = { t: Math.random() * 500, tension: 0, target: 0, energy: 0, raf: 0, running: false, lastTs: 0 };
+  const ripples = [];
+  let w = 0;
+  let h = 0;
+  let motes = [];
+
+  const reduceQuery = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const reduceMotion = () => !!(reduceQuery && reduceQuery.matches);
+  const stableMode = () => document.body.classList.contains('stable-mode');
+
+  function mix(c1, c2, t) {
+    return [Math.round(c1[0] + (c2[0] - c1[0]) * t), Math.round(c1[1] + (c2[1] - c1[1]) * t), Math.round(c1[2] + (c2[2] - c1[2]) * t)];
+  }
+  function rgba(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${Math.max(0, Math.min(1, a)).toFixed(3)})`; }
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (cursorCanvas && cursorCtx) {
+      cursorCanvas.width = Math.max(1, Math.round(w * dpr));
+      cursorCanvas.height = Math.max(1, Math.round(h * dpr));
+      cursorCanvas.style.width = `${w}px`;
+      cursorCanvas.style.height = `${h}px`;
+      cursorCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    seedMotes();
+    if (!state.running) drawFrame(0);
+  }
+
+  function seedMotes() {
+    const count = w < 900 ? 26 : 58;
+    motes = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      v: 0.35 + Math.random() * 0.5,
+      c: COOL[Math.floor(Math.random() * COOL.length)],
+      a: 0.14 + Math.random() * 0.18,
+      r: 0.8 + Math.random() * 1.4,
+    }));
+  }
+
+  // Cheap divergence-free-looking flow: three layered sines. Time already
+  // dilates with tension in the loop, so the field itself stays stateless.
+  function flowAngle(x, y, t) {
+    return Math.sin(x * 0.0016 + t * 0.28) + Math.cos(y * 0.0013 - t * 0.22) + Math.sin((x + y) * 0.0007 + t * 0.11);
+  }
+
+  function drawFrame(dt) {
+    ctx.clearRect(0, 0, w, h);
+    const t = state.t;
+    const tn = state.tension;
+    const en = state.energy;
+    for (const o of ORBS) {
+      const col = mix(o.c, WARM, Math.min(1, tn * o.warmable * 0.75));
+      const x = o.cx * w + Math.sin(t * o.fx + o.ax) * o.ax * (1 + tn * 0.8);
+      const y = o.cy * h + Math.cos(t * o.fy + o.ay) * o.ay * (1 + tn * 0.8);
+      const r = o.r * Math.max(w, h) * (1 + Math.sin(t * 0.05 + o.ax) * 0.04 + en * 0.05);
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, rgba(col, o.a * (1 + tn * 0.55 + en * 0.6)));
+      g.addColorStop(1, rgba(col, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    const speed = 0.5 + tn * 1.7 + en * 1.2;
+    for (const m of motes) {
+      if (dt > 0) {
+        const ang = flowAngle(m.x, m.y, t) * (1 + tn * 0.7);
+        m.x += Math.cos(ang) * m.v * speed * dt * 24;
+        m.y += Math.sin(ang) * m.v * speed * dt * 24 + (tn > 0.55 ? Math.sin(t * 3 + m.x * 0.05) * tn * 0.35 : 0);
+        if (m.x < -8) m.x = w + 8; else if (m.x > w + 8) m.x = -8;
+        if (m.y < -8) m.y = h + 8; else if (m.y > h + 8) m.y = -8;
+      }
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, 6.2832);
+      ctx.fillStyle = rgba(m.c, m.a * (0.8 + en * 0.8));
+      ctx.fill();
+    }
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i];
+      if (dt > 0) {
+        rp.r += dt * (240 + rp.kick * 180);
+        rp.a -= dt * 0.55;
+      }
+      if (rp.a <= 0.01) { ripples.splice(i, 1); continue; }
+      ctx.beginPath();
+      ctx.arc(rp.x, rp.y, rp.r, 0, 6.2832);
+      ctx.strokeStyle = rgba(rp.c, rp.a);
+      ctx.lineWidth = 1.5 + rp.kick;
+      ctx.stroke();
+    }
+  }
+
+  // The mist, v0.52.3. Replaces the comet ribbon, which still read as a
+  // hard object at speed. Movement now sheds small vapour puffs: each one
+  // is a soft radial gradient that blooms to roughly three times its spawn
+  // radius, drifts gently upward, and dissipates over MIST_LIFE. No
+  // strokes and no polyline, so there is nothing left to look segmented,
+  // just overlapping soft gradients at very low alpha.
+  function drawMist(now) {
+    if (!cursorCtx) return;
+    cursorCtx.clearRect(0, 0, w, h);
+    while (puffs.length && now - puffs[0].t > MIST_LIFE) puffs.shift();
+    if (!puffs.length) return;
+    for (const p of puffs) {
+      const age = (now - p.t) / MIST_LIFE;
+      if (age >= 1) continue;
+      const sec = (now - p.t) / 1000;
+      const r = p.r0 * (1 + 2.2 * age);
+      const x = p.x + p.vx * sec;
+      const y = p.y + p.vy * sec;
+      const a = 0.12 * Math.pow(1 - age, 1.6);
+      const g = cursorCtx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, rgba(p.c, a * 0.9));
+      g.addColorStop(0.6, rgba(p.c, a * 0.35));
+      g.addColorStop(1, rgba(p.c, 0));
+      cursorCtx.fillStyle = g;
+      cursorCtx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+  }
+
+  function loop(ts) {
+    if (!state.running) return;
+    if (stableMode()) { park(); return; }
+    const dt = state.lastTs ? Math.min(0.05, (ts - state.lastTs) / 1000) : 0.016;
+    state.lastTs = ts;
+    state.tension += (state.target - state.tension) * Math.min(1, dt * 1.4);
+    state.energy = Math.max(0, state.energy * Math.pow(0.3, dt));
+    state.t += dt * (0.6 + state.tension * 0.7 + state.energy * 0.5);
+    drawFrame(dt);
+    drawMist(ts);
+    state.raf = window.requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (state.running || reduceMotion() || stableMode() || document.hidden) return;
+    if (typeof window.requestAnimationFrame !== 'function') return;
+    state.running = true;
+    state.lastTs = 0;
+    state.raf = window.requestAnimationFrame(loop);
+  }
+
+  function park() {
+    state.running = false;
+    if (state.raf) window.cancelAnimationFrame(state.raf);
+    state.raf = 0;
+  }
+
+  // Tension: how much of the team currently needs a human. Urgent counts
+  // hard, Support needed counts softer, and every open attention detail
+  // adds a little. Normalized against team size so one red dot on a team
+  // of two reads hotter than one red dot on a team of ten.
+  function syncFromState() {
+    try {
+      const people = (app?.doc?.people || []).filter((p) => p && !p.archived);
+      let heat = 0;
+      let attention = 0;
+      for (const p of people) {
+        const fill = supportLevelFill(p.supportLevel);
+        if (fill === 'red') heat += 1.6;
+        else if (fill === 'amber') heat += 0.7;
+        try { attention += (getMetrics(p.id)?.attentionDetails || []).length; } catch (_) { /* metrics not ready yet */ }
+      }
+      const denom = Math.max(3, people.length * 1.6);
+      state.target = Math.max(0, Math.min(1, (heat + attention * 0.8) / denom));
+    } catch (_) {
+      state.target = 0;
+    }
+    if (stableMode()) { park(); return; }
+    if (reduceMotion()) { state.tension = state.target; drawFrame(0); return; }
+    start();
+  }
+
+  function eventPulse(type) {
+    if (reduceMotion() || stableMode()) return;
+    const warm = /^(meeting|note|followup|follow_up|pulse|goal)/.test(String(type));
+    ripples.push({
+      x: w * (0.45 + Math.random() * 0.35),
+      y: h * (0.25 + Math.random() * 0.4),
+      r: 8,
+      a: warm ? 0.34 : 0.24,
+      kick: warm ? 1 : 0.4,
+      c: warm ? [168, 102, 255] : [0, 179, 230],
+    });
+    if (ripples.length > 6) ripples.shift();
+    state.energy = Math.min(1, state.energy + (warm ? 0.45 : 0.22));
+    start();
+  }
+
+  window.addEventListener('resize', resize);
+  let lastTrailX = -1e9;
+  let lastTrailY = -1e9;
+  window.addEventListener('pointermove', (event) => {
+    if (event.pointerType && event.pointerType !== 'mouse') return;
+    if (reduceMotion() || stableMode() || !cursorCtx) return;
+    // v0.52.3: shed a puff every 12px of travel. Sparser than the old
+    // ribbon samples; the bloom and overlap fill the gaps softly.
+    const dx = event.clientX - lastTrailX;
+    const dy = event.clientY - lastTrailY;
+    if (dx * dx + dy * dy < 144) return;
+    lastTrailX = event.clientX;
+    lastTrailY = event.clientY;
+    puffs.push({
+      x: event.clientX + (Math.random() - 0.5) * 8,
+      y: event.clientY + (Math.random() - 0.5) * 8,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -6 - Math.random() * 10,
+      r0: 4 + Math.random() * 3.5,
+      c: MIST_COLS[Math.floor(Math.random() * MIST_COLS.length)],
+      t: performance.now()
+    });
+    if (puffs.length > MIST_MAX) puffs.shift();
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) park(); else start(); });
+  if (reduceQuery && typeof reduceQuery.addEventListener === 'function') {
+    reduceQuery.addEventListener('change', () => {
+      if (reduceMotion()) { park(); state.tension = state.target; drawFrame(0); } else { start(); }
+    });
+  }
+
+  resize();
+  if (reduceMotion()) { drawFrame(0); } else { start(); }
+  return { syncFromState, eventPulse, pause: park, resume: start };
+})();
 
 // Startup. If anything below throws, show a user-visible error panel so the
 // user isn't stuck staring at the blank startup gate with no clue why nothing
