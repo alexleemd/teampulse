@@ -1,0 +1,163 @@
+  <!-- v0.52.0: living atmosphere. A fixed canvas behind the app shell that the
+       TP_AMBIENT module (end of the script) paints with a slow flow field.
+       Purely decorative: pointer-events none, aria-hidden, and it disappears
+       under Stable mode or prefers-reduced-motion (one calm static frame). -->
+  <canvas id="ambientCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
+  <!-- v0.52.1: cursor comet trail. Painted by the same TP_AMBIENT loop,
+       mouse pointers only, sits above the UI with pointer-events none. -->
+  <canvas id="cursorCanvas" class="cursor-canvas" aria-hidden="true"></canvas>
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="app-shell" id="appShell" data-main-view="teamHealth" data-mobile-pane="content">
+
+    <!-- UNIFIED SIDEBAR — app-level nav with full names -->
+    <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img" aria-label="Team Pulse">
+            <defs>
+              <linearGradient id="brandMarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2f5be0"></stop>
+                <stop offset="58%" stop-color="#6d5df6"></stop>
+                <stop offset="100%" stop-color="#00b3e6"></stop>
+              </linearGradient>
+            </defs>
+            <rect x="1" y="1" width="38" height="38" rx="11" fill="url(#brandMarkGrad)"></rect>
+            <path class="brand-pulse" pathLength="100" d="M7 22h6l3.2-9 5.6 16 4.2-12 2.2 5h5.8" fill="none" stroke="#ffffff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-name">Team Pulse</span>
+          <span class="sidebar-brand-version" id="appVersion">v0.0.0</span>
+        </div>
+      </div>
+      <div id="sidebarNav"></div>
+    </nav>
+
+    <!-- RIGHT COLUMN — active content -->
+    <main class="content-pane" id="contentPane" role="main">
+      <div class="content-pane-inner" id="contentPaneInner">
+
+        <!-- Startup gate (folder selection) -->
+        <section class="card startup-gate" id="startupGate">
+          <div class="panel-header">
+            <div>
+              <h2>Choose a Team Pulse Folder</h2>
+              <p>Choose where Team Pulse should write team-pulse.json, rolling backups, exports, and SCHEMA.md. Team Pulse stays blank until you connect a folder.</p>
+            </div>
+          </div>
+          <div class="content topless startup-gate-body">
+            <div class="setup-actions">
+              <button id="createJsonFileBtn">Choose Team Pulse folder</button>
+              <button id="openJsonFileBtn" class="secondary">Import existing JSON</button>
+            </div>
+            <p class="help-text">After you connect a folder once, Team Pulse will remember it in this browser and offer it again next time.</p>
+          </div>
+        </section>
+
+        <!-- Content header (view title + folder pill) -->
+        <div class="content-header" id="contentHeader" hidden>
+          <button type="button" class="mobile-back-btn" id="mobileBackBtn" aria-label="Back to list">← Back</button>
+          <div class="content-header-title">
+            <h1 id="contentHeaderTitle">Team Health</h1>
+            <p id="contentHeaderSubtitle"></p>
+          </div>
+          <div class="content-header-meta">
+            <button type="button" class="gs-trigger" id="globalSearchTrigger" title="Search everything">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <span>Search</span>
+              <kbd class="gs-kbd">/</kbd>
+            </button>
+            <span id="fileStatePill" class="pill save-pill neutral" title="Choose a Team Pulse folder to start.">No folder connected</span>
+            <details class="toolbar-menu" id="dataMenu">
+              <summary class="toolbar-menu-trigger">Data</summary>
+              <div class="toolbar-menu-popover" role="menu" aria-label="Data actions">
+                <button id="saveFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Choose folder</button>
+                <button id="connectDataFileBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import JSON</button>
+                <button id="importIcsBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Import .ics</button>
+                <button id="exportCsvBtn" class="secondary toolbar-menu-item" type="button" role="menuitem">Export files</button>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- Hidden: Team Health section -->
+        <section class="card team-health-card" id="teamHealthSection" hidden>
+          <!-- Tab bar moved to list pane; kept hidden for legacy click handlers. -->
+          <div class="team-health-tabbar hidden" id="teamHealthTabBar" role="tablist" aria-label="Team Health sections" style="display:none"></div>
+          <div class="content topless">
+            <div id="teamHealthBody" role="tabpanel"></div>
+          </div>
+        </section>
+
+        <!-- Reports section: tile grid (when no report selected) -->
+        <section id="reportsSection" hidden>
+          <div class="reports-toolbar">
+            <div class="searchbox">
+              <input id="reportsGridSearch" type="search" placeholder="Search direct reports…" autocomplete="off">
+            </div>
+            <div class="view-switch" role="group" aria-label="Direct reports layout" id="reportsViewSwitch">
+              <button type="button" data-reports-view="tiles" aria-pressed="true">Tiles</button>
+              <button type="button" data-reports-view="table" aria-pressed="false">Table</button>
+            </div>
+            <label class="reports-filter"><span>PDC</span><select id="reportsPlanFilter"></select></label>
+            <label class="reports-filter"><span>Show</span>
+              <select id="reportsAttentionFilter">
+                <option value="">Everyone</option>
+                <option value="needs-attention">Needs attention only</option>
+                <option value="on-track">On track only</option>
+                <option value="open-followups">Open follow-ups</option>
+                <option value="on-vacation">On vacation</option>
+              </select>
+            </label>
+            <button id="addReportBtn">+ Add direct report</button>
+          </div>
+          <div id="quickFilterBar" class="quick-filter-bar hidden">
+            <div>
+              <strong id="quickFilterTitle"></strong>
+              <p id="quickFilterDescription" class="hint"></p>
+            </div>
+            <button id="clearQuickFilterBtn" class="secondary">Clear filter</button>
+          </div>
+          <div id="reportsGrid" class="reports-grid"></div>
+        </section>
+
+        <!-- All Meetings section (across all reports) -->
+        <section id="meetingsSection" hidden>
+          <div id="meetingsBody"></div>
+        </section>
+
+        <!-- Follow-Ups section (open action items across all reports) -->
+        <section id="followUpsSection" hidden>
+          <div id="followUpsBody"></div>
+        </section>
+
+        <!-- PDC Summary section (across all reports) -->
+        <section id="pdcSummarySection" hidden>
+          <div id="pdcSummaryBody"></div>
+        </section>
+
+        <!-- 1:1 meeting room (per-person prep + run + wrap up) -->
+        <section id="meetingRoomSection" hidden>
+          <div id="meetingRoomBody"></div>
+        </section>
+
+        <!-- Detail drawer (now inline, not modal) -->
+        <div id="detailDrawer" hidden></div>
+
+        <!-- Settings view content -->
+        <section class="card" id="settingsSection" hidden>
+          <div class="panel-header">
+            <div>
+              <h2 id="settingsSectionTitle">Settings</h2>
+              <p id="settingsSectionSubtitle">Choose a settings category from the list.</p>
+            </div>
+          </div>
+          <div class="content" id="settingsSectionBody"></div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+<!-- end .app-shell -->
