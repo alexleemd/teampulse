@@ -37,14 +37,15 @@ Edit the files in `src/`, never `index.html` directly. The `index.html` at the r
 
 - `src/index.html` is the page template: the head, the `<style>` and `<script>` tags, and one `<!-- @include path -->` line per source file, in order.
 - `src/styles/` holds the CSS, `src/markup/` the body HTML and `src/scripts/` the JavaScript. The number in each file name is its place in the page.
-- Order matters. The styles rely on the cascade (later rules override earlier ones) and the scripts are one classic script split into parts, so a file's content must stay in the file and position the template gives it. Moving code between files is fine as long as the built result still works.
+- Order matters. The styles rely on the cascade (later rules override earlier ones) and the scripts are one classic script split into parts, run top to bottom. Keep the include order in `src/index.html`. Code can move between files as long as the built result still works.
+- Every file in `src/styles`, `src/markup` and `src/scripts` must be included exactly once. The build stops with an error otherwise, and also on a malformed include line or Windows line endings.
 - `build.mjs` replaces each include line with the file's exact contents (`indent=4` adds the indentation the CSS has inside the page). It has no dependencies and does not minify or rewrite anything.
 
 ### Commands
 
 - `node build.mjs` rebuilds `index.html`. Run it after every change in `src/` and commit both.
-- `node build.mjs --check` fails if `index.html` is not the current build. The Build workflow (`.github/workflows/build.yml`) runs this on every pull request and on every push to main, and keeps the built file with each run.
-- `npm install` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run.
+- `node build.mjs --check` fails if `index.html` is not the current build. The Build workflow (`.github/workflows/build.yml`) runs this on every pull request and on every push to main, and keeps a copy of `index.html` with each passing run.
+- `npm install` and `npx playwright install chromium` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run.
 - `node tools/screenshots/compare.cjs <runA> <runB>` compares two screenshot runs pixel for pixel. Use it to prove a change has no visual effect, and use the PNGs for before and after pictures.
 
 ## Design
