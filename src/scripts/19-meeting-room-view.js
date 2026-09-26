@@ -206,3 +206,26 @@ function renderMeetingRoomView() {
   document.getElementById('mrWrapUpBtn')?.addEventListener('click', () => wrapUpMeetingRoom());
 }
 
+// --- "Last time" recap in the 1:1 room -----------------------------------
+// The most recent logged meeting of any type, collapsed above the editor so
+// twenty seconds of prep replaces digging through the workspace. Open state
+// lives on the meeting room draft so mid-meeting re-renders keep it as is.
+function renderPrevMeetingPanelHtml(report, draft) {
+  const prev = (report.meetings || [])[0] || null;
+  if (!prev) return '';
+  const ago = dateDiffInDays(prev.meetingDate);
+  const metaText = `${canonicalMeetingType(prev.meetingType)} · ${formatDate(prev.meetingDate)}${ago !== null && ago >= 0 ? ` · ${ago}d ago` : ''}`;
+  const noteHtml = normalizeText(prev.notes)
+    ? `<div class="note-markdown mr-prev-note">${renderNoteMarkdown(prev.notes)}</div>`
+    : '<p class="tp-empty mr-prev-empty">No notes were written for that meeting.</p>';
+  return `
+    <details class="mr-panel mr-prev" id="mrPrevDetails"${draft.prevNoteOpen ? ' open' : ''}>
+      <summary class="mr-prev-summary">
+        <span class="mr-prev-title">Last time</span>
+        ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
+        <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
+        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
+      </summary>
+      ${noteHtml}
+    </details>`;
+}

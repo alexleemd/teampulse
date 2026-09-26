@@ -280,3 +280,12 @@ function renderTenureTimelineSection(report, metrics) {
     </div>
   `;
 }
+
+const LEVEL_TIMELINE_COLORS = Object.freeze({
+  'Consultant (Developing)': '#9fc0ff',
+  'Consultant (Skilled)': '#6f97f5',
+  'Consultant (Proficient)': '#2957d6',
+  'Senior (Developing)': '#cdbaf6',
+  'Senior (Skilled)': '#9f82e6',
+  'Senior (Proficient)': '#6d46c8'
+});

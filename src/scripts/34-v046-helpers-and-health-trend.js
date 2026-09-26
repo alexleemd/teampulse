@@ -59,52 +59,6 @@ function tickPopClass(key) {
   return lastTickPop && lastTickPop.key === key && (Date.now() - lastTickPop.at) < 700 ? ' tick-pop' : '';
 }
 
-// --- Illustrated empty states -------------------------------------------
-// Inline stroke icons in the same style as the sidebar set, so the zero
-// network promise holds. Used by the big first-run and all-clear states;
-// small filter-result notes keep their plain text.
-const EMPTY_HERO_ICONS = Object.freeze({
-  people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>',
-  calendar: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
-  clear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg>',
-  inbox: '<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
-});
-
-function emptyHeroHtml(kind, title, body, actionHtml = '') {
-  const icon = EMPTY_HERO_ICONS[kind] || EMPTY_HERO_ICONS.inbox;
-  return `
-    <div class="empty-hero${kind === 'clear' ? ' celebrate' : ''}">
-      <div class="empty-hero-icon" aria-hidden="true">${icon}</div>
-      <h3>${escapeHtml(title)}</h3>
-      <p>${escapeHtml(body)}</p>
-      ${actionHtml}
-    </div>`;
-}
-
-// --- "Last time" recap in the 1:1 room -----------------------------------
-// The most recent logged meeting of any type, collapsed above the editor so
-// twenty seconds of prep replaces digging through the workspace. Open state
-// lives on the meeting room draft so mid-meeting re-renders keep it as is.
-function renderPrevMeetingPanelHtml(report, draft) {
-  const prev = (report.meetings || [])[0] || null;
-  if (!prev) return '';
-  const ago = dateDiffInDays(prev.meetingDate);
-  const metaText = `${canonicalMeetingType(prev.meetingType)} · ${formatDate(prev.meetingDate)}${ago !== null && ago >= 0 ? ` · ${ago}d ago` : ''}`;
-  const noteHtml = normalizeText(prev.notes)
-    ? `<div class="note-markdown mr-prev-note">${renderNoteMarkdown(prev.notes)}</div>`
-    : '<p class="tp-empty mr-prev-empty">No notes were written for that meeting.</p>';
-  return `
-    <details class="mr-panel mr-prev" id="mrPrevDetails"${draft.prevNoteOpen ? ' open' : ''}>
-      <summary class="mr-prev-summary">
-        <span class="mr-prev-title">Last time</span>
-        ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
-        <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
-        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
-      </summary>
-      ${noteHtml}
-    </details>`;
-}
-
 // --- Insights: health trend recomputed from the event log ----------------
 // weeklySnapshots were removed in the v7 migration because storing them was
 // waste. This takes the other path: since every meeting, vacation, and

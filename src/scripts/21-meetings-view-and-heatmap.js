@@ -79,22 +79,6 @@ function renderMeetingHeatmapHtml(meetings) {
     </div>`;
 }
 
-// Tiny 12-week rhythm bars for a report tile.
-function renderTileSparkline(report) {
-  const buckets = buildWeeklyMeetingBuckets(report.meetings || [], 12);
-  const max = Math.max(1, ...buckets.map((b) => b.count));
-  const BAR = 4;
-  const GAP = 2;
-  const H = 16;
-  const width = buckets.length * (BAR + GAP) - GAP;
-  const bars = buckets.map((b, i) => {
-    const h = b.count === 0 ? 2 : Math.max(4, Math.round((b.count / max) * H));
-    const fill = b.count === 0 ? '#e3e9f4' : 'var(--accent)';
-    return `<rect x="${i * (BAR + GAP)}" y="${H - h}" width="${BAR}" height="${h}" rx="1" fill="${fill}"><title>${escapeHtml(`${b.count} meeting${b.count === 1 ? '' : 's'} · week of ${formatDate(b.key)}`)}</title></rect>`;
-  }).join('');
-  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="Meetings per week, last 12 weeks">${bars}</svg>`;
-}
-
 function renderMeetingsView() {
   const mount = document.getElementById('meetingsBody');
   if (!mount) return;
