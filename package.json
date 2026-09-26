@@ -1,0 +1,15 @@
+{
+  "name": "team-pulse",
+  "private": true,
+  "description": "Local first team pulse tracker for line managers. Private data, no server.",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node build.mjs --check",
+    "screenshots": "node tools/screenshots/shoot.cjs",
+    "compare": "node tools/screenshots/compare.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

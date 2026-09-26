@@ -31,11 +31,21 @@ A local first browser app for a line manager to track direct reports, 1:1 meetin
 
 ## Source and build
 
-Today the whole app is the single `index.html` at the repository root. The `packages` folder holds old releases. Leave it alone.
+Edit the files in `src/`, never `index.html` directly. The `index.html` at the repository root is the built app. It is committed, because GitHub Pages serves it straight from the main branch (Settings, Pages, "Deploy from a branch", main, root). The `packages` folder holds old releases. Leave it alone.
 
-The plan is to split the source into organized files (styles by purpose, scripts by feature, markup) and add a build script that inlines everything, including the embedded fonts, into one `index.html`. GitHub Actions runs the build on every pull request and on main. GitHub Pages must always serve the latest build from main.
+### Layout
 
-Update this section once the build exists, so it describes the real layout and the commands to run.
+- `src/index.html` is the page template: the head, the `<style>` and `<script>` tags, and one `<!-- @include path -->` line per source file, in order.
+- `src/styles/` holds the CSS, `src/markup/` the body HTML and `src/scripts/` the JavaScript. The number in each file name is its place in the page.
+- Order matters. The styles rely on the cascade (later rules override earlier ones) and the scripts are one classic script split into parts, so a file's content must stay in the file and position the template gives it. Moving code between files is fine as long as the built result still works.
+- `build.mjs` replaces each include line with the file's exact contents (`indent=4` adds the indentation the CSS has inside the page). It has no dependencies and does not minify or rewrite anything.
+
+### Commands
+
+- `node build.mjs` rebuilds `index.html`. Run it after every change in `src/` and commit both.
+- `node build.mjs --check` fails if `index.html` is not the current build. The Build workflow (`.github/workflows/build.yml`) runs this on every pull request and on every push to main, and keeps the built file with each run.
+- `npm install` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run.
+- `node tools/screenshots/compare.cjs <runA> <runB>` compares two screenshot runs pixel for pixel. Use it to prove a change has no visual effect, and use the PNGs for before and after pictures.
 
 ## Design
 
