@@ -125,6 +125,9 @@ async function exportPlainFiles(options = {}) {
   }
 }
 
+// The save status in the header has five looks (Moss, Controls 1): Autosaved
+// (is-saved), Saving… (is-saving), Pending save (is-pending), Save failed
+// (is-failed) and No folder connected (is-disconnected). The dot is drawn in CSS.
 function updateFileUi() {
   const connected = !!app.folderHandle && app.connectedFolderReady;
   saveDockEl.classList.add('hidden');
@@ -132,24 +135,24 @@ function updateFileUi() {
 
   if (!connected) {
     fileStatePillEl.textContent = 'No folder connected';
-    fileStatePillEl.className = 'pill save-pill neutral';
+    fileStatePillEl.className = 'save-status is-disconnected';
     fileStatePillEl.title = 'Choose a Team Pulse folder to begin.';
   } else if (app.saveInFlight) {
     fileStatePillEl.textContent = 'Saving…';
-    fileStatePillEl.className = 'pill save-pill info';
+    fileStatePillEl.className = 'save-status is-saving';
     fileStatePillEl.title = `Writing to ${MAIN_JSON_NAME} in ${app.folderName || 'your Team Pulse folder'}.`;
   } else if (app.lastSaveError) {
     fileStatePillEl.textContent = 'Save failed';
-    fileStatePillEl.className = 'pill save-pill danger';
+    fileStatePillEl.className = 'save-status is-failed';
     fileStatePillEl.title = app.lastSaveError;
   } else if (app.saveQueued) {
     fileStatePillEl.textContent = 'Pending save';
-    fileStatePillEl.className = 'pill save-pill warning';
+    fileStatePillEl.className = 'save-status is-pending';
     fileStatePillEl.title = 'A file save is queued.';
   } else {
     const manualSaveLabel = app.lastSaveReason === 'manual' ? formatManualSaveLabel(app.lastSaveAt) : '';
     fileStatePillEl.textContent = manualSaveLabel || 'Autosaved';
-    fileStatePillEl.className = 'pill save-pill success';
+    fileStatePillEl.className = 'save-status is-saved';
     fileStatePillEl.title = app.lastSaveAt
       ? `Last save: ${formatSavedStamp(app.lastSaveAt)} in ${app.folderName || 'your Team Pulse folder'}.`
       : `Connected to ${app.folderName || 'your Team Pulse folder'}.`;
@@ -201,25 +204,42 @@ function renderExportReminderBanner() {
   if (!mount) {
     mount = document.createElement('div');
     mount.id = 'exportReminderMount';
-    startupGateEl.insertAdjacentElement('afterend', mount);
+    // Above the page header, where the banner sat in v0.52.4.
+    const headerEl = document.getElementById('contentHeader');
+    if (headerEl) headerEl.insertAdjacentElement('beforebegin', mount);
+    else startupGateEl.insertAdjacentElement('afterend', mount);
   }
   mount.replaceChildren();
   if (!app.folderHandle || !app.connectedFolderReady || !quarterlyExportDue() || exportReminderSnoozed()) return;
+  // Moss backup banner (Controls 3): a white card with the title and text,
+  // then Remind me later (secondary) and Export now (primary).
   const wrapper = document.createElement('section');
-  wrapper.className = 'card callout';
-  // innerHTML kept: complex static markup with inline styles; no dynamic inputs.
-  wrapper.innerHTML = `
-    <div class="content" style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
-      <div>
-        <strong>Time for a backup export</strong>
-        <p>It has been more than 90 days since the last plain-format export.</p>
-      </div>
-      <div class="actions">
-        <button type="button" class="secondary" id="bannerExportDismissBtn" title="Hide this reminder for 7 days">Remind me later</button>
-        <button type="button" id="bannerExportNowBtn">Export now</button>
-      </div>
-    </div>
-  `;
+  wrapper.className = 'export-banner';
+  wrapper.setAttribute('aria-labelledby', 'exportBannerTitle');
+  const copy = document.createElement('div');
+  copy.className = 'export-banner-copy';
+  const title = document.createElement('strong');
+  title.className = 'export-banner-title';
+  title.id = 'exportBannerTitle';
+  title.textContent = 'Time for a backup export';
+  const text = document.createElement('p');
+  text.className = 'export-banner-text';
+  text.textContent = 'It has been more than 90 days since the last plain-format export.';
+  copy.append(title, text);
+  const actions = document.createElement('div');
+  actions.className = 'export-banner-actions';
+  const dismissBtn = document.createElement('button');
+  dismissBtn.type = 'button';
+  dismissBtn.className = 'secondary';
+  dismissBtn.id = 'bannerExportDismissBtn';
+  dismissBtn.title = 'Hide this reminder for 7 days';
+  dismissBtn.textContent = 'Remind me later';
+  const exportBtn = document.createElement('button');
+  exportBtn.type = 'button';
+  exportBtn.id = 'bannerExportNowBtn';
+  exportBtn.textContent = 'Export now';
+  actions.append(dismissBtn, exportBtn);
+  wrapper.append(copy, actions);
   mount.appendChild(wrapper);
   document.getElementById('bannerExportNowBtn')?.addEventListener('click', () => exportPlainFiles());
   document.getElementById('bannerExportDismissBtn')?.addEventListener('click', () => {
