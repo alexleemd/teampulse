@@ -1,0 +1,117 @@
+/* ===================================================================
+   v0.50.1 — Title clipping ended for good. The gradient ink relied
+   on background-clip:text, which erases any glyph ink outside the
+   element's paint box. After fixing the vertical clip, Windows
+   fractional display scaling produced a horizontal one: the measured
+   box ends a few pixels before the text run does, so the final
+   letterform lost its right side (the w reading as a v). Rather than
+   chase paint box metrics per platform, the clipping mechanism is
+   removed entirely. Titles are now solid deep indigo, so they keep
+   color without any erasure being possible, and page titles stay on
+   one line except on narrow screens where wrapping beats clipping.
+   =================================================================== */
+.content-header-title h1{width:auto;max-width:none;padding:0;margin:0;line-height:1.15;letter-spacing:-0.02em;white-space:nowrap;background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:#2a3878}
+@media (max-width:700px){
+  .content-header-title h1{white-space:normal}
+}
+/* ===================================================================
+   v0.51.0 — Final polish. The TP lettermark becomes the Team Pulse
+   brand mark: a gradient badge with a white pulse trace that sweeps
+   continuously like a heartbeat monitor and quickens when hovered.
+   The same mark ships as an inline SVG favicon so the browser tab
+   carries the identity too, and the tab title follows the current
+   view. Form controls adopt the accent (checkboxes, radios, text
+   carets), and the content pane scrolls smoothly for people without
+   reduced motion set.
+   =================================================================== */
+.sidebar-brand-mark{background:none;filter:drop-shadow(0 4px 12px rgba(109,93,246,0.5))}
+.sidebar-brand-mark svg{width:100%;height:100%;display:block}
+.brand-pulse{stroke-dasharray:100;stroke-dashoffset:0;animation:brandDraw 3.4s ease-in-out infinite}
+.sidebar-brand:hover .brand-pulse{animation-duration:1.4s}
+@keyframes brandDraw{0%{stroke-dashoffset:100}55%{stroke-dashoffset:0}100%{stroke-dashoffset:-100}}
+:root{accent-color:var(--accent)}
+input,textarea{caret-color:var(--accent)}
+@media (prefers-reduced-motion: no-preference){
+  .content-pane{scroll-behavior:smooth}
+}
+@media (prefers-reduced-motion: reduce){
+  .brand-pulse{animation:none;stroke-dashoffset:0}
+}
+/* ===================================================================
+   v0.52.0 — The continuous surface + a living atmosphere.
+
+   CONTINUOUS SURFACE — Navigation stops swapping screens and starts
+   moving one material. Stable chrome (sidebar, toasts, save dock,
+   ambient canvas, page title) opts out of the root transition with
+   its own view-transition-names, so only the content pane travels:
+   the old view sinks out of focus (blur + desaturate), the new one
+   rises into focus with a 40ms stagger. Person cards make the trip
+   between views: a report tile grows into the workspace header and
+   into the meeting room header (avatars have morphed since v0.39;
+   now the whole card travels), and the sidebar's gradient active
+   pill glides to the clicked item instead of teleporting. Cards
+   that exist on only one side of a transition (.vt-card groups
+   whose old/new snapshot is an :only-child) ride the pane's
+   focus-pull motion so nothing fades detached in place. The v0.39
+   reduced-motion rule already zeroes every transition animation,
+   and navigateRender now also falls back to a plain synchronous
+   update in Stable mode.
+   v0.52.3 — Most of the paragraph above is history. The card morphs,
+   focus pull, and .vt-card rules proved to be too much motion in use
+   and were removed; the section switch is now a bare fade. What
+   remains: the stable-chrome isolation, the v0.39 avatar morph, and
+   the nav pill glide. See the rules below for the current truth.
+   v0.52.4 — The bare fade is gone too. Section switches are back on
+   the original v0.39 root crossfade; only the avatar morph and the
+   nav pill glide animate. See the section-switch comment below.
+
+   LIVING ATMOSPHERE — The static aurora backdrop becomes a canvas
+   flow field painted by the TP_AMBIENT module at the end of the
+   script: four drifting gradient orbs plus a field of motes riding
+   a layered-sine flow. Calm teams get slow indigo and cyan drift;
+   open attention items and Urgent or Support-needed levels pull
+   warmth, speed, and turbulence into the field; logging a meeting
+   or note sends a soft ripple through it. The canvas sits fixed at
+   z-index 0 behind the shell, and the content pane keeps only its
+   dot grid and goes transparent so the field shows through the
+   glass overlays. DPR capped, pauses when the tab is hidden, one
+   calm static frame under reduced motion, gone in Stable mode.
+   =================================================================== */
+/* --- Atmosphere canvas + layering --- */
+.ambient-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;display:block;view-transition-name:vt-ambient}
+.app-shell{position:relative;z-index:1}
+.content-pane{background:radial-gradient(circle at 1px 1px, rgba(41,60,110,0.05) 1px, transparent 1.6px) 0 0/26px 26px}
+body.stable-mode .ambient-canvas{display:none}
+/* v0.52.1: retire the v0.49 static header bloom. It was a 16s CSS drift
+   that read as a frozen purple blob next to the live canvas orbs, which
+   now own all atmosphere. The gradient hairline on the header stays. */
+.content-header::before{content:none}
+/* v0.52.1: cursor canvas. A second fixed canvas above the UI (pointer
+   events off) painted by TP_AMBIENT. v0.52.3: it now carries a faint
+   mist that blooms and dissipates behind the mouse instead of a
+   comet. Hidden in Stable mode; reduced motion never draws it. */
+.cursor-canvas{position:fixed;inset:0;z-index:9999;pointer-events:none;display:block;view-transition-name:vt-cursor}
+body.stable-mode .cursor-canvas{display:none}
+/* v0.52.1: the snooze confirmation uses the info kind, which had no
+   accent rule. Same pattern as success / warning / error above. */
+.toast.info{border-left-color:var(--info)}
+/* --- Stable chrome: opts out of the root transition --- */
+.sidebar{view-transition-name:vt-sidebar}
+.toast-stack{view-transition-name:vt-toasts}
+.save-dock{view-transition-name:vt-savedock}
+/* --- Section switches, v0.52.4: no custom animation ---
+   The custom content-pane fade is gone entirely. With vt-content and
+   vt-page-title removed, the pane rejoins the root snapshot, so
+   section switches ride the original v0.39 root crossfade (0.18s,
+   plus-lighter blended), the same behaviour this app shipped with
+   from v0.39 through v0.51. Lesson from four rounds of tuning: a
+   separately named pane fade cannot keep old plus new opacity
+   summing to one, so the backdrop glinted through mid-fade and every
+   switch read as a flip. The root image pair blends correctly by
+   construction. Only the v0.39 avatar morph and the nav pill glide
+   remain as animated groups. For fully instant switches, set the two
+   .18s durations in the v0.39 root rule near the top of this
+   stylesheet to 0s. --- */
+::view-transition-group(*){animation-duration:.18s;animation-timing-function:ease}
+/* --- Active nav pill glides between sidebar items --- */
+.sidebar-item.active{view-transition-name:vt-nav-active}

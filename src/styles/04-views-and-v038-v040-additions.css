@@ -1,0 +1,192 @@
+/* === Reports tile grid (main content area) ============================== */
+.reports-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.reports-toolbar .searchbox{flex:1 1 280px;max-width:360px;position:relative}
+.reports-toolbar .searchbox input{width:100%;padding:10px 14px 10px 38px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.reports-toolbar .searchbox::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:14px;height:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235f6b85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");background-repeat:no-repeat;pointer-events:none}
+.reports-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;justify-content:start;align-content:start}
+/* align-items:stretch is load-bearing: the Chromium UA stylesheet gives
+   <button> elements a non-stretch align-items default, so without it the
+   head row sizes to max-content, centers, and spills the avatar off the
+   left edge and the 1:1 room pill + support dot past the right edge. */
+.report-tile{appearance:none;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;align-items:stretch;gap:10px;cursor:pointer;transition:border-color 0.15s ease,box-shadow 0.15s ease,transform 0.04s ease;min-height:120px;font-family:inherit;color:inherit}
+.report-tile:hover,.report-tile:focus-visible{border-color:#c2cde0;box-shadow:0 4px 14px rgba(23,32,51,0.06);outline:none}
+.report-tile:active{transform:translateY(1px)}
+.report-tile-head{display:flex;align-items:center;gap:10px}
+.report-tile-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;letter-spacing:-0.02em}
+.report-tile-name{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.initials-tag{flex:none;font-size:10.5px;font-weight:800;letter-spacing:0.05em;color:var(--muted);background:#f1f4fa;border:1px solid var(--line);border-radius:5px;padding:2px 5px;line-height:1;font-variant-numeric:tabular-nums}
+.report-tile-support-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.report-tile-support-dot[data-fill="green"]{background:var(--sat-green)}
+.report-tile-support-dot[data-fill="blue"]{background:var(--sat-blue)}
+.report-tile-support-dot[data-fill="amber"]{background:var(--sat-amber)}
+.report-tile-support-dot[data-fill="red"]{background:var(--sat-red)}
+.report-tile-support-dot[data-fill="grey"]{background:var(--sat-grey)}
+.report-tile-meta{color:var(--muted);font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:2px}
+.report-tile-meta-line{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.report-tile-fullname{color:var(--text);font-weight:700}
+.report-tile-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+.report-tile-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:3px 7px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
+.report-tile-chip[data-tone="danger"]{background:var(--danger-soft);color:var(--danger)}
+.report-tile-chip[data-tone="info"]{background:var(--info-soft);color:var(--info)}
+.report-tile-chip[data-tone="good"]{background:var(--success-soft);color:var(--success)}
+.report-tile-add{appearance:none;background:#fff;border:2px dashed var(--line-strong);border-radius:14px;padding:16px 18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--accent);font-size:14px;font-weight:700;transition:background 0.15s ease,border-color 0.15s ease}
+.report-tile-add:hover,.report-tile-add:focus-visible{background:var(--accent-soft);border-color:var(--accent);outline:none}
+/* === Meetings view ====================================================== */
+.meetings-view-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.meetings-view-filter{display:flex;align-items:center;gap:8px}
+.meetings-view-filter > span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+.meetings-view-filter select{min-width:220px;padding:9px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.meetings-view-filter select.meetings-filter-pulse{animation:meetingsFilterPulse 0.9s ease}
+@keyframes meetingsFilterPulse{0%{box-shadow:0 0 0 0 rgba(41,87,214,0.4)}70%{box-shadow:0 0 0 8px rgba(41,87,214,0)}100%{box-shadow:0 0 0 0 rgba(41,87,214,0)}}
+.meetings-view{display:flex;flex-direction:column;gap:12px}
+.meetings-view-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:14px;align-items:center;cursor:pointer;transition:border-color 0.12s ease,box-shadow 0.12s ease}
+.meetings-view-item:hover{border-color:#c2cde0;box-shadow:0 2px 8px rgba(23,32,51,0.04)}
+.meetings-view-date{display:flex;flex-direction:column;text-align:center;width:52px;flex:none}
+.meetings-view-date-m{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase}
+.meetings-view-date-d{font-size:22px;font-weight:800;color:var(--text);line-height:1}
+.meetings-view-main{display:flex;flex-direction:column;gap:3px;min-width:0}
+.meetings-view-main-title{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meetings-view-main-sub{font-size:12px;color:var(--muted);font-weight:600}
+.meetings-view-main-snip{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60ch}
+/* === PDC Summary view =================================================== */
+.pdc-summary-view{display:grid;gap:14px}
+.pdc-summary-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.pdc-summary-card-head{display:flex;gap:12px;align-items:center}
+.pdc-summary-card-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;letter-spacing:-0.02em}
+.pdc-summary-card-title{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.pdc-summary-card-title h3{margin:0;font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.01em;line-height:1.2}
+.pdc-summary-card-meta{font-size:13px;color:var(--muted);font-weight:600}
+.pdc-summary-card-open{flex:none;padding:7px 12px;font-size:13px}
+.pdc-summary-card-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pdc-summary-block{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pdc-summary-block-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+.pdc-summary-block p{margin:0;font-size:14px;color:var(--text);line-height:1.5;white-space:pre-wrap}
+.pdc-summary-block p.pdc-summary-block-empty{color:var(--muted);font-style:italic;font-weight:500}
+@media (max-width:700px){.pdc-summary-card-body{grid-template-columns:1fr}}
+/* === Full-width report detail page ====================================== */
+.detail-page{display:flex;flex-direction:column;gap:18px}
+.detail-page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.detail-page-header-title{display:flex;gap:14px;align-items:center;flex:1;min-width:0}
+.detail-page-header-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4f7bff,#8a5cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none;letter-spacing:-0.02em}
+.detail-page-header-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+.detail-page-header-text h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-0.01em;line-height:1.1}
+.detail-page-header-text p{margin:0;color:var(--muted);font-size:14px;font-weight:600}
+.detail-page-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);padding:0 2px;overflow-x:auto}
+.detail-page-tab{appearance:none;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:color 0.12s ease,border-color 0.12s ease;border-radius:0;margin-bottom:-1px}
+.detail-page-tab:hover{color:var(--text)}
+.detail-page-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+body.stable-mode .section-note,body.stable-mode .table-tip,body.stable-mode .drawer-header p,body.stable-mode .help-text,body.stable-mode .toggle-copy p,body.stable-mode .panel-header p{display:none}
+/* === v0.38 additions ==================================================== */
+/* Reports toolbar filter selects */
+.reports-filter{display:flex;align-items:center;gap:8px}
+.reports-filter > span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+.reports-filter select{min-width:160px;padding:9px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+/* Meetings view: search box + month dividers + chips */
+.meetings-view-search{flex:1 1 220px;max-width:320px;position:relative}
+.meetings-view-search input{width:100%;padding:9px 12px 9px 36px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.meetings-view-search::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235f6b85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");background-repeat:no-repeat;pointer-events:none}
+.meetings-month-divider{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);padding:8px 2px 0;border-bottom:1px solid var(--line);margin-bottom:2px;padding-bottom:6px}
+.meetings-view-chips{display:flex;gap:6px;margin-top:3px}
+.mv-chip{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;padding:3px 7px;border-radius:4px;background:var(--warning-soft);color:var(--warning)}
+.mv-chip[data-tone="good"]{background:var(--success-soft);color:var(--success)}
+/* Follow-Ups view */
+.followups-summary{margin-bottom:14px}
+.followups-view{display:flex;flex-direction:column;gap:16px}
+.followups-view .followup-panel{background:#fff}
+.fu-person-link{appearance:none;border:none;background:transparent;padding:0;font:inherit;font-weight:800;color:var(--text);cursor:pointer}
+.fu-person-link:hover,.fu-person-link:focus-visible{color:var(--accent);text-decoration:underline;outline:none}
+.followups-help{font-size:13px;color:var(--muted);margin:14px 2px 0;line-height:1.5}
+.followups-help code{background:#eef2f8;border-radius:4px;padding:1px 5px;font-size:12px}
+/* PDC Summary: status line + inline edit */
+.pdc-summary-card-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pdc-summary-card-dates{font-size:12.5px;color:var(--muted);font-weight:600}
+.pdc-summary-card-actions{margin-left:auto;display:flex;gap:8px;flex:none}
+.pdc-summary-card.editing{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pdc-summary-edit textarea{width:100%;min-height:88px;padding:10px 12px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff;resize:vertical;line-height:1.5}
+.pdc-summary-edit textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+/* Workspace: PDC status row on the Development tab */
+.pdc-status-row{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
+.pdc-status-field{display:flex;flex-direction:column;gap:6px}
+.pdc-status-field > span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+.pdc-status-field select{min-width:190px;padding:9px 12px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.pdc-status-derived{display:flex;flex-direction:column;gap:6px;align-items:flex-start;max-width:420px}
+.pdc-status-derived > .label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em}
+/* Workspace: tab count chip + danger zone */
+.drawer-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:17px;padding:0 5px;margin-left:7px;border-radius:999px;background:var(--warning-soft);color:var(--warning);font-size:11px;font-weight:800;line-height:1;vertical-align:1px}
+.drawer-workspace-tab.active .drawer-tab-count{background:var(--accent-soft);color:var(--accent)}
+.danger-zone{border:1px solid #f1c6c1;border-radius:12px;padding:16px 18px;background:#fff8f7}
+.danger-zone .drawer-section-head{margin-bottom:0}
+.danger-outline{appearance:none;border:1px solid var(--danger);background:#fff;color:var(--danger);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;flex:none;transition:background 0.12s ease}
+.danger-outline:hover,.danger-outline:focus-visible{background:var(--danger-soft);outline:none}
+/* Settings: privacy section */
+.privacy-actions{margin:12px 0 8px}
+@media (max-width:900px){
+  .reports-filter select{min-width:130px}
+  .meetings-view-filter select{min-width:150px}
+  .pdc-summary-card-actions{margin-left:0;width:100%}
+  .pdc-status-derived{max-width:none}
+}
+/* === v0.39 additions ==================================================== */
+/* View transitions: quick crossfade on navigation, morphing avatars. */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s;animation-timing-function:ease}
+@media (prefers-reduced-motion: reduce){
+  ::view-transition-group(*),::view-transition-image-pair(*),::view-transition-old(*),::view-transition-new(*){animation:none !important}
+  .anim-entry .report-tile,.anim-entry .report-tile-add,.anim-entry .pdc-summary-card,.anim-entry .followup-panel,.anim-entry .meetings-view-item,.overview-tab.anim-entry > .overview-section,.anim-entry .pdc-board-card,.report-tile-support-dot[data-fill="red"],.toast{animation:none !important}
+}
+/* Workspace header identity (avatar is the morph target from the grid tile). */
+.drawer-header-identity{display:flex;align-items:center;gap:14px;min-width:0}
+/* Daily briefing card on the Overview tab. */
+.briefing-list{display:flex;flex-direction:column;gap:4px}
+.briefing-row{display:flex;align-items:baseline;gap:10px;padding:8px 10px;border-radius:10px;font-size:14px;line-height:1.5;color:var(--text);text-align:left}
+button.briefing-row{appearance:none;border:none;background:transparent;font:inherit;width:100%;cursor:pointer;transition:background 0.12s ease}
+button.briefing-row:hover,button.briefing-row:focus-visible{background:var(--accent-soft);outline:none}
+.briefing-dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--muted);transform:translateY(-1px)}
+.briefing-dot[data-tone="warning"]{background:var(--warning)}
+.briefing-dot[data-tone="danger"]{background:var(--danger)}
+.briefing-dot[data-tone="info"]{background:var(--info)}
+.briefing-dot[data-tone="success"]{background:var(--sat-green)}
+.briefing-text{flex:1;min-width:0}
+.briefing-text strong{font-weight:700}
+.briefing-go{flex:none;color:var(--accent);font-weight:700;opacity:0;transition:opacity 0.12s ease}
+button.briefing-row:hover .briefing-go,button.briefing-row:focus-visible .briefing-go{opacity:1}
+/* Person chips inside briefing rows: each one is a direct link to that
+   person's profile, so every line names names instead of giving counts. */
+.briefing-row.has-people{align-items:flex-start}
+.briefing-row.has-people .briefing-dot{margin-top:5px;transform:none}
+.briefing-people{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.briefing-person{appearance:none;display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;font-weight:700;color:var(--text);cursor:pointer;transition:border-color 0.12s ease,background 0.12s ease,color 0.12s ease}
+.briefing-person:hover,.briefing-person:focus-visible{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);outline:none}
+.briefing-person .bp-extra{font-size:11px;font-weight:600;color:var(--muted)}
+.briefing-person:hover .bp-extra,.briefing-person:focus-visible .bp-extra{color:var(--accent)}
+.briefing-link{appearance:none;border:none;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer;padding:2px 4px;border-radius:6px;flex:none;align-self:center}
+.briefing-link:hover,.briefing-link:focus-visible{background:var(--accent-soft);outline:none}
+/* === v0.40 additions ==================================================== */
+/* Staggered entry for collection views. The anim-entry class is gated in
+   JS to the first appearance of a view, so search keystrokes, filter
+   changes, and saves never re-trigger it. */
+@keyframes riseIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.anim-entry .report-tile,.anim-entry .report-tile-add,.anim-entry .pdc-summary-card,.anim-entry .followup-panel,.anim-entry .meetings-view-item{animation:riseIn .42s cubic-bezier(.22,.9,.28,1) both;animation-delay:calc(var(--i,0)*26ms)}
+.overview-tab.anim-entry > .overview-section{animation:riseIn .46s cubic-bezier(.22,.9,.28,1) both}
+.overview-tab.anim-entry > .overview-section:nth-child(2){animation-delay:70ms}
+.overview-tab.anim-entry > .overview-section:nth-child(3){animation-delay:140ms}
+.overview-tab.anim-entry > .overview-section:nth-child(4){animation-delay:210ms}
+/* Tactile hover physics: tiles lift toward the cursor, press compresses. */
+.report-tile{transition:border-color 0.15s ease,box-shadow 0.18s ease,transform 0.16s cubic-bezier(.2,.8,.3,1);will-change:transform}
+.report-tile:hover,.report-tile:focus-visible{transform:translateY(-2px);border-color:#b9c7e6;box-shadow:0 10px 26px rgba(23,32,51,0.10);outline:none}
+.report-tile:active{transform:translateY(0) scale(.985);box-shadow:0 4px 12px rgba(23,32,51,0.08)}
+.pdc-summary-card{transition:box-shadow 0.18s ease,transform 0.18s ease,border-color 0.18s ease}
+.pdc-summary-card:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(23,32,51,0.08)}
+/* Urgent support level gets a slow heartbeat halo on the tile dot. */
+@keyframes urgentPulse{0%,100%{box-shadow:0 0 0 0 rgba(226,68,92,0.45)}55%{box-shadow:0 0 0 7px rgba(226,68,92,0)}}
+.report-tile-support-dot[data-fill="red"]{animation:urgentPulse 1.9s ease-out infinite}
+/* Toast entrance: rise with a small spring. */
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.toast{animation:toastIn 0.3s cubic-bezier(.2,.85,.3,1.1)}
+/* Floating glass header: sticks while the pane scrolls, blurs content
+   passing beneath it. Hidden anyway while the workspace drawer is open. */
+.content-header{position:sticky;top:10px;z-index:40;background:rgba(255,255,255,0.66);backdrop-filter:blur(12px) saturate(1.35);-webkit-backdrop-filter:blur(12px) saturate(1.35);border:1px solid rgba(219,226,238,0.75);border-radius:16px;padding:12px 16px;box-shadow:0 10px 30px rgba(23,32,51,0.07)}
+/* Health dial: tone-matched glow behind the gradient arc, steady digits. */
+.health-score-dial[data-tone="success"] svg{filter:drop-shadow(0 0 10px rgba(13,122,72,0.22))}
+.health-score-dial[data-tone="warning"] svg{filter:drop-shadow(0 0 10px rgba(176,107,0,0.22))}
+.health-score-dial[data-tone="danger"] svg{filter:drop-shadow(0 0 10px rgba(180,35,24,0.25))}
+.health-score-dial-value strong{font-variant-numeric:tabular-nums}
