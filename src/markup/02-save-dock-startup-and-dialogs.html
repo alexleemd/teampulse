@@ -1,0 +1,174 @@
+
+  <div id="saveDock" class="save-dock hidden" role="status" aria-live="polite">
+    <div>
+      <strong id="saveDockTitle">Unsaved changes</strong>
+      <p id="saveDockText">Your latest changes are safe in this browser, but they are not in your JSON file yet.</p>
+    </div>
+    <div class="save-dock-actions">
+      <button id="saveDockBtn">Save to JSON</button>
+      <button id="dismissDockBtn" class="secondary">Later</button>
+    </div>
+  </div>
+
+  <input id="icsFileInput" type="file" accept=".ics,text/calendar" class="hidden" multiple>
+
+<div id="startupPromptOverlay" class="overlay" aria-hidden="true">
+  <div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="startupPromptTitle">
+    <div class="modal-header">
+      <div>
+        <h2 id="startupPromptTitle">Choose a Team Pulse folder</h2>
+        <p id="startupPromptCopy">Pick the folder Team Pulse should write to before you start.</p>
+      </div>
+    </div>
+    <div class="modal-body startup-modal-body">
+      <div id="startupSavedFolderCard" class="callout startup-saved-folder hidden">
+        <strong>Saved folder</strong>
+        <p id="startupSavedFolderLabel"></p>
+      </div>
+      <div class="setup-actions">
+        <button id="startupUseSavedFolderBtn" type="button" class="secondary hidden">Use saved folder</button>
+        <button id="startupChooseFolderBtn" type="button">Choose Team Pulse folder</button>
+        <button id="startupImportJsonBtn" type="button" class="secondary">Import existing JSON</button>
+      </div>
+      <p class="help-text">You can change folders later from Data.</p>
+    </div>
+  </div>
+</div>
+
+<div id="meetingModal" class="overlay" aria-hidden="true">
+  <div class="modal meeting-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="meetingModalTitle">Log Meeting</h2>
+        <p id="meetingModalSubtitle">Log or import a meeting for this direct report.</p>
+      </div>
+      <button id="closeMeetingModalBtn" class="secondary">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="meetingForm">
+        <input type="hidden" id="meetingReportId" name="meetingReportId">
+        <input type="hidden" id="editingMeetingId" name="editingMeetingId">
+        <input type="hidden" id="meetingSource" name="meetingSource" value="manual">
+        <input type="hidden" id="meetingExternalUid" name="meetingExternalUid" value="">
+        <div class="form-grid">
+          <label>
+            <span>Meeting type</span>
+            <select id="meetingType" name="meetingType">
+                <option value="1:1">1:1</option>
+                <option value="PDC">PDC</option>
+                <option value="CV review">CV review</option>
+            </select>
+          </label>
+          <label>
+            <span>Meeting date</span>
+            <input id="meetingDate" name="meetingDate" type="date" required>
+          </label>
+          <label>
+            <span>Duration (optional)</span>
+            <div class="input-with-suffix">
+              <input id="meetingDuration" name="meetingDuration" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 45">
+              <span class="suffix">min</span>
+            </div>
+          </label>
+          <div class="full pulse-field">
+            <span>How did it feel? (optional)</span>
+            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-label="Meeting pulse">
+              <label class="pulse-option" data-pulse="green"><input type="radio" name="meetingPulse" value="green"><span>Good</span></label>
+              <label class="pulse-option" data-pulse="amber"><input type="radio" name="meetingPulse" value="amber"><span>Mixed</span></label>
+              <label class="pulse-option" data-pulse="red"><input type="radio" name="meetingPulse" value="red"><span>Rough</span></label>
+              <button type="button" class="pulse-clear" id="meetingPulseClear" title="Clear pulse">Clear</button>
+            </div>
+          </div>
+          <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
+            <span>Notes</span>
+            <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
+              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
+              <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
+            </div>
+            <div class="md-panel-write" role="tabpanel">
+              <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+            </div>
+            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveMeetingBtn">Save meeting</button>
+          <button type="button" id="insertAgendaBtn" class="secondary hidden">Insert talking points</button>
+          <button type="button" id="insertPdcTemplateBtn" class="secondary hidden">Insert PDC template</button>
+          <button type="button" id="meetingImportIcsBtn" class="secondary">Import .ics</button>
+          <button type="button" id="cancelMeetingModalBtn" class="secondary">Cancel</button>
+        </div>
+        <div id="meetingStatus" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="goalModal" class="overlay" aria-hidden="true">
+  <div class="modal goal-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="goalModalTitle">Add Goal</h2>
+        <p id="goalModalSubtitle">A concrete development goal with a status and progress.</p>
+      </div>
+      <button id="closeGoalModalBtn" class="secondary" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="goalForm">
+        <input type="hidden" id="goalReportId" name="goalReportId">
+        <input type="hidden" id="goalId" name="goalId">
+        <div class="form-grid">
+          <label class="full"><span>Goal title *</span><input id="goalTitle" name="goalTitle" placeholder="e.g. Lead a validation deliverable end to end" required></label>
+          <label><span>Status</span><select id="goalStatus" name="goalStatus"></select></label>
+          <label><span>Target date (optional)</span><input id="goalTargetDate" name="goalTargetDate" type="date"></label>
+          <label class="full goal-progress-field"><span>Progress</span>
+            <div class="goal-progress-inputs">
+              <input id="goalProgress" name="goalProgress" type="range" min="0" max="100" step="5" value="0">
+              <span class="goal-progress-value" id="goalProgressValue">0%</span>
+            </div>
+          </label>
+          <label class="full"><span>Detail (optional)</span><textarea id="goalDetail" name="goalDetail" placeholder="What good looks like, how it will be assessed"></textarea></label>
+          <label class="full"><span>Progress note (optional)</span><input id="goalUpdateNote" name="goalUpdateNote" placeholder="Short dated note added to the goal's progress log"></label>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveGoalBtn">Save goal</button>
+          <button type="button" class="secondary" id="cancelGoalModalBtn">Cancel</button>
+          <button type="button" class="danger-outline hidden" id="deleteGoalBtn">Remove goal</button>
+        </div>
+        <div id="goalStatusLine" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="feedbackModal" class="overlay" aria-hidden="true">
+  <div class="modal feedback-modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="feedbackModalTitle">Log Feedback</h2>
+        <p id="feedbackModalSubtitle">A dated feedback entry stored in the evidence locker.</p>
+      </div>
+      <button id="closeFeedbackModalBtn" class="secondary" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <form id="feedbackForm">
+        <input type="hidden" id="feedbackReportId" name="feedbackReportId">
+        <div class="form-grid">
+          <label><span>Kind</span><select id="feedbackKind" name="feedbackKind"></select></label>
+          <label><span>Category</span><select id="feedbackCategory" name="feedbackCategory"></select></label>
+          <label><span>Date</span><input id="feedbackDate" name="feedbackDate" type="date"></label>
+          <label><span>Linked meeting</span><select id="feedbackMeeting" name="feedbackMeeting"></select></label>
+          <label class="full"><span>Summary *</span><input id="feedbackSummary" name="feedbackSummary" placeholder="Short headline" required></label>
+          <label class="full"><span>Detail (optional)</span><textarea id="feedbackDetail" name="feedbackDetail" placeholder="What happened, why it mattered, who saw it"></textarea></label>
+          <label class="full feedback-shared-field"><input type="checkbox" id="feedbackShared" name="feedbackShared"><span>Shared with the person</span></label>
+        </div>
+        <div class="actions" style="margin-top:16px;">
+          <button type="submit" id="saveFeedbackBtn">Log feedback</button>
+          <button type="button" class="secondary" id="cancelFeedbackModalBtn">Cancel</button>
+        </div>
+        <div id="feedbackStatusLine" class="status-line"></div>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,34 @@
+name: Build
+
+# Rebuilds index.html from the files in src/ and fails if the committed
+# index.html does not match. GitHub Pages serves the committed index.html
+# from main, so a green check means the live app is the current build.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Check index.html is the current build
+        run: node build.mjs --check
+
+      - name: Keep the built file with this run
+        uses: actions/upload-artifact@v7
+        with:
+          name: team-pulse-index-html
+          path: index.html
+          retention-days: 30

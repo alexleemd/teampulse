@@ -1,0 +1,196 @@
+<!-- Detail drawer overlay: legacy stub only. The real #detailDrawer now lives inline in the content pane. -->
+<div id="detailDrawerOverlay" class="hidden" aria-hidden="true" style="display:none !important"></div>
+
+  <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
+    <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle">
+      <div class="drawer-shell">
+        <div class="drawer-header">
+          <div class="drawer-header-top">
+            <div>
+              <h2 id="rulesDrawerTitle">Settings</h2>
+              <p>Manage overdue rules, durability, exports, backups, and Stable mode.</p>
+            </div>
+            <div class="actions">
+              <button id="closeRulesDrawerBtn" class="secondary">Close</button>
+            </div>
+          </div>
+        </div>
+        <div class="drawer-body">
+          <div class="drawer-section">
+            <h3>Overdue Windows</h3>
+            <form id="thresholdForm" class="form-grid">
+              <label>
+                <span>1:1 overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="oneOnOneThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>PDC overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="developmentThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>CV review overdue after</span>
+                <div class="input-with-suffix">
+                  <input id="cvReviewThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+              <label>
+                <span>Promotion conversation after</span>
+                <div class="input-with-suffix">
+                  <input id="promotionConversationThreshold" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">months</span>
+                </div>
+              </label>
+              <label>
+                <span>Recent themes window</span>
+                <div class="input-with-suffix">
+                  <input id="themesWindowDays" type="number" min="1" inputmode="numeric">
+                  <span class="suffix">days</span>
+                </div>
+              </label>
+
+              <div class="full">
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Missing mentor counts as attention</strong>
+                    <p>Controls whether "No mentor assigned" appears in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Missing mentor counts as attention">
+                    <input id="missingMentorCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Blocked PDC status counts as attention</strong>
+                    <p>Controls whether blocked PDC statuses appear in attention badges and filters.</p>
+                  </div>
+                  <label class="switch" aria-label="Blocked PDC status counts as attention">
+                    <input id="blockedPlanCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Downward 1:1 pulse counts as attention</strong>
+                    <p>Flags a person when their latest logged pulse is Rough, or the last two are not Good.</p>
+                  </div>
+                  <label class="switch" aria-label="Downward 1:1 pulse counts as attention">
+                    <input id="pulseTrendCounts" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>New PDC round resets the board</strong>
+                    <p>The year splits into rounds from the PDC cadence rule (90 days means quarterly). When a round ends, every card moves back to Not started, logged per person in the change log.</p>
+                  </div>
+                  <label class="switch" aria-label="New PDC round resets the board">
+                    <input id="pdcRoundAutoReset" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>PDC round start month</strong>
+                    <p>Anchors the round calendar. January with a 90 day cadence gives Jan to Mar, Apr to Jun, and so on. Changing this adopts the new calendar without resetting any cards.</p>
+                  </div>
+                  <label aria-label="PDC round start month">
+                    <select id="pdcRoundStartMonth">
+                      <option value="1">January</option>
+                      <option value="2">February</option>
+                      <option value="3">March</option>
+                      <option value="4">April</option>
+                      <option value="5">May</option>
+                      <option value="6">June</option>
+                      <option value="7">July</option>
+                      <option value="8">August</option>
+                      <option value="9">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-copy">
+                    <strong>Density</strong>
+                    <p>Comfortable keeps today's spacing. Compact tightens tiles, tables, and the workspace for more rows per screen.</p>
+                  </div>
+                  <label aria-label="Interface density">
+                    <select id="densitySetting">
+                      <option value="comfortable">Comfortable</option>
+                      <option value="compact">Compact</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="actions full" style="margin-top: 4px;">
+                <button type="submit">Save rules</button>
+                <button type="button" id="resetRulesBtn" class="secondary">Reset defaults</button>
+              </div>
+              <div id="thresholdStatus" class="status-line full"></div>
+            </form>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-section-head">
+              <div>
+                <h3>Data Health</h3>
+                <p class="section-note">Verify saves, backups, exports, and schema status in one place.</p>
+              </div>
+            </div>
+            <div id="dataHealthPanel"></div>
+            <div class="actions" style="margin-top: 14px;">
+              <button type="button" id="exportNowBtn">Export now</button>
+              <button type="button" class="secondary" id="restoreBackupBtn">Restore latest backup</button>
+            </div>
+            <div id="dataHealthStatus" class="status-line"></div>
+          </div>
+          <div class="drawer-section">
+            <h3>Stable Mode</h3>
+            <div class="toggle-row">
+              <div class="toggle-copy">
+                <strong>Keep the interface calm</strong>
+                <p>Hides most helper copy so Team Pulse feels finished and steady.</p>
+              </div>
+              <label class="switch" aria-label="Stable mode">
+                <input id="stableModeToggle" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <h3>Privacy &amp; Data Lifecycle</h3>
+            <p class="section-note">Everything lives in your Team Pulse folder plus a convenience copy in this browser's local storage. Nothing ever leaves this machine — the app makes zero network requests.</p>
+            <div class="privacy-actions">
+              <button type="button" class="secondary" id="disconnectFolderBtn">Disconnect folder &amp; clear browser copies</button>
+            </div>
+            <p class="field-hint">Removes the saved folder connection, the cached document, and remembered view state from this browser. Your JSON file and backups stay untouched in the folder. To erase a single person permanently, use the Danger Zone on their Profile tab.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+
+  <!-- Global search overlay: click-first Spotlight over everything in the doc -->
+  <div id="globalSearch" class="gs-overlay" aria-hidden="true">
+    <div class="gs-panel" role="dialog" aria-modal="true" aria-label="Search everything">
+      <div class="gs-input-row">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="globalSearchInput" type="text" placeholder="Search people, meeting notes, follow-ups, views…" autocomplete="off" spellcheck="false">
+        <kbd class="gs-kbd">Esc</kbd>
+      </div>
+      <div class="gs-results" id="globalSearchResults"></div>
+    </div>
+  </div>
+
+  <div id="printSheet" aria-hidden="true"></div>
+
