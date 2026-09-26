@@ -20,23 +20,13 @@ function navigateRender(update) {
   const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stableMode = !!app.doc?.settings?.stableMode;
   if (typeof document.startViewTransition === 'function' && !reduceMotion && !stableMode) {
-    // v0.52.2: park the ambient canvas while the transition plays. The rAF
-    // loop was competing with snapshot compositing for frame budget, and
-    // the canvas is frozen behind its own vt-ambient snapshot during the
-    // transition anyway, so pausing costs nothing visually.
-    window.TP_AMBIENT?.pause?.();
-    const transition = document.startViewTransition(() => { update(); });
-    const resume = () => window.TP_AMBIENT?.resume?.();
-    if (transition?.finished?.finally) transition.finished.finally(resume); else resume();
+    document.startViewTransition(() => { update(); });
   } else {
     update();
   }
 }
 
 function render() {
-  // v0.52.0: let the ambient atmosphere read the latest team state on every
-  // render pass. Cheap (counts over app.doc.people) and safe pre-connection.
-  window.TP_AMBIENT?.syncFromState();
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
   if (ready) maybeResetPdcRoundOnRollover();

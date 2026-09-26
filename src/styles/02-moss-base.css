@@ -1,0 +1,119 @@
+/* Moss base: reset, type, focus, motion policy, and the behavior rules the app
+   needs to work (showing and hiding panels, overlays, drawers, menus, print).
+   Owner: foundation. Area files restyle how things look but must keep this
+   behavior working. */
+
+/* --- Reset and page ---------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { color-scheme: light; scrollbar-color: var(--button-line) transparent; }
+body {
+  font-family: var(--font);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* Only 400, 500 and 600 are embedded, so nothing may ask for heavier weights. */
+h1, h2, h3, h4, h5, h6, strong, b, th { font-weight: 600; }
+h1, h2, h3, h4, h5, h6, p { margin: 0; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-strong); text-decoration: underline; }
+svg { flex-shrink: 0; }
+::placeholder { color: var(--placeholder); opacity: 1; }
+
+/* --- Focus ------------------------------------------------------------- */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* --- Motion policy ------------------------------------------------------
+   Motion only answers the user and lasts 150 ms or less. Nothing loops. */
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) { animation-duration: 150ms; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Utilities --------------------------------------------------------- */
+.hidden { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.tabular, .num { font-variant-numeric: tabular-nums; }
+
+/* --- Behavior: overlays, dialogs and drawers --------------------------- */
+body.overlay-open { overflow: hidden; }
+.overlay, .drawer-overlay {
+  position: fixed; inset: 0; background: var(--scrim);
+  opacity: 0; pointer-events: none; transition: opacity 120ms ease;
+}
+.drawer-overlay { z-index: 40; }
+.overlay { z-index: 70; }
+#meetingModal { z-index: 90; }
+.overlay.open, .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+.drawer, .rules-drawer {
+  position: absolute; right: 0; top: 0; bottom: 0; height: 100vh;
+  max-width: calc(100vw - 14px);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-float);
+  transform: translateX(12px); transition: transform 120ms ease;
+}
+.drawer { width: min(1180px, 72vw); }
+.drawer.rules-drawer, .rules-drawer { width: min(560px, 94vw); }
+.drawer-overlay.open .drawer, .drawer-overlay.open .rules-drawer { transform: translateX(0); }
+
+#detailDrawer { display: flex; flex-direction: column; min-height: 0; background: transparent; overflow: visible; flex: 1 1 auto; }
+#detailDrawer[hidden] { display: none !important; }
+.content-pane.drawer-active { overflow: auto; }
+.content-pane.drawer-active #contentHeader { display: none; }
+.content-pane.drawer-active #detailDrawer { flex: 1 1 auto; min-height: 0; }
+
+.gs-overlay { display: none; position: fixed; inset: 0; z-index: 120; background: var(--scrim); align-items: flex-start; justify-content: center; padding: 9vh 16px 16px; }
+.gs-overlay.open { display: flex; }
+
+/* --- Behavior: panels, tabs, menus and disclosures --------------------- */
+.md-shell[data-md-active="preview"] .md-panel-write { display: none; }
+.md-shell[data-md-active="write"] .md-panel-preview { display: none; }
+.drawer-tab-panel[hidden] { display: none !important; }
+.team-health-tabbar.hidden { display: none; }
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.pulse-option input { position: absolute; opacity: 0; pointer-events: none; }
+
+.toolbar-menu summary { list-style: none; }
+.toolbar-menu summary::-webkit-details-marker { display: none; }
+.meeting-summary::-webkit-details-marker { display: none; }
+.meeting-summary-toggle::before { content: "Open"; }
+details[open] > .meeting-summary .meeting-summary-toggle::before { content: "Hide"; }
+.mr-prev-summary::-webkit-details-marker { display: none; }
+
+/* --- Setting: Stable mode hides helper copy ----------------------------
+   Kept exactly as before the redesign (see the pull request for the note on
+   how this interacts with the mockups). Empty state messages carry the class
+   .empty-note and stay visible. */
+body.stable-mode .section-note:not(.empty-note),
+body.stable-mode .table-tip,
+body.stable-mode .drawer-header p,
+body.stable-mode .help-text:not(.empty-note),
+body.stable-mode .toggle-copy p,
+body.stable-mode .panel-header p { display: none; }
+
+/* --- Behavior: print ---------------------------------------------------- */
+#printSheet { display: none; }
+@media print {
+  body > *:not(#printSheet) { display: none !important; }
+  #printSheet { display: block !important; }
+}
