@@ -146,6 +146,9 @@ const screens = [
   // ---- variants ----
   ['stable-off-overview', { doc: withSettings({ stableMode: false }) }, async () => {}],
   ['stable-off-reports', { doc: withSettings({ stableMode: false }) }, async (p) => { await p.keyboard.press('3'); }],
+  ['stable-off-meeting-room', { doc: withSettings({ stableMode: false }) }, async (p) => { await p.keyboard.press('3'); await p.click('.tile-room-btn[data-open-room="p_001"]'); }, { fullPane: true }],
+  ['stable-off-workspace-meetings', { doc: withSettings({ stableMode: false }) }, async (p) => { await p.keyboard.press('3'); await p.click('[data-report-card="p_001"]'); await p.click('[data-drawer-tab="meetings"]'); }, { fullPane: true }],
+  ['stable-off-settings-drawer', { doc: withSettings({ stableMode: false }) }, async (p) => { await p.keyboard.press('7'); }],
   ['mobile-overview', { viewport: { width: 390, height: 844 } }, async () => {}],
   ['mobile-reports', { viewport: { width: 390, height: 844 } }, async (p) => { await p.keyboard.press('3'); }],
   ['mobile-workspace', { viewport: { width: 390, height: 844 } }, async (p) => { await p.keyboard.press('3'); await p.click('[data-report-card="p_001"]'); }],
