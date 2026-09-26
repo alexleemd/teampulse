@@ -1,17 +1,4 @@
 const THEMES_WINDOW_DEFAULT = 90;
-const SUPPORT_TREND_COLORS = Object.freeze({
-  Good: '#0d7a48',
-  Monitor: '#115b9c',
-  'Support needed': '#b06b00',
-  Urgent: '#b42318'
-});
-const PDC_TREND_COLORS = Object.freeze({
-  'Not started': '#d9e1ef',
-  'In progress': '#7fb0ff',
-  'Needs review': '#f6d58d',
-  Completed: '#b6ebc9',
-  Blocked: '#f5b4af'
-});
 const RECENT_THEME_STOPWORDS = new Set([
   'about','after','again','against','almost','along','also','although','always','another','around','because','before','being','between','could','every','first','from','have','having','into','just','maybe','might','other','really','should','since','still','their','there','these','thing','think','those','through','under','until','where','which','while','would','about','above','after','along','around','being','below','could','every','further','great','maybe','other','quite','rather','shall','since','some','such','than','that','them','then','they','this','very','were','what','when','with','your','ours','ourselves','theirs','herself','himself','themselves','have','has','had','been','will','would','could','should','must','want','need','make','made','much','many','more','most','less','over','into','onto','upon','across','within','without','because','through','during','about','today','yesterday','tomorrow','week','weeks','month','months','quarter','years','year','team','manager','meeting','meetings','notes','noted','follow','followup','followups','action','actions','update','updated','review','reviews','check','checking','status','level','levels','report','reports','direct','people','person','pdc','cv','good','monitor','urgent','support'
 ]);
