@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node build.mjs",
     "check": "node build.mjs --check",
+    "screenshots:setup": "playwright install chromium",
     "screenshots": "node tools/screenshots/shoot.cjs",
     "compare": "node tools/screenshots/compare.cjs"
   },

@@ -5,7 +5,8 @@
 // outDir defaults to tools/screenshots/out, appFile to the built index.html.
 // The clock, time zone, locale, random numbers and motion are all fixed, so two
 // runs of the same file give identical PNGs. hashes.json lists every screen with
-// a short hash of its PNG and any page errors. Needs "npm install" once.
+// a short hash of its PNG and any page errors. Exits with an error if a screen
+// failed. Setup once: "npm install", then "npx playwright install chromium".
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
@@ -182,4 +183,5 @@ const screens = [
   await browser.close();
   fs.writeFileSync(path.join(OUT, 'hashes.json'), JSON.stringify(results, null, 2));
   results.forEach((r) => console.log(`${r.hash}  ${r.name}${r.errors.length ? '  ERR: ' + r.errors.join(' | ') : ''}`));
+  if (results.some((r) => r.hash === 'FAILED')) process.exitCode = 1;
 })();
