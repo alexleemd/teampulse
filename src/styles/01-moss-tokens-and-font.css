@@ -1,0 +1,119 @@
+/* Moss tokens and the embedded font.
+   Owner: foundation. The values are copied from docs/design/tokens.css, which is
+   the reference. Use these variables everywhere instead of raw colors.
+   Instrument Sans 400, 500 and 600 (latin), SIL Open Font License (src/fonts/OFL.txt).
+   The build embeds the woff2 files as data URLs, so nothing loads from the network. */
+
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-600-normal.woff2") format("woff2");
+}
+
+:root {
+  /* Surfaces */
+  --page: #FAF7F2;          /* page background and sidebar */
+  --surface: #FFFFFF;       /* cards, panels, fields, dialogs, menus, toasts */
+  --sunken: #F1ECE4;        /* neutral tags, avatars, tracks, hover fill */
+
+  /* Lines */
+  --line: #E8E2D8;          /* card borders, section dividers */
+  --line-soft: #F1ECE4;     /* row dividers inside cards */
+  --button-line: #DAD3C7;   /* secondary button borders */
+  --field-line: #928A7E;    /* field and switch borders, 3:1 on white */
+  --outline: #CFC7BA;       /* outline tag border */
+
+  /* Text */
+  --ink: #1E1B17;           /* main text */
+  --ink-2: #6B645B;         /* secondary text, labels, captions */
+  --ink-3: #5C554D;         /* neutral tag text */
+  --placeholder: #766E63;   /* placeholder text */
+
+  /* Accent: only for things you can click, focus, and where you are */
+  --accent: #3D6B35;
+  --accent-strong: #2C5025; /* hover and pressed */
+  --focus-ring: rgba(61, 107, 53, 0.18);
+
+  /* Status: only for status, always with a label or shape */
+  --good: #218462;
+  --mixed: #B7791F;
+  --rough: #8F2733;
+  --good-tint: #E4F0E9;
+  --good-text: #1D5B43;
+  --amber-tint: #FBF0DC;
+  --amber-text: #7A5212;
+  --amber-strong: #8A5B0B;  /* warning counts in navigation, overdue dates */
+  --red-tint: #F8E3E4;
+  --red-text: #8F2733;
+
+  /* Disabled */
+  --disabled-bg: #F1ECE4;
+  --disabled-text: #A39B8F;
+
+  /* Charts: one hue, light to dark, for heatmaps and levels */
+  --ramp-1: #EEF3EA;
+  --ramp-2: #D3E1CC;
+  --ramp-3: #A9C59D;
+  --ramp-4: #76A067;
+  --ramp-5: #4D7E43;
+  --ramp-6: #2C5025;
+
+  /* Floating layers only: dialogs, menus, toasts */
+  --scrim: rgba(30, 27, 23, 0.40);
+  --shadow-float: 0 12px 32px -8px rgba(30, 27, 23, 0.18), 0 2px 6px rgba(30, 27, 23, 0.06);
+
+  /* Type */
+  --font: 'Instrument Sans', 'Helvetica Neue', sans-serif;
+  --text-title: 34px;       /* page title, weight 600, line-height 1.1, letter-spacing -0.025em */
+  --text-score: 72px;       /* health score, weight 600, line-height 0.95, letter-spacing -0.045em */
+  --text-dialog: 20px;      /* dialog title, weight 600 */
+  --text-section: 16px;     /* section title, weight 600 */
+  --text-panel: 15px;       /* panel title, weight 600 */
+  --text-nav: 14.5px;       /* navigation items */
+  --text-body: 14px;        /* body, fields */
+  --text-small: 13.5px;     /* list rows, buttons, descriptions */
+  --text-label: 12.5px;     /* field labels, weight 500 */
+  --text-caption: 12px;     /* meta and captions */
+  --text-tag: 11.5px;       /* tags, weight 600 */
+
+  /* Corners */
+  --radius-card: 14px;      /* cards, panels, dialogs, table wrapper */
+  --radius-toast: 12px;
+  --radius-menu: 10px;      /* menus, empty state boxes */
+  --radius-field: 9px;      /* fields, segmented track */
+  --radius-button: 8px;     /* buttons, nav items */
+  --radius-small: 7px;      /* small buttons, save status */
+  --radius-tag: 6px;
+
+  /* Sizes */
+  --sidebar-width: 232px;
+  --control-height: 36px;
+  --field-height: 38px;
+  --small-height: 28px;
+  --tag-height: 22px;
+}
+
+/* Old token names still read by inline styles in some scripts. They point at
+   Moss values so nothing turns invisible. Remove once nothing uses them. */
+:root {
+  --success: var(--good);
+  --warning: var(--mixed);
+  --danger: var(--rough);
+  --info: var(--ink-2);
+}
