@@ -454,6 +454,29 @@ function bindStaticEvents() {
     closeDataMenu();
     exportPlainFiles();
   });
+  // Data menu keyboard support: while it is open, the arrow keys move between
+  // the enabled items and Home and End jump to the ends. Escape (handled by
+  // the document listener below) closes it; focus goes back to the trigger
+  // first so it is never lost inside the closed popover.
+  dataMenuEl?.addEventListener('keydown', (event) => {
+    if (!dataMenuEl.hasAttribute('open')) return;
+    const trigger = dataMenuEl.querySelector('summary');
+    if (event.key === 'Escape') {
+      if (trigger && dataMenuEl.querySelector('.toolbar-menu-popover')?.contains(document.activeElement)) trigger.focus();
+      return;
+    }
+    const items = [...dataMenuEl.querySelectorAll('.toolbar-menu-item:not(:disabled)')];
+    if (!items.length) return;
+    const index = items.indexOf(document.activeElement);
+    let next = -1;
+    if (event.key === 'ArrowDown') next = index < 0 ? 0 : (index + 1) % items.length;
+    else if (event.key === 'ArrowUp') next = index < 0 ? items.length - 1 : (index - 1 + items.length) % items.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = items.length - 1;
+    if (next < 0) return;
+    event.preventDefault();
+    items[next].focus();
+  });
   saveDockBtn.addEventListener('click', () => flushAutosaveQueue(true));
   dismissDockBtn.addEventListener('click', () => saveDockEl.classList.add('hidden'));
 

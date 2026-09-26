@@ -167,7 +167,7 @@ async function saveFeedbackEntry(reportId, entryInput) {
 }
 
 function goalStatusVariant(status) {
-  return { 'On track': 'success', 'At risk': 'danger', 'Paused': 'neutral', 'Done': 'info' }[status] || 'neutral';
+  return { 'On track': 'good', 'At risk': 'red', 'Paused': 'outline', 'Done': 'solid-good' }[status] || 'neutral';
 }
 
 function renderGoalProgressBar(goal, options = {}) {
@@ -190,16 +190,11 @@ function statusPillHtml(kind, value) {
   return `<span class="status-pill" data-pill-kind="${escapeHtml(kind)}" data-pill-value="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
 }
 
-// Deterministic per-person identity gradient derived from the stable person
-// id, so the grid tile, PDC card, and workspace header all share one color
-// and the app becomes scannable by color memory. Purely cosmetic, no data.
+// Moss avatars are flat: initials on --sunken in --ink, styled by the avatar
+// classes in src/styles/04-moss-components.css. The function stays so every
+// call site keeps working; it adds no per-person color.
 function avatarGradient(personId) {
-  let hash = 5381;
-  const s = String(personId || '');
-  for (let i = 0; i < s.length; i += 1) hash = ((hash << 5) + hash + s.charCodeAt(i)) | 0;
-  const hue = ((hash % 360) + 360) % 360;
-  const hue2 = (hue + 42) % 360;
-  return `background:linear-gradient(135deg,hsl(${hue} 72% 56%),hsl(${hue2} 78% 46%))`;
+  return '';
 }
 
 // --- Illustrated empty states -------------------------------------------

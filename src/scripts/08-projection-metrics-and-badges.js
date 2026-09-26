@@ -280,30 +280,34 @@ function buildReportMetrics(report, settings) {
   };
 }
 
+// Moss status tones. The returned names are tag tone classes styled in
+// src/styles/04-moss-components.css: neutral, outline, good, amber, red,
+// solid-good and solid-red.
 function variantForPdcStatus(status) {
   return {
-    'Completed': 'success',
-    'Blocked': 'danger',
-    'Needs review': 'warning',
-    'In progress': 'info'
+    'Not started': 'outline',
+    'In progress': 'neutral',
+    'Needs review': 'amber',
+    'Blocked': 'red',
+    'Completed': 'solid-good'
   }[status] || 'neutral';
 }
 
 function variantForSupport(flag) {
   return {
-    'Good': 'success',
-    'Monitor': 'info',
-    'Support needed': 'warning',
-    'Urgent': 'danger'
+    'Good': 'good',
+    'Monitor': 'neutral',
+    'Support needed': 'red',
+    'Urgent': 'solid-red'
   }[flag] || 'neutral';
 }
 
 function supportFillForLevel(flag) {
   return {
-    'Good': 'green',
-    'Monitor': 'blue',
-    'Support needed': 'amber',
-    'Urgent': 'red'
+    'Good': 'good',
+    'Monitor': 'neutral',
+    'Support needed': 'red',
+    'Urgent': 'solid-red'
   }[flag] || 'none';
 }
 
@@ -312,8 +316,8 @@ function badge(label, variant = 'neutral') {
 }
 
 function attentionTone(issue) {
-  if (issue.includes('blocked') || issue.includes('Urgent')) return 'danger';
-  if (issue.includes('Support level')) return 'warning';
-  return 'warning';
+  if (issue.includes('Urgent')) return 'solid-red';
+  if (issue.includes('blocked') || issue.includes('Support level')) return 'red';
+  return 'amber';
 }
 

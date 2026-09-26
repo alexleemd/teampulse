@@ -1,2 +1,789 @@
 /* Buttons, header controls, fields (text, select, number with unit, textarea, range, date), checkboxes, switches, segmented control, tabs, the pulse picker. Built from Controls 1 and Controls 2.
-   Owner: W2 shared controls. */
+   Owner: W2 shared controls.
+
+   How to use these from a view file:
+   - A <button> with no class (or only "hidden"/"active" toggled off) is Primary.
+     "secondary" is Secondary, "danger" or "danger-outline" is Danger, "small" is
+     Small, "link-button" is Link and "icon-button" is Icon. "primary" also works.
+   - The .button class gives any other element (a link, a file label) the
+     same looks.
+   - Every other classed <button> starts from a blank reset (no border, no fill,
+     inherited font) so a view class only adds what it needs.
+   - Base element rules keep element specificity, so one class in a view file
+     wins over them. To vary a shared control, scope it under the view container. */
+
+/* --- Button reset -------------------------------------------------------- */
+button {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+button:disabled { cursor: not-allowed; }
+
+/* --- Button look: Primary (default), Secondary, Danger, Small -------------- */
+button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small),
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--control-height);
+  padding: 0 14px;
+  flex-shrink: 0;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-button);
+  background: var(--accent);
+  color: var(--surface);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+button:where(:not([class]), [class=""], .primary):where(:hover, :active):not(:disabled),
+.button:where(:not(.secondary, .small, .danger, .danger-outline)):hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--surface);
+}
+.button:hover { text-decoration: none; }
+.button:where(.secondary, .small):hover { color: var(--ink); }
+.button:where(.danger, .danger-outline):hover { color: var(--rough); }
+
+button:where(.secondary, .small),
+.button:where(.secondary, .small) {
+  background: var(--surface);
+  border-color: var(--button-line);
+  color: var(--ink);
+  font-weight: 500;
+}
+button:where(.secondary, .small):where(:hover, :active):not(:disabled),
+.button:where(.secondary, .small):hover { background: var(--sunken); }
+
+button:where(.danger, .danger-outline),
+.button:where(.danger, .danger-outline) {
+  background: var(--surface);
+  border-color: var(--rough);
+  color: var(--rough);
+  font-weight: 600;
+}
+button:where(.danger, .danger-outline):where(:hover, :active):not(:disabled),
+.button:where(.danger, .danger-outline):hover { background: var(--red-tint); }
+
+/* Small: 28px, radius 7px, 12.5px, secondary look. The table and tile room
+   buttons are small buttons too (the tile one is a span with role="button"). */
+button:where(.small),
+.button.small,
+.tt-action-btn,
+.tile-room-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--small-height);
+  padding: 0 10px;
+  flex-shrink: 0;
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.tt-action-btn:hover,
+.tile-room-btn:hover { background: var(--sunken); }
+.tt-action-btn { padding: 0 8px; }
+
+/* Disabled: flat disabled fill, never opacity. */
+button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small):disabled,
+.tt-action-btn:disabled {
+  background: var(--disabled-bg);
+  border-color: var(--disabled-bg);
+  color: var(--disabled-text);
+  font-weight: 500;
+  cursor: not-allowed;
+}
+
+/* Link: no box, accent text, 600. The person names in the Follow-Ups panel
+   headers and on the PDC board cards are link buttons too. */
+.link-button,
+.followup-jump,
+.tl-jump,
+.tp-done-toggle,
+.pulse-clear,
+.toast-action,
+.briefing-link,
+.fu-person-link,
+.pdc-board-card-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.link-button:hover,
+.followup-jump:hover,
+.tl-jump:hover,
+.tp-done-toggle:hover,
+.pulse-clear:hover,
+.toast-action:hover,
+.briefing-link:hover,
+.fu-person-link:hover,
+.pdc-board-card-name:hover { color: var(--accent-strong); }
+.link-button:disabled { color: var(--disabled-text); cursor: not-allowed; }
+/* Link buttons have no box, so an invisible pseudo element, centered on the
+   text, brings the hit area to at least 30px high at any font size without
+   moving anything. */
+.link-button,
+.followup-jump,
+.tl-jump,
+.tp-done-toggle,
+.pulse-clear,
+.toast-action,
+.briefing-link,
+.fu-person-link { position: relative; }
+.link-button::after,
+.followup-jump::after,
+.tl-jump::after,
+.tp-done-toggle::after,
+.pulse-clear::after,
+.toast-action::after,
+.briefing-link::after,
+.fu-person-link::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 50%;
+  height: max(100% + 12px, 30px);
+  transform: translateY(-50%);
+}
+/* The name in a Follow-Ups panel header keeps the panel title size. */
+.fu-person-link { font-size: inherit; }
+/* PDC board card names are cut with an ellipsis in narrow columns, so they
+   clip their overflow; padding (not a pseudo element, which would be clipped)
+   takes their hit area to 28px. */
+.pdc-board-card-name {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  margin: -5px 0;
+  padding: 5px 0;
+  font-size: var(--text-small);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Icon: 28px square, ink-2 icon, hover sunken. Needs an aria-label.
+   .tp-delete still carries a text "×" in its markup; the glyph is hidden and
+   the Moss x icon is drawn with a mask so it matches the controls sheet. */
+.icon-button,
+.tp-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--small-height);
+  height: var(--small-height);
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.icon-button:hover,
+.tp-delete:hover { background: var(--sunken); }
+.icon-button svg,
+.tp-delete svg { width: 16px; height: 16px; stroke: currentColor; }
+.tp-delete:has(svg)::before { display: none; }
+.tp-delete { font-size: 0; line-height: 0; }
+.tp-delete::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+}
+
+/* --- Fields ---------------------------------------------------------------- */
+/* Label above the control, 12.5px 500 ink-2. */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+label > span:where(:first-child),
+.field-label,
+.pulse-field > span:where(:first-child),
+.md-shell > span:where(:first-child) {
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+input:where(:not([type]), [type="text"], [type="search"], [type="number"], [type="date"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="time"], [type="month"], [type="week"], [type="datetime-local"]),
+select,
+textarea {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: var(--field-h, var(--field-height));
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-field);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--text-body);
+  line-height: 1.45;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+input:where(:not([type]), [type="text"], [type="search"], [type="number"], [type="date"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="time"], [type="month"], [type="week"], [type="datetime-local"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  outline: none;
+}
+input:where([type="number"]) { font-variant-numeric: tabular-nums; }
+input:where([type="date"], [type="time"], [type="month"]) { font-variant-numeric: tabular-nums; }
+input:where([type="date"])::-webkit-calendar-picker-indicator { cursor: pointer; }
+input:where([type="search"])::-webkit-search-decoration { appearance: none; }
+input:where(:not([type]), [type="text"], [type="search"], [type="number"], [type="date"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="time"], [type="month"], [type="week"], [type="datetime-local"]):where(:disabled, [readonly]),
+select:disabled,
+textarea:where(:disabled, [readonly]) {
+  background: var(--page);
+  border-color: var(--button-line);
+  color: var(--ink-2);
+}
+input:disabled, select:disabled, textarea:disabled { cursor: not-allowed; }
+
+textarea {
+  height: auto;
+  min-height: 84px;
+  padding: 10px 12px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+/* Dense panels (36px fields): set --field-h: 36px on the container. Fields,
+   units and select chevrons follow it. */
+
+/* Select: native select with appearance none and a chevron. The chevron is
+   drawn on the wrapping label (or a .select-wrap span) with a mask, so its
+   color comes from a token. */
+select {
+  padding-right: 34px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+select option { color: var(--ink); background: var(--surface); font-weight: 400; }
+label:where(:has(> select:last-child)),
+.select-wrap {
+  position: relative;
+}
+.select-wrap { display: inline-flex; min-width: 0; }
+label:where(:has(> select:last-child))::after,
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 11px;
+  bottom: calc((var(--field-h, var(--field-height)) - 16px) / 2);
+  width: 16px;
+  height: 16px;
+  background: var(--ink-2);
+  pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+}
+.select-wrap::after { top: 50%; bottom: auto; margin-top: -8px; }
+label:where(:has(> select:last-child:disabled))::after { background: var(--disabled-text); }
+
+/* Number with a unit: the unit sits inside the field on page behind a divider. */
+.input-with-suffix {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  height: var(--field-h, var(--field-height));
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-field);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.input-with-suffix:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.input-with-suffix input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.input-with-suffix input:focus { border: 0; box-shadow: none; }
+.input-with-suffix .suffix {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 12px;
+  border-left: 1px solid var(--line);
+  background: var(--page);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* Range: native, accent color, value at the right. */
+input[type="range"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.goal-progress-inputs,
+.range-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  height: 30px;
+}
+.goal-progress-value,
+.range-value {
+  width: 38px;
+  flex-shrink: 0;
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 500;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hints and status lines under fields and forms. */
+.field-hint {
+  display: block;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.status-line {
+  min-height: 18px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+form > .status-line,
+.actions + .status-line { margin-top: 10px; }
+.status-line.success { color: var(--good-text); }
+.status-line.warning { color: var(--amber-text); }
+.status-line.error,
+.status-line.danger { color: var(--red-text); }
+
+/* Form grid: two columns, 14px by 16px, full width fields span both. */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+  align-items: start;
+}
+.form-grid > .full { grid-column: 1 / -1; }
+
+/* --- Checkboxes and radios --------------------------------------------------- */
+input:where([type="checkbox"], [type="radio"]) {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+input:where([type="checkbox"], [type="radio"]):disabled { cursor: not-allowed; }
+/* A label that wraps a checkbox is a row: box, then its text. */
+label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 400;
+}
+.feedback-shared-field { flex-direction: row; align-items: flex-start; gap: 10px; }
+
+/* --- Switch ------------------------------------------------------------------ */
+/* 36 by 20 on a real checkbox. On: accent fill, white knob. Off: white track,
+   1.5px field-line border, field-line knob. */
+.switch {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 0;
+  cursor: pointer;
+}
+/* The track is 20px high, so an invisible pseudo element takes the hit area
+   to 30 by 40 without moving anything. */
+.switch::after {
+  content: "";
+  position: absolute;
+  inset: -5px -2px;
+}
+.slider {
+  position: relative;
+  display: block;
+  width: 36px;
+  height: 20px;
+  border: 1.5px solid var(--field-line);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.slider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3.5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--field-line);
+  transition: left 120ms ease, top 120ms ease, width 120ms ease, height 120ms ease, background-color 120ms ease;
+}
+.switch input:checked + .slider {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.switch input:checked + .slider::before {
+  left: 17px;
+  top: 1.5px;
+  width: 14px;
+  height: 14px;
+  background: var(--surface);
+}
+.switch input:focus-visible + .slider {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.switch input:disabled + .slider { border-color: var(--disabled-text); background: var(--disabled-bg); cursor: not-allowed; }
+.switch input:disabled + .slider::before { background: var(--disabled-text); }
+
+/* Switch row: title and note on the left, the control on the right. */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.toggle-row:first-child { border-top: 0; }
+.toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.toggle-copy strong {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.toggle-copy p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.toggle-row > label:not(.switch) { flex: 0 0 auto; width: 180px; }
+
+/* --- Segmented control ------------------------------------------------------- */
+/* Sunken track, radius 9px, padding 3px. The current option is white with a
+   1px line ring and 600 text. Used for Tiles/Table, the PDC views, the
+   Insights chart modes and the timeline filter. */
+.segmented,
+.view-switch,
+.pdc-view-toggle,
+.tenure-mode-toggle,
+.tl-filter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 3px;
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-field);
+  background: var(--sunken);
+}
+.segmented > button,
+.view-switch > button,
+.pdc-view-toggle > button,
+.tenure-mode-toggle > button,
+.tl-filter > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.segmented > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
+.view-switch > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
+.pdc-view-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
+.tenure-mode-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
+.tl-filter > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active) { color: var(--ink); background: transparent; }
+.segmented > button:where([aria-pressed="true"], [aria-selected="true"], .active),
+.view-switch > button:where([aria-pressed="true"], .active),
+.pdc-view-toggle > button:where([aria-pressed="true"], .active),
+.tenure-mode-toggle > button:where([aria-pressed="true"], [aria-selected="true"], .active),
+.tl-filter > button:where([aria-pressed="true"], .active) {
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+  color: var(--ink);
+  font-weight: 600;
+}
+.tenure-mode-sep { display: none; }
+
+/* --- Tabs --------------------------------------------------------------------- */
+/* Text tabs 22px apart. The current tab has 600 text and a 2px accent
+   underline. Counts sit in a small amber chip that stays amber when current. */
+.tabs,
+.md-tabs,
+.drawer-workspace-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+.tab,
+.md-tab,
+.drawer-workspace-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  margin: 0 0 -1px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.tab:hover,
+.md-tab:hover,
+.drawer-workspace-tab:hover { color: var(--ink); }
+.tab:where(.active, [aria-selected="true"]),
+.md-tab:where(.active, [aria-selected="true"]),
+.drawer-workspace-tab:where(.active, [aria-selected="true"]) {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+.tab:focus-visible,
+.md-tab:focus-visible,
+.drawer-workspace-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tab-count,
+.drawer-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0 5px;
+  border-radius: 5px;
+  background: var(--amber-tint);
+  color: var(--amber-text);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Pulse picker ------------------------------------------------------------ */
+/* Three bordered options, each with its pulse glyph. The selected option uses
+   its status tint, a 1.5px status border and 600 text. Clear is a link. */
+.pulse-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.pulse-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pulse-option {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.pulse-option:hover { background: var(--page); }
+.pulse-option > span { color: inherit; font-size: inherit; font-weight: inherit; }
+.pulse-option input { width: 1px; height: 1px; margin: 0; }
+/* The glyph: full circle Good, half circle Mixed, empty ring Rough, drawn
+   with the --pulse-glyph-* masks defined with the pulse glyphs in
+   04-moss-components.css (exact 1.4px and 1.8px rings). */
+.pulse-option::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  background: var(--field-line);
+  -webkit-mask: var(--pulse-glyph-none) center / 100% 100% no-repeat;
+  mask: var(--pulse-glyph-none) center / 100% 100% no-repeat;
+}
+.pulse-option[data-pulse="green"]::before { background: var(--good); -webkit-mask-image: var(--pulse-glyph-good); mask-image: var(--pulse-glyph-good); }
+.pulse-option[data-pulse="amber"]::before { background: var(--mixed); -webkit-mask-image: var(--pulse-glyph-mixed); mask-image: var(--pulse-glyph-mixed); }
+.pulse-option[data-pulse="red"]::before { background: var(--rough); -webkit-mask-image: var(--pulse-glyph-rough); mask-image: var(--pulse-glyph-rough); }
+.pulse-option:has(input:checked) {
+  padding: 0 11.5px;
+  border-width: 1.5px;
+  font-weight: 600;
+}
+.pulse-option[data-pulse="green"]:has(input:checked) { background: var(--good-tint); border-color: var(--good); color: var(--good-text); }
+.pulse-option[data-pulse="amber"]:has(input:checked) { background: var(--amber-tint); border-color: var(--mixed); color: var(--amber-text); }
+.pulse-option[data-pulse="red"]:has(input:checked) { background: var(--red-tint); border-color: var(--rough); color: var(--red-text); }
+.pulse-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.pulse-clear { margin-left: 4px; }
+
+/* --- Narrow screens ------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  /* The workspace tabs scroll sideways here, and a scroll box clips what
+     sticks out of it. 4px of padding (the top 4px taken back with a negative
+     margin) keeps the whole focus ring visible. The line under the tabs is
+     then an inset shadow at the bottom, and the current tab's underline is
+     a pseudo element that sits on it, so the tabs look as they do on wide
+     screens. */
+  .drawer-workspace-tabs {
+    margin: -4px -4px 0;
+    padding: 4px;
+    border-bottom: 0;
+    box-shadow: inset 0 -1px 0 var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .drawer-workspace-tabs::-webkit-scrollbar { display: none; }
+  .drawer-workspace-tab {
+    position: relative;
+    height: 34px;
+    margin: 0;
+    border-bottom: 0;
+  }
+  .drawer-workspace-tab:where(.active, [aria-selected="true"])::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: var(--accent);
+  }
+  .toggle-row { align-items: flex-start; }
+  .toggle-row > label:not(.switch) { width: 150px; }
+}
