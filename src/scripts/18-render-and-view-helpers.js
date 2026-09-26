@@ -9,18 +9,6 @@ function viewJustEntered(viewKey, isVisibleNow) {
   return isVisibleNow && !wasVisible;
 }
 
-// Deterministic per-person identity gradient derived from the stable person
-// id, so the grid tile, PDC card, and workspace header all share one color
-// and the app becomes scannable by color memory. Purely cosmetic, no data.
-function avatarGradient(personId) {
-  let hash = 5381;
-  const s = String(personId || '');
-  for (let i = 0; i < s.length; i += 1) hash = ((hash << 5) + hash + s.charCodeAt(i)) | 0;
-  const hue = ((hash % 360) + 360) % 360;
-  const hue2 = (hue + 42) % 360;
-  return `background:linear-gradient(135deg,hsl(${hue} 72% 56%),hsl(${hue2} 78% 46%))`;
-}
-
 // Wraps a navigation-level DOM update in the View Transitions API so view
 // switches crossfade and same-named elements morph between states. Only
 // user-gesture navigation goes through here: frequent in-place re-renders
@@ -206,3 +194,88 @@ function renderSettingsView() {
   `;
 }
 
+// Unified sidebar renderer — replaces the old 3-pane list-pane system.
+// Renders all nav items (Team Health sub-views, Direct Reports, Meetings, Settings)
+// in a single dark sidebar with full names.
+function renderSidebar() {
+  const mount = document.getElementById('sidebarNav');
+  if (!mount) return;
+  const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
+  if (!ready) { mount.innerHTML = ''; return; }
+  const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
+  const thTab = currentTeamHealthTab();
+  const reports = getReports();
+  const reportCount = reports.length;
+  const attentionCount = reports.filter((r) => {
+    const m = getMetrics(r.id);
+    return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
+  }).length;
+  const openFollowUpsTotal = reports.reduce((sum, r) => sum + ((getMetrics(r.id).openFollowUps || []).length), 0);
+
+  const thIcon = (tab) => {
+    switch (tab) {
+      case 'overview':  return '<svg viewBox="0 0 24 24"><path d="M3 12h3l2-5 4 10 2-5h7"/></svg>';
+      case 'cadence':   return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+      case 'attention': return '<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>';
+      case 'support':   return '<svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"/></svg>';
+      case 'insights':  return '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>';
+      default:          return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>';
+    }
+  };
+
+  const teamHealthItems = TEAM_HEALTH_TABS.map((tab, tabIndex) => {
+    const isActive = mainView === 'teamHealth' && tab === thTab;
+    let badge = '';
+    if (tab === 'attention' && attentionCount > 0) {
+      badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
+    }
+    return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}" aria-pressed="${isActive}" title="${escapeHtml(`${TEAM_HEALTH_TAB_LABELS[tab]} · press ${tabIndex + 1}`)}">
+      ${thIcon(tab)}
+      <span>${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
+      ${badge}
+    </button>`;
+  }).join('');
+
+  const reportsBadge = reportCount > 0 ? `<span class="sidebar-item-badge">${reportCount}</span>` : '';
+  const followUpsBadge = openFollowUpsTotal > 0 ? `<span class="sidebar-item-badge" data-tone="warning">${openFollowUpsTotal}</span>` : '';
+  const isReports = mainView === 'reports';
+  const isMeetings = mainView === 'meetings' || mainView === 'meetingRoom';
+  const isFollowUps = mainView === 'followUps';
+  const isPdcSummary = mainView === 'pdcSummary';
+  const isSettings = mainView === 'settings';
+
+  mount.innerHTML = `
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Team Health</div>
+      ${teamHealthItems}
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">People</div>
+      <button type="button" class="sidebar-item${isReports ? ' active' : ''}" data-nav-main="reports" aria-pressed="${isReports}" title="Direct Reports · press 3">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
+        <span>Direct Reports</span>
+        ${reportsBadge}
+      </button>
+      <button type="button" class="sidebar-item${isMeetings ? ' active' : ''}" data-nav-main="meetings" aria-pressed="${isMeetings}" title="Meetings · press 4">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+        <span>Meetings</span>
+      </button>
+      <button type="button" class="sidebar-item${isFollowUps ? ' active' : ''}" data-nav-main="followUps" aria-pressed="${isFollowUps}" title="Follow-Ups · press 5">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Follow-Ups</span>
+        ${followUpsBadge}
+      </button>
+      <button type="button" class="sidebar-item${isPdcSummary ? ' active' : ''}" data-nav-main="pdcSummary" aria-pressed="${isPdcSummary}" title="PDC Summary · press 6">
+        <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
+        <span>PDC Summary</span>
+      </button>
+    </div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-group">
+      <button type="button" class="sidebar-item${isSettings ? ' active' : ''}" data-nav-main="settings" aria-pressed="${isSettings}" title="Settings · press 7">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
+        <span>Settings</span>
+      </button>
+    </div>
+  `;
+}
