@@ -792,6 +792,25 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .tp-item:has(> .tp-delete) > .tp-item-text { padding-top: 4px; }
 .tp-item:not(:has(> .tp-delete)) { --tp-pad-y: 8px; }
 .tp-item > .tp-delete { margin-left: -2px; }
+/* Only the checkbox sits in its label, so clicking the text does not tick
+   it (as in v0.52.4). The label is a 28px hit area centered on the 16px box;
+   the negative side margins keep the box where the row puts it. */
+.tp-item > .tp-check {
+  flex: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  gap: 0;
+  width: 28px;
+  height: 28px;
+  margin: 0 -6px;
+  padding: 0;
+}
+.tp-item:has(> .tp-check) > .tp-check > input[type="checkbox"] { margin: 0; }
+.tp-item:has(> .tp-check) > .tp-item-text,
+.tp-item:has(> .tp-check) > .tp-item-main { padding-top: 4px; }
 .tp-item:has(> label) { gap: 8px; }
 .tp-item:has(> label) > .tp-delete { margin-left: 0; }
 /* The same row when the checkbox and text are wrapped in a label. The label

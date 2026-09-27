@@ -11,10 +11,8 @@ function renderTalkingPointsPanel(report) {
   const openList = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item${tickPopClass(`tp:${point.id}`)}">
-          <label>
-            <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" title="Mark discussed">
-            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? ' <span class="tp-chip">Carried over</span>' : ''}</span>
-          </label>
+          <label class="tp-check"><input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" aria-label="Mark discussed"></label>
+          <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? ' <span class="tp-chip">Carried over</span>' : ''}</span>
           <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued for the next conversation yet.</p>';
@@ -25,11 +23,9 @@ function renderTalkingPointsPanel(report) {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
           const doneStamp = String(point.doneAt || '').slice(0, 10);
           return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
+            <label class="tp-check"><input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point"></label>
             <div class="tp-item-main">
-              <label>
-                <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" title="Reopen talking point">
-                <span class="tp-item-text">${escapeHtml(point.text)}</span>
-              </label>
+              <span class="tp-item-text">${escapeHtml(point.text)}</span>
               <span class="tp-meta">${doneStamp ? `Discussed ${formatDate(doneStamp)}` : 'Discussed'}${linkedMeeting ? ` · <button type="button" class="tl-jump" data-jump-meeting="${escapeHtml(linkedMeeting.id)}">View meeting</button>` : ''}</span>
             </div>
             <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>

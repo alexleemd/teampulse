@@ -108,12 +108,3 @@
   --small-height: 28px;
   --tag-height: 22px;
 }
-
-/* Old token names still read by inline styles in some scripts. They point at
-   Moss values so nothing turns invisible. Remove once nothing uses them. */
-:root {
-  --success: var(--good);
-  --warning: var(--mixed);
-  --danger: var(--rough);
-  --info: var(--ink-2);
-}

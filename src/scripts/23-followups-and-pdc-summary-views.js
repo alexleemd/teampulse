@@ -226,7 +226,7 @@ function renderPdcBoardHtml(reports) {
           <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(r.id)}" title="Open profile">${escapeHtml(r.name || 'Unnamed')}</button>
         </div>
         <span class="pdc-board-card-goal">${escapeHtml(goal)}</span>
-        ${primaryGoal ? renderGoalProgressBar(primaryGoal, { compact: true }) : ''}
+        ${primaryGoal ? `<span class="pdc-board-card-goal-row">${statusPillHtml('goal', primaryGoal.status || GOAL_STATUSES[0])}${renderGoalProgressBar(primaryGoal, { compact: true })}</span>` : ''}
         <span class="pdc-board-card-meta"><span>${escapeHtml(metaLast)}</span> <span>${escapeHtml(metaNext)}</span></span>
         ${chipRow}
         ${dateBlock}

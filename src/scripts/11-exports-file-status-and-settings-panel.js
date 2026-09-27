@@ -262,15 +262,18 @@ function renderSettingsPanel() {
   const daysSinceExport = app.doc?.settings?.lastExportDate ? daysSinceIso(app.doc.settings.lastExportDate) : null;
   const folderLabel = app.fileStats.folderLabel || app.folderName || 'Not available';
 
+  // The third value marks a row good or needing attention; the row's text
+  // always says the same thing, so the mark never carries meaning alone.
+  const savedState = (stamp) => (stamp ? 'good' : 'attention');
   const items = [
     ['Schema', `File v${app.loadedSchemaVersion || CURRENT_SCHEMA_VERSION} · App ${APP_VERSION}`],
     ['Last migration', app.lastMigrationApplied || 'None'],
-    ['Folder', `${folderLabel}/${MAIN_JSON_NAME}`],
-    ['Last save', formatDateTime(app.fileStats.mainSavedAt || app.lastSaveAt)],
-    ['Latest backup', formatDateTime(app.fileStats.backupSavedAt) || '-'],
-    ['Daily backup', formatDateTime(app.fileStats.dailySavedAt) || '-'],
-    ['Monthly backup', formatDateTime(app.fileStats.monthlySavedAt) || '-'],
-    ['Schema doc', app.fileStats.schemaWrittenAt ? 'Up to date' : 'Will be written on save'],
+    ['Folder', `${folderLabel}/${MAIN_JSON_NAME}`, app.connectedFolderReady ? 'good' : 'attention'],
+    ['Last save', formatDateTime(app.fileStats.mainSavedAt || app.lastSaveAt), app.lastSaveError ? 'attention' : savedState(app.fileStats.mainSavedAt || app.lastSaveAt)],
+    ['Latest backup', formatDateTime(app.fileStats.backupSavedAt) || '-', savedState(app.fileStats.backupSavedAt)],
+    ['Daily backup', formatDateTime(app.fileStats.dailySavedAt) || '-', savedState(app.fileStats.dailySavedAt)],
+    ['Monthly backup', formatDateTime(app.fileStats.monthlySavedAt) || '-', savedState(app.fileStats.monthlySavedAt)],
+    ['Schema doc', app.fileStats.schemaWrittenAt ? 'Up to date' : 'Will be written on save', app.fileStats.schemaWrittenAt ? 'good' : ''],
     ['Event count', String(app.doc?.events?.length || 0)],
     ['Event range', firstEvent ? `${formatDateTime(firstEvent)} → ${formatDateTime(lastEvent)}` : 'No events yet'],
     ['Last export', app.doc?.settings?.lastExportDate ? formatDateTime(app.doc.settings.lastExportDate) : 'Never'],
@@ -278,9 +281,10 @@ function renderSettingsPanel() {
   ];
   const grid = document.createElement('div');
   grid.className = 'health-grid';
-  items.forEach(([label, value]) => {
+  items.forEach(([label, value, state]) => {
     const item = document.createElement('div');
     item.className = 'health-item';
+    if (state) item.dataset.state = state;
     const strong = document.createElement('strong');
     strong.textContent = label;
     const span = document.createElement('span');

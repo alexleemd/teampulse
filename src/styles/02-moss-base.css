@@ -27,6 +27,7 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-strong); text-decoration: underline; }
 svg { flex-shrink: 0; }
 ::placeholder { color: var(--placeholder); opacity: 1; }
+::selection { background: var(--ramp-2); color: var(--ink); }
 
 /* --- Focus ------------------------------------------------------------- */
 :focus { outline: none; }

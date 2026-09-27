@@ -107,8 +107,8 @@ function renderReportTileHtml(report, options = {}) {
       </span>
       <span class="report-tile-foot">
         <span class="report-tile-vitals">
-          <span class="report-tile-vital">${renderTileSparkline(report)}</span>
-          ${pulseHtml ? `<span class="report-tile-vital is-pulse">${pulseHtml}</span>` : ''}
+          <span class="report-tile-vital"><span class="report-tile-caption">Meetings, 12 weeks</span>${renderTileSparkline(report)}</span>
+          ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
         </span>
         ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
         ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
