@@ -286,6 +286,11 @@
 }
 .meetings-view-item:hover .meetings-view-edit { color: var(--accent-strong); }
 
+/* --- Meetings: Show more ------------------------------------------------------------
+   Under the list card, only when more meetings match than are shown. The
+   secondary button from 03, left aligned like the other actions. */
+.meetings-view-more { display: flex; }
+
 /* --- Follow-Ups ----------------------------------------------------------------------
    The summary count tag, then one panel per person: avatar and name in the
    header with the count tag, checkbox rows with their source meta. */
