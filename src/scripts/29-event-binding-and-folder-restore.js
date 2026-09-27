@@ -405,18 +405,6 @@ function bindStaticEvents() {
     });
   }
 
-  // Mobile: back button returns to list pane. (Legacy — may be no-op now.)
-  const mobileBackBtn = document.getElementById('mobileBackBtn');
-  if (mobileBackBtn) {
-    mobileBackBtn.addEventListener('click', () => {
-      if (!confirmWorkspaceClose()) return;
-      app.ui.selectedId = null;
-      app.ui.creatingReport = false;
-      persistUiState();
-      navigateRender(() => render());
-    });
-  }
-
   addReportBtn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
   startupChooseFolderBtn?.addEventListener('click', async () => {
     const connected = await chooseFolderAndConnect();
