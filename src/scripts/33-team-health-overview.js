@@ -3,17 +3,22 @@
 // Overview dashboard (Team Health > Overview tab)
 // ============================================================================
 //
-// The dashboard is an at-a-glance view. Three sections, top to bottom:
+// The dashboard is an at-a-glance view laid out as in Overview.html:
 //
-//   1. Briefing     - named, per-person digest of everything that needs a
+//   1. Health score - single composite number (0-100), an 8px meter whose
+//                     fill follows the health band, the band label and the
+//                     on-track summary. Left card of the first row.
+//   2. Briefing     - named, per-person digest of everything that needs a
 //                     manager's eyes today (overdue touchpoints, elevated
 //                     support levels, vacations, follow-ups, PDC round).
 //                     Every person mentioned is a chip that opens their
 //                     profile. This absorbed the former Cadence, Attention,
 //                     and Support Levels tabs in v0.45: counts by rule and
 //                     aggregate bars told you less than names do.
-//   2. Health score - single composite number (0-100) + headline
-//   3. Upcoming     - forward-looking list of next touchpoints
+//                     Right card of the first row.
+//   3. Direct Reports - the first tiles (attention first) with the team
+//                     count and "View all →", the same tile as Direct Reports.
+//   4. Upcoming     - forward-looking list of next touchpoints, as a panel.
 //
 // Design notes:
 //   - Composite score weights each cadence equally, plus a support-level penalty.
@@ -24,11 +29,14 @@
 //     short enough to stay actionable.
 //   - We keep `data-glyph-open` on clickable elements so existing click handlers
 //     (drawer open, keyboard activation) keep working without new wiring.
+//   - Nothing animates on its own: the score and meter render at their value.
 
 const UPCOMING_HORIZON_DAYS = 14;
+const OVERVIEW_TILE_LIMIT = 4;
 
 // Compose a single 0–100 health score from cadence adherence + support levels.
-// Kept in one place so the score, the headline, and the dial stay in sync.
+// Kept in one place so the score, the headline, and the meter stay in sync.
+// tone is the health band: good (80 and up), mixed (55 to 79), rough (below 55).
 function computeTeamHealthScore(reportStates) {
   const total = reportStates.length;
   if (!total) return { score: 0, tone: 'neutral', headline: 'No reports yet', sub: 'Add a direct report to get started.' };
@@ -44,7 +52,7 @@ function computeTeamHealthScore(reportStates) {
   const score = Math.max(0, Math.min(100, Math.round(raw)));
   const onTrack = reportStates.filter((item) => item.attentionCount === 0).length;
   const needAttention = total - onTrack;
-  const tone = score >= 80 ? 'success' : score >= 55 ? 'warning' : 'danger';
+  const tone = score >= 80 ? 'good' : score >= 55 ? 'mixed' : 'rough';
   const headline = score >= 80
     ? 'Team is healthy'
     : score >= 55
@@ -56,80 +64,23 @@ function computeTeamHealthScore(reportStates) {
   return { score, tone, headline, sub };
 }
 
+// Health score card (Overview.html): label, the score with "/100", an 8px
+// meter on --sunken whose fill follows the band, the band label with its
+// status mark, and the summary line. The score and meter are one image for
+// screen readers.
 function renderHealthScoreSection(scoreInfo) {
   const { score, tone, headline, sub } = scoreInfo;
-  const r = 52;
-  const circ = 2 * Math.PI * r;
-  // Paint the dial at the last value it showed so re-renders never flash to
-  // zero. animateHealthRing() then eases it to the new target.
-  const shown = healthRingShownScore === null ? 0 : healthRingShownScore;
-  const initialOffset = circ - (circ * shown) / 100;
-  const gradStops = tone === 'success'
-    ? ['#3fd68f', 'var(--success)']
-    : tone === 'warning'
-      ? ['#ffc65c', 'var(--warning)']
-      : ['#ff8a7e', 'var(--danger)'];
   return `
-    <div class="overview-section health-score">
-      <div class="health-score-dial" data-tone="${escapeHtml(tone)}" role="img" aria-label="Team health score ${score} of 100">
-        <svg viewBox="0 0 120 120">
-          <defs>
-            <linearGradient id="healthRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:${gradStops[0]}"></stop>
-              <stop offset="100%" style="stop-color:${gradStops[1]}"></stop>
-            </linearGradient>
-          </defs>
-          <circle cx="60" cy="60" r="${r}" fill="none" stroke="#ecf1f9" stroke-width="10"></circle>
-          <circle id="healthRingProgress" cx="60" cy="60" r="${r}" fill="none" stroke="url(#healthRingGradient)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${initialOffset.toFixed(2)}" data-circ="${circ.toFixed(2)}"></circle>
-        </svg>
-        <div class="health-score-dial-value">
-          <div>
-            <strong id="healthScoreValue" data-target="${score}">${Math.round(shown)}</strong>
-            <span>of 100</span>
-          </div>
-        </div>
+    <section class="card overview-card health-score" data-band="${escapeHtml(tone)}" aria-labelledby="healthScoreLabel">
+      <h2 class="health-score-label" id="healthScoreLabel">Team Health</h2>
+      <div class="health-score-reading" role="img" aria-label="Team health score ${score} of 100">
+        <span class="health-score-value"><span class="health-score-number">${score}</span><span class="health-score-max">/100</span></span>
+        <span class="health-meter"><span class="health-meter-fill" style="width:${score}%"></span></span>
       </div>
-      <div class="health-score-body">
-        <div class="health-score-label">Team Health</div>
-        <p class="health-score-headline" data-tone="${escapeHtml(tone)}">${escapeHtml(headline)}</p>
-        <p class="health-score-sub">${escapeHtml(sub)}</p>
-      </div>
-    </div>
+      <p class="health-score-headline"><span class="health-band-mark" aria-hidden="true"></span>${escapeHtml(headline)}</p>
+      <p class="health-score-sub">${escapeHtml(sub)}</p>
+    </section>
   `;
-}
-
-// Eases the health dial from whatever it last displayed to the freshly
-// computed score: arc sweep and number count-up together. Snaps instantly
-// when the value is unchanged, motion is reduced, or rAF is unavailable.
-let healthRingShownScore = null;
-let healthRingRaf = 0;
-function animateHealthRing() {
-  const progressEl = document.getElementById('healthRingProgress');
-  const valueEl = document.getElementById('healthScoreValue');
-  if (!progressEl || !valueEl) return;
-  const target = Number(valueEl.getAttribute('data-target')) || 0;
-  const circ = Number(progressEl.getAttribute('data-circ')) || 0;
-  const setTo = (value) => {
-    progressEl.setAttribute('stroke-dashoffset', (circ - (circ * value) / 100).toFixed(2));
-    valueEl.textContent = String(Math.round(value));
-  };
-  window.cancelAnimationFrame(healthRingRaf);
-  const from = healthRingShownScore === null ? 0 : healthRingShownScore;
-  healthRingShownScore = target;
-  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion || typeof window.requestAnimationFrame !== 'function' || from === target) {
-    setTo(target);
-    return;
-  }
-  const duration = 750;
-  const start = performance.now();
-  const ease = (t) => 1 - Math.pow(1 - t, 3);
-  const step = (now) => {
-    const t = Math.min(1, (now - start) / duration);
-    setTo(from + (target - from) * ease(t));
-    if (t < 1) healthRingRaf = window.requestAnimationFrame(step);
-  };
-  healthRingRaf = window.requestAnimationFrame(step);
 }
 
 function renderUpcomingSection(reportStates) {
@@ -150,30 +101,32 @@ function renderUpcomingSection(reportStates) {
   const MAX = 8;
   const visible = items.slice(0, MAX);
   const overflow = items.length > MAX ? items.length - MAX : 0;
+  // Next planned dates are neutral (Moss status table). The next two days
+  // are set in ink and 600 so they stand out without a status color.
   const body = visible.length === 0
     ? `<p class="upcoming-empty">Nothing scheduled in the next ${UPCOMING_HORIZON_DAYS} days.</p>`
     : `<ul class="upcoming-list">${visible.map((item) => {
         const days = daysBetween(today, item.date);
         const whenText = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `In ${days} days · ${formatDate(item.date)}`;
-        const tone = days === 0 ? 'warning' : days <= 2 ? 'warning' : days <= 7 ? 'success' : '';
+        const soon = days <= 2;
         return `
           <li>
             <button type="button" class="upcoming-row" data-glyph-open="${escapeHtml(item.report.id)}" title="${escapeHtml(`Open ${item.report.name}`)}">
-              <span class="upcoming-row-kind">${escapeHtml(item.kind)}</span>
+              <span class="upcoming-row-kind"><span class="tag">${escapeHtml(item.kind)}</span></span>
               <span class="upcoming-row-name">${escapeHtml(item.report.name)}</span>
-              <span class="upcoming-row-when" ${tone ? `data-tone="${escapeHtml(tone)}"` : ''}>${escapeHtml(whenText)}</span>
+              <span class="upcoming-row-when"${soon ? ' data-soon="true"' : ''}>${escapeHtml(whenText)}</span>
             </button>
           </li>
         `;
-      }).join('')}${overflow > 0 ? `<li><p class="upcoming-empty">+${overflow} more in the next ${UPCOMING_HORIZON_DAYS} days.</p></li>` : ''}</ul>`;
+      }).join('')}${overflow > 0 ? `<li><p class="upcoming-empty upcoming-more">+${overflow} more in the next ${UPCOMING_HORIZON_DAYS} days.</p></li>` : ''}</ul>`;
   return `
-    <div class="overview-section">
+    <section class="card overview-card upcoming" aria-labelledby="upcomingTitle">
       <div class="overview-section-head">
-        <h3>Upcoming · next ${UPCOMING_HORIZON_DAYS} days</h3>
+        <h2 id="upcomingTitle">Upcoming · next ${UPCOMING_HORIZON_DAYS} days</h2>
         <span class="overview-section-note">${items.length} scheduled</span>
       </div>
       ${body}
-    </div>
+    </section>
   `;
 }
 
@@ -186,16 +139,17 @@ function daysBetween(a, b) {
 }
 
 // Builds the daily briefing lines from current state. Each line names names:
-// an item carries a tone (dot color), a label, and a list of people rendered
-// as chips that open the person's profile directly (data-glyph-open, handled
-// by the existing teamHealthBody delegation). Aggregate-only lines may carry
-// plain html plus an optional navigation target instead. This briefing is the
-// single home for cadence, attention, and support-level signals since v0.45,
-// so it stays specific: who, not how many.
+// an item carries a tone (its status mark), a label, and a list of people
+// rendered as chips that open the person's profile directly (data-glyph-open,
+// handled by the existing teamHealthBody delegation). Aggregate-only lines may
+// carry plain html plus an optional navigation target instead. This briefing
+// is the single home for cadence, attention, and support-level signals since
+// v0.45, so it stays specific: who, not how many.
+// Tones: amber (attention), red (urgent), neutral (for information), good.
 function buildBriefingItems(reportStates) {
   const items = [];
   const today = todayStamp();
-  const chip = (report, extra = '') => ({ id: report.id, name: report.name || 'Unnamed', extra });
+  const chip = (report, extra = '', extraTone = '') => ({ id: report.id, name: report.name || 'Unnamed', extra, extraTone });
 
   // 1. Overdue touchpoints, one line per kind (respects snoozes and vacation
   //    suppression via the metrics flags). The chip subtext shows the last
@@ -204,7 +158,7 @@ function buildBriefingItems(reportStates) {
     const hit = reportStates.filter(({ metrics }) => metrics[flagKey]);
     if (!hit.length) return 0;
     items.push({
-      tone: 'warning',
+      tone: 'amber',
       label: `${label} overdue`,
       people: hit.map(({ report, metrics }) => chip(report, metrics[lastKey] ? `last ${formatDate(metrics[lastKey])}` : 'never held'))
     });
@@ -216,7 +170,8 @@ function buildBriefingItems(reportStates) {
   overdueTotal += overdueLine('CV review', 'cvReviewOverdue', 'lastCvReview');
 
   // 2. Elevated support levels. This absorbed the Support Levels tab: instead
-  //    of a distribution bar, name the people and their exact level.
+  //    of a distribution bar, name the people and their exact level. Support
+  //    needed and Urgent read in the red status text (Overview.html).
   const flagged = reportStates.filter(({ report }) => {
     const level = normalizeSupportLevel(report.supportLevel);
     return level && level !== 'Good';
@@ -227,9 +182,12 @@ function buildBriefingItems(reportStates) {
     const hasUrgent = sorted.some(({ report }) => normalizeSupportLevel(report.supportLevel) === 'Urgent');
     const hasNeeded = sorted.some(({ report }) => normalizeSupportLevel(report.supportLevel) === 'Support needed');
     items.push({
-      tone: hasUrgent ? 'danger' : hasNeeded ? 'warning' : 'info',
+      tone: hasUrgent ? 'red' : hasNeeded ? 'amber' : 'neutral',
       label: 'Support level elevated',
-      people: sorted.map(({ report }) => chip(report, normalizeSupportLevel(report.supportLevel)))
+      people: sorted.map(({ report }) => {
+        const level = normalizeSupportLevel(report.supportLevel);
+        return chip(report, level, level === 'Urgent' || level === 'Support needed' ? 'red' : '');
+      })
     });
   }
 
@@ -237,7 +195,7 @@ function buildBriefingItems(reportStates) {
   const activeVacations = reportStates.filter(({ metrics }) => metrics.vacationStatus.active);
   if (activeVacations.length) {
     items.push({
-      tone: 'info',
+      tone: 'neutral',
       label: 'On vacation',
       people: activeVacations.map(({ report, metrics }) => chip(report, `back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`))
     });
@@ -248,7 +206,7 @@ function buildBriefingItems(reportStates) {
   });
   if (startingSoon.length) {
     items.push({
-      tone: 'info',
+      tone: 'neutral',
       label: 'Vacation ahead',
       people: startingSoon.map(({ report, metrics }) => chip(report, `from ${formatDate(metrics.vacationStatus.next.startDate)}`))
     });
@@ -269,7 +227,7 @@ function buildBriefingItems(reportStates) {
   });
   if (openTotal > 0) {
     items.push({
-      tone: followUpPeople.some((person) => person.extra.includes('stale')) ? 'warning' : 'info',
+      tone: followUpPeople.some((person) => person.extra.includes('stale')) ? 'amber' : 'neutral',
       label: `${openTotal} open follow-up${openTotal === 1 ? '' : 's'}`,
       people: followUpPeople,
       go: 'view:followUps',
@@ -282,7 +240,7 @@ function buildBriefingItems(reportStates) {
   const blocked = reportStates.filter(({ metrics }) => metrics.pdcStatus === 'Blocked');
   if (blocked.length) {
     items.push({
-      tone: 'warning',
+      tone: 'amber',
       label: `PDC round: ${completed} of ${reportStates.length} completed, blocked`,
       people: blocked.map(({ report }) => chip(report)),
       go: 'view:pdcSummary',
@@ -290,7 +248,7 @@ function buildBriefingItems(reportStates) {
     });
   } else {
     items.push({
-      tone: completed === reportStates.length ? 'success' : 'info',
+      tone: completed === reportStates.length ? 'good' : 'neutral',
       html: `PDC round: ${completed} of ${reportStates.length} completed.`,
       go: 'view:pdcSummary'
     });
@@ -298,16 +256,18 @@ function buildBriefingItems(reportStates) {
 
   // 6. All clear, the line worth working toward.
   if (overdueTotal === 0 && openTotal === 0 && !flagged.length) {
-    items.unshift({ tone: 'success', html: 'All clear. No overdue touchpoints, no open follow-ups, nobody flagged.' });
+    items.unshift({ tone: 'good', html: 'All clear. No overdue touchpoints, no open follow-ups, nobody flagged.' });
   }
   return items;
 }
 
-// Always-on daily briefing at the top of the Overview tab: a short narrated
-// digest of what needs a manager's eyes today, computed fresh on every render.
-// Rows with people render as plain containers holding one profile chip per
-// person (buttons cannot nest, so the row itself stays a div); aggregate rows
-// without people keep the original full-row button behavior.
+// Always-on daily briefing next to the health score: a short narrated digest
+// of what needs a manager's eyes today, computed fresh on every render.
+// Each row is a status mark, a fixed label column and the chips (name plus
+// meta) with an optional link such as "All follow-ups →" at the end of the
+// chips (Overview.html). Rows with people are plain containers holding one
+// profile chip per person (buttons cannot nest, so the row itself stays a
+// div); aggregate rows without people keep the original full-row button.
 function renderBriefingSection(reportStates) {
   if (!reportStates.length) return '';
   const items = buildBriefingItems(reportStates);
@@ -317,13 +277,12 @@ function renderBriefingSection(reportStates) {
     if (item.people && item.people.length) {
       const chips = item.people.map((person) => `
         <button type="button" class="briefing-person" data-glyph-open="${escapeHtml(person.id)}" title="${escapeHtml(`Open ${person.name}`)}">
-          <span class="bp-name">${escapeHtml(person.name)}</span>${person.extra ? `<span class="bp-extra">${escapeHtml(person.extra)}</span>` : ''}
+          <span class="bp-name">${escapeHtml(person.name)}</span>${person.extra ? `<span class="bp-extra"${person.extraTone ? ` data-tone="${escapeHtml(person.extraTone)}"` : ''}>${escapeHtml(person.extra)}</span>` : ''}
         </button>`).join('');
       const trailing = item.go ? `<button type="button" class="briefing-link" data-briefing-go="${escapeHtml(item.go)}">${escapeHtml(item.goLabel || 'Open')} →</button>` : '';
       return `<div class="briefing-row has-people">
         <span class="briefing-dot" data-tone="${escapeHtml(item.tone)}" aria-hidden="true"></span>
-        <span class="briefing-text"><strong>${escapeHtml(item.label)}</strong><span class="briefing-people">${chips}</span></span>
-        ${trailing}
+        <span class="briefing-text"><strong>${escapeHtml(item.label)}</strong><span class="briefing-people">${chips}${trailing}</span></span>
       </div>`;
     }
     const inner = `<span class="briefing-dot" data-tone="${escapeHtml(item.tone)}" aria-hidden="true"></span><span class="briefing-text">${item.html}</span>`;
@@ -332,17 +291,38 @@ function renderBriefingSection(reportStates) {
       : `<div class="briefing-row">${inner}</div>`;
   }).join('');
   return `
-    <div class="overview-section briefing" id="dailyBriefing">
+    <section class="card overview-card briefing" id="dailyBriefing" aria-labelledby="dailyBriefingTitle">
       <div class="overview-section-head">
-        <h3>Briefing</h3>
+        <h2 id="dailyBriefingTitle">Briefing</h2>
         <span class="overview-section-note">${escapeHtml(dateLabel)}</span>
       </div>
       <div class="briefing-list">${rows}</div>
-    </div>
+    </section>
   `;
 }
 
-function renderOverviewTabHtml(reports, entering = false) {
+// "Direct Reports" on the Overview (Overview.html): the team count, "View
+// all →" to Direct Reports, and the first tiles in the app's urgency order
+// (compareReportsForTable, the order of the table), so the people who need
+// attention come first. The tiles are the Direct Reports tile
+// (renderReportTileHtml in 20).
+function renderOverviewReportsSection(reports) {
+  const shown = [...reports].sort(compareReportsForTable).slice(0, OVERVIEW_TILE_LIMIT);
+  return `
+    <section class="overview-reports" aria-labelledby="overviewReportsTitle">
+      <div class="overview-reports-head">
+        <div class="overview-reports-title">
+          <h2 id="overviewReportsTitle">Direct Reports</h2>
+          <span class="overview-reports-count">${reports.length}</span>
+        </div>
+        <button type="button" class="link-button" data-briefing-go="view:reports">View all →</button>
+      </div>
+      <div class="overview-reports-grid">${shown.map((report) => renderReportTileHtml(report, { context: 'overview' })).join('')}</div>
+    </section>
+  `;
+}
+
+function renderOverviewTabHtml(reports) {
   const reportStates = [...reports].map((report) => {
     const metrics = getMetrics(report.id);
     return {
@@ -353,9 +333,12 @@ function renderOverviewTabHtml(reports, entering = false) {
   });
   const scoreInfo = computeTeamHealthScore(reportStates);
   return `
-    <div class="overview-tab${entering ? ' anim-entry' : ''}">
-      ${renderBriefingSection(reportStates)}
-      ${renderHealthScoreSection(scoreInfo)}
+    <div class="overview-tab">
+      <div class="overview-top">
+        ${renderHealthScoreSection(scoreInfo)}
+        ${renderBriefingSection(reportStates)}
+      </div>
+      ${renderOverviewReportsSection(reports)}
       ${renderUpcomingSection(reportStates)}
     </div>
   `;
@@ -388,14 +371,23 @@ function renderTeamHealth() {
   }
   renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
-  const overviewEntering = viewJustEntered('overviewTab', app.ui.mainView === 'teamHealth' && tab === 'overview');
   const insightsEntering = viewJustEntered('insightsTab', app.ui.mainView === 'teamHealth' && tab === 'insights');
   let panelHtml = '';
-  if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports, overviewEntering);
+  if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
   else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports, insightsEntering);
   teamHealthBodyEl.innerHTML = panelHtml;
-  animateHealthRing();
 }
+
+// The Overview tiles' 1:1 room buttons (data-overview-room). Clicking the
+// rest of a tile, or Enter or Space on it, opens the workspace through its
+// data-glyph-open hook, which the #teamHealthBody delegation in 29 handles.
+// The room button is a sibling of the tile's main button, so that
+// delegation never sees it. Bound once, here.
+teamHealthBodyEl.addEventListener('click', (event) => {
+  const roomBtn = event.target.closest('[data-overview-room]');
+  if (!roomBtn || !teamHealthBodyEl.contains(roomBtn)) return;
+  openMeetingRoom(roomBtn.getAttribute('data-overview-room'));
+});
 
 function updateThemeWindowSettingFromForm() {
   if (!app.doc) return;

@@ -7,6 +7,89 @@ function meetingExistsForReport(report, meetingType, meetingDate, notes, externa
     && normalizeText(meeting.notes) === normalizedNotes);
 }
 
+// Dialog focus: remember what had focus when a dialog opened and put focus
+// back there when it closes. If a re-render replaced that element, its new
+// copy gets focus instead (focusReturnTarget in 09).
+const dialogReturnFocus = new Map();
+
+function rememberDialogOpener(key, modalEl) {
+  const activeEl = document.activeElement;
+  if (activeEl && modalEl && modalEl.contains(activeEl)) return;
+  dialogReturnFocus.set(key, focusReturnRecord(activeEl));
+}
+
+function restoreDialogOpener(key) {
+  const saved = dialogReturnFocus.get(key);
+  dialogReturnFocus.delete(key);
+  restoreFocusTo(saved);
+}
+
+// Keyboard focus stays inside the open dialog, search or Settings drawer
+// (they are aria-modal): Tab from the last control goes back to the first,
+// Shift+Tab from the first goes to the last, and Tab from outside moves in.
+// The topmost open layer wins, in z-index order (02-moss-base.css).
+const FOCUS_TRAP_LAYERS = [
+  '#globalSearch.open .gs-panel',
+  '#meetingModal.open .modal',
+  '.overlay.open .modal',
+  '#rulesDrawerOverlay.open .rules-drawer'
+];
+
+function topOpenFocusLayer() {
+  for (const selector of FOCUS_TRAP_LAYERS) {
+    const layerEl = document.querySelector(selector);
+    if (layerEl) return layerEl;
+  }
+  return null;
+}
+
+function focusableIn(containerEl) {
+  return [...containerEl.querySelectorAll('a[href], button, input, select, textarea, [tabindex]')].filter((el) => {
+    if (el.disabled || el.tabIndex < 0 || el.type === 'hidden') return false;
+    if (!el.getClientRects().length) return false;
+    return getComputedStyle(el).visibility !== 'hidden';
+  });
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Tab' || event.altKey || event.ctrlKey || event.metaKey) return;
+  const layerEl = topOpenFocusLayer();
+  if (!layerEl) return;
+  const items = focusableIn(layerEl);
+  if (!items.length) {
+    event.preventDefault();
+    return;
+  }
+  const first = items[0];
+  const last = items[items.length - 1];
+  const active = document.activeElement;
+  if (!active || !layerEl.contains(active)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+  } else if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
+// Fills a select with options built by DOM methods.
+function fillSelectOptions(selectEl, entries, selectedValue) {
+  if (!selectEl) return;
+  selectEl.replaceChildren(...entries.map(([value, label]) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    if (value === selectedValue) {
+      option.selected = true;
+      option.defaultSelected = true;
+    }
+    return option;
+  }));
+}
+
 function openMeetingModal(reportId, options = {}) {
   const report = getReportById(reportId);
   if (!report) return;
@@ -44,6 +127,7 @@ function openMeetingModal(reportId, options = {}) {
       btn.setAttribute('aria-selected', isWrite ? 'true' : 'false');
     });
   }
+  rememberDialogOpener('meeting', meetingModalEl);
   meetingModalEl.classList.add('open');
   meetingModalEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
@@ -51,10 +135,12 @@ function openMeetingModal(reportId, options = {}) {
 }
 
 function closeMeetingModal() {
+  const wasOpen = meetingModalEl.classList.contains('open');
   meetingModalEl.classList.remove('open');
   meetingModalEl.setAttribute('aria-hidden', 'true');
   setStatus(meetingStatusEl, '');
   syncBodyOverlayLock();
+  if (wasOpen) restoreDialogOpener('meeting');
 }
 
 function openGoalModal(reportId, goalId = '') {
@@ -65,8 +151,7 @@ function openGoalModal(reportId, goalId = '') {
   document.getElementById('goalForm')?.reset();
   document.getElementById('goalReportId').value = reportId;
   document.getElementById('goalId').value = goal?.id || '';
-  const statusSelect = document.getElementById('goalStatus');
-  if (statusSelect) statusSelect.innerHTML = GOAL_STATUSES.map((status) => `<option value="${escapeHtml(status)}" ${status === (goal?.status || GOAL_STATUSES[0]) ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('');
+  fillSelectOptions(document.getElementById('goalStatus'), GOAL_STATUSES.map((status) => [status, status]), goal?.status || GOAL_STATUSES[0]);
   document.getElementById('goalTitle').value = goal?.title || '';
   document.getElementById('goalTargetDate').value = goal?.targetDate || '';
   const progressEl = document.getElementById('goalProgress');
@@ -83,6 +168,7 @@ function openGoalModal(reportId, goalId = '') {
     ? `Update the goal for ${report.name}. A progress note or changed progress is added to the goal's log.`
     : `A concrete development goal for ${report.name}, with a status and progress.`;
   setStatus(document.getElementById('goalStatusLine'), '');
+  rememberDialogOpener('goal', modalEl);
   modalEl.classList.add('open');
   modalEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
@@ -92,10 +178,12 @@ function openGoalModal(reportId, goalId = '') {
 function closeGoalModal() {
   const modalEl = document.getElementById('goalModal');
   if (!modalEl) return;
+  const wasOpen = modalEl.classList.contains('open');
   modalEl.classList.remove('open');
   modalEl.setAttribute('aria-hidden', 'true');
   setStatus(document.getElementById('goalStatusLine'), '');
   syncBodyOverlayLock();
+  if (wasOpen) restoreDialogOpener('goal');
 }
 
 function openFeedbackModal(reportId, template = {}) {
@@ -104,17 +192,15 @@ function openFeedbackModal(reportId, template = {}) {
   if (!report || !modalEl) return;
   document.getElementById('feedbackForm')?.reset();
   document.getElementById('feedbackReportId').value = reportId;
-  const kindSelect = document.getElementById('feedbackKind');
-  if (kindSelect) kindSelect.innerHTML = FEEDBACK_KINDS.map((kind) => `<option value="${escapeHtml(kind)}" ${kind === normalizeFeedbackKind(template.kind) ? 'selected' : ''}>${escapeHtml(FEEDBACK_KIND_LABELS[kind])}</option>`).join('');
+  fillSelectOptions(document.getElementById('feedbackKind'), FEEDBACK_KINDS.map((kind) => [kind, FEEDBACK_KIND_LABELS[kind]]), normalizeFeedbackKind(template.kind));
   const categories = resolveEvidenceCategories(app.doc?.settings);
-  const categorySelect = document.getElementById('feedbackCategory');
-  if (categorySelect) categorySelect.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}" ${category === normalizeText(template.category) ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('');
+  fillSelectOptions(document.getElementById('feedbackCategory'), categories.map((category) => [category, category]), normalizeText(template.category));
   document.getElementById('feedbackDate').value = normalizeDate(template.date) || todayStamp();
-  const meetingSelect = document.getElementById('feedbackMeeting');
-  if (meetingSelect) {
-    const linkedId = normalizeText(template.linkedMeetingId);
-    meetingSelect.innerHTML = ['<option value="">Not linked</option>', ...(report.meetings || []).slice(0, 20).map((meeting) => `<option value="${escapeHtml(meeting.id)}" ${meeting.id === linkedId ? 'selected' : ''}>${escapeHtml(`${meeting.meetingType} · ${formatDate(meeting.meetingDate)}`)}</option>`)].join('');
-  }
+  fillSelectOptions(
+    document.getElementById('feedbackMeeting'),
+    [['', 'Not linked'], ...(report.meetings || []).slice(0, 20).map((meeting) => [meeting.id, `${meeting.meetingType} · ${formatDate(meeting.meetingDate)}`])],
+    normalizeText(template.linkedMeetingId)
+  );
   document.getElementById('feedbackSummary').value = '';
   document.getElementById('feedbackDetail').value = '';
   const sharedEl = document.getElementById('feedbackShared');
@@ -122,6 +208,7 @@ function openFeedbackModal(reportId, template = {}) {
   const subtitleEl = document.getElementById('feedbackModalSubtitle');
   if (subtitleEl) subtitleEl.textContent = `A dated feedback entry for ${report.name}, stored in the evidence locker.`;
   setStatus(document.getElementById('feedbackStatusLine'), '');
+  rememberDialogOpener('feedback', modalEl);
   modalEl.classList.add('open');
   modalEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
@@ -131,10 +218,12 @@ function openFeedbackModal(reportId, template = {}) {
 function closeFeedbackModal() {
   const modalEl = document.getElementById('feedbackModal');
   if (!modalEl) return;
+  const wasOpen = modalEl.classList.contains('open');
   modalEl.classList.remove('open');
   modalEl.setAttribute('aria-hidden', 'true');
   setStatus(document.getElementById('feedbackStatusLine'), '');
   syncBodyOverlayLock();
+  if (wasOpen) restoreDialogOpener('feedback');
 }
 
 function buildMeetingPayloadFromForm(formData) {

@@ -50,14 +50,70 @@ function keyboardNavigateToSlot(slot) {
 // Full renders rebuild the DOM, so an animation started on the clicked node
 // dies immediately. Instead the toggle handler stamps a key here and the
 // next render adds a one-shot .tick-pop class to the matching row. The
-// 700ms window means unrelated later renders never replay the animation.
+// stamp is used up by the first render that draws that row, so a later
+// render (the autosave status, for example) never replays the fade, and the
+// 700ms window drops a stamp that no render picked up.
 let lastTickPop = null;
 function markTickPop(key) {
   lastTickPop = { key, at: Date.now() };
 }
 function tickPopClass(key) {
-  return lastTickPop && lastTickPop.key === key && (Date.now() - lastTickPop.at) < 700 ? ' tick-pop' : '';
+  if (!lastTickPop || lastTickPop.key !== key) return '';
+  const fresh = (Date.now() - lastTickPop.at) < 700;
+  lastTickPop = null;
+  return fresh ? ' tick-pop' : '';
 }
+
+// --- Keyboard focus kept across re-renders ---------------------------------
+// The Development path stage pills, the Heatmap / Web switch, the Tenure /
+// Months since promotion switch and the capability ticks all re-render
+// their area, which drops focus to the page. When the control had focus, the
+// control with the same hook and value in the new markup gets it back, so a
+// keyboard user carries on where they were. A MutationObserver waits for the
+// re-render, whether it runs straight away or after a save, and gives up
+// after 2 seconds or as soon as something else takes focus.
+const FOCUS_KEEP_HOOKS = Object.freeze({
+  click: ['data-cdp-stage', 'data-cdp-team-mode', 'data-tenure-mode'],
+  change: ['data-cdp-toggle', 'data-cdp-date']
+});
+let focusKeepWatch = null;
+
+function stopFocusKeepWatch() {
+  if (!focusKeepWatch) return;
+  focusKeepWatch.observer.disconnect();
+  clearTimeout(focusKeepWatch.timer);
+  focusKeepWatch = null;
+}
+
+function keepFocusAcrossRender(control, hook) {
+  stopFocusKeepWatch();
+  const selector = `[${hook}="${CSS.escape(control.getAttribute(hook) || '')}"]`;
+  const tryRestore = () => {
+    if (control.isConnected) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && active.isConnected) {
+      stopFocusKeepWatch();
+      return;
+    }
+    const next = document.querySelector(selector);
+    if (!next) return;
+    stopFocusKeepWatch();
+    next.focus({ preventScroll: true });
+  };
+  const observer = new MutationObserver(tryRestore);
+  observer.observe(document.body, { childList: true, subtree: true });
+  focusKeepWatch = { observer, timer: setTimeout(stopFocusKeepWatch, 2000) };
+}
+
+Object.entries(FOCUS_KEEP_HOOKS).forEach(([type, hooks]) => {
+  const selector = hooks.map((hook) => `[${hook}]`).join(', ');
+  document.addEventListener(type, (event) => {
+    const control = event.target instanceof Element ? event.target.closest(selector) : null;
+    if (!control || document.activeElement !== control) return;
+    const hook = hooks.find((name) => control.hasAttribute(name));
+    if (hook) keepFocusAcrossRender(control, hook);
+  }, true);
+});
 
 // --- Insights: health trend recomputed from the event log ----------------
 // weeklySnapshots were removed in the v7 migration because storing them was
@@ -165,10 +221,12 @@ function renderHealthTrendCard(reports) {
   const drawable = series.filter((point) => point.score !== null);
   const head = `
     <div class="trend-head">
-      <h3>Health Trend</h3>
+      <div class="trend-head-text">
+        <h3>Health Trend</h3>
+        <p class="trend-sub">The Overview score recomputed for each past week from logged meetings, vacations, and support level changes. Uses today's cadence thresholds. Snoozes only affect the newest point.</p>
+      </div>
       <span class="trend-note">Weekly · last ${HEALTH_TREND_WEEKS} weeks</span>
-    </div>
-    <p class="trend-sub">The Overview score recomputed for each past week from logged meetings, vacations, and support level changes. Uses today's cadence thresholds. Snoozes only affect the newest point.</p>`;
+    </div>`;
   if (!reports.length || drawable.length < 2) {
     const emptyCopy = reports.length
       ? 'Not enough history yet. The trend appears once the team has been tracked for at least two weeks.'
@@ -179,62 +237,76 @@ function renderHealthTrendCard(reports) {
       <div class="trend-empty">${emptyCopy}</div>
     </div>`;
   }
-  const W = 660;
-  const H = 170;
-  const padL = 34;
-  const padR = 14;
-  const padT = 12;
-  const padB = 24;
-  const plotW = W - padL - padR;
-  const plotH = H - padT - padB;
+  // No viewBox: x positions are percentages of the chart width and y
+  // positions are pixels, so the chart stretches to the card while the
+  // 12px axis labels stay 12px on screen (a scaled viewBox would grow or
+  // shrink them). The y labels sit in the wrapper's left padding.
+  const H = 184;
+  const padT = 8;
+  const plotH = 150;
+  const baseY = padT + plotH;
   const n = series.length;
-  const x = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const xPct = (i) => (n === 1 ? 50 : (i / (n - 1)) * 100);
+  const px = (i) => `${xPct(i).toFixed(2)}%`;
   const y = (score) => padT + ((100 - score) / 100) * plotH;
-  const gridLines = [0, 25, 50, 75, 100]
-    .map((v) => `<line class="trend-grid-line" x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}"></line>`)
+  const gridLines = [25, 50, 75, 100]
+    .map((v) => `<line class="trend-grid-line" x1="0" y1="${y(v).toFixed(1)}" x2="100%" y2="${y(v).toFixed(1)}"></line>`)
     .join('');
+  const axisLine = `<line class="trend-axis-line" x1="0" y1="${baseY}" x2="100%" y2="${baseY}"></line>`;
   const axisLabels = [0, 50, 100]
-    .map((v) => `<text class="trend-axis-label" x="${padL - 8}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${v}</text>`)
+    .map((v) => `<text class="trend-axis-label" x="-10" y="${(y(v) + 4).toFixed(1)}" text-anchor="end">${v}</text>`)
     .join('');
-  let monthLabels = '';
+  const monthTicks = [];
   let prevMonth = '';
   series.forEach((point, i) => {
     const monthName = new Date(`${point.weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
     if (monthName !== prevMonth) {
-      monthLabels += `<text class="trend-month-label" x="${x(i).toFixed(1)}" y="${H - 8}">${escapeHtml(monthName)}</text>`;
+      monthTicks.push({ i, monthName });
       prevMonth = monthName;
     }
   });
-  const coords = series
-    .map((point, i) => (point.score === null ? null : `${x(i).toFixed(1)},${y(point.score).toFixed(1)}`))
-    .filter(Boolean);
-  const linePath = `M ${coords.join(' L ')}`;
-  const firstDrawn = Math.max(0, series.findIndex((point) => point.score !== null));
-  const areaPath = `${linePath} L ${x(n - 1).toFixed(1)},${(padT + plotH).toFixed(1)} L ${x(firstDrawn).toFixed(1)},${(padT + plotH).toFixed(1)} Z`;
-  const dots = series
+  // A month with fewer than three weeks on the chart sits close to the next
+  // label. It is marked "tight" and hidden on narrow cards so the two never
+  // run together.
+  const monthLabels = monthTicks.map((tick, index) => {
+    const next = monthTicks[index + 1];
+    const tight = next && (next.i - tick.i) < 3;
+    return `<text class="trend-month-label${tight ? ' tight' : ''}" x="${px(tick.i)}" y="${baseY + 20}" text-anchor="middle">${escapeHtml(tick.monthName)}</text>`;
+  }).join('');
+  // The line is drawn as one segment per week, since a path cannot mix
+  // percentage and pixel coordinates.
+  const segments = [];
+  let prevIndex = -1;
+  series.forEach((point, i) => {
+    if (point.score === null) return;
+    if (prevIndex > -1) {
+      segments.push(`<line class="trend-line" x1="${px(prevIndex)}" y1="${y(series[prevIndex].score).toFixed(1)}" x2="${px(i)}" y2="${y(point.score).toFixed(1)}"></line>`);
+    }
+    prevIndex = i;
+  });
+  // Each week keeps its tooltip on a larger invisible hit area. The dot only
+  // shows on hover, except the current week, which is always marked.
+  const points = series
     .map((point, i) => {
       if (point.score === null) return '';
       const tip = `Week of ${formatDate(point.weekStart)} · ${point.score} of 100 · ${point.count} ${point.count === 1 ? 'person' : 'people'} tracked`;
-      return `<circle class="trend-dot${point.current ? ' current' : ''}" cx="${x(i).toFixed(1)}" cy="${y(point.score).toFixed(1)}" r="${point.current ? 4 : 3}"><title>${escapeHtml(tip)}</title></circle>`;
+      const cy = y(point.score).toFixed(1);
+      return `<g class="trend-point${point.current ? ' current' : ''}"><title>${escapeHtml(tip)}</title><circle class="trend-hit" cx="${px(i)}" cy="${cy}" r="10"></circle><circle class="trend-dot${point.current ? ' current' : ''}" cx="${px(i)}" cy="${cy}" r="${point.current ? 4 : 3}"></circle></g>`;
     })
     .join('');
   const latest = drawable[drawable.length - 1];
   return `
     <div class="trend-card">
       ${head}
-      <svg class="trend-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Team health score by week for the last ${HEALTH_TREND_WEEKS} weeks, currently ${latest.score} of 100">
-        <defs>
-          <linearGradient id="trendFillGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(41,87,214,0.16)"></stop>
-            <stop offset="100%" stop-color="rgba(41,87,214,0)"></stop>
-          </linearGradient>
-        </defs>
-        ${gridLines}
-        ${axisLabels}
-        ${monthLabels}
-        <path d="${areaPath}" fill="url(#trendFillGradient)"></path>
-        <path class="trend-line" d="${linePath}"></path>
-        ${dots}
-      </svg>
+      <div class="trend-plot">
+        <svg class="trend-chart" width="100%" height="${H}" role="img" aria-label="Team health score by week for the last ${HEALTH_TREND_WEEKS} weeks, currently ${latest.score} of 100">
+          ${gridLines}
+          ${axisLine}
+          ${axisLabels}
+          ${monthLabels}
+          ${segments.join('')}
+          ${points}
+        </svg>
+      </div>
     </div>`;
 }

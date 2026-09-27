@@ -1,2 +1,844 @@
 /* Insights (health trend, development path heatmap and web, tenure, recent themes) and the chart pieces shown inside the workspace.
-   Owner: W5 insights and charts. */
+   Owner: W5 insights and charts.
+
+   Charts follow the Moss chart rules: thin marks, one axis, grid lines in
+   --line-soft, 12px --ink-2 axis labels that are never scaled by a viewBox,
+   a single measure as a 2px --accent line, levels and heatmaps on the one hue
+   ramp, and categories (tenure markers, people in the team web, themes) in
+   ink, ramp steps and shapes, never the accent or the status colors. */
+
+/* --- Insights layout ------------------------------------------------------- */
+.insights-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.insights-tab > * { min-width: 0; max-width: 100%; }
+
+.trend-card,
+.cdp-card,
+.tenure-river-card,
+.recent-themes-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+  padding: 16px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+/* Card heads: title and note on the left, the mode switch or meta on the right. */
+.trend-head,
+.tenure-river-head,
+.recent-themes-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px 14px;
+  min-width: 0;
+}
+.trend-head { align-items: baseline; }
+.trend-head-text,
+.tenure-river-head > div:first-child,
+.recent-themes-head > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.trend-card h3,
+.cdp-card h3,
+.tenure-river-card h3,
+.recent-themes-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.trend-sub,
+.tenure-river-head p,
+.recent-themes-head p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.trend-note {
+  flex-shrink: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.tenure-river-head .tenure-mode-toggle { flex-shrink: 0; }
+
+.tenure-footnote,
+.recent-themes-footnote,
+.cdp-card-footnote {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.45;
+  text-align: left;
+}
+
+/* --- Health trend ------------------------------------------------------------ */
+/* x is a percentage of the plot and y is in pixels, so the SVG has no viewBox
+   and its text renders at 12px. The y labels sit in the left padding. */
+.trend-card { container: trend / inline-size; }
+.trend-plot {
+  min-width: 0;
+  padding: 2px 14px 0 34px;
+}
+@container trend (max-width: 600px) {
+  .trend-month-label.tight { display: none; }
+}
+.trend-chart {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.trend-grid-line { stroke: var(--line-soft); stroke-width: 1; }
+.trend-axis-line { stroke: var(--line); stroke-width: 1; }
+.trend-axis-label,
+.trend-month-label {
+  fill: var(--ink-2);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.trend-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.trend-hit { fill: transparent; }
+.trend-dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.trend-dot.current,
+.trend-point:hover .trend-dot { opacity: 1; }
+
+/* --- Legends ----------------------------------------------------------------- */
+.tenure-legend,
+.tenure-mini-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-width: 0;
+}
+.tenure-river-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.tenure-legend .swatch.threshold { --swatch-fill: var(--mixed); --swatch-line: var(--mixed); }
+.legend-item .tenure-glyph { width: 12px; height: 12px; }
+
+/* Marker shapes: white with an ink outline; Today is filled. */
+.tenure-glyph {
+  display: block;
+  flex-shrink: 0;
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.tenure-glyph-today { fill: var(--ink); }
+.tenure-threshold-glyph {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--amber-strong);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Level bars on the ramp. Light steps keep a --field-line border so the bar
+   reaches 3:1 against white; the dark steps reach it on their own. */
+.tenure-river-bar,
+.tenure-mini-bar {
+  --bar-fill: var(--sunken);
+  --bar-line: var(--field-line);
+  border: 1px solid var(--bar-line);
+  border-radius: 3px;
+  background: var(--bar-fill);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+:is(.tenure-river-bar, .tenure-mini-bar).level-1 { --bar-fill: var(--ramp-1); }
+:is(.tenure-river-bar, .tenure-mini-bar).level-2 { --bar-fill: var(--ramp-2); }
+:is(.tenure-river-bar, .tenure-mini-bar).level-3 { --bar-fill: var(--ramp-3); }
+:is(.tenure-river-bar, .tenure-mini-bar).level-4 { --bar-fill: var(--ramp-4); --bar-line: var(--ramp-4); }
+:is(.tenure-river-bar, .tenure-mini-bar).level-5 { --bar-fill: var(--ramp-5); --bar-line: var(--ramp-5); }
+:is(.tenure-river-bar, .tenure-mini-bar).level-6 { --bar-fill: var(--ramp-6); --bar-line: var(--ramp-6); }
+
+/* --- Team tenure river ----------------------------------------------------------- */
+/* An HTML grid: name, track, duration. Each row is a real button. The year
+   labels sit above the track column and each track draws its own year lines,
+   so the lines run behind the bars and never cross a name or a duration. */
+.tenure-river-card { container: tenure / inline-size; }
+.tenure-river-svg-wrap { min-width: 0; }
+.tenure-river {
+  display: grid;
+  grid-template-columns: fit-content(160px) minmax(0, 1fr) max-content;
+  grid-template-rows: 24px;
+  grid-auto-rows: 34px;
+  column-gap: 16px;
+  min-width: 0;
+}
+.tenure-river-scale {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  pointer-events: none;
+}
+.tenure-river-years { position: relative; height: 24px; }
+.tenure-river-year {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tenure-river-gridline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px solid var(--line-soft);
+}
+.tenure-river-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  min-width: 0;
+  height: 34px;
+  margin: 0 -8px;
+  padding: 0 8px;
+  border-radius: var(--radius-button);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+.tenure-river-row:hover { background: var(--sunken); }
+.tenure-river-name {
+  grid-column: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tenure-river-track {
+  position: relative;
+  grid-column: 2;
+  align-self: stretch;
+  min-width: 0;
+}
+.tenure-river-bar {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 10px;
+  margin-top: -5px;
+}
+.tenure-river-bar.overdue { --bar-fill: var(--mixed); --bar-line: var(--mixed); }
+.tenure-river-bar.missing {
+  border: 1.5px dashed var(--field-line);
+  background: transparent;
+}
+.tenure-river-marker {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+}
+.tenure-river-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  grid-column: 3;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tenure-river-duration.overdue { color: var(--amber-strong); font-weight: 600; }
+
+/* Narrow cards: the name and duration share a line above the track. */
+@container tenure (max-width: 640px) {
+  .tenure-river {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    grid-auto-rows: auto;
+  }
+  .tenure-river-scale { grid-column: 1 / -1; }
+  .tenure-river-row {
+    grid-template-rows: 20px 18px;
+    height: auto;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .tenure-river-name { grid-column: 1; grid-row: 1; }
+  .tenure-river-duration { grid-column: 2; grid-row: 1; }
+  .tenure-river-track { grid-column: 1 / -1; grid-row: 2; }
+  .tenure-river-year:nth-child(even) { display: none; }
+}
+
+/* --- Tenure and promotion timeline (workspace profile) ----------------------------- */
+/* The level bar runs from hire to today. Markers are shapes on the bar, and
+   each label hangs under its marker in the lane the script picked so labels
+   never overlap. Below 576px the narrow lanes and anchors take over. */
+.tenure-mini-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.tenure-mini-wrap {
+  container: tenuremini / inline-size;
+  min-width: 0;
+  padding: 4px 8px 0;
+}
+.tenure-mini-chart {
+  position: relative;
+  height: calc(30px + var(--lanes, 1) * 36px);
+}
+.tenure-mini-bar {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+.tenure-mini-point {
+  --l: var(--lane, 0);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+}
+.tenure-mini-point::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: -0.5px;
+  height: calc(8px + var(--l) * 36px);
+  border-left: 1px solid var(--field-line);
+}
+.tenure-mini-marker {
+  position: absolute;
+  top: 5px;
+  left: -7px;
+  width: 14px;
+  height: 14px;
+}
+.tenure-mini-label {
+  position: absolute;
+  top: calc(30px + var(--l) * 36px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-50%);
+  text-align: center;
+  white-space: nowrap;
+}
+.tenure-mini-point[data-anchor="start"] .tenure-mini-label { left: -7px; transform: none; text-align: left; }
+.tenure-mini-point[data-anchor="end"] .tenure-mini-label { left: auto; right: -7px; transform: none; text-align: right; }
+.tenure-mini-label-name {
+  color: var(--ink);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: 16px;
+}
+.tenure-mini-label-date {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+@container tenuremini (max-width: 575px) {
+  .tenure-mini-chart { height: calc(30px + var(--lanes-n, 1) * 36px); }
+  .tenure-mini-point { --l: var(--lane-n, 0); }
+  .tenure-mini-point[data-anchor-n] .tenure-mini-label { left: 0; right: auto; transform: translateX(-50%); text-align: center; }
+  .tenure-mini-point[data-anchor-n="start"] .tenure-mini-label { left: -7px; transform: none; text-align: left; }
+  .tenure-mini-point[data-anchor-n="end"] .tenure-mini-label { left: auto; right: -7px; transform: none; text-align: right; }
+}
+
+/* --- Development path: team heatmap ------------------------------------------------ */
+/* Completion is bucketed onto the six ramp steps. Ink text on the light steps,
+   white on the two dark ones (both at least 4.5:1). The current stage has an
+   ink ring, so it never depends on color. */
+.cdp-hm-scroll {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.cdp-hm-table {
+  width: 100%;
+  min-width: 560px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.cdp-hm-table thead th {
+  height: 26px;
+  padding: 0 4px;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cdp-hm-table .cdp-hm-person-cell { width: 210px; }
+/* The person cell is the row header: a th holding the open button. */
+.cdp-hm-person-cell {
+  padding: 0;
+  font-weight: 400;
+  text-align: left;
+}
+.cdp-hm-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 8px 0 4px;
+  border-radius: var(--radius-button);
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+.cdp-hm-person:hover { background: var(--sunken); }
+.cdp-hm-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cdp-hm-cell {
+  --hm-fill: var(--ramp-1);
+  --hm-ink: var(--ink);
+  height: 40px;
+  padding: 0 6px;
+  border-radius: var(--radius-tag);
+  background: var(--hm-fill);
+  color: var(--hm-ink);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cdp-hm-cell.step-2 { --hm-fill: var(--ramp-2); }
+.cdp-hm-cell.step-3 { --hm-fill: var(--ramp-3); }
+.cdp-hm-cell.step-4 { --hm-fill: var(--ramp-4); }
+.cdp-hm-cell.step-5 { --hm-fill: var(--ramp-5); --hm-ink: var(--surface); }
+.cdp-hm-cell.step-6 { --hm-fill: var(--ramp-6); --hm-ink: var(--surface); }
+/* The ring is a positioned pseudo element rather than an outline, so on
+   narrow cards it scrolls under the sticky names like the cell itself. */
+.cdp-hm-cell { position: relative; }
+.cdp-hm-cell.current { font-weight: 600; }
+.cdp-hm-cell.current::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 2px solid var(--ink);
+  border-radius: calc(var(--radius-tag) + 3px);
+  pointer-events: none;
+}
+
+.cdp-card { container: cdpteam / inline-size; }
+/* Narrow cards: the avatars go and the table scrolls inside the card. Each
+   stage column keeps at least 64px, so no header is cut, and the names stay
+   in view while the stages scroll. */
+@container cdpteam (max-width: 600px) {
+  .cdp-hm-table { min-width: 552px; }
+  .cdp-hm-table .cdp-hm-person-cell {
+    position: sticky;
+    left: 4px;
+    z-index: 1;
+    width: 136px;
+    background: var(--surface);
+  }
+  /* Covers the 4px gaps around the names too, where a scrolled cell or
+     current-stage ring would otherwise show. The 4px left offset keeps room
+     for the focus ring, and a focused name sits above its neighbors. */
+  .cdp-hm-table .cdp-hm-person-cell::before {
+    content: "";
+    position: absolute;
+    inset: -2px 0 -2px -4px;
+    z-index: -1;
+    background: var(--surface);
+  }
+  .cdp-hm-table .cdp-hm-person-cell:focus-within { z-index: 2; }
+  .cdp-hm-person .fu-avatar { display: none; }
+}
+
+/* --- Development path: team web --------------------------------------------------- */
+.cdp-web-wrap {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+.cdp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+.cdp-legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--small-height);
+  padding: 0 10px;
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 120ms ease;
+}
+.cdp-legend-chip:hover { background: var(--sunken); }
+.cdp-legend-line { display: block; flex-shrink: 0; }
+.cdp-legend-line line { fill: none; stroke-width: 2; stroke-linecap: round; }
+/* A single person's web uses the accent outline, so its legend key does too. */
+.cdp-legend-swatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent);
+  border-radius: 3px;
+}
+
+/* --- Radar (the person's web and the team web) ------------------------------------- */
+/* The plot is a square SVG that scales down with the card, up to its full
+   diameter (--radar-d). Strokes keep their width (non-scaling-stroke). The
+   stage labels are HTML around the plot, so they are always 12px; the
+   padding leaves room for them: 64px on the sides for "C · Skilled", 26px
+   above and below. */
+.cdp-radar {
+  box-sizing: border-box;
+  width: calc(var(--radar-d, 220px) + 128px);
+  max-width: 100%;
+  padding: 26px 64px;
+}
+.cdp-radar-plot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.cdp-radar-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.cdp-radar-ring,
+.cdp-radar-axis {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.cdp-radar-label {
+  position: absolute;
+  left: calc(50% + var(--lx) * (50% + 16px));
+  top: calc(50% + var(--ly) * (50% + 16px));
+  transform: translate(-50%, -50%);
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.cdp-radar-label[data-anchor="start"] { transform: translate(0, -50%); }
+.cdp-radar-label[data-anchor="end"] { transform: translate(-100%, -50%); }
+.cdp-radar-label.current { color: var(--ink); font-weight: 600; }
+.cdp-radar-shape {
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.cdp-radar-shape.is-single {
+  fill: var(--accent);
+  fill-opacity: 0.12;
+  stroke: var(--accent);
+}
+.cdp-radar-shape.is-team { fill: none; }
+.cdp-radar-dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* --- Development path: the workspace Development tab ------------------------------- */
+.cdp-section { container: cdp / inline-size; }
+.cdp-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  min-width: 0;
+}
+.cdp-radar-wrap {
+  display: flex;
+  justify-content: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.cdp-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.cdp-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cdp-summary strong {
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.cdp-summary span {
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.cdp-stage-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* Stage pills are small buttons. The stage being viewed has an accent ring
+   (where you are); the person's current stage has a leading dot. */
+.cdp-stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--small-height);
+  padding: 0 10px;
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.cdp-stage-pill:hover { background: var(--sunken); }
+/* The viewed stage: a 2px accent border, with 1px less padding so the text
+   stays put. */
+.cdp-stage-pill.active {
+  padding: 0 9px;
+  border: 2px solid var(--accent);
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+.cdp-stage-pill.active:hover { background: var(--surface); }
+.cdp-stage-pill.current::before {
+  content: "";
+  display: block;
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cdp-stage-title {
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.cdp-implied-note {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-menu);
+  background: var(--page);
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.cdp-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cdp-group-title {
+  padding: 4px 0 8px;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.4;
+}
+/* Rows reach 10px past the text so the tick fade has room; the divider
+   stays in line with the text. */
+.cdp-item {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 12px;
+  min-width: 0;
+  margin: 0 -10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-button);
+}
+.cdp-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+.cdp-item-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1 1 320px;
+  min-width: 0;
+  cursor: pointer;
+}
+.cdp-item-main input[type="checkbox"] { margin-top: 2px; }
+.cdp-item-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.cdp-item-text {
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.cdp-hint {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.cdp-item-side {
+  --field-h: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  margin-top: -8px;
+  margin-bottom: -8px;
+}
+.cdp-item-side .cdp-date-label {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+.cdp-item-side .cdp-date { width: 150px; }
+/* Narrow sections: the achieved date moves under the capability text. */
+@container cdp (max-width: 560px) {
+  .cdp-item-side { margin: 0 0 0 26px; }
+}
+
+/* --- Recent themes ---------------------------------------------------------------- */
+/* Neutral tags. Frequency changes the size, within the Moss sizes, never the
+   color. The chip whose filter is on gets an ink ring. */
+.theme-chip-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--small-height);
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-tag);
+  background: var(--sunken);
+  color: var(--ink-3);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+.theme-chip span {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.theme-chip.chip-md { height: 30px; padding: 0 11px; font-size: var(--text-small); }
+.theme-chip.chip-lg { height: 34px; padding: 0 12px; font-size: var(--text-panel); }
+.theme-chip:hover { border-color: var(--outline); }
+.theme-chip.active {
+  border-color: var(--ink-3);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* --- Narrow screens ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .trend-card,
+  .cdp-card,
+  .tenure-river-card,
+  .recent-themes-card { padding: 14px; }
+  .trend-plot { padding-right: 12px; }
+}

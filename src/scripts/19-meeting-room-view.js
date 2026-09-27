@@ -21,27 +21,26 @@ function renderMeetingRoomView() {
   const donePoints = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => point.done);
   const openFollowUps = metrics.openFollowUps || [];
   const goals = metrics.goals || [];
-  const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
   const lastOneOnOneText = metrics.lastOneOnOne
     ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${dateDiffInDays(metrics.lastOneOnOne) !== null ? ` · ${dateDiffInDays(metrics.lastOneOnOne)}d ago` : ''}`
     : 'No 1:1 logged yet';
   const chips = [
-    badge(lastOneOnOneText, metrics.oneOnOneOverdue ? 'warning' : 'neutral'),
+    badge(lastOneOnOneText, metrics.oneOnOneOverdue ? 'amber' : 'neutral'),
     statusPillHtml('pdc', metrics.pdcStatus),
-    openFollowUps.length ? badge(`${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}`, 'info') : '',
+    openFollowUps.length ? badge(`${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}`, 'neutral') : '',
     report.nextOneOnOneDate ? badge(`Next planned ${formatDate(report.nextOneOnOneDate)}`, 'neutral') : '',
-    metrics.vacationStatus?.active ? badge('On vacation', 'info') : '',
+    metrics.vacationStatus?.active ? badge('On vacation', 'neutral') : '',
     renderPulseDots(metrics.pulseSeries, { emptyHtml: '' })
   ].filter(Boolean).join('');
 
   const pointsHtml = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item">
-          <input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} aria-label="Covered in this meeting">
-          <span class="tp-item-text">${escapeHtml(point.text)}
-            ${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}
-          </span>
-          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
+          <label>
+            <input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} title="Covered in this meeting">
+            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}</span>
+          </label>
+          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued. Add the first talking point below.</p>';
 
@@ -57,53 +56,58 @@ function renderMeetingRoomView() {
     ? goals.map((goal) => `
         <div class="mr-goal-row">
           <span class="mr-goal-title" title="${escapeHtml(goal.title)}">${escapeHtml(goal.title)}</span>
-          ${statusPillHtml('goal', goal.status)}
-          ${renderGoalProgressBar(goal, { compact: true })}
-          <button type="button" class="tt-action-btn" data-mr-goal-edit="${escapeHtml(goal.id)}" title="Edit goal">Edit</button>
+          <div class="mr-goal-meta">
+            ${statusPillHtml('goal', goal.status)}
+            ${renderGoalProgressBar(goal, { compact: true })}
+            <button type="button" class="tt-action-btn" data-mr-goal-edit="${escapeHtml(goal.id)}" title="Edit goal">Edit</button>
+          </div>
         </div>`).join('')
     : '<p class="tp-empty">No goals yet. Add one to anchor the development conversation.</p>';
 
   mount.innerHTML = `
     <div class="mr-shell" data-mr-report="${escapeHtml(report.id)}">
       <div class="mr-header">
-        <div class="mr-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
-        <div class="mr-header-title">
-          <h2>${escapeHtml(report.name || 'Unnamed')}</h2>
-          <p>${escapeHtml(report.level || 'Level not set')}${report.mentors ? ` · Mentor: ${escapeHtml(report.mentors)}` : ''}</p>
-        </div>
         <div class="mr-chips">${chips}</div>
       </div>
       <div class="mr-grid">
         <div class="mr-col">
-          <div class="mr-panel">
-            <h3>Talking Points</h3>
-            <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
+          <section class="mr-panel">
+            <div class="mr-panel-head">
+              <h3>Talking Points</h3>
+              <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
+            </div>
             ${pointsHtml}
             <div class="tp-add">
-              <input type="text" id="mrTpInput" placeholder="Add a talking point and press Enter" autocomplete="off">
+              <input type="text" id="mrTpInput" placeholder="Add a talking point and press Enter" autocomplete="off" aria-label="New talking point">
               <button type="button" class="secondary" id="mrTpAddBtn">Add</button>
             </div>
             ${donePoints.length ? `<button type="button" class="tp-done-toggle" data-open-report-meetings="${escapeHtml(report.id)}">${donePoints.length} discussed point${donePoints.length === 1 ? '' : 's'} in the workspace →</button>` : ''}
-          </div>
-          <div class="mr-panel">
-            <h3>Open Follow-Ups</h3>
-            <p class="section-note">Ticking marks them complete immediately in the source meeting note.</p>
+          </section>
+          <section class="mr-panel">
+            <div class="mr-panel-head">
+              <h3>Open Follow-Ups</h3>
+              <p class="section-note">Ticking marks them complete immediately in the source meeting note.</p>
+            </div>
             ${followUpsHtml}
-          </div>
-          <div class="mr-panel">
-            <h3>Goals</h3>
-            <p class="section-note">The development thread this conversation should touch.</p>
-            <div>${goalsHtml}</div>
-            <div class="actions" style="margin-top:10px;">
+          </section>
+          <section class="mr-panel">
+            <div class="mr-panel-head">
+              <h3>Goals</h3>
+              <p class="section-note">The development thread this conversation should touch.</p>
+            </div>
+            <div class="mr-goal-list">${goalsHtml}</div>
+            <div class="actions mr-goal-actions">
               <button type="button" class="secondary" id="mrAddGoalBtn">Add goal</button>
               <button type="button" class="secondary" id="mrLogFeedbackBtn">Log feedback</button>
             </div>
-          </div>
+          </section>
         </div>
         <div class="mr-col">
           ${renderPrevMeetingPanelHtml(report, draft)}
-          <div class="mr-panel">
-            <h3>This Meeting</h3>
+          <section class="mr-panel mr-meeting">
+            <div class="mr-panel-head">
+              <h3>This Meeting</h3>
+            </div>
             <div class="mr-meta-row">
               <label><span>Type</span>
                 <select id="mrType">${MEETING_TYPES.map((type) => `<option value="${escapeHtml(type)}" ${type === draft.meetingType ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('')}</select>
@@ -118,19 +122,17 @@ function renderMeetingRoomView() {
                 <button type="button" class="pulse-clear" id="mrPulseClear" title="Clear pulse">Clear</button>
               </div>
             </div>
-            <div style="margin-top:12px;">
-              <textarea id="mrNotes" class="mr-notes" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
-            </div>
-            <div class="actions" style="margin-top:10px;">
+            <textarea id="mrNotes" class="mr-notes" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
+            <div class="actions mr-insert-actions">
               <button type="button" class="secondary" id="mrInsertPointsBtn" ${openPoints.length ? '' : 'disabled'}>Insert talking points</button>
               <button type="button" class="secondary${draft.meetingType === 'PDC' ? '' : ' hidden'}" id="mrInsertPdcBtn">Insert PDC template</button>
             </div>
             <div class="mr-footer">
-              <div id="meetingRoomStatus" class="status-line"></div>
+              <div id="meetingRoomStatus" class="status-line" role="status"></div>
               <button type="button" class="secondary" id="mrBackBtn">Back</button>
               <button type="button" id="mrWrapUpBtn">Wrap up meeting</button>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>
@@ -219,12 +221,12 @@ function renderPrevMeetingPanelHtml(report, draft) {
     ? `<div class="note-markdown mr-prev-note">${renderNoteMarkdown(prev.notes)}</div>`
     : '<p class="tp-empty mr-prev-empty">No notes were written for that meeting.</p>';
   return `
-    <details class="mr-panel mr-prev" id="mrPrevDetails"${draft.prevNoteOpen ? ' open' : ''}>
+    <details class="mr-prev" id="mrPrevDetails"${draft.prevNoteOpen ? ' open' : ''}>
       <summary class="mr-prev-summary">
         <span class="mr-prev-title">Last time</span>
-        ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
+        ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
         <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
-        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
+        <svg class="mr-prev-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
       </summary>
       ${noteHtml}
     </details>`;

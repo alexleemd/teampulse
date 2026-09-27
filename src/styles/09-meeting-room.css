@@ -1,2 +1,276 @@
 /* The 1:1 room and the Last time recap, and its compact density.
-   Owner: W7 meeting room. */
+   Owner: W7 meeting room. Built from Meeting Room.html (and the open Last time
+   panel in Controls 4). The page header (eyebrow "1:1 room", the name, the
+   level and mentor line) is drawn by 05-shell-and-header.css. Shared pieces
+   (tags, pulse glyphs, talking point rows, fields, buttons, the pulse picker,
+   progress bars, empty states) come from 03 and 04; this file only lays them
+   out and adds a few room scoped variations under .mr-shell. */
+
+/* --- Shell: status chips row, then the two columns, 18px apart ------------ */
+.mr-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* What is left of the old header card: a plain row of tags plus the pulse
+   glyphs, no card. */
+.mr-header,
+.mr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mr-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 16px;
+  align-items: start;
+}
+.mr-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* --- Panels ---------------------------------------------------------------- */
+/* Surface, 1px line, radius 14, padding 16, never a shadow. The children are
+   spaced by the flex gap (12px), with 14px before the goal actions, the pulse
+   picker, the notes and the footer, as in the mockup. */
+.mr-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.mr-panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.mr-panel-head h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+}
+/* Panel notes are helper copy: 12.5px ink-2 under the title. Stable mode
+   hides them (02-moss-base.css). */
+.mr-panel-head .section-note {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+
+/* --- Talking Points -------------------------------------------------------- */
+/* The rows, the remove button and the add field are the shared talking point
+   pieces (04). The text and the "Carried over" tag wrap as a flex row: 8px
+   apart on one line (the mockup's margin), flush with the text column when
+   the tag wraps under a long point. Baseline alignment keeps the text where
+   the mockup's inline tag puts it. */
+.mr-shell .tp-list .tp-item-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 4px;
+}
+.mr-shell .tp-list .tp-item-text > .tp-chip { margin-left: 0; }
+/* The "… discussed points in the workspace →" link is a plain link button
+   here: it opens the workspace, so it has no disclosure chevron. */
+.mr-panel > .tp-done-toggle { align-self: flex-start; }
+.mr-panel > .tp-done-toggle::before { content: none; }
+
+/* --- Open Follow-Ups ------------------------------------------------------- */
+.mr-followups {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* --- Goals ----------------------------------------------------------------- */
+/* Each goal is two lines in a divided row: the title, then the status tag,
+   the progress bar with its percentage and a small Edit button at the right. */
+.mr-goal-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.mr-goal-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.mr-goal-row:first-child { border-top: 1px solid var(--line-soft); }
+.mr-goal-title {
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.mr-goal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.mr-goal-meta > .tt-action-btn {
+  margin-left: auto;
+  padding: 0 10px;
+}
+.mr-goal-actions { margin-top: 2px; }
+
+/* --- Last time (a details element drawn as a panel) ------------------------ */
+.mr-prev {
+  display: block;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.mr-prev-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: calc(var(--radius-card) - 1px);
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.mr-prev[open] > .mr-prev-summary { border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0; }
+.mr-prev-title {
+  flex: none;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+}
+/* The recap glyph is 9px in the mockup (Mixed: a 3.8px ring of 1.4px plus
+   the half fill), so the shared 10px shapes are swapped for 9px ones. */
+.mr-prev-summary .pulse-dot {
+  --pulse-glyph-good: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='4.5'/%3E%3C/svg%3E");
+  --pulse-glyph-mixed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='3.8' fill='none' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M4.5 0.7A3.8 3.8 0 0 0 4.5 8.3Z'/%3E%3C/svg%3E");
+  --pulse-glyph-rough: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='3.6' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
+  --pulse-glyph-none: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='3.75' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  width: 9px;
+  height: 9px;
+}
+.mr-prev-meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+/* The chevron turns over when the recap is open (120ms, answers the click). */
+.mr-prev-chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  color: var(--ink-2);
+  transition: transform 120ms ease;
+}
+.mr-prev[open] .mr-prev-chevron { transform: rotate(180deg); }
+.mr-prev-summary:hover .mr-prev-chevron { color: var(--ink); }
+/* Open: the note, 13.5px with a 1.55 line height. Long notes scroll inside
+   the panel, as before. */
+.mr-prev-note {
+  max-height: 260px;
+  margin: 0 16px 16px;
+  overflow-y: auto;
+  font-size: var(--text-small);
+  line-height: 1.55;
+}
+.mr-prev-empty { margin: 0 16px 16px; }
+
+/* --- This Meeting ---------------------------------------------------------- */
+/* Three equal fields (Type, Date, Duration) at 36px. On narrow panels they
+   wrap two to a row instead of cutting off the date. */
+.mr-meta-row {
+  --field-h: 36px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+.mr-meeting > .pulse-field,
+.mr-meeting > .mr-notes { margin-top: 2px; }
+.mr-notes {
+  display: block;
+  width: 100%;
+  min-height: 330px;
+  padding: 10px 12px;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  resize: vertical;
+}
+/* Back and Wrap up sit at the bottom right, under a soft divider. The status
+   line takes the rest of the row and never pushes the buttons down. */
+.mr-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 2px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.mr-footer > .status-line {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 18px;
+  margin: 0;
+}
+
+/* --- Compact density ------------------------------------------------------- */
+body.density-compact .mr-shell { gap: 14px; }
+body.density-compact .mr-grid { gap: 12px; }
+body.density-compact .mr-col { gap: 10px; }
+/* Panels keep the 14px minimum padding; the room tightens its gaps. */
+body.density-compact .mr-panel { gap: 10px; padding: 14px; }
+body.density-compact .mr-prev-summary { padding: 14px; }
+body.density-compact .mr-prev-note,
+body.density-compact .mr-prev-empty { margin: 0 14px 14px; }
+body.density-compact .mr-goal-row { gap: 6px; padding: 7px 0; }
+body.density-compact .mr-meta-row { gap: 8px; }
+body.density-compact .mr-notes { min-height: 240px; }
+body.density-compact .mr-footer { padding-top: 10px; }
+
+/* --- Narrow screens -------------------------------------------------------- */
+/* One column below 1100px, as before. */
+@media (max-width: 1100px) {
+  .mr-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .mr-panel { padding: 14px; }
+  .mr-prev-summary { padding: 14px; }
+  .mr-prev-note,
+  .mr-prev-empty { margin: 0 14px 14px; }
+  .mr-notes { min-height: 260px; }
+}

@@ -182,24 +182,40 @@ function runGlobalSearch(rawQuery) {
   return results;
 }
 
+// The results follow the combobox and listbox pattern: focus stays in the
+// field, the arrow keys move the active option (aria-activedescendant), and
+// each group of rows is a labelled group. With no match the list is hidden and
+// the message goes to the status region under it, so it is read out.
 function renderGlobalSearchResults() {
   gsResults = runGlobalSearch(globalSearchInputEl.value);
   gsActiveIndex = 0;
+  const statusEl = document.getElementById('globalSearchStatus');
   if (!gsResults.length) {
-    globalSearchResultsEl.innerHTML = `<div class="gs-empty">No matches for "${escapeHtml(normalizeText(globalSearchInputEl.value))}".</div>`;
+    globalSearchResultsEl.replaceChildren();
+    globalSearchResultsEl.hidden = true;
+    globalSearchInputEl.setAttribute('aria-expanded', 'false');
+    globalSearchInputEl.removeAttribute('aria-activedescendant');
+    const emptyEl = document.createElement('p');
+    emptyEl.className = 'gs-empty';
+    emptyEl.textContent = `No matches for "${normalizeText(globalSearchInputEl.value)}".`;
+    statusEl?.replaceChildren(emptyEl);
     return;
   }
+  statusEl?.replaceChildren();
   let html = '';
   let lastGroup = '';
+  let groupIndex = -1;
   gsResults.forEach((res, i) => {
     if (res.group !== lastGroup) {
-      html += `<div class="gs-group">${escapeHtml(res.group)}</div>`;
+      if (groupIndex >= 0) html += '</div>';
+      groupIndex += 1;
+      html += `<div class="gs-section" role="group" aria-labelledby="gs-grp-${groupIndex}"><div class="gs-group" id="gs-grp-${groupIndex}" role="presentation">${escapeHtml(res.group)}</div>`;
       lastGroup = res.group;
     }
     const iconHtml = res.avatarId
       ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
-      : `<span class="gs-icon" aria-hidden="true">→</span>`;
-    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" data-gs-index="${i}">
+      : `<span class="gs-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>`;
+    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" data-gs-index="${i}">
       ${iconHtml}
       <span class="gs-main">
         <span class="gs-title">${escapeHtml(res.title)}</span>
@@ -208,18 +224,37 @@ function renderGlobalSearchResults() {
       ${res.meta ? `<span class="gs-meta">${escapeHtml(res.meta)}</span>` : ''}
     </button>`;
   });
+  if (groupIndex >= 0) html += '</div>';
   globalSearchResultsEl.innerHTML = html;
+  globalSearchResultsEl.hidden = false;
+  globalSearchInputEl.setAttribute('aria-expanded', 'true');
+  globalSearchInputEl.setAttribute('aria-activedescendant', `gs-opt-${gsActiveIndex}`);
 }
 
 function gsUpdateActiveRow() {
+  let activeRow = null;
   globalSearchResultsEl.querySelectorAll('.gs-row').forEach((row) => {
-    row.classList.toggle('active', Number(row.getAttribute('data-gs-index')) === gsActiveIndex);
+    const isActive = Number(row.getAttribute('data-gs-index')) === gsActiveIndex;
+    row.classList.toggle('active', isActive);
+    row.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    if (isActive) activeRow = row;
   });
-  globalSearchResultsEl.querySelector('.gs-row.active')?.scrollIntoView({ block: 'nearest' });
+  if (!activeRow) {
+    globalSearchInputEl.removeAttribute('aria-activedescendant');
+    return;
+  }
+  globalSearchInputEl.setAttribute('aria-activedescendant', activeRow.id);
+  activeRow.scrollIntoView({ block: 'nearest' });
 }
+
+// The element that had focus before search opened, so closing search with
+// Escape or a click outside puts focus back where it was.
+let gsReturnFocusEl = null;
 
 function openGlobalSearch() {
   if (!app.connectedFolderReady || !app.doc) return;
+  const activeEl = document.activeElement;
+  gsReturnFocusEl = activeEl && activeEl !== document.body && !globalSearchEl.contains(activeEl) ? activeEl : null;
   globalSearchEl.classList.add('open');
   globalSearchEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
@@ -228,17 +263,22 @@ function openGlobalSearch() {
   globalSearchInputEl.focus();
 }
 
-function closeGlobalSearch() {
+function closeGlobalSearch(restoreFocus = true) {
   globalSearchEl.classList.remove('open');
   globalSearchEl.setAttribute('aria-hidden', 'true');
+  globalSearchInputEl.setAttribute('aria-expanded', 'false');
+  globalSearchInputEl.removeAttribute('aria-activedescendant');
   globalSearchInputEl.blur();
   syncBodyOverlayLock();
+  const returnEl = gsReturnFocusEl;
+  gsReturnFocusEl = null;
+  if (restoreFocus && returnEl && returnEl.isConnected && !returnEl.disabled) returnEl.focus({ preventScroll: true });
 }
 
 function runGsResult(index) {
   const res = gsResults[index];
   if (!res) return;
-  closeGlobalSearch();
+  closeGlobalSearch(false);
   res.run();
 }
 

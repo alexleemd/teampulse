@@ -25,6 +25,11 @@ function buildWeeklyMeetingBuckets(meetings, weeksCount) {
 
 // GitHub-style contribution grid: one cell per day, trailing 52 weeks,
 // Monday rows on top. Reflects the person and type filters of the view.
+// Cells are painted by CSS from data-level (Moss: an empty day is --sunken,
+// and the count steps 1, 2 and 3 or more are --ramp-4 to --ramp-6, the ramp
+// steps that reach 3:1 as marks). The SVGs are drawn at 1:1 so their labels
+// render at 12px. The weekday labels sit in their own column that does not
+// scroll, so they stay in view when the grid scrolls on narrow screens.
 function renderMeetingHeatmapHtml(meetings) {
   const WEEKS = 52;
   const start = mondayOf(todayStamp());
@@ -39,42 +44,68 @@ function renderMeetingHeatmapHtml(meetings) {
     dayCounts.set(key, (dayCounts.get(key) || 0) + 1);
     total += 1;
   });
-  const level = (c) => (c === 0 ? 0 : c === 1 ? 1 : c === 2 ? 2 : c <= 4 ? 3 : 4);
-  const COLORS = ['#edf1f8', '#cfe0ff', '#9ec1ff', '#5b8ffb', '#2957d6'];
-  const CELL = 11;
-  const STEP = 14;
-  const GUTTER = 30;
-  const TOP = 16;
-  const width = GUTTER + WEEKS * STEP;
-  const height = TOP + 7 * STEP;
-  let monthLabels = '';
+  const level = (c) => (c === 0 ? 0 : c === 1 ? 1 : c === 2 ? 2 : 3);
+  const CELL = 12;
+  const STEP = 15;
+  const DAYS_W = 34;
+  const TOP = 20;
+  const height = TOP + 7 * STEP - (STEP - CELL);
+  // One label where each month starts; every month keeps its label. A month
+  // that has a single column is too narrow for its name, so its label ends at
+  // that column instead of starting there: at the grid's end for the last
+  // month, and just before the next label for a partial first month, which
+  // then gets a little room (LEAD) before the first column.
+  const monthStarts = [];
   let prevMonth = '';
-  const cells = weekStarts.map((weekStart, col) => {
+  weekStarts.forEach((weekStart, col) => {
     const monthName = new Date(`${weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
     if (monthName !== prevMonth) {
-      monthLabels += `<text x="${GUTTER + col * STEP}" y="10" class="hm-label">${escapeHtml(monthName)}</text>`;
+      monthStarts.push({ col, monthName });
       prevMonth = monthName;
     }
+  });
+  const spanOf = (index) => (monthStarts[index + 1] ? monthStarts[index + 1].col : WEEKS) - monthStarts[index].col;
+  const LEAD = monthStarts.length > 1 && spanOf(0) === 1 ? 14 : 0;
+  const colX = (col) => LEAD + col * STEP;
+  const width = colX(WEEKS - 1) + CELL;
+  const monthLabels = monthStarts.map(({ col, monthName }, index) => {
+    let x = colX(col);
+    let anchor = '';
+    if (spanOf(index) === 1) {
+      x = index === monthStarts.length - 1 ? width : colX(monthStarts[index + 1].col) - 4;
+      anchor = ' text-anchor="end"';
+    }
+    return `<text x="${x}" y="12"${anchor} class="hm-label hm-month">${escapeHtml(monthName)}</text>`;
+  }).join('');
+  const cells = weekStarts.map((weekStart, col) => {
     let colCells = '';
     for (let row = 0; row < 7; row += 1) {
       const date = addDays(weekStart, row);
       const count = dayCounts.get(date) || 0;
       const title = `${count} meeting${count === 1 ? '' : 's'} · ${formatDate(date)}`;
-      colCells += `<rect x="${GUTTER + col * STEP}" y="${TOP + row * STEP}" width="${CELL}" height="${CELL}" rx="2.5" fill="${COLORS[level(count)]}" data-count="${count}"><title>${escapeHtml(title)}</title></rect>`;
+      colCells += `<rect class="hm-cell" x="${colX(col)}" y="${TOP + row * STEP}" width="${CELL}" height="${CELL}" rx="3" data-level="${level(count)}" data-count="${count}"><title>${escapeHtml(title)}</title></rect>`;
     }
     return colCells;
   }).join('');
-  const dayLabels = [['Mon', 0], ['Wed', 2], ['Fri', 4]].map(([label, row]) => `<text x="0" y="${TOP + row * STEP + 9}" class="hm-label">${label}</text>`).join('');
-  const legend = COLORS.map((c) => `<span class="hm-swatch" style="background:${c}"></span>`).join('');
+  const dayLabels = [['Mon', 0], ['Wed', 2], ['Fri', 4]].map(([label, row]) => `<text x="0" y="${TOP + row * STEP + 10}" class="hm-label">${label}</text>`).join('');
+  // Legend: the shared swatches, empty day first, then the three ramp steps.
+  const legend = ['', ' ramp-4', ' ramp-5', ' ramp-6'].map((step) => `<span class="swatch${step}"></span>`).join('');
   return `
     <div class="sharp-panel heatmap-panel">
       <div class="sharp-panel-header">
         <h3>Meeting rhythm · trailing 12 months</h3>
         <div class="sharp-panel-header-meta"><span class="hm-total">${total} meeting${total === 1 ? '' : 's'}</span></div>
       </div>
-      <div class="sharp-panel-body padded heatmap-scroll">
-        <svg id="meetingHeatmap" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Meetings per day over the trailing year">${monthLabels}${dayLabels}${cells}</svg>
-        <div class="hm-legend"><span>Less</span>${legend}<span>More</span></div>
+      <div class="sharp-panel-body padded">
+        <div class="hm-figure">
+          <div class="hm-chart">
+            <svg class="hm-days" width="${DAYS_W}" height="${height}" viewBox="0 0 ${DAYS_W} ${height}" aria-hidden="true" focusable="false">${dayLabels}</svg>
+            <div class="heatmap-scroll">
+              <svg id="meetingHeatmap" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Meetings per day over the trailing year">${monthLabels}${cells}</svg>
+            </div>
+          </div>
+          <div class="hm-legend" aria-hidden="true"><span>Less</span>${legend}<span>More</span></div>
+        </div>
       </div>
     </div>`;
 }
@@ -87,7 +118,6 @@ function renderMeetingsView() {
   const validFilter = filterId && reports.some((r) => r.id === filterId) ? filterId : '';
   const typeFilter = MEETING_TYPES.includes(app.ui.meetingsTypeFilter) ? app.ui.meetingsTypeFilter : '';
   const searchTerm = normalizeText(app.ui.meetingsSearch || '').toLowerCase();
-  const meetingsEntering = viewJustEntered('meetingsView', app.ui.mainView === 'meetings');
 
   const followUpsByMeeting = new Map();
   const items = [];
@@ -124,8 +154,13 @@ function renderMeetingsView() {
     .join('');
 
   const canLog = reports.length > 0;
+  // Toolbar as on Direct Reports: search field, the Person and Type selects,
+  // then the one primary button.
   const toolbar = `
     <div class="meetings-view-toolbar">
+      <div class="searchbox meetings-view-search">
+        <input id="meetingsSearchInput" type="search" placeholder="Search notes, names…" aria-label="Search notes, names" autocomplete="off" value="${escapeHtml(app.ui.meetingsSearch || '')}">
+      </div>
       <label class="meetings-view-filter">
         <span>Person</span>
         <select id="meetingsFilterSelect">${filterOptions}</select>
@@ -134,9 +169,6 @@ function renderMeetingsView() {
         <span>Type</span>
         <select id="meetingsTypeFilter">${typeOptions}</select>
       </label>
-      <div class="searchbox meetings-view-search">
-        <input id="meetingsSearchInput" type="search" placeholder="Search notes, names…" autocomplete="off" value="${escapeHtml(app.ui.meetingsSearch || '')}">
-      </div>
       <button type="button" id="meetingsLogBtn"${canLog ? '' : ' disabled'}>+ Log meeting</button>
     </div>
   `;
@@ -153,7 +185,8 @@ function renderMeetingsView() {
   if (items.length === 0) {
     const hasActiveFilter = validFilter || typeFilter || searchTerm;
     if (hasActiveFilter) {
-      mount.innerHTML = `${toolbar}${heatmapHtml}<div class="sharp-panel"><div class="sharp-panel-body padded"><p class="section-note" style="margin:0;">No meetings match the current filters.</p></div></div>`;
+      mount.innerHTML = `${toolbar}${heatmapHtml}<p class="section-note empty-note meetings-no-match">No meetings match the current filters.</p>`;
+      showLatestHeatmapWeeks(mount);
       return;
     }
     mount.innerHTML = `${toolbar}${heatmapHtml}${emptyHeroHtml(
@@ -161,6 +194,7 @@ function renderMeetingsView() {
       'No meetings logged yet',
       'Log the first one and it shows up here, on the heatmap, and in the person\u2019s history.'
     )}`;
+    showLatestHeatmapWeeks(mount);
     return;
   }
 
@@ -184,39 +218,84 @@ function renderMeetingsView() {
     } catch (_) { return 'Undated'; }
   };
 
+  // One list card. A month divider row starts each month, then one row per
+  // meeting: date, avatar, person, type tag, pulse glyph, the date and
+  // duration, the first line of the notes, and the follow-up count tag.
   let lastMonthKey = '';
-  const rows = items.map(({ report, meeting }, rowIndex) => {
+  const rows = items.map(({ report, meeting }) => {
     const monthKey = (meeting.meetingDate || '').slice(0, 7) || 'undated';
     const divider = monthKey !== lastMonthKey
-      ? `<div class="meetings-month-divider">${escapeHtml(monthHeading(meeting.meetingDate))}</div>`
+      ? `<h3 class="meetings-month-divider">${escapeHtml(monthHeading(meeting.meetingDate))}</h3>`
       : '';
     lastMonthKey = monthKey;
     const snippet = firstMeaningfulLine(meeting.notes) || 'No notes captured.';
     const mInitials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
     const fu = followUpsByMeeting.get(meeting.id);
     const fuChip = fu && fu.open
-      ? `<span class="mv-chip" data-tone="warning">${fu.open} open follow-up${fu.open === 1 ? '' : 's'}</span>`
+      ? `<span class="mv-chip" data-tone="neutral">${fu.open} open follow-up${fu.open === 1 ? '' : 's'}</span>`
       : (fu && fu.total ? `<span class="mv-chip" data-tone="good">Follow-ups done</span>` : '');
     const duration = Number.isFinite(Number(meeting.durationMinutes)) && Number(meeting.durationMinutes) > 0
       ? ` · ${Number(meeting.durationMinutes)} min` : '';
-    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0" style="--i:${Math.min(rowIndex, 12)}">
+    const pulse = normalizePulse(meeting.pulse);
+    const pulseGlyph = pulse
+      ? `<span class="pulse-dot" data-pulse="${escapeHtml(pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[pulse])}" title="${escapeHtml(PULSE_LABELS[pulse])}"></span>`
+      : '';
+    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0">
         <div class="meetings-view-date">
           <span class="meetings-view-date-m">${escapeHtml(monthName(meeting.meetingDate))}</span>
           <span class="meetings-view-date-d">${escapeHtml(dayNum(meeting.meetingDate))}</span>
         </div>
-        <div class="mv-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml(mInitials)}</div>
+        <div class="mv-avatar" aria-hidden="true">${escapeHtml(mInitials)}</div>
         <div class="meetings-view-main">
-          <span class="meetings-view-main-title">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}${normalizePulse(meeting.pulse) ? ` <span class="pulse-dot" data-pulse="${escapeHtml(normalizePulse(meeting.pulse))}" title="${escapeHtml(PULSE_LABELS[normalizePulse(meeting.pulse)])}"></span>` : ''}</span>
-          <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
+          <span class="meetings-view-main-title">
+            <span class="meetings-view-name">${escapeHtml(report.name || 'Unnamed')}</span>
+            <span class="tag neutral meetings-view-type">${escapeHtml(meeting.meetingType || '1:1')}</span>
+            ${pulseGlyph}
+            <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}${escapeHtml(duration)}</span>
+          </span>
           <span class="meetings-view-main-snip">${escapeHtml(snippet)}</span>
-          ${fuChip ? `<span class="meetings-view-chips">${fuChip}</span>` : ''}
         </div>
-        <div class="meetings-view-main-sub">Edit →</div>
+        ${fuChip ? `<span class="meetings-view-chips">${fuChip}</span>` : ''}
+        <div class="meetings-view-edit">Edit →</div>
       </div>`;
   }).join('');
 
-  mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view${meetingsEntering ? ' anim-entry' : ''}">${rows}</div>`;
+  mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view">${rows}</div>`;
+  showLatestHeatmapWeeks(mount);
 }
+
+// When the heatmap is wider than its card (narrow screens), start it scrolled
+// to the most recent weeks.
+function showLatestHeatmapWeeks(mount) {
+  const scroller = mount.querySelector('.heatmap-scroll');
+  if (!scroller) return;
+  if (scroller.scrollWidth > scroller.clientWidth) scroller.scrollLeft = scroller.scrollWidth;
+  hideCutHeatmapMonths(scroller);
+}
+
+// A month label that the scrolled edge cuts in half (the "c" of Dec) is
+// hidden until it is fully in view again.
+function hideCutHeatmapMonths(scroller) {
+  const left = scroller.scrollLeft;
+  const right = left + scroller.clientWidth;
+  const scrolls = scroller.scrollWidth > scroller.clientWidth + 1;
+  scroller.querySelectorAll('.hm-month').forEach((label) => {
+    let cut = false;
+    if (scrolls && scroller.clientWidth > 0) {
+      const box = label.getBBox();
+      cut = box.x < left - 0.5 || box.x + box.width > right + 0.5;
+    }
+    label.classList.toggle('hm-cut', cut);
+  });
+}
+
+document.addEventListener('scroll', (event) => {
+  const target = event.target;
+  if (target instanceof Element && target.classList.contains('heatmap-scroll')) hideCutHeatmapMonths(target);
+}, { capture: true, passive: true });
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.heatmap-scroll').forEach(hideCutHeatmapMonths);
+});
 
 // Opens a report's workspace on the Meetings & Agenda tab and scrolls to a
 // specific meeting. Used by the global Follow-Ups view.
@@ -228,7 +307,8 @@ function openReportMeetingsAt(reportId, meetingId) {
   window.setTimeout(() => {
     const target = [...document.querySelectorAll('[data-meeting-item]')].find((item) => item.getAttribute('data-meeting-item') === meetingId);
     if (target && typeof target.open === 'boolean') target.open = true;
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Moss motion lasts 150ms or less, so the jump is immediate.
+    if (target) target.scrollIntoView({ block: 'center' });
   }, 0);
 }
 
