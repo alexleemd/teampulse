@@ -92,12 +92,11 @@ function renderReportTileHtml(report, options = {}) {
   const tileTitle = report.initials || report.name || 'Unnamed';
   const openHook = onOverview ? `data-glyph-open="${id}"` : `data-report-card="${id}"`;
   const roomHook = onOverview ? `data-overview-room="${id}"` : `data-open-room="${id}"`;
-  const avatarMorph = onOverview ? '' : ` style="view-transition-name:vt-${id}"`;
   const pulseHtml = renderPulseDots(metrics.pulseSeries, { emptyHtml: '' });
   return `<div class="report-tile">
     <button type="button" class="report-tile-main" ${openHook}>
       <span class="report-tile-head">
-        <span class="report-tile-avatar" aria-hidden="true"${avatarMorph}>${escapeHtml(initials)}</span>
+        <span class="report-tile-avatar" aria-hidden="true">${escapeHtml(initials)}</span>
         <span class="report-tile-name${report.initials ? ' is-code' : ''}" ${hasCode ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
       </span>
       <span class="report-tile-meta">

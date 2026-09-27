@@ -798,17 +798,6 @@ function bindStaticEvents() {
       runGsResult(gsActiveIndex);
     }
   });
-  document.addEventListener('change', (event) => {
-    if (event.target && event.target.id === 'stableModeToggle') {
-      if (!app.doc) return;
-      clearLastDestructiveAction();
-      app.doc.settings.stableMode = !!event.target.checked;
-      document.body.classList.toggle('stable-mode', !!app.doc.settings.stableMode);
-      scheduleAutosave();
-      render();
-    }
-  });
-
   window.addEventListener('beforeunload', (event) => {
     if (!app.saveQueued && !app.saveInFlight && !app.lastSaveError && !hasUnsavedWorkspaceChanges()) return;
     event.preventDefault();

@@ -7,7 +7,6 @@ function applyProjectedState() {
     clearWorkspaceDraft();
   }
   persistUiState();
-  document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
 }
 
 function getThemeWindowDays(settings = app.doc?.settings || normalizeSettings({})) {
