@@ -1,6 +1,7 @@
 // Renders the global Follow-Ups view: every open [ ] line from meeting notes
 // across the team, grouped by person, toggleable in place.
 function renderFollowUpsView() {
+  if (viewSectionHidden('followUpsSection')) return;
   const mount = document.getElementById('followUpsBody');
   if (!mount) return;
   const reports = getReports();
@@ -326,6 +327,7 @@ function renderOneOnOneBoardHtml(reports) {
 // PDC status, last and next PDC dates, and the two focus fields — editable in
 // place so a whole PDC round can be captured from this one screen.
 function renderPdcSummaryView() {
+  if (viewSectionHidden('pdcSummarySection')) return;
   const mount = document.getElementById('pdcSummaryBody');
   if (!mount) return;
   const reports = getSortedReports();
