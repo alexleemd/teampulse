@@ -127,8 +127,8 @@
 /* --- Panels ---------------------------------------------------------------- */
 /* Every workspace panel head is one 28px title row, whatever sits in it, so
    the content starts at the same offset (17px under the title text) in
-   every panel. The title sits 5px down in the row; the note (Stable mode
-   off) follows 4px under the title. A control is centered on the title
+   every panel. The title sits 5px down in the row; the note follows 4px
+   under the title. A control is centered on the title
    line: a 28px small button fills the row, a 36px button takes 4px back at
    the top and at the bottom, a 22px count tag moves down 3px. When the head
    wraps on a narrow panel, the row gap keeps the control 12px below the

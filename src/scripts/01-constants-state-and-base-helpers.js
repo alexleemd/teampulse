@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.55.9';
+const APP_VERSION = 'v0.55.10';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -125,7 +125,7 @@ const TEAM_HEALTH_TAB_LABELS = Object.freeze({
   'overview': 'Overview',
   'insights': 'Insights'
 });
-// All three workspace tabs are visible. The top-level Meetings and PDC Summary
+// All four workspace tabs are visible. The top-level Meetings and PDC Summary
 // sidebar views are the cross-team rollups; these tabs are the per-person deep
 // dive (and the only place PDC focus, notes, evidence, and snoozes are edited).
 const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary', 'timeline']);
