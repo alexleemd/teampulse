@@ -7513,7 +7513,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.5';
+const APP_VERSION = 'v0.54.6';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -7653,7 +7653,10 @@ const FORMATTERS = {
   longDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
   dateTime: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
   monthDay: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
-  clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' })
+  clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }),
+  monthShort: new Intl.DateTimeFormat(undefined, { month: 'short' }),
+  monthYear: new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }),
+  weekdayDate: new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 };
 
 
@@ -13168,7 +13171,7 @@ function renderMeetingHeatmapHtml(meetings) {
   const monthStarts = [];
   let prevMonth = '';
   weekStarts.forEach((weekStart, col) => {
-    const monthName = new Date(`${weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    const monthName = FORMATTERS.monthShort.format(new Date(`${weekStart}T00:00:00`));
     if (monthName !== prevMonth) {
       monthStarts.push({ col, monthName });
       prevMonth = monthName;
@@ -13312,7 +13315,7 @@ function renderMeetingsView() {
     if (!iso) return '';
     try {
       const d = new Date(iso + 'T00:00:00');
-      return d.toLocaleString(undefined, { month: 'short' });
+      return FORMATTERS.monthShort.format(d);
     } catch (_) { return ''; }
   };
   const dayNum = (iso) => {
@@ -13324,7 +13327,7 @@ function renderMeetingsView() {
     if (!iso) return 'Undated';
     try {
       const d = new Date(iso + 'T00:00:00');
-      return d.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+      return FORMATTERS.monthYear.format(d);
     } catch (_) { return 'Undated'; }
   };
 
@@ -13822,7 +13825,7 @@ function pdcRoundInfo(settings = app.doc?.settings || normalizeSettings({}), sta
   const endMonth0 = endAbs % 12;
   const startStamp = `${startYear}-${String(startMonth0 + 1).padStart(2, '0')}-01`;
   const endStamp = localDateStamp(new Date(endYear, endMonth0 + 1, 0));
-  const monthLabel = (m0, y) => new Date(y, m0, 1).toLocaleString(undefined, { month: 'short' });
+  const monthLabel = (m0, y) => FORMATTERS.monthShort.format(new Date(y, m0, 1));
   const rangeLabel = startYear === endYear
     ? `${monthLabel(startMonth0, startYear)} to ${monthLabel(endMonth0, endYear)} ${endYear}`
     : `${monthLabel(startMonth0, startYear)} ${startYear} to ${monthLabel(endMonth0, endYear)} ${endYear}`;
@@ -17212,7 +17215,7 @@ function renderBriefingSection(reportStates) {
   if (!reportStates.length) return '';
   const items = buildBriefingItems(reportStates);
   if (!items.length) return '';
-  const dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  const dateLabel = FORMATTERS.weekdayDate.format(new Date());
   const rows = items.map((item) => {
     if (item.people && item.people.length) {
       const chips = item.people.map((person) => `
@@ -17596,7 +17599,7 @@ function renderHealthTrendCard(reports) {
   const monthTicks = [];
   let prevMonth = '';
   series.forEach((point, i) => {
-    const monthName = new Date(`${point.weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    const monthName = FORMATTERS.monthShort.format(new Date(`${point.weekStart}T00:00:00`));
     if (monthName !== prevMonth) {
       monthTicks.push({ i, monthName });
       prevMonth = monthName;
