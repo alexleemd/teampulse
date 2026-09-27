@@ -16,10 +16,14 @@ try {
     if (stack) {
       const panel = document.createElement('div');
       panel.className = 'toast error';
+      panel.setAttribute('data-toast-icon', 'error');
       panel.setAttribute('role', 'alert');
-      panel.style.maxWidth = '520px';
+      try { panel.appendChild(createToastIcon('error')); } catch (_) { /* the message alone still helps */ }
       const message = (error && error.message) ? error.message : String(error);
-      panel.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      const messageEl = document.createElement('div');
+      messageEl.className = 'toast-message';
+      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      panel.appendChild(messageEl);
       stack.appendChild(panel);
     }
   } catch (_) { /* last-ditch: leave console error only */ }
