@@ -130,9 +130,6 @@ async function exportPlainFiles(options = {}) {
 // (is-failed) and No folder connected (is-disconnected). The dot is drawn in CSS.
 function updateFileUi() {
   const connected = !!app.folderHandle && app.connectedFolderReady;
-  saveDockEl.classList.add('hidden');
-  saveDockEl.classList.remove('nudge');
-
   if (!connected) {
     fileStatePillEl.textContent = 'No folder connected';
     fileStatePillEl.className = 'save-status is-disconnected';

@@ -8,7 +8,7 @@ function workspaceScrollBehavior() {
 
 function currentDetailDrawerTab() {
   // Clamp to the visible set: the workspace now only exposes Profile.
-  return VISIBLE_DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
+  return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
 // Composes a clean A4 one-pager for a person (profile facts, development
@@ -91,12 +91,12 @@ function printPdcOnePager(reportId) {
 }
 
 function renderDetailDrawerTabBar(metrics = null, isCreating = false) {
-  if (VISIBLE_DETAIL_DRAWER_TABS.length <= 1) return '';
+  if (DETAIL_DRAWER_TABS.length <= 1) return '';
   const activeTab = currentDetailDrawerTab();
   const openCount = !isCreating && metrics ? (metrics.openFollowUps || []).length : 0;
   return `
     <div class="drawer-workspace-tabs" id="detailWorkspaceTabBar" role="tablist" aria-label="Direct report workspace sections">
-      ${VISIBLE_DETAIL_DRAWER_TABS.map((tab) => {
+      ${DETAIL_DRAWER_TABS.map((tab) => {
         const isActive = tab === activeTab;
         const countChip = tab === 'meetings' && openCount ? `<span class="drawer-tab-count" title="${openCount} open follow-up${openCount === 1 ? '' : 's'}">${openCount}</span>` : '';
         return `<button type="button" class="drawer-workspace-tab${isActive ? ' active' : ''}" data-drawer-tab="${escapeHtml(tab)}" role="tab" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(DETAIL_DRAWER_TAB_LABELS[tab])}${countChip}</button>`;
@@ -355,7 +355,7 @@ function renderDetailDrawer() {
     if (newContentEl) newContentEl.scrollTop = previousContentScroll;
   }
 
-  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => navigateRender(() => clearSelectedReport()));
+  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => clearSelectedReport());
   document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => deleteReport(report.id));
   document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
     document.getElementById('detailEditorForm')?.requestSubmit();
@@ -400,7 +400,7 @@ function renderDetailDrawer() {
       captureWorkspaceDraftFromDom(detailEditorFormEl);
       app.ui.detailDrawerTab = nextTab;
       persistUiState();
-      navigateRender(() => renderDetailDrawer());
+      renderDetailDrawer();
     });
   });
   const detailNotesInputEl = document.getElementById('detailNotes');
@@ -528,20 +528,6 @@ function renderDetailDrawer() {
     button.addEventListener('click', () => jumpToMeeting(button.getAttribute('data-pulse-jump-meeting')));
   });
   if (!isCreating) {
-    document.querySelectorAll('[data-add-evidence-meeting]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const meetingId = button.getAttribute('data-add-evidence-meeting');
-        const meeting = getReportById(report.id)?.meetings.find((item) => item.id === meetingId);
-        app.ui.detailDrawerTab = 'pdc-summary';
-        persistUiState();
-        addEvidenceDraftRow({ linkedMeetingId: meetingId, date: meeting?.meetingDate || todayStamp() });
-        window.setTimeout(() => {
-          document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'start' });
-          const row = document.querySelector('#evidenceGroups [data-evidence-row]');
-          row?.querySelector('[data-evidence-summary]')?.focus();
-        }, 0);
-      });
-    });
     document.getElementById('openMeetingModalBtn')?.addEventListener('click', () => openMeetingModal(report.id));
     document.querySelectorAll('[data-edit-meeting]').forEach((button) => {
       button.addEventListener('click', () => {

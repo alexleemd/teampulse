@@ -48,7 +48,6 @@
 
 /* Outline */
 :is(.tag, .badge, .pill).outline,
-:is(.tag, .badge, .pill).soft,
 .tp-chip,
 .note-task.open .note-task-status,
 .status-pill:is([data-pill-value="Not started"], [data-pill-value="Paused"]),
@@ -178,7 +177,6 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 /* --- Avatars --------------------------------------------------------------- */
 /* Initials on sunken in ink. No per person colors. 30px radius 8, 36px radius 10. */
 .avatar,
-.avatar-sm,
 .tt-avatar,
 .mv-avatar,
 .gs-avatar,
@@ -186,8 +184,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .pdc-board-card-avatar,
 .report-tile-avatar,
 .pdc-summary-card-avatar,
-.detail-page-header-avatar,
-.mr-avatar {
+.detail-page-header-avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -205,7 +202,6 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   font-variant-numeric: tabular-nums;
   user-select: none;
 }
-.avatar-sm,
 .mv-avatar,
 .gs-avatar,
 .fu-avatar,
@@ -365,8 +361,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   background: var(--surface);
 }
 .drawer-section > h3,
-.drawer-section-head h3,
-.panel-title {
+.drawer-section-head h3 {
   margin: 0;
   color: var(--ink);
   font-size: var(--text-panel);
@@ -443,8 +438,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 /* Helper copy. Stable mode hides it (see 02-moss-base.css). */
 .section-note,
 .help-text,
-.hint,
-.panel-note {
+.hint {
   margin: 0;
   color: var(--ink-2);
   font-size: var(--text-label);
@@ -533,8 +527,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 /* --- Tables (Controls 4) --------------------------------------------------- */
 /* White wrapper, radius 14px. Header row 38px with 12px 500 ink-2 labels.
    Group rows 34px on page with a 7px status dot. Rows 52px, line-soft dividers. */
-.team-table-wrap,
-.table-wrap {
+.team-table-wrap {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
@@ -670,10 +663,8 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 /* --- Empty states (Controls 3) --------------------------------------------- */
 /* 13.5px ink-2 text in a page box with a dashed button-line border, radius 10px. */
 .empty-note,
-.empty-state,
 .tp-empty,
 .vacation-empty,
-.followup-empty,
 .attention-empty,
 .evidence-empty,
 .theme-empty,
@@ -695,7 +686,6 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   line-height: 1.45;
   text-align: left;
 }
-.empty-state p { margin: 0; }
 /* The PDC board's empty column is a drop target: the same dashed box, text
    centered. */
 .pdc-board-empty { text-align: center; }

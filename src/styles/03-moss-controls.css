@@ -205,7 +205,6 @@ button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-o
 /* Icon: 28px square, ink-2 icon, hover sunken. Needs an aria-label.
    .tp-delete still carries a text "×" in its markup; the glyph is hidden and
    the Moss x icon is drawn with a mask so it matches the controls sheet. */
-.icon-button,
 .tp-delete {
   display: inline-flex;
   align-items: center;
@@ -222,9 +221,7 @@ button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-o
   cursor: pointer;
   transition: background-color 120ms ease;
 }
-.icon-button:hover,
 .tp-delete:hover { background: var(--sunken); }
-.icon-button svg,
 .tp-delete svg { width: 16px; height: 16px; stroke: currentColor; }
 .tp-delete:has(svg)::before { display: none; }
 .tp-delete { font-size: 0; line-height: 0; }
@@ -247,7 +244,6 @@ label {
   min-width: 0;
 }
 label > span:where(:first-child),
-.field-label,
 .pulse-field > span:where(:first-child),
 .md-shell > span:where(:first-child) {
   font-size: var(--text-label);
@@ -413,16 +409,14 @@ input[type="range"] {
   accent-color: var(--accent);
   cursor: pointer;
 }
-.goal-progress-inputs,
-.range-row {
+.goal-progress-inputs {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 12px;
   height: 30px;
 }
-.goal-progress-value,
-.range-value {
+.goal-progress-value {
   width: 38px;
   flex-shrink: 0;
   color: var(--ink);
@@ -585,7 +579,6 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 /* Sunken track, radius 9px, padding 3px. The current option is white with a
    1px line ring and 600 text. Used for Tiles/Table, the PDC views, the
    Insights chart modes and the timeline filter. */
-.segmented,
 .view-switch,
 .pdc-view-toggle,
 .tenure-mode-toggle,
@@ -602,7 +595,6 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   border-radius: var(--radius-field);
   background: var(--sunken);
 }
-.segmented > button,
 .view-switch > button,
 .pdc-view-toggle > button,
 .tenure-mode-toggle > button,
@@ -625,12 +617,10 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   text-decoration: none;
   transition: background-color 120ms ease, color 120ms ease;
 }
-.segmented > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
 .view-switch > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
 .pdc-view-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
 .tenure-mode-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
 .tl-filter > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active) { color: var(--ink); background: transparent; }
-.segmented > button:where([aria-pressed="true"], [aria-selected="true"], .active),
 .view-switch > button:where([aria-pressed="true"], .active),
 .pdc-view-toggle > button:where([aria-pressed="true"], .active),
 .tenure-mode-toggle > button:where([aria-pressed="true"], [aria-selected="true"], .active),
@@ -698,7 +688,6 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 .tab:focus-visible,
 .md-tab:focus-visible,
 .drawer-workspace-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.tab-count,
 .drawer-tab-count {
   display: inline-flex;
   align-items: center;
