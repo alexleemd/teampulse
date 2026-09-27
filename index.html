@@ -535,6 +535,30 @@
     input:where([type="number"]) { font-variant-numeric: tabular-nums; }
     input:where([type="date"], [type="time"], [type="month"]) { font-variant-numeric: tabular-nums; }
     input:where([type="date"])::-webkit-calendar-picker-indicator { cursor: pointer; }
+    /* The segment being typed into (month, day or year) is marked with the moss
+       accent instead of Chromium's blue highlight. :focus-within is the only
+       pseudo-class Chromium matches on these segments for page styles, and it
+       matches the focused segment alone, so the user still sees which part they
+       are editing. */
+    input:where([type="date"])::-webkit-datetime-edit-month-field:focus-within,
+    input:where([type="date"])::-webkit-datetime-edit-day-field:focus-within,
+    input:where([type="date"])::-webkit-datetime-edit-year-field:focus-within {
+      background-color: var(--accent);
+      color: var(--surface);
+    }
+    /* Tab from the year reaches the calendar button inside the field. The field
+       no longer matches :focus then (only :focus-within), so it keeps its focus
+       border, and the button gets the accent ring instead of Chromium's black
+       one. */
+    input:where([type="date"]):focus-within:not(:disabled) {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    input:where([type="date"])::-webkit-calendar-picker-indicator:focus-within {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: var(--radius-tag);
+    }
     input:where([type="search"])::-webkit-search-decoration { appearance: none; }
     input:where(:not([type]), [type="text"], [type="search"], [type="number"], [type="date"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="time"], [type="month"], [type="week"], [type="datetime-local"]):where(:disabled, [readonly]),
     select:disabled,
@@ -865,7 +889,15 @@
       color: var(--ink);
       font-weight: 600;
     }
-    .tenure-mode-sep { display: none; }
+    /* The "·" between the two Insights chart modes stays visible inside the
+       track, as quiet text between the two buttons. */
+    .tenure-mode-sep {
+      padding: 0 2px;
+      color: var(--ink-2);
+      font-size: 13px;
+      line-height: 1;
+      user-select: none;
+    }
 
     /* --- Tabs --------------------------------------------------------------------- */
     /* Text tabs 22px apart. The current tab has 600 text and a 2px accent
@@ -1428,7 +1460,12 @@
     }
     .drawer-section-head > :not(:first-child) { flex-shrink: 0; }
 
+    /* Panels follow Meeting Room.html: 16px inside, the title with no rule under
+       it, and rows divided by inset --line-soft lines. 14px at 900px and below,
+       and 14px top and bottom in compact density. */
     .sharp-panel {
+      --panel-pad-x: 16px;
+      --panel-pad-y: 16px;
       min-width: 0;
       border: 1px solid var(--line);
       border-radius: var(--radius-card);
@@ -1440,8 +1477,8 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 4px 12px;
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid var(--line-soft);
+      padding: var(--panel-pad-y) var(--panel-pad-x) 12px;
+      border-bottom: 0;
       background: var(--surface);
     }
     .sharp-panel-header h3 {
@@ -1470,7 +1507,8 @@
       line-height: 1.45;
     }
     .sharp-panel-body { padding: 0; }
-    .sharp-panel-body.padded { padding: 14px 16px; }
+    .sharp-panel-body.padded { padding: var(--panel-pad-y) var(--panel-pad-x); }
+    .sharp-panel-header + .sharp-panel-body.padded { padding-top: 0; }
 
     /* Helper copy. Stable mode hides it (see 02-moss-base.css). */
     .section-note,
@@ -1805,11 +1843,12 @@
     /* Meeting Room.html: 10px between the box and its text, 8px before the
        remove button. */
     .tp-item {
+      --tp-pad-y: 7px;
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       gap: 10px;
-      padding: 7px 0;
+      padding: var(--tp-pad-y) 0;
       border: 0;
       border-bottom: 1px solid var(--line-soft);
       border-radius: 0;
@@ -1821,17 +1860,29 @@
     .tp-item:has(> .tp-delete) { align-items: flex-start; }
     .tp-item:has(> .tp-delete) > input[type="checkbox"] { margin-top: 6px; }
     .tp-item:has(> .tp-delete) > .tp-item-text { padding-top: 4px; }
-    .tp-item:not(:has(> .tp-delete)) { padding: 8px 0; }
+    .tp-item:not(:has(> .tp-delete)) { --tp-pad-y: 8px; }
     .tp-item > .tp-delete { margin-left: -2px; }
     .tp-item:has(> label) { gap: 8px; }
     .tp-item:has(> label) > .tp-delete { margin-left: 0; }
-    /* The same row when the checkbox and text are wrapped in a label. */
+    /* The same row when the checkbox and text are wrapped in a label. The label
+       takes over the row's vertical padding (negative margin, same padding) and
+       stretches to the row height, so the whole row toggles the box and the hit
+       area is at least 28px without changing how the row looks. */
     .tp-item > label {
       flex: 1 1 auto;
       flex-direction: row;
       align-items: flex-start;
+      align-self: stretch;
       gap: 10px;
       min-width: 0;
+      margin: calc(-1 * var(--tp-pad-y)) 0;
+      padding: var(--tp-pad-y) 0;
+    }
+    /* A discussed point keeps its meta line under the label, so the label only
+       reaches up into the row padding. */
+    .tp-item-main > label {
+      margin-top: calc(-1 * var(--tp-pad-y, 7px));
+      padding-top: var(--tp-pad-y, 7px);
     }
     .tp-item:has(> .tp-delete) > label > input[type="checkbox"] { margin-top: 6px; }
     .tp-item:has(> .tp-delete) > label > .tp-item-text { padding-top: 4px; }
@@ -1871,21 +1922,26 @@
     .tp-done-details > summary::-webkit-details-marker { display: none; }
 
     /* --- Follow-up rows ------------------------------------------------------------ */
+    /* Inside a panel the list carries the panel's side and bottom padding, so
+       the row dividers are inset like the talking point rows. The selector is
+       one step stronger than a view's own list rule, so the inset holds on every
+       page that shows the panel. */
     .followup-list {
       display: flex;
       flex-direction: column;
     }
+    .sharp-panel .sharp-panel-body > .followup-list { padding: 0 var(--panel-pad-x) var(--panel-pad-y); }
     .followup-item {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       gap: 10px;
-      padding: 8px 16px;
+      padding: 8px 0;
       border-bottom: 1px solid var(--line-soft);
       background: transparent;
       cursor: pointer;
     }
-    .followup-item:last-child { border-bottom: 0; }
+    .followup-item:first-child { border-top: 1px solid var(--line-soft); }
     .followup-copy {
       display: flex;
       flex-direction: column;
@@ -2091,16 +2147,16 @@
     body.density-compact .team-table td { height: 44px; }
     body.density-compact .team-table th { height: 34px; }
     body.density-compact .drawer-section { padding: 14px 16px; }
-    body.density-compact .tp-item { padding-top: 5px; padding-bottom: 5px; }
+    body.density-compact .tp-item { --tp-pad-y: 5px; }
     body.density-compact .followup-item { padding-top: 6px; padding-bottom: 6px; }
+    body.density-compact .sharp-panel { --panel-pad-y: 14px; }
 
     /* --- Narrow screens -------------------------------------------------------------- */
     @media (max-width: 900px) {
       .panel-header,
       .quick-filter-bar { flex-direction: column; align-items: stretch; }
       .drawer-section { padding: 14px; }
-      .sharp-panel-header { padding: 12px 14px 10px; }
-      .followup-item { padding: 8px 14px; }
+      .sharp-panel { --panel-pad-x: 14px; --panel-pad-y: 14px; }
     }
     /* App shell grid, sidebar (brand, groups, items, counts), content pane, header (eyebrow, title, subtitle, Search, save status, Data menu), backup banner, settings view, shell breakpoints and mobile shell.
        Owner: W3 shell. Built from Overview.html, Meeting Room.html, Controls 1
@@ -2262,6 +2318,9 @@
       min-height: 0;
       overflow-x: hidden;
       overflow-y: auto;
+      /* Tab scrolls a control into view flush with the pane edge; leave room for
+         the 2px focus outline and its 2px offset. */
+      scroll-padding-block: 8px;
       background: var(--page);
     }
     .content-pane-inner {
@@ -3101,10 +3160,12 @@
     }
 
     /* === Direct Reports ========================================================== */
+    /* 18px from the toolbar to the tiles or table, as on the other People views
+       (10-team-views.css); 14px in compact density. */
     #reportsSection:not([hidden]) {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
       min-width: 0;
     }
 
@@ -3250,27 +3311,24 @@
     }
     .report-tile-vital {
       display: flex;
-      flex-direction: column;
-      gap: 5px;
       min-width: 0;
     }
-    .report-tile-vital.is-pulse { align-items: flex-end; }
-    .report-tile-caption {
-      color: var(--ink-2);
-      font-size: var(--text-tag);
-      font-weight: 500;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
+    .report-tile-vital.is-pulse { justify-content: flex-end; }
     /* Meeting sparkline: 3px accent bars, 2px line stubs for weeks with none. */
     .tile-spark { display: block; overflow: visible; }
     .tile-spark-bar { fill: var(--accent); }
     .tile-spark-stub { fill: var(--line); }
     .report-tile-vital .pulse-dots { height: 9px; }
-    /* The first active goal, as a full width bar with its percentage. */
-    .report-tile-goal { display: flex; min-width: 0; }
-    .report-tile-goal .goal-progress { width: 100%; }
-    .report-tile-goal .goal-progress.compact .goal-progress-track { flex: 1 1 auto; width: auto; }
+    /* The first active goal: its status tag, then a bar that takes the rest of
+       the row, with its percentage. */
+    .report-tile-goal {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .report-tile-goal .goal-progress { flex: 1 1 auto; width: auto; }
+    .report-tile-goal .goal-progress.compact .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
     /* The tile and table goal bars are built from spans (a button holds only
        phrasing content), so the fill span is made a block to take its size. */
     .report-tile-goal .goal-progress-fill,
@@ -3310,9 +3368,47 @@
        at their natural width. */
     #reportsGrid.reports-table { display: block; min-width: 0; }
     .reports-table .tt-last { font-variant-numeric: tabular-nums; }
+    /* An overdue last 1:1: amber (04) with a leading triangle, so it never
+       relies on color alone. */
+    .reports-table .tt-last.tt-overdue {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .tt-overdue-glyph {
+      display: block;
+      flex-shrink: 0;
+      fill: none;
+      stroke: var(--amber-strong);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    /* The triangle makes the Last 1:1 column 18px wider. 04 fits the table to a
+       1134px area (1440 wide) with 7px cell padding below 1185px; to keep that
+       fit, this table keeps 7px up to 1200px and uses 6px below 1143px. */
+    @container team-table (max-width: 1200px) {
+      .reports-table .team-table th,
+      .reports-table .team-table td { padding: 0 7px; }
+    }
+    @container team-table (max-width: 1142px) {
+      .reports-table .team-table th,
+      .reports-table .team-table td { padding: 0 6px; }
+    }
+    /* Goal cell: the status tag over the compact bar, so the column stays as
+       narrow as the bar alone. */
+    .reports-table .tt-goal {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      vertical-align: middle;
+    }
     .reports-table .pill-select-wrap { max-width: 100%; }
 
     /* --- Compact density ---------------------------------------------------------- */
+    body.density-compact #reportsSection:not([hidden]) { gap: 14px; }
     body.density-compact .reports-grid,
     body.density-compact .overview-reports-grid { gap: 10px; }
     body.density-compact .report-tile-main { gap: 7px; padding: 11px 12px; }
@@ -3660,7 +3756,8 @@
         padding-bottom: 4px;
       }
       .tenure-river-name { grid-column: 1; grid-row: 1; }
-      .tenure-river-duration { grid-column: 2; grid-row: 1; }
+      /* Right-aligned, so every duration ends on the same edge as the bars. */
+      .tenure-river-duration { grid-column: 2; grid-row: 1; justify-self: end; }
       .tenure-river-track { grid-column: 1 / -1; grid-row: 2; }
       .tenure-river-year:nth-child(even) { display: none; }
     }
@@ -3749,9 +3846,15 @@
     /* Completion is bucketed onto the six ramp steps. Ink text on the light steps,
        white on the two dark ones (both at least 4.5:1). The current stage has an
        ink ring, so it never depends on color. */
+    /* The 4px border spacing would inset the table from the card's content edge,
+       so the scroll box reaches 4px past the content edge on the right and 12px
+       on the left: the last stage column ends on the content edge, and the name
+       button starts 8px left of it (the hover overhang the tenure rows use),
+       so its avatar lines up with the card title. The extra 4px on the left
+       keeps room for the name's focus ring inside the scroll box. */
     .cdp-hm-scroll {
       min-width: 0;
-      max-width: 100%;
+      margin: 0 -4px 0 -12px;
       overflow-x: auto;
     }
     .cdp-hm-table {
@@ -3787,7 +3890,7 @@
       width: 100%;
       min-width: 0;
       height: 40px;
-      padding: 0 8px 0 4px;
+      padding: 0 8px;
       border-radius: var(--radius-button);
       color: var(--ink);
       font-size: var(--text-small);
@@ -3852,7 +3955,8 @@
       }
       /* Covers the 4px gaps around the names too, where a scrolled cell or
          current-stage ring would otherwise show. The 4px left offset keeps room
-         for the focus ring, and a focused name sits above its neighbors. */
+         for the focus ring (the name text still starts on the card's content
+         edge), and a focused name sits above its neighbors. */
       .cdp-hm-table .cdp-hm-person-cell::before {
         content: "";
         position: absolute;
@@ -4101,6 +4205,8 @@
       right: 10px;
       border-top: 1px solid var(--line-soft);
     }
+    /* The label reaches 5px into the row padding above and below, so a one-line
+       item still has a 29.6px hit area while the row keeps its height. */
     .cdp-item-main {
       display: flex;
       flex-direction: row;
@@ -4108,6 +4214,9 @@
       gap: 10px;
       flex: 1 1 320px;
       min-width: 0;
+      min-height: 28px;
+      margin: -5px 0;
+      padding: 5px 0;
       cursor: pointer;
     }
     .cdp-item-main input[type="checkbox"] { margin-top: 2px; }
@@ -4289,18 +4398,21 @@
       font-weight: 400;
     }
     /* A small dot between the level and the mentor, as the room's "level · Mentor"
-       line (and before the "not saved yet" note). It is drawn, so no text is
-       added. */
+       line (and before the "not saved yet" note): 2px with 4px on each side, the
+       size of the room's " · ". It is drawn, so no text is added. The -4px
+       margin takes the subhead's 8px gap down to 4px before the dot. */
     .detail-level + :is(.detail-mentor, .detail-supporting-meta) {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
+      margin-left: -4px;
     }
     .detail-level + :is(.detail-mentor, .detail-supporting-meta)::before {
       content: "";
       display: block;
-      width: 3px;
-      height: 3px;
+      flex-shrink: 0;
+      width: 2px;
+      height: 2px;
       border-radius: 50%;
       background: var(--ink-2);
     }
@@ -4320,19 +4432,23 @@
     }
 
     /* --- Panels ---------------------------------------------------------------- */
-    /* A button in a panel head is centered on the 18px title line, whether
-       Stable mode shows the note under the title or not: a 28px small button
-       moves up 5px, a 36px button 9px. The space under the button stays 12px.
-       When the head wraps on a narrow panel, the larger row gap keeps the
-       button 12px below the title and note. */
+    /* Every workspace panel head is one 28px title row, whatever sits in it, so
+       the content starts at the same offset (17px under the title text) in
+       every panel. The title sits 5px down in the row; the note (Stable mode
+       off) follows 4px under the title. A control is centered on the title
+       line: a 28px small button fills the row, a 36px button takes 4px back at
+       the top and at the bottom, a 22px count tag moves down 3px. When the head
+       wraps on a narrow panel, the row gap keeps the control 12px below the
+       title and note. */
+    #detailDrawer :is(.drawer-section-head, .pulse-strip-head) { min-height: 28px; }
+    #detailDrawer :is(.drawer-section-head, .pulse-strip-head) > div:first-child { padding-top: 5px; }
     #detailDrawer .drawer-section-head > button.small,
-    #detailDrawer .drawer-section-head > .actions:has(> button.small) { margin: -5px 0 0; }
+    #detailDrawer .drawer-section-head > .actions:has(> button.small) { margin: 0; }
     #detailDrawer .drawer-section-head > button:not(.small),
-    #detailDrawer .drawer-section-head > .actions:has(> button:not(.small)) { margin: -9px 0 0; }
-    /* A count tag in a panel head (22px) sits on the title line too. */
-    #detailDrawer .drawer-section-head > .badges { margin: -2px 0 0; }
-    #detailDrawer .drawer-section-head:has(> button.small, > .actions > button.small) { row-gap: 17px; }
-    #detailDrawer .drawer-section-head:has(> button:not(.small), > .actions > button:not(.small)) { row-gap: 21px; }
+    #detailDrawer .drawer-section-head > .actions:has(> button:not(.small)) { margin: -4px 0; }
+    #detailDrawer .drawer-section-head > .badges { margin: 3px 0 0; }
+    #detailDrawer .drawer-section-head:has(> button:not(.small), > .actions > button:not(.small)) { row-gap: 16px; }
+    #detailDrawer .drawer-section-head:has(> .badges) { row-gap: 9px; }
 
     /* The Open Follow-Ups and Meetings panels (sharp panels) follow the same
        pattern as the other panels, as in the 1:1 room: the panel padding, the
@@ -4353,9 +4469,15 @@
       padding: var(--ws-pad-y) var(--ws-pad-x) 12px;
       border-bottom: 0;
     }
-    /* The count tag and the Log Meeting button sit on the title line. */
-    #detailDrawer .sharp-panel-header-meta > .badge { margin: -2px 0; }
-    #detailDrawer .sharp-panel-header-meta > button:not(.small) { margin-top: -9px; }
+    /* The same 28px title row as the other panel heads, with the count tag and
+       the Log Meeting button centered on the title line. */
+    #detailDrawer .sharp-panel-header > h3 {
+      align-items: flex-start;
+      min-height: 28px;
+      padding-top: 5px;
+    }
+    #detailDrawer .sharp-panel-header-meta > .badge { margin: 3px 0 0; }
+    #detailDrawer .sharp-panel-header-meta > button:not(.small) { margin: -4px 0; }
     #detailDrawer .sharp-panel-body.padded { padding: 0 var(--ws-pad-x) var(--ws-pad-y); }
     #detailDrawer .followup-panel .followup-list { padding: 0 var(--ws-pad-x) var(--ws-pad-y); }
     #detailDrawer .followup-panel .followup-item {
@@ -4415,8 +4537,8 @@
     .profile-readonly-field .value .badge { flex-shrink: 1; }
 
     /* Profile edit form: the shared two column form grid (14px by 16px). The
-       initials field shows what is typed; normalizeInitials stores it in
-       capitals on save. */
+       initials field shows its value in capitals while typing: 17 sets the value
+       in capitals (as normalizeInitials stores it), so no text-transform here. */
 
     /* --- Vacation tracker ------------------------------------------------------ */
     .vacation-summary {
@@ -4551,8 +4673,10 @@
     .tp-item-main > label > .tp-item-text { padding-top: 4px; }
     .tp-item-main > .tp-meta { margin: 0 0 2px 26px; }
     .tp-item:has(> .tp-item-main) { gap: 8px; }
-    /* The Discussed (n) summary gets a chevron that turns when it is open. */
-    .tp-done-toggle::before {
+    /* The Discussed (n) summary in the workspace gets a chevron that turns when
+       it is open. Scoped to the workspace details, so the 1:1 room's
+       "discussed points" link (also .tp-done-toggle) has none. */
+    #detailDrawer .tp-done-details > .tp-done-toggle::before {
       content: "";
       order: 2;
       display: block;
@@ -4560,10 +4684,10 @@
       height: 14px;
       background: currentColor;
       transition: transform 120ms ease;
-      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
-      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
     }
-    .tp-done-details[open] > .tp-done-toggle::before { transform: rotate(180deg); }
+    #detailDrawer .tp-done-details[open] > .tp-done-toggle::before { transform: rotate(180deg); }
 
     /* --- Cadence Pulse strip --------------------------------------------------- */
     /* Twelve weeks, oldest to newest. Each week is a cell with three bars: 1:1
@@ -4582,7 +4706,7 @@
       flex-wrap: wrap;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 8px 18px;
+      gap: 6px 18px;
     }
     .pulse-strip-head > div:first-child {
       display: flex;
@@ -4598,12 +4722,14 @@
       font-weight: 600;
       line-height: 1.2;
     }
+    /* The legend (16px line) is centered on the title line; when it wraps, its
+       6px top and the head's 6px row gap put it 12px under the title. */
     .pulse-legend {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 6px 14px;
-      padding-top: 2px;
+      padding-top: 6px;
     }
     .pulse-strip {
       display: flex;
@@ -4640,16 +4766,23 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    /* A week without that meeting is a 2px stub in field-line (3:1 on white),
-       as the rules' meeting sparkline marks weeks with no meeting. The legend's
-       "No meeting" key is the same stub. */
-    .pulse-bar:not(.active) {
+    /* Only the meetings are drawn. A lane without that meeting stays blank, and
+       a week with no meeting at all gets one short 2px stub in its middle lane,
+       in field-line (3:1 on white), as the rules' meeting sparkline marks weeks
+       with no meeting. The legend's "No meeting" key is the same 12px stub, so
+       there is exactly one key mark per empty week. */
+    .pulse-bar:not(.active) { visibility: hidden; }
+    .pulse-cell:not(:has(> .pulse-bar.active)) > .pulse-bar.pdc {
+      visibility: visible;
+      justify-self: center;
       align-self: center;
+      width: 12px;
       height: 2px;
       border-radius: 1px;
       background: var(--field-line);
     }
     #cadencePulseSection .pulse-legend .swatch.empty {
+      width: 12px;
       height: 2px;
       border: 0;
       border-radius: 1px;
@@ -4705,6 +4838,9 @@
       transition: background-color 120ms ease;
     }
     .meeting-summary:hover { background: var(--sunken); }
+    /* The neutral tags share the sunken fill, so in a hovered row they turn
+       white and keep their box. */
+    #detailDrawer .meeting-summary:hover .badge:is(.neutral, .info) { --tag-bg: var(--surface); }
     .meeting-summary-main {
       display: flex;
       flex-direction: column;
@@ -4883,13 +5019,20 @@
     .evidence-row textarea { min-height: 84px; }
     /* Detail spans two rows, so Shared with them sits right under Summary. */
     .evidence-row-bottom > label:nth-child(2) { grid-row: span 2; }
-    .evidence-kind-shared { grid-column: 1; }
+    /* Shared with them: a 28px tall target, only as wide as its content. */
+    .evidence-kind-shared {
+      grid-column: 1;
+      justify-self: start;
+      min-height: 28px;
+      align-items: center;
+    }
 
     /* --- Timeline -------------------------------------------------------------- */
     /* One stream on a thin rail. Kinds are categories, not status (decision 5):
-       every mark is the same neutral ring, told apart by a small icon drawn in
-       ink-2 (calendar for meetings, speech bubble for feedback, target for goal
-       updates, check for capabilities, pencil for notes, arrows for changes).
+       every mark is the same neutral ring, told apart by a 13px icon (24 grid,
+       stroke 2) drawn in ink-2: calendar for meetings, speech bubble for
+       feedback, target for goal updates, check for capabilities, pencil for
+       notes, arrows for changes.
        The title and the feedback kind tag name the entry in words. */
     #timelineSection .tl-filter-scroll { min-width: 0; }
     #timelineSection .tl-filter { max-width: 100%; }
@@ -4901,7 +5044,7 @@
       padding-left: 34px;
     }
     .tl-item {
-      --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+      --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
       position: relative;
       display: flex;
       flex-direction: column;
@@ -4923,20 +5066,20 @@
     .tl-item::after {
       content: "";
       position: absolute;
-      left: -28px;
-      top: 15px;
-      width: 11px;
-      height: 11px;
+      left: -29px;
+      top: 14px;
+      width: 13px;
+      height: 13px;
       background: var(--ink-2);
-      -webkit-mask: var(--tl-icon) center / 11px 11px no-repeat;
-      mask: var(--tl-icon) center / 11px 11px no-repeat;
+      -webkit-mask: var(--tl-icon) center / 13px 13px no-repeat;
+      mask: var(--tl-icon) center / 13px 13px no-repeat;
     }
-    .tl-item[data-tl-kind="meeting"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E"); }
-    .tl-item[data-tl-kind="feedback"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H10l-5 4v-4H4z'/%3E%3C/svg%3E"); }
-    .tl-item[data-tl-kind="goal"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E"); }
-    .tl-item[data-tl-kind="capability"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E"); }
-    .tl-item[data-tl-kind="note"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E"); }
-    .tl-item[data-tl-kind="change"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h14l-3-3M20 16H6l3 3'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="meeting"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="feedback"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H10l-5 4v-4H4z'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="goal"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="capability"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="note"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E"); }
+    .tl-item[data-tl-kind="change"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h14l-3-3M20 16H6l3 3'/%3E%3C/svg%3E"); }
     /* The rail runs from each mark down to the next one, so it never sticks out
        past the last entry. It is drawn by the head (positioned on the item). */
     .tl-item:not(:last-child) > .tl-item-head::before {
@@ -4992,7 +5135,7 @@
     body.density-compact .meeting-summary { padding: 9px 8px; }
     body.density-compact .tl-item { padding: 6px 0; }
     body.density-compact .tl-item::before { top: 6px; }
-    body.density-compact .tl-item::after { top: 12px; }
+    body.density-compact .tl-item::after { top: 11px; }
     body.density-compact .tl-item:not(:last-child) > .tl-item-head::before { top: 29px; bottom: -6px; }
 
     /* --- Narrow screens -------------------------------------------------------- */
@@ -5007,6 +5150,9 @@
       }
       #detailDrawer .drawer-header-top > .actions { justify-content: flex-start; }
       .profile-readonly-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      /* Nine fields in two columns: the last one spans the row, so its line
+         runs the full width like the others. */
+      .profile-readonly-field:last-child:nth-child(odd) { grid-column: 1 / -1; }
       .vacation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .vacation-row > label:nth-of-type(3) { grid-column: 1 / -1; }
       .vacation-row > button { justify-self: start; margin-bottom: 0; }
@@ -5015,6 +5161,18 @@
     }
     @media (max-width: 640px) {
       .drawer-header-identity:has(.detail-page-header-avatar) .detail-subhead { padding-left: 0; }
+      /* A head with 36px buttons does not fit on one line at phone width, so it
+         always stacks: title (and note), then the buttons 12px under it and 12px
+         above the content. Heads with a small button or a tag stay on one
+         line. */
+      #detailDrawer .drawer-section-head:has(> button:not(.small), > .actions > button:not(.small)) {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 12px;
+      }
+      #detailDrawer .drawer-section-head:has(> button:not(.small), > .actions > button:not(.small)) > div:first-child { flex: 0 0 auto; width: 100%; }
+      #detailDrawer .drawer-section-head > button:not(.small),
+      #detailDrawer .drawer-section-head > .actions:has(> button:not(.small)) { margin: 0; }
       .cadence-target-grid,
       .cadence-target-grid.cadence-target-grid-readonly,
       .vacation-row,
@@ -5067,6 +5225,15 @@
       gap: 8px;
       min-width: 0;
     }
+    /* An overdue Last 1:1 chip leads with a 12px triangle in the tag's amber
+       text color, so the status never relies on the color alone. */
+    .mr-chips > .mr-overdue { gap: 5px; padding-left: 7px; }
+    .mr-overdue-glyph {
+      display: block;
+      flex: none;
+      width: 12px;
+      height: 12px;
+    }
 
     .mr-grid {
       display: grid;
@@ -5101,7 +5268,7 @@
       gap: 4px;
       min-width: 0;
     }
-    .mr-panel-head h3 {
+    .mr-panel-head h2 {
       margin: 0;
       color: var(--ink);
       font-size: var(--text-panel);
@@ -5131,10 +5298,30 @@
       row-gap: 4px;
     }
     .mr-shell .tp-list .tp-item-text > .tp-chip { margin-left: 0; }
+    /* Only the checkbox sits in its label, so clicking the point's text or its
+       tag does not tick it (as before). The label is a 28px hit area centered
+       on the 16px box; the negative side margins keep the box where the shared
+       row puts it (6px down, 10px before the text, 8px before the remove
+       button). */
+    .mr-shell .tp-item:has(> .mr-tp-check) { gap: 10px; }
+    .mr-shell .tp-item > .mr-tp-check {
+      flex: none;
+      flex-direction: row;
+      align-items: center;
+      align-self: flex-start;
+      justify-content: center;
+      gap: 0;
+      width: 28px;
+      height: 28px;
+      margin: 0 -6px;
+      padding: 0;
+    }
+    .mr-shell .tp-item > .mr-tp-check > input[type="checkbox"] { margin: 0; }
+    .mr-shell .tp-item:has(> .mr-tp-check) > .tp-delete { margin-left: -2px; }
     /* The "… discussed points in the workspace →" link is a plain link button
-       here: it opens the workspace, so it has no disclosure chevron. */
+       here: it opens the workspace, so it has no disclosure chevron (08 scopes
+       its chevron to #detailDrawer .tp-done-details). */
     .mr-panel > .tp-done-toggle { align-self: flex-start; }
-    .mr-panel > .tp-done-toggle::before { content: none; }
 
     /* --- Open Follow-Ups ------------------------------------------------------- */
     .mr-followups {
@@ -5229,14 +5416,28 @@
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
-    /* The chevron turns over when the recap is open (120ms, answers the click). */
+    /* The chevron turns over when the recap is open (120ms, answers the click).
+       The span keeps its "▾" text; the glyph is hidden and the Moss chevron icon
+       is drawn with a mask, as the shared .tp-delete does for its "×". */
     .mr-prev-chevron {
+      display: block;
       flex: none;
       width: 16px;
       height: 16px;
       margin-left: auto;
       color: var(--ink-2);
+      font-size: 0;
+      line-height: 0;
       transition: transform 120ms ease;
+    }
+    .mr-prev-chevron::before {
+      content: "";
+      display: block;
+      width: 16px;
+      height: 16px;
+      background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
     }
     .mr-prev[open] .mr-prev-chevron { transform: rotate(180deg); }
     .mr-prev-summary:hover .mr-prev-chevron { color: var(--ink); }
@@ -5512,12 +5713,14 @@
       grid-template-columns: 36px 30px minmax(0, 1fr) auto auto;
       align-items: center;
       column-gap: 14px;
+      width: 100%;
       min-height: 60px;
       padding: 10px 16px;
       background: var(--surface);
       color: var(--ink);
       font-size: var(--text-small);
       line-height: 1.4;
+      text-align: left;
       cursor: pointer;
       transition: background-color 120ms ease;
     }
@@ -5550,7 +5753,7 @@
     .meetings-view-main {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       min-width: 0;
     }
     .meetings-view-main-title {
@@ -5837,8 +6040,8 @@
     .pdc-board-col-dot {
       display: block;
       flex-shrink: 0;
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border: 1.5px solid var(--field-line);
       border-radius: 50%;
       background: transparent;
@@ -5915,6 +6118,12 @@
     }
     .pdc-board-card .goal-progress { display: flex; width: 100%; }
     .pdc-board-card .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
+    /* The board card shows the goal's progress without its status (as v0.52.4
+       did), so the fill is one neutral ink for every status: the color must not
+       be the only sign of At risk or Paused. --ink-2 is 4.96:1 on the --sunken
+       track. The PDC Summary list and the workspace keep the status fills,
+       where the status tag sits beside the bar. */
+    .pdc-board-card .goal-progress .goal-progress-fill { background: var(--ink-2); }
     .pdc-board-card-meta {
       color: var(--ink-2);
       font-size: var(--text-caption);
@@ -6157,10 +6366,12 @@
        Top right, white, 1px line, radius 12, floating shadow, 360px wide. A
        leading 18px status icon, the message in 13.5px, an optional link button
        such as Undo. No colored side borders. The icon color follows the kind:
-       good for success, mixed for warning, rough for error, ink-2 for info. */
+       good for success, mixed for warning, rough for error, ink-2 for info.
+       --toast-top is set by placeToastStack (09) when a header row with
+       buttons sits in the top right spot, so the stack starts under it. */
     .toast-stack {
       position: fixed;
-      top: 20px;
+      top: var(--toast-top, 20px);
       right: 20px;
       z-index: 130;
       display: flex;
@@ -6275,13 +6486,15 @@
       grid-row: 1;
       margin-bottom: -4px;
     }
+    /* The body has the header's 24px side padding, so the section cards line up
+       under the title. */
     .rules-drawer .drawer-body {
       display: flex;
       flex-direction: column;
       gap: 14px;
       flex: 1 1 auto;
       min-height: 0;
-      padding: 18px 20px 28px;
+      padding: 18px 24px 28px;
       overflow-x: hidden;
       overflow-y: auto;
       overscroll-behavior: contain;
@@ -6378,9 +6591,11 @@
     }
 
     /* --- Global search --------------------------------------------------------------
-       A dialog with a search field and list rows: 13.5px, 36px rows, the active
-       row on sunken, group labels 12px 500 ink-2. The overlay placement comes
-       from the base file. */
+       A dialog with a search field and list rows: 13.5px, 36px rows, group
+       labels 12px 500 ink-2. The one active row (the arrow keys move it, 22;
+       Enter runs it) is sunken with a 2px accent ring inside its edge; a hovered
+       row gets the sunken fill only. The overlay placement comes from the base
+       file. */
     .gs-panel {
       display: flex;
       flex-direction: column;
@@ -6492,11 +6707,21 @@
       cursor: pointer;
       transition: background-color 120ms ease;
     }
-    .gs-results .gs-row:hover,
-    .gs-results .gs-row.active { background: var(--sunken); }
+    .gs-results .gs-row:hover { background: var(--sunken); }
+    /* The ring sits inside the row (offset -2px), so the results scroller never
+       clips it when the active row is scrolled to its edge. */
+    .gs-results .gs-row.active {
+      background: var(--sunken);
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
     .gs-results .gs-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    /* On the sunken row the avatar turns white so it keeps its shape. */
-    .gs-row:is(:hover, .active) .gs-avatar { background: var(--surface); }
+    /* On a sunken row the avatar turns white so it keeps its shape. */
+    .gs-row.active .gs-avatar,
+    .gs-row:hover .gs-avatar { background: var(--surface); }
+    /* The go-to arrow: the "→" text glyph in ink-2. Instrument Sans draws it
+       low in its line, so 4px of bottom padding lifts it 2px onto the middle of
+       the title's lowercase letters. */
     .gs-icon {
       display: inline-flex;
       align-items: center;
@@ -6504,9 +6729,12 @@
       flex-shrink: 0;
       width: 30px;
       height: 30px;
+      padding-bottom: 4px;
       color: var(--ink-2);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1;
     }
-    .gs-icon svg { display: block; width: 16px; height: 16px; }
     .gs-main {
       display: flex;
       flex-direction: column;
@@ -6540,7 +6768,8 @@
       color: var(--ink);
       font-weight: 600;
     }
-    .gs-row:is(:hover, .active) .gs-snippet mark { background: var(--surface); }
+    .gs-row.active .gs-snippet mark,
+    .gs-row:hover .gs-snippet mark { background: var(--surface); }
     .gs-meta {
       flex-shrink: 0;
       color: var(--ink-2);
@@ -6569,18 +6798,57 @@
       line-height: 1.45;
     }
 
-    /* --- Narrow screens ------------------------------------------------------------ */
+    /* --- Narrow screens ------------------------------------------------------------
+       Under 900px only the toasts move (the sidebar turns into a top bar). The
+       dialogs and the drawer keep their full padding while they are 560px wide,
+       and the padding shrinks (keeping the 16px phone gutter) only where they
+       get narrower: a dialog under 592px (560 plus two 16px gutters), the drawer
+       under 596px (its width is min(560px, 94vw) in the base file). */
     @media (max-width: 900px) {
-      .overlay { padding: 16px; }
-      .modal { padding: 20px 16px 20px; }
-      .rules-drawer .drawer-header { padding: 18px 16px 16px; }
-      .rules-drawer .drawer-body { padding: 14px 12px 24px; }
-      .rules-drawer .drawer-section { padding: 16px 14px 18px; }
-      .rules-drawer .toggle-row > label:not(.switch) { width: 150px; }
-      .toast-stack { top: 12px; right: 16px; }
+      .toast-stack { top: var(--toast-top, 12px); right: 16px; }
     }
     @media (max-width: 640px) {
       .gs-input-row .gs-kbd { display: none; }
+      /* Once the panel narrows below its 640px, a one-line snippet can cut off
+         the matched word. A row with a snippet becomes a grid: the title with the
+         date on its right, then the snippet under both, full width, on up to two
+         lines, so the match stays in view. The spacing sits on the icon and the
+         date, not in a column gap, so a row with no date keeps the full width. */
+      .gs-results .gs-row:has(.gs-snippet) {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "icon title meta"
+          "icon snippet snippet";
+        align-items: center;
+        column-gap: 0;
+        row-gap: 2px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+      }
+      .gs-row:has(.gs-snippet) > .gs-avatar,
+      .gs-row:has(.gs-snippet) > .gs-icon { grid-area: icon; align-self: start; margin-right: 10px; }
+      .gs-row:has(.gs-snippet) > .gs-main { display: contents; }
+      .gs-row:has(.gs-snippet) .gs-title { grid-area: title; }
+      .gs-row:has(.gs-snippet) > .gs-meta { grid-area: meta; padding-left: 10px; }
+      .gs-row:has(.gs-snippet) .gs-snippet {
+        grid-area: snippet;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+    }
+    @media (max-width: 595px) {
+      .rules-drawer .drawer-header { padding: 18px 16px 16px; }
+      .rules-drawer .drawer-body { padding: 14px 16px 24px; }
+      .rules-drawer .drawer-section { padding: 16px 14px 18px; }
+      .rules-drawer .toggle-row > label:not(.switch) { width: 150px; }
+    }
+    @media (max-width: 591px) {
+      .overlay { padding: 16px; }
+      .modal { padding: 20px 16px 20px; }
     }
     /* The printed PDC one-pager (#printSheet) inside @media print.
        Owner: W6 workspace.
@@ -6979,8 +7247,8 @@
             </div>
           </label>
           <div class="full pulse-field">
-            <span>How did it feel? (optional)</span>
-            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-label="Meeting pulse">
+            <span id="meetingPulseLabel">How did it feel? (optional)</span>
+            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-labelledby="meetingPulseLabel">
               <label class="pulse-option" data-pulse="green"><input type="radio" name="meetingPulse" value="green"><span>Good</span></label>
               <label class="pulse-option" data-pulse="amber"><input type="radio" name="meetingPulse" value="amber"><span>Mixed</span></label>
               <label class="pulse-option" data-pulse="red"><input type="radio" name="meetingPulse" value="red"><span>Rough</span></label>
@@ -6990,13 +7258,13 @@
           <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
             <span id="meetingNotesLabel">Notes</span>
             <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
-              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
-              <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
+              <button type="button" class="md-tab active" id="meetingNotesWriteTab" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true" aria-controls="meetingNotesWritePanel">Markdown</button>
+              <button type="button" class="md-tab" id="meetingNotesPreviewTab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false" aria-controls="meetingNotesPreview">Preview</button>
             </div>
-            <div class="md-panel-write" role="tabpanel">
+            <div class="md-panel-write" id="meetingNotesWritePanel" role="tabpanel" aria-labelledby="meetingNotesWriteTab">
               <textarea id="meetingNotes" name="meetingNotes" aria-labelledby="meetingNotesLabel" placeholder="Optional notes or follow-ups"></textarea>
             </div>
-            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
+            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel" aria-labelledby="meetingNotesPreviewTab"><p class="note-preview-empty">Nothing to preview yet.</p></div>
           </div>
         </div>
         <div class="actions modal-actions">
@@ -9198,6 +9466,49 @@ function restoreFocusTo(record) {
   if (target && !target.disabled && typeof target.focus === 'function') target.focus({ preventScroll: true });
 }
 
+// Where focus was before it moved into each toast with an action, so a
+// keyboard Undo, or a dialog the action opens (27), can put focus back there.
+const toastReturnFocus = new WeakMap();
+
+// Toast placement: top right, 20px in (12px on narrow screens, from
+// 11-overlays.css). When a row of controls already sits in that spot, the
+// stack starts 12px under it, so a toast never hides the buttons it reports
+// on: the header of the open dialog, search or Settings drawer, or with no
+// layer open the backup banner, the workspace action row and the page header
+// controls. Only rows at the very top count, so on a scrolled page the stack
+// stays put.
+const TOAST_LAYER_HEADERS = [
+  '#globalSearch.open .gs-input-row',
+  '#meetingModal.open .modal-header',
+  '.overlay.open .modal-header',
+  '#rulesDrawerOverlay.open .drawer-header'
+];
+const TOAST_PAGE_ROWS = [
+  '#exportReminderMount .export-banner',
+  '#detailDrawer:not([hidden]) .drawer-header-top > .actions',
+  '#contentHeader .content-header-meta'
+];
+
+function placeToastStack() {
+  if (!toastStackEl) return;
+  toastStackEl.style.removeProperty('--toast-top');
+  if (!toastStackEl.childElementCount) return;
+  const stackRect = toastStackEl.getBoundingClientRect();
+  const baseTop = stackRect.top;
+  const bandBottom = baseTop + toastStackEl.firstElementChild.getBoundingClientRect().height;
+  const layerHeaderEl = TOAST_LAYER_HEADERS.map((selector) => document.querySelector(selector)).find(Boolean);
+  const rowEls = layerHeaderEl ? [layerHeaderEl] : TOAST_PAGE_ROWS.flatMap((selector) => [...document.querySelectorAll(selector)]);
+  let top = baseTop;
+  rowEls.forEach((rowEl) => {
+    const rect = rowEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    if (rect.right <= stackRect.left || rect.left >= stackRect.right) return;
+    if (rect.bottom <= baseTop || rect.top >= bandBottom) return;
+    top = Math.max(top, Math.ceil(rect.bottom) + 12);
+  });
+  if (top > baseTop) toastStackEl.style.setProperty('--toast-top', `${top}px`);
+}
+
 function showToast(message, kind = '', options = {}) {
   const iconKind = toastIconKind(kind);
   const hasAction = !!options.actionLabel && typeof options.onAction === 'function';
@@ -9212,36 +9523,44 @@ function showToast(message, kind = '', options = {}) {
   messageEl.className = 'toast-message';
   messageEl.textContent = message;
   toast.appendChild(messageEl);
+  const button = hasAction ? document.createElement('button') : null;
+  if (button) {
+    button.type = 'button';
+    button.className = 'toast-action';
+    button.textContent = options.actionLabel;
+    toast.appendChild(button);
+  }
   toastStackEl.appendChild(toast);
+  placeToastStack();
 
   const duration = options.duration || TOAST_TIMEOUT_MS;
   let timer = window.setTimeout(() => toast.remove(), duration);
   // A toast without an action ignores the pointer (11-overlays.css), so it
   // never blocks the buttons under it and always leaves on time.
-  if (!hasAction) return;
+  if (!button) return;
 
   // Where focus was before it moved into the toast, so a keyboard Undo puts
   // focus back there (or on its re-rendered copy) instead of on the page body.
-  let returnFocus = null;
+  // If the action opens a dialog instead, the dialog takes this record as its
+  // opener (rememberDialogOpener in 27), since the toast button goes away.
   toast.addEventListener('focusin', (event) => {
-    if (returnFocus) return;
+    if (toastReturnFocus.has(toast)) return;
     const from = event.relatedTarget;
-    if (from && !toast.contains(from)) returnFocus = focusReturnRecord(from);
+    if (!from || toast.contains(from)) return;
+    // From another toast: share where that one came from.
+    const fromToast = toastStackEl.contains(from) ? from.closest('.toast') : null;
+    const record = fromToast ? toastReturnFocus.get(fromToast) : focusReturnRecord(from);
+    if (record) toastReturnFocus.set(toast, record);
   });
   const dismiss = () => {
     window.clearTimeout(timer);
-    if (toast.contains(document.activeElement)) restoreFocusTo(returnFocus);
+    if (toast.contains(document.activeElement)) restoreFocusTo(toastReturnFocus.get(toast));
     toast.remove();
   };
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'toast-action';
-  button.textContent = options.actionLabel;
   button.addEventListener('click', () => {
     options.onAction();
     dismiss();
   });
-  toast.appendChild(button);
 
   // A toast with an action stays while the pointer is on it or focus is
   // inside it (so Undo cannot vanish under the cursor), then gets its full
@@ -9287,6 +9606,9 @@ function syncBodyOverlayLock() {
     || !!goalModalEl?.classList.contains('open')
     || !!feedbackModalEl?.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
+  // A layer opened or closed: move any toast on screen off its header. After
+  // the caller's render, so the rows are measured where they end up.
+  if (toastStackEl?.childElementCount) window.requestAnimationFrame(placeToastStack);
 }
 
 function updateStartupPrompt() {
@@ -10054,18 +10376,36 @@ function renderSettingsPanel() {
   healthPanelEl.replaceChildren(grid);
 }
 
+// The drawer is a modal dialog: opening it moves focus to its Close button,
+// and closing it puts focus back on the control that opened it (or that
+// control's re-rendered copy, via focusReturnRecord in 09). When nothing had
+// focus (a digit shortcut, a search result), focus returns to the sidebar
+// Settings item, which is where the view now is.
+let rulesDrawerReturnFocus = null;
+
 function openRulesDrawer() {
+  const wasOpen = rulesDrawerOverlayEl.classList.contains('open');
   renderRuleInputs();
   renderSettingsPanel();
   rulesDrawerOverlayEl.classList.add('open');
   rulesDrawerOverlayEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
+  if (wasOpen) return;
+  const activeEl = document.activeElement;
+  rulesDrawerReturnFocus = activeEl && !rulesDrawerOverlayEl.contains(activeEl) ? focusReturnRecord(activeEl) : null;
+  closeRulesDrawerBtn.focus({ preventScroll: true });
 }
 
 function closeRulesDrawer() {
+  const wasOpen = rulesDrawerOverlayEl.classList.contains('open');
   rulesDrawerOverlayEl.classList.remove('open');
   rulesDrawerOverlayEl.setAttribute('aria-hidden', 'true');
   syncBodyOverlayLock();
+  if (!wasOpen) return;
+  const saved = rulesDrawerReturnFocus;
+  rulesDrawerReturnFocus = null;
+  const target = focusReturnTarget(saved) || document.querySelector('#sidebarNav [data-nav-main="settings"]');
+  if (target && !target.disabled && typeof target.focus === 'function') target.focus({ preventScroll: true });
 }
 
 function openCreateWorkspace(options = {}) {
@@ -10207,13 +10547,13 @@ function renderOpenFollowUpsPanel(report, metrics) {
       </div>
       <div class="sharp-panel-body">
         <div class="followup-list">
-          ${openFollowUps.map((item) => `
+          ${openFollowUps.map((item, itemIndex) => `
             <label class="followup-item">
-              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="wsfu-${itemIndex}-text wsfu-${itemIndex}-meta">
               <span class="followup-copy">
-                <strong>${escapeHtml(item.text)}</strong>
+                <strong id="wsfu-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                 <span class="followup-meta">
-                  <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                  <span id="wsfu-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                   <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
                 </span>
               </span>
@@ -10645,7 +10985,7 @@ function renderTalkingPointsPanel(report) {
       </div>
       ${openList}
       <div class="tp-add">
-        <input type="text" id="drawerTpInput" placeholder="Add a talking point and press Enter" autocomplete="off">
+        <input type="text" id="drawerTpInput" placeholder="Add a talking point and press Enter" autocomplete="off" aria-label="New talking point">
         <button type="button" class="secondary" id="drawerTpAddBtn">Add</button>
       </div>
       ${doneList}
@@ -10891,7 +11231,7 @@ function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
         </div>
         ${isCreating ? '' : (inEditMode
           ? `<div class="actions">
-              <button type="button" id="addVacationBtn" class="small">Add Vacation</button>
+              <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
               <button type="button" class="small" id="cancelVacationEditBtn">Cancel</button>
             </div>`
           : '<button type="button" class="small" id="openVacationEditBtn">Edit</button>')}
@@ -11046,6 +11386,29 @@ function tenureMarkerGlyph(kind) {
   return `<svg class="tenure-glyph tenure-glyph-${kind}" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">${shape}</svg>`;
 }
 
+// Marker shapes are 14px boxes, and two markers keep at least 2px of clear
+// space between them, so their centers stay this far apart even when the
+// dates are only days apart.
+const TENURE_MARKER_SPACING = 16;
+
+// The CSS left for marker `index` of markers sorted by date (ratios 0 to 1).
+// A marker sits on its date, or steps left just enough to keep the spacing
+// to every later marker (the last one is Today at the right end), and never
+// closer to the chart start than the markers before it need. The label under
+// it still gives the exact date. tenureSpacedMarkerX is the same in pixels.
+function tenureSpacedMarkerLeft(ratios, index) {
+  const terms = ratios.slice(index).map((ratio, offset) => (offset
+    ? `${tenureAxisPercent(ratio)} - ${offset * TENURE_MARKER_SPACING}px`
+    : tenureAxisPercent(ratio)));
+  const fromDates = terms.length > 1 ? `min(${terms.join(', ')})` : terms[0];
+  return `max(${index * TENURE_MARKER_SPACING}px, ${fromDates})`;
+}
+
+function tenureSpacedMarkerX(ratios, index, width) {
+  const fromDates = Math.min(...ratios.slice(index).map((ratio, offset) => (ratio * width) - (offset * TENURE_MARKER_SPACING)));
+  return Math.max(index * TENURE_MARKER_SPACING, fromDates);
+}
+
 // Promotion timing at or past the threshold is attention status: amber, and
 // always with this triangle so it never relies on color alone.
 const TENURE_THRESHOLD_GLYPH = '<svg class="tenure-threshold-glyph" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"></path><path d="M12 9.6v4.8M12 17.4v.2"></path></svg>';
@@ -11154,6 +11517,8 @@ function renderTeamTenureCard(reports) {
     const startLeft = tenureAxisPercent(startRatio);
     // In promotion mode the line starts at the promotion, so the promotion
     // marker already sits on the start and the start ring is left out.
+    // A promotion soon after hire steps right of the start ring, so the two
+    // shapes never touch.
     const startIsPromotion = promotionRatio !== null && Math.abs(promotionRatio - (startRatio === null ? 0 : startRatio)) < 0.0001;
     const durationText = durationTextFor(row);
     // Prefer the short company initials in the name column and truncate long
@@ -11161,20 +11526,29 @@ function renderTeamTenureCard(reports) {
     // stays in the tooltip.
     const rawGutterLabel = row.initials || row.name || '';
     const gutterLabel = rawGutterLabel.length > 19 ? `${rawGutterLabel.slice(0, 18)}…` : rawGutterLabel;
+    // The bar's ramp step is the only visual cue for the level, so the level
+    // goes in the tooltip and the name as well.
     const tooltip = [
       row.name,
+      row.level,
       `Hire date: ${formatDate(row.hireDate)}`,
       `Tenure: ${formatMonthSpan(row.tenureMonths)}`,
       row.lastPromotionDate ? `Last promotion: ${formatDate(row.lastPromotionDate)} (${formatMonthSpan(row.promotionMonths)} ago)` : 'Last promotion: not recorded'
-    ].join(' · ');
+    ].filter(Boolean).join(' · ');
+    // The name starts with the row's visible text (label in name), then the
+    // threshold status the triangle shows, the level and the open action.
+    const rowName = [
+      [rawGutterLabel, durationText, overdue ? 'At threshold' : '', row.level].filter(Boolean).join(', '),
+      `Open ${row.name}`
+    ].join('. ');
     return `
-      <button type="button" class="tenure-river-row" style="grid-row:${index + 2}" data-tenure-open="${escapeHtml(row.id)}" title="${escapeHtml(tooltip)}" aria-label="Open ${escapeHtml(row.name)}">
+      <button type="button" class="tenure-river-row" style="grid-row:${index + 2}" data-tenure-open="${escapeHtml(row.id)}" title="${escapeHtml(tooltip)}" aria-label="${escapeHtml(rowName)}">
         <span class="tenure-river-name">${escapeHtml(gutterLabel)}</span>
         <span class="tenure-river-track" aria-hidden="true">
           ${yearLines}
           <span class="${barClass}" style="left:${startLeft}"></span>
           ${startIsPromotion ? '' : `<span class="tenure-river-marker" style="left:${startLeft}">${tenureMarkerGlyph('hire')}</span>`}
-          ${promotionRatio === null ? '' : `<span class="tenure-river-marker" style="left:${tenureAxisPercent(promotionRatio)}">${tenureMarkerGlyph('promotion')}</span>`}
+          ${promotionRatio === null ? '' : `<span class="tenure-river-marker" style="left:${startIsPromotion ? tenureAxisPercent(promotionRatio) : `max(${tenureAxisPercent(promotionRatio)}, ${startLeft} + ${TENURE_MARKER_SPACING}px)`}">${tenureMarkerGlyph('promotion')}</span>`}
         </span>
         <span class="tenure-river-duration${overdue ? ' overdue' : ''}">${overdue ? TENURE_THRESHOLD_GLYPH : ''}${escapeHtml(durationText)}</span>
       </button>
@@ -11212,37 +11586,64 @@ function renderTeamTenureCard(reports) {
   `;
 }
 
-// Label lanes for the mini timeline. Each label is centered under its
-// marker, or starts or ends at it near the edges, and drops to the next lane
-// when it would touch the label before it. Widths are estimated from the
-// text at a given chart width. Lanes only get roomier as the chart widens, so
-// the lanes worked out for the narrowest width of each layout hold at every
-// wider one.
+// Label lanes for the mini timeline. Each label hangs under its marker (at
+// its spaced position, see tenureSpacedMarkerX): centered on it, or starting
+// or ending at it (the CSS puts those 7px past the marker). A label keeps
+// 12px from the other labels in its lane, and a leader line that runs down to
+// a deeper lane keeps 4px clear of every label it passes. The search uses as
+// few lanes as it can, and prefers a shallow lane, then the centered anchor.
+// Text widths are estimated. Every one of these gaps only grows as the chart
+// widens, so the lanes worked out for the narrowest width of each layout hold
+// at every wider one.
 const TENURE_MINI_WIDE_MIN = 560;
-const TENURE_MINI_NARROW_MIN = 300;
+const TENURE_MINI_NARROW_MIN = 280;
 
 function tenureMiniLabelLanes(points, width) {
-  const laneEnds = [];
-  return points.map((point) => {
-    const x = point.ratio * width;
-    const w = Math.max(point.label.length * 7, point.dateText.length * 6.6) + 12;
-    let anchor = 'middle';
-    let from = x - (w / 2);
-    if (from < 0) {
-      anchor = 'start';
-      from = x;
-    } else if (x + (w / 2) > width) {
-      anchor = 'end';
-      from = x - w;
-    }
-    let lane = laneEnds.findIndex((end) => end <= from);
-    if (lane === -1) {
-      lane = laneEnds.length;
-      laneEnds.push(0);
-    }
-    laneEnds[lane] = from + w;
-    return { anchor, lane };
+  const ratios = points.map((point) => point.ratio);
+  const items = points.map((point, index) => {
+    const x = tenureSpacedMarkerX(ratios, index, width);
+    const textWidth = Math.max(point.label.length * 7, point.dateText.length * 6.6);
+    const spans = {
+      middle: [x - (textWidth / 2), x + (textWidth / 2)],
+      start: [x - 7, x - 7 + textWidth],
+      end: [x + 7 - textWidth, x + 7]
+    };
+    const fitsChart = {
+      middle: spans.middle[0] >= 6 && spans.middle[1] <= width - 6,
+      start: spans.start[1] <= width + 7,
+      end: spans.end[0] >= -7
+    };
+    const natural = fitsChart.middle ? 'middle' : (spans.middle[0] < 6 ? 'start' : 'end');
+    const anchors = [natural, 'end', 'start'].filter((anchor, at, list) => list.indexOf(anchor) === at && fitsChart[anchor]);
+    return { x, spans, anchors: anchors.length ? anchors : [natural] };
   });
+  const placed = [];
+  const clearOf = (x, span) => x < span[0] - 4 || x > span[1] + 4;
+  const fits = (index, lane, span) => placed.slice(0, index).every((other, at) => {
+    if (other.lane === lane) return span[0] >= other.span[1] + 12 || other.span[0] >= span[1] + 12;
+    return other.lane > lane ? clearOf(items[at].x, span) : clearOf(items[index].x, other.span);
+  });
+  let budget = 20000;
+  const place = (index, laneLimit) => {
+    if (index === items.length) return true;
+    for (let lane = 0; lane < laneLimit; lane += 1) {
+      for (const anchor of items[index].anchors) {
+        budget -= 1;
+        if (budget < 0) return false;
+        const span = items[index].spans[anchor];
+        if (!fits(index, lane, span)) continue;
+        placed[index] = { anchor, lane, span };
+        if (place(index + 1, laneLimit)) return true;
+      }
+    }
+    return false;
+  };
+  for (let laneLimit = 1; laneLimit <= items.length; laneLimit += 1) {
+    placed.length = 0;
+    if (place(0, laneLimit)) return placed.map(({ anchor, lane }) => ({ anchor, lane }));
+  }
+  // Only for charts far too narrow for their markers: one label per lane.
+  return items.map((item, index) => ({ anchor: item.anchors[0], lane: index }));
 }
 
 function renderTenureTimelineSection(report, metrics) {
@@ -11290,9 +11691,10 @@ function renderTenureTimelineSection(report, metrics) {
     });
   const wideLanes = tenureMiniLabelLanes(ordered, TENURE_MINI_WIDE_MIN);
   const narrowLanes = tenureMiniLabelLanes(ordered, TENURE_MINI_NARROW_MIN);
+  const orderedRatios = ordered.map((marker) => marker.ratio);
   const laneCount = (lanes) => lanes.reduce((max, entry) => Math.max(max, entry.lane + 1), 1);
   const pointsMarkup = ordered.map((marker, index) => `
-          <div class="tenure-mini-point" data-marker="${marker.key}" data-anchor="${wideLanes[index].anchor}" data-anchor-n="${narrowLanes[index].anchor}" style="left:${tenureAxisPercent(marker.ratio)};--lane:${wideLanes[index].lane};--lane-n:${narrowLanes[index].lane}" title="${escapeHtml(`${marker.label} · ${marker.dateText}`)}">
+          <div class="tenure-mini-point" data-marker="${marker.key}" data-anchor="${wideLanes[index].anchor}" data-anchor-n="${narrowLanes[index].anchor}" style="left:${tenureSpacedMarkerLeft(orderedRatios, index)};--lane:${wideLanes[index].lane};--lane-n:${narrowLanes[index].lane}" title="${escapeHtml(`${marker.label} · ${marker.dateText}`)}">
             <span class="tenure-mini-marker">${tenureMarkerGlyph(marker.key)}</span>
             <span class="tenure-mini-label">
               <span class="tenure-mini-label-name">${escapeHtml(marker.label)}</span>
@@ -11566,7 +11968,7 @@ function renderDetailDrawer() {
               <div class="drawer-section" id="notesSection">
                 <div class="drawer-section-head">
                   <div>
-                    <h3>Manager Notes</h3>
+                    <h3 id="managerNotesHeading">Manager Notes</h3>
                     <p class="section-note">Keep quick context, coaching notes, and review reminders here.</p>
                   </div>
                 </div>
@@ -11576,7 +11978,7 @@ function renderDetailDrawer() {
                     <button type="button" class="md-tab" data-md-target="detailNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
                   </div>
                   <div class="md-panel-write" role="tabpanel">
-                    <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
+                    <textarea name="notes" id="detailNotes" class="notes-textarea" aria-labelledby="managerNotesHeading" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
                   </div>
                   <div class="md-panel-preview note-markdown" id="detailNotesPreview" role="tabpanel">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Nothing to preview yet.</p>' })}</div>
                 </div>
@@ -11890,6 +12292,20 @@ function renderDetailDrawer() {
 
 
 
+// The initials field shows its value in capitals while typing, the way
+// normalizeInitials stores it on save. The value itself is set in capitals
+// (no text-transform styling), so the placeholder keeps its written case.
+function uppercaseInitialsField(event) {
+  const field = event.target;
+  if (event.isComposing || !(field instanceof HTMLInputElement) || !field.matches('#detailEditorForm input[name="initials"]')) return;
+  const upper = field.value.toUpperCase();
+  if (upper === field.value) return;
+  const { selectionStart, selectionEnd } = field;
+  field.value = upper;
+  field.setSelectionRange(selectionStart, selectionEnd);
+}
+document.addEventListener('input', uppercaseInitialsField, true);
+document.addEventListener('compositionend', uppercaseInitialsField, true);
 // Tracks which collection views were visible on the previous render so entry
 // animations (staggered tiles and cards) fire only when a view first appears,
 // never on in-place re-renders like search keystrokes, filter changes, or
@@ -12186,6 +12602,15 @@ function renderSidebar() {
   const isPdcSummary = mainView === 'pdcSummary';
   const isSettings = mainView === 'settings';
 
+  // The nav is rebuilt below. When one of its items has focus (a keyboard
+  // user just pressed Enter on it), the same item in the new markup gets
+  // focus back, so the next Tab carries on from there.
+  const focusedEl = document.activeElement;
+  const focusedHook = focusedEl && mount.contains(focusedEl)
+    ? ['data-nav-main', 'data-nav-team-health'].find((name) => focusedEl.hasAttribute(name))
+    : '';
+  const refocusSelector = focusedHook ? `[${focusedHook}="${CSS.escape(focusedEl.getAttribute(focusedHook))}"]` : '';
+
   mount.innerHTML = `
     <div class="sidebar-group">
       <div class="sidebar-group-label">Team Health</div>
@@ -12219,6 +12644,7 @@ function renderSidebar() {
       </button>
     </div>
   `;
+  if (refocusSelector) mount.querySelector(refocusSelector)?.focus({ preventScroll: true });
   sidebarRevealTarget = `${mainView}:${thTab}`;
   watchSidebarRowSize(mount);
   revealActiveSidebarItem(mount, sidebarRevealTarget);
@@ -12268,6 +12694,11 @@ function revealActiveSidebarItem(mount, key) {
 // written to the event log until Wrap up; the in-flight draft lives in the
 // module-level meetingRoomDraft.
 // -----------------------------------------------------------------------
+// The overdue triangle on the Last 1:1 chip (the reports table's shape, drawn
+// in the tag's text color). Hidden from screen readers; the chip carries an
+// sr-only "overdue" instead.
+const MEETING_ROOM_OVERDUE_GLYPH = '<svg class="mr-overdue-glyph" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"/><path d="M12 9.6v4.8M12 17.4v.2"/></svg>';
+
 function renderMeetingRoomView() {
   const sectionEl = document.getElementById('meetingRoomSection');
   const mount = document.getElementById('meetingRoomBody');
@@ -12287,8 +12718,13 @@ function renderMeetingRoomView() {
   const lastOneOnOneText = metrics.lastOneOnOne
     ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${dateDiffInDays(metrics.lastOneOnOne) !== null ? ` · ${dateDiffInDays(metrics.lastOneOnOne)}d ago` : ''}`
     : 'No 1:1 logged yet';
+  // An overdue last 1:1 is amber, with a leading triangle and a screen reader
+  // "overdue" (as in the reports table), so it never relies on color alone.
+  const lastOneOnOneChip = metrics.oneOnOneOverdue
+    ? `<span class="badge amber mr-overdue">${MEETING_ROOM_OVERDUE_GLYPH}${escapeHtml(lastOneOnOneText)}<span class="sr-only">overdue</span></span>`
+    : badge(lastOneOnOneText, 'neutral');
   const chips = [
-    badge(lastOneOnOneText, metrics.oneOnOneOverdue ? 'amber' : 'neutral'),
+    lastOneOnOneChip,
     statusPillHtml('pdc', metrics.pdcStatus),
     openFollowUps.length ? badge(`${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}`, 'neutral') : '',
     report.nextOneOnOneDate ? badge(`Next planned ${formatDate(report.nextOneOnOneDate)}`, 'neutral') : '',
@@ -12299,11 +12735,9 @@ function renderMeetingRoomView() {
   const pointsHtml = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item">
-          <label>
-            <input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} title="Covered in this meeting">
-            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}</span>
-          </label>
-          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          <label class="mr-tp-check"><input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} aria-labelledby="mrTpText-${escapeHtml(point.id)}" title="Covered in this meeting"></label>
+          <span class="tp-item-text" id="mrTpText-${escapeHtml(point.id)}">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}</span>
+          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued. Add the first talking point below.</p>';
 
@@ -12336,7 +12770,7 @@ function renderMeetingRoomView() {
         <div class="mr-col">
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Talking Points</h3>
+              <h2>Talking Points</h2>
               <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
             </div>
             ${pointsHtml}
@@ -12348,14 +12782,14 @@ function renderMeetingRoomView() {
           </section>
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Open Follow-Ups</h3>
+              <h2>Open Follow-Ups</h2>
               <p class="section-note">Ticking marks them complete immediately in the source meeting note.</p>
             </div>
             ${followUpsHtml}
           </section>
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Goals</h3>
+              <h2>Goals</h2>
               <p class="section-note">The development thread this conversation should touch.</p>
             </div>
             <div class="mr-goal-list">${goalsHtml}</div>
@@ -12369,7 +12803,7 @@ function renderMeetingRoomView() {
           ${renderPrevMeetingPanelHtml(report, draft)}
           <section class="mr-panel mr-meeting">
             <div class="mr-panel-head">
-              <h3>This Meeting</h3>
+              <h2 id="mrMeetingTitle">This Meeting</h2>
             </div>
             <div class="mr-meta-row">
               <label><span>Type</span>
@@ -12379,13 +12813,13 @@ function renderMeetingRoomView() {
               <label><span>Duration (min)</span><input id="mrDuration" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 45" value="${escapeHtml(String(draft.durationMinutes || ''))}"></label>
             </div>
             <div class="pulse-field">
-              <span>How did it feel?</span>
-              <div class="pulse-picker" role="radiogroup" aria-label="Meeting pulse">
+              <span id="mrPulseLabel">How did it feel?</span>
+              <div class="pulse-picker" role="radiogroup" aria-labelledby="mrPulseLabel">
                 ${PULSE_VALUES.map((value) => `<label class="pulse-option" data-pulse="${value}"><input type="radio" name="mrPulse" value="${value}" ${draft.pulse === value ? 'checked' : ''}><span>${PULSE_LABELS[value]}</span></label>`).join('')}
                 <button type="button" class="pulse-clear" id="mrPulseClear" title="Clear pulse">Clear</button>
               </div>
             </div>
-            <textarea id="mrNotes" class="mr-notes" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
+            <textarea id="mrNotes" class="mr-notes" aria-labelledby="mrMeetingTitle" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
             <div class="actions mr-insert-actions">
               <button type="button" class="secondary" id="mrInsertPointsBtn" ${openPoints.length ? '' : 'disabled'}>Insert talking points</button>
               <button type="button" class="secondary${draft.meetingType === 'PDC' ? '' : ' hidden'}" id="mrInsertPdcBtn">Insert PDC template</button>
@@ -12489,7 +12923,7 @@ function renderPrevMeetingPanelHtml(report, draft) {
         <span class="mr-prev-title">Last time</span>
         ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
         <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
-        <svg class="mr-prev-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
       </summary>
       ${noteHtml}
     </details>`;
@@ -12603,10 +13037,10 @@ function renderReportTileHtml(report, options = {}) {
       </span>
       <span class="report-tile-foot">
         <span class="report-tile-vitals">
-          <span class="report-tile-vital"><span class="report-tile-caption">Meetings, 12 weeks</span>${renderTileSparkline(report)}</span>
-          ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
+          <span class="report-tile-vital">${renderTileSparkline(report)}</span>
+          ${pulseHtml ? `<span class="report-tile-vital is-pulse">${pulseHtml}</span>` : ''}
         </span>
-        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBarPhrasing(metrics.primaryGoal, { compact: true })}</span>` : ''}
+        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
         ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
       </span>
     </button>
@@ -12622,6 +13056,17 @@ function renderReportTileHtml(report, options = {}) {
 function renderGoalProgressBarPhrasing(goal, options = {}) {
   return renderGoalProgressBar(goal, options).replace(/<(\/?)div\b/g, '<$1span');
 }
+
+// The goal's status as a tag before the compact bar, as on the PDC board and
+// in the 1:1 room, so At risk, Paused and On track never rely on the bar
+// color alone. Used by the tile and the table.
+function renderGoalStatusAndBar(goal) {
+  return `${statusPillHtml('goal', goal.status || GOAL_STATUSES[0])}${renderGoalProgressBarPhrasing(goal, { compact: true })}`;
+}
+
+// An overdue last 1:1 is amber, and always carries this triangle and a
+// screen reader word, so it never relies on color alone.
+const REPORTS_OVERDUE_GLYPH = '<svg class="tt-overdue-glyph" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"></path><path d="M12 9.6v4.8M12 17.4v.2"></path></svg>';
 
 // Monday-style table lens for Direct Reports: grouped by attention state,
 // status selects editable inline, next 1:1 editable in place. Same filtered
@@ -12652,10 +13097,10 @@ function renderReportsTableHtml(filtered, total) {
       </button></td>
       <td>${pillSelect('data-table-pdc', report.id, PDC_STATUSES, pdcValue, 'pdc')}</td>
       <td>${pillSelect('data-table-support', report.id, SUPPORT_LEVELS, supportValue, 'support')}</td>
-      <td><span class="tt-last${metrics.oneOnOneOverdue ? ' tt-overdue' : ''}">${escapeHtml(lastText)}</span></td>
+      <td><span class="tt-last${metrics.oneOnOneOverdue ? ' tt-overdue' : ''}">${metrics.oneOnOneOverdue ? REPORTS_OVERDUE_GLYPH : ''}<span>${escapeHtml(lastText)}</span>${metrics.oneOnOneOverdue ? '<span class="sr-only">overdue</span>' : ''}</span></td>
       <td class="tt-date"><input type="date" data-table-next="${escapeHtml(report.id)}" value="${escapeHtml(report.nextOneOnOneDate || '')}" aria-label="Next planned 1:1"></td>
       <td><span class="tt-count${openFu ? '' : ' zero'}">${openFu}</span></td>
-      <td>${metrics.primaryGoal ? `<span title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBarPhrasing(metrics.primaryGoal, { compact: true })}</span>` : '<span class="tt-empty">No goal</span>'}</td>
+      <td>${metrics.primaryGoal ? `<span class="tt-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : '<span class="tt-empty">No goal</span>'}</td>
       <td>${renderPulseDots(metrics.pulseSeries, { emptyHtml: '<span class="tt-empty">No pulse</span>' })}</td>
       <td><span class="tt-actions">
         <button type="button" class="tt-action-btn" data-open-room="${escapeHtml(report.id)}" title="Open the 1:1 meeting room">1:1 room</button>
@@ -12708,7 +13153,11 @@ function renderTileSparkline(report) {
     const h = Math.round(STUB + ((H - STUB) * b.count) / max);
     return `<rect class="tile-spark-bar" x="${i * PITCH}" y="${H - h}" width="${BAR}" height="${h}" rx="1.5">${tip}</rect>`;
   }).join('');
-  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="Meetings per week, last 12 weeks">${bars}</svg>`;
+  // The label keeps its wording and adds the 12-week total, since the
+  // per-week <title>s are hidden inside role="img".
+  const total = buckets.reduce((sum, b) => sum + b.count, 0);
+  const label = `Meetings per week, last 12 weeks: ${total} meeting${total === 1 ? '' : 's'}`;
+  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="${escapeHtml(label)}">${bars}</svg>`;
 }
 // Renders a global "all meetings" view (flattened across every direct report).
 // Top toolbar: person filter + "Log meeting" button. Click a row to edit that meeting.
@@ -12931,8 +13380,9 @@ function renderMeetingsView() {
   };
 
   // One list card. A month divider row starts each month, then one row per
-  // meeting: date, avatar, person, type tag, pulse glyph, the date and
-  // duration, the first line of the notes, and the follow-up count tag.
+  // meeting: date, avatar, "person · type · duration" with the pulse glyph,
+  // the full date on its own line, the first line of the notes, and the
+  // follow-up count tag. The title and date lines keep the v0.52.4 text.
   let lastMonthKey = '';
   const rows = items.map(({ report, meeting }) => {
     const monthKey = (meeting.meetingDate || '').slice(0, 7) || 'undated';
@@ -12952,24 +13402,23 @@ function renderMeetingsView() {
     const pulseGlyph = pulse
       ? `<span class="pulse-dot" data-pulse="${escapeHtml(pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[pulse])}" title="${escapeHtml(PULSE_LABELS[pulse])}"></span>`
       : '';
-    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0">
-        <div class="meetings-view-date">
+    return `${divider}<button type="button" class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}">
+        <span class="meetings-view-date">
           <span class="meetings-view-date-m">${escapeHtml(monthName(meeting.meetingDate))}</span>
           <span class="meetings-view-date-d">${escapeHtml(dayNum(meeting.meetingDate))}</span>
-        </div>
-        <div class="mv-avatar" aria-hidden="true">${escapeHtml(mInitials)}</div>
-        <div class="meetings-view-main">
+        </span>
+        <span class="mv-avatar" aria-hidden="true">${escapeHtml(mInitials)}</span>
+        <span class="meetings-view-main">
           <span class="meetings-view-main-title">
-            <span class="meetings-view-name">${escapeHtml(report.name || 'Unnamed')}</span>
-            <span class="tag neutral meetings-view-type">${escapeHtml(meeting.meetingType || '1:1')}</span>
+            <span class="meetings-view-name">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}</span>
             ${pulseGlyph}
-            <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}${escapeHtml(duration)}</span>
           </span>
+          <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
           <span class="meetings-view-main-snip">${escapeHtml(snippet)}</span>
-        </div>
+        </span>
         ${fuChip ? `<span class="meetings-view-chips">${fuChip}</span>` : ''}
-        <div class="meetings-view-edit">Edit →</div>
-      </div>`;
+        <span class="meetings-view-edit">Edit →</span>
+      </button>`;
   }).join('');
 
   mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view">${rows}</div>`;
@@ -13210,8 +13659,12 @@ function runGlobalSearch(rawQuery) {
 
 // The results follow the combobox and listbox pattern: focus stays in the
 // field, the arrow keys move the active option (aria-activedescendant), and
-// each group of rows is a labelled group. With no match the list is hidden and
-// the message goes to the status region under it, so it is read out.
+// each group of rows is a labelled group. The rows are left out of the Tab
+// order (tabindex -1), so there is only ever one active row: the first row,
+// or the one the arrow keys last picked. Hovering a row only highlights it
+// (CSS); Enter always runs the active row, as before. With no match the list
+// is hidden and the message goes to the status region under it, so it is read
+// out.
 function renderGlobalSearchResults() {
   gsResults = runGlobalSearch(globalSearchInputEl.value);
   gsActiveIndex = 0;
@@ -13240,8 +13693,8 @@ function renderGlobalSearchResults() {
     }
     const iconHtml = res.avatarId
       ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
-      : `<span class="gs-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>`;
-    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" data-gs-index="${i}">
+      : `<span class="gs-icon" aria-hidden="true">→</span>`;
+    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" tabindex="-1" data-gs-index="${i}">
       ${iconHtml}
       <span class="gs-main">
         <span class="gs-title">${escapeHtml(res.title)}</span>
@@ -13341,10 +13794,13 @@ function renderFollowUpsView() {
     return;
   }
 
+  // Each checkbox is named by its item text and source meta only (through
+  // aria-labelledby), so the "Open meeting" button inside the row label does
+  // not become part of the checkbox's name.
   mount.innerHTML = `
     <div class="followups-summary">${badge(`${totalOpen} open across ${groups.length} ${groups.length === 1 ? 'person' : 'people'}`, 'neutral')}</div>
     <div class="followups-view">
-      ${groups.map(({ report, items }) => `
+      ${groups.map(({ report, items }, groupIndex) => `
         <div class="sharp-panel followup-panel">
           <div class="sharp-panel-header">
             <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
@@ -13352,13 +13808,13 @@ function renderFollowUpsView() {
           </div>
           <div class="sharp-panel-body">
             <div class="followup-list">
-              ${items.map((item) => `
+              ${items.map((item, itemIndex) => `
                 <label class="followup-item">
-                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="fuv-${groupIndex}-${itemIndex}-text fuv-${groupIndex}-${itemIndex}-meta">
                   <span class="followup-copy">
-                    <strong>${escapeHtml(item.text)}</strong>
+                    <strong id="fuv-${groupIndex}-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                     <span class="followup-meta">
-                      <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                      <span id="fuv-${groupIndex}-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                       <button type="button" class="followup-jump" data-followup-open="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}">Open meeting</button>
                     </span>
                   </span>
@@ -14148,7 +14604,8 @@ function renderPulseDots(pulseSeries = [], options = {}) {
   const limit = options.limit || 5;
   const items = [...(pulseSeries || [])].slice(0, limit).reverse();
   if (!items.length) return options.emptyHtml !== undefined ? options.emptyHtml : '<span class="pulse-dots-empty">No pulse yet</span>';
-  return `<span class="pulse-dots" role="img" aria-label="Recent 1:1 pulse, oldest to newest">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
+  const spoken = items.map((item) => PULSE_LABELS[item.pulse] || item.pulse).join(', ');
+  return `<span class="pulse-dots" role="img" aria-label="${escapeHtml(`Recent 1:1 pulse, oldest to newest: ${spoken}`)}">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
 }
 
 function statusPillHtml(kind, value) {
@@ -14331,13 +14788,16 @@ function meetingExistsForReport(report, meetingType, meetingDate, notes, externa
 
 // Dialog focus: remember what had focus when a dialog opened and put focus
 // back there when it closes. If a re-render replaced that element, its new
-// copy gets focus instead (focusReturnTarget in 09).
+// copy gets focus instead (focusReturnTarget in 09). A dialog opened from a
+// toast action (such as Log the PDC) returns focus to where it was before the
+// toast, because the toast and its button are gone by then.
 const dialogReturnFocus = new Map();
 
 function rememberDialogOpener(key, modalEl) {
   const activeEl = document.activeElement;
   if (activeEl && modalEl && modalEl.contains(activeEl)) return;
-  dialogReturnFocus.set(key, focusReturnRecord(activeEl));
+  const toastEl = activeEl && toastStackEl?.contains(activeEl) ? activeEl.closest('.toast') : null;
+  dialogReturnFocus.set(key, toastEl ? toastReturnFocus.get(toastEl) || null : focusReturnRecord(activeEl));
 }
 
 function restoreDialogOpener(key) {
@@ -17707,10 +18167,14 @@ try {
     if (stack) {
       const panel = document.createElement('div');
       panel.className = 'toast error';
+      panel.setAttribute('data-toast-icon', 'error');
       panel.setAttribute('role', 'alert');
-      panel.style.maxWidth = '520px';
+      try { panel.appendChild(createToastIcon('error')); } catch (_) { /* the message alone still helps */ }
       const message = (error && error.message) ? error.message : String(error);
-      panel.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      const messageEl = document.createElement('div');
+      messageEl.className = 'toast-message';
+      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      panel.appendChild(messageEl);
       stack.appendChild(panel);
     }
   } catch (_) { /* last-ditch: leave console error only */ }

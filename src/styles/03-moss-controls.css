@@ -286,6 +286,30 @@ textarea:focus {
 input:where([type="number"]) { font-variant-numeric: tabular-nums; }
 input:where([type="date"], [type="time"], [type="month"]) { font-variant-numeric: tabular-nums; }
 input:where([type="date"])::-webkit-calendar-picker-indicator { cursor: pointer; }
+/* The segment being typed into (month, day or year) is marked with the moss
+   accent instead of Chromium's blue highlight. :focus-within is the only
+   pseudo-class Chromium matches on these segments for page styles, and it
+   matches the focused segment alone, so the user still sees which part they
+   are editing. */
+input:where([type="date"])::-webkit-datetime-edit-month-field:focus-within,
+input:where([type="date"])::-webkit-datetime-edit-day-field:focus-within,
+input:where([type="date"])::-webkit-datetime-edit-year-field:focus-within {
+  background-color: var(--accent);
+  color: var(--surface);
+}
+/* Tab from the year reaches the calendar button inside the field. The field
+   no longer matches :focus then (only :focus-within), so it keeps its focus
+   border, and the button gets the accent ring instead of Chromium's black
+   one. */
+input:where([type="date"]):focus-within:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+input:where([type="date"])::-webkit-calendar-picker-indicator:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-tag);
+}
 input:where([type="search"])::-webkit-search-decoration { appearance: none; }
 input:where(:not([type]), [type="text"], [type="search"], [type="number"], [type="date"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="time"], [type="month"], [type="week"], [type="datetime-local"]):where(:disabled, [readonly]),
 select:disabled,
@@ -616,7 +640,15 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   color: var(--ink);
   font-weight: 600;
 }
-.tenure-mode-sep { display: none; }
+/* The "·" between the two Insights chart modes stays visible inside the
+   track, as quiet text between the two buttons. */
+.tenure-mode-sep {
+  padding: 0 2px;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1;
+  user-select: none;
+}
 
 /* --- Tabs --------------------------------------------------------------------- */
 /* Text tabs 22px apart. The current tab has 600 text and a 2px accent

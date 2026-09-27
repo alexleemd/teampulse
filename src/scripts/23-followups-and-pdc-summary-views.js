@@ -31,10 +31,13 @@ function renderFollowUpsView() {
     return;
   }
 
+  // Each checkbox is named by its item text and source meta only (through
+  // aria-labelledby), so the "Open meeting" button inside the row label does
+  // not become part of the checkbox's name.
   mount.innerHTML = `
     <div class="followups-summary">${badge(`${totalOpen} open across ${groups.length} ${groups.length === 1 ? 'person' : 'people'}`, 'neutral')}</div>
     <div class="followups-view">
-      ${groups.map(({ report, items }) => `
+      ${groups.map(({ report, items }, groupIndex) => `
         <div class="sharp-panel followup-panel">
           <div class="sharp-panel-header">
             <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
@@ -42,13 +45,13 @@ function renderFollowUpsView() {
           </div>
           <div class="sharp-panel-body">
             <div class="followup-list">
-              ${items.map((item) => `
+              ${items.map((item, itemIndex) => `
                 <label class="followup-item">
-                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="fuv-${groupIndex}-${itemIndex}-text fuv-${groupIndex}-${itemIndex}-meta">
                   <span class="followup-copy">
-                    <strong>${escapeHtml(item.text)}</strong>
+                    <strong id="fuv-${groupIndex}-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                     <span class="followup-meta">
-                      <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                      <span id="fuv-${groupIndex}-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                       <button type="button" class="followup-jump" data-followup-open="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}">Open meeting</button>
                     </span>
                   </span>

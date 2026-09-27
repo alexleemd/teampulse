@@ -24,6 +24,15 @@
   gap: 8px;
   min-width: 0;
 }
+/* An overdue Last 1:1 chip leads with a 12px triangle in the tag's amber
+   text color, so the status never relies on the color alone. */
+.mr-chips > .mr-overdue { gap: 5px; padding-left: 7px; }
+.mr-overdue-glyph {
+  display: block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
 
 .mr-grid {
   display: grid;
@@ -58,7 +67,7 @@
   gap: 4px;
   min-width: 0;
 }
-.mr-panel-head h3 {
+.mr-panel-head h2 {
   margin: 0;
   color: var(--ink);
   font-size: var(--text-panel);
@@ -88,10 +97,30 @@
   row-gap: 4px;
 }
 .mr-shell .tp-list .tp-item-text > .tp-chip { margin-left: 0; }
+/* Only the checkbox sits in its label, so clicking the point's text or its
+   tag does not tick it (as before). The label is a 28px hit area centered
+   on the 16px box; the negative side margins keep the box where the shared
+   row puts it (6px down, 10px before the text, 8px before the remove
+   button). */
+.mr-shell .tp-item:has(> .mr-tp-check) { gap: 10px; }
+.mr-shell .tp-item > .mr-tp-check {
+  flex: none;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  gap: 0;
+  width: 28px;
+  height: 28px;
+  margin: 0 -6px;
+  padding: 0;
+}
+.mr-shell .tp-item > .mr-tp-check > input[type="checkbox"] { margin: 0; }
+.mr-shell .tp-item:has(> .mr-tp-check) > .tp-delete { margin-left: -2px; }
 /* The "… discussed points in the workspace →" link is a plain link button
-   here: it opens the workspace, so it has no disclosure chevron. */
+   here: it opens the workspace, so it has no disclosure chevron (08 scopes
+   its chevron to #detailDrawer .tp-done-details). */
 .mr-panel > .tp-done-toggle { align-self: flex-start; }
-.mr-panel > .tp-done-toggle::before { content: none; }
 
 /* --- Open Follow-Ups ------------------------------------------------------- */
 .mr-followups {
@@ -186,14 +215,28 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
-/* The chevron turns over when the recap is open (120ms, answers the click). */
+/* The chevron turns over when the recap is open (120ms, answers the click).
+   The span keeps its "▾" text; the glyph is hidden and the Moss chevron icon
+   is drawn with a mask, as the shared .tp-delete does for its "×". */
 .mr-prev-chevron {
+  display: block;
   flex: none;
   width: 16px;
   height: 16px;
   margin-left: auto;
   color: var(--ink-2);
+  font-size: 0;
+  line-height: 0;
   transition: transform 120ms ease;
+}
+.mr-prev-chevron::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
 }
 .mr-prev[open] .mr-prev-chevron { transform: rotate(180deg); }
 .mr-prev-summary:hover .mr-prev-chevron { color: var(--ink); }

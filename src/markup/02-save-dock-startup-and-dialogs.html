@@ -71,8 +71,8 @@
             </div>
           </label>
           <div class="full pulse-field">
-            <span>How did it feel? (optional)</span>
-            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-label="Meeting pulse">
+            <span id="meetingPulseLabel">How did it feel? (optional)</span>
+            <div class="pulse-picker" id="meetingPulsePicker" role="radiogroup" aria-labelledby="meetingPulseLabel">
               <label class="pulse-option" data-pulse="green"><input type="radio" name="meetingPulse" value="green"><span>Good</span></label>
               <label class="pulse-option" data-pulse="amber"><input type="radio" name="meetingPulse" value="amber"><span>Mixed</span></label>
               <label class="pulse-option" data-pulse="red"><input type="radio" name="meetingPulse" value="red"><span>Rough</span></label>
@@ -82,13 +82,13 @@
           <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
             <span id="meetingNotesLabel">Notes</span>
             <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
-              <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
-              <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
+              <button type="button" class="md-tab active" id="meetingNotesWriteTab" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true" aria-controls="meetingNotesWritePanel">Markdown</button>
+              <button type="button" class="md-tab" id="meetingNotesPreviewTab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false" aria-controls="meetingNotesPreview">Preview</button>
             </div>
-            <div class="md-panel-write" role="tabpanel">
+            <div class="md-panel-write" id="meetingNotesWritePanel" role="tabpanel" aria-labelledby="meetingNotesWriteTab">
               <textarea id="meetingNotes" name="meetingNotes" aria-labelledby="meetingNotesLabel" placeholder="Optional notes or follow-ups"></textarea>
             </div>
-            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
+            <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel" aria-labelledby="meetingNotesPreviewTab"><p class="note-preview-empty">Nothing to preview yet.</p></div>
           </div>
         </div>
         <div class="actions modal-actions">

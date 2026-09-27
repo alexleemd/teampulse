@@ -66,6 +66,49 @@ function restoreFocusTo(record) {
   if (target && !target.disabled && typeof target.focus === 'function') target.focus({ preventScroll: true });
 }
 
+// Where focus was before it moved into each toast with an action, so a
+// keyboard Undo, or a dialog the action opens (27), can put focus back there.
+const toastReturnFocus = new WeakMap();
+
+// Toast placement: top right, 20px in (12px on narrow screens, from
+// 11-overlays.css). When a row of controls already sits in that spot, the
+// stack starts 12px under it, so a toast never hides the buttons it reports
+// on: the header of the open dialog, search or Settings drawer, or with no
+// layer open the backup banner, the workspace action row and the page header
+// controls. Only rows at the very top count, so on a scrolled page the stack
+// stays put.
+const TOAST_LAYER_HEADERS = [
+  '#globalSearch.open .gs-input-row',
+  '#meetingModal.open .modal-header',
+  '.overlay.open .modal-header',
+  '#rulesDrawerOverlay.open .drawer-header'
+];
+const TOAST_PAGE_ROWS = [
+  '#exportReminderMount .export-banner',
+  '#detailDrawer:not([hidden]) .drawer-header-top > .actions',
+  '#contentHeader .content-header-meta'
+];
+
+function placeToastStack() {
+  if (!toastStackEl) return;
+  toastStackEl.style.removeProperty('--toast-top');
+  if (!toastStackEl.childElementCount) return;
+  const stackRect = toastStackEl.getBoundingClientRect();
+  const baseTop = stackRect.top;
+  const bandBottom = baseTop + toastStackEl.firstElementChild.getBoundingClientRect().height;
+  const layerHeaderEl = TOAST_LAYER_HEADERS.map((selector) => document.querySelector(selector)).find(Boolean);
+  const rowEls = layerHeaderEl ? [layerHeaderEl] : TOAST_PAGE_ROWS.flatMap((selector) => [...document.querySelectorAll(selector)]);
+  let top = baseTop;
+  rowEls.forEach((rowEl) => {
+    const rect = rowEl.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    if (rect.right <= stackRect.left || rect.left >= stackRect.right) return;
+    if (rect.bottom <= baseTop || rect.top >= bandBottom) return;
+    top = Math.max(top, Math.ceil(rect.bottom) + 12);
+  });
+  if (top > baseTop) toastStackEl.style.setProperty('--toast-top', `${top}px`);
+}
+
 function showToast(message, kind = '', options = {}) {
   const iconKind = toastIconKind(kind);
   const hasAction = !!options.actionLabel && typeof options.onAction === 'function';
@@ -80,36 +123,44 @@ function showToast(message, kind = '', options = {}) {
   messageEl.className = 'toast-message';
   messageEl.textContent = message;
   toast.appendChild(messageEl);
+  const button = hasAction ? document.createElement('button') : null;
+  if (button) {
+    button.type = 'button';
+    button.className = 'toast-action';
+    button.textContent = options.actionLabel;
+    toast.appendChild(button);
+  }
   toastStackEl.appendChild(toast);
+  placeToastStack();
 
   const duration = options.duration || TOAST_TIMEOUT_MS;
   let timer = window.setTimeout(() => toast.remove(), duration);
   // A toast without an action ignores the pointer (11-overlays.css), so it
   // never blocks the buttons under it and always leaves on time.
-  if (!hasAction) return;
+  if (!button) return;
 
   // Where focus was before it moved into the toast, so a keyboard Undo puts
   // focus back there (or on its re-rendered copy) instead of on the page body.
-  let returnFocus = null;
+  // If the action opens a dialog instead, the dialog takes this record as its
+  // opener (rememberDialogOpener in 27), since the toast button goes away.
   toast.addEventListener('focusin', (event) => {
-    if (returnFocus) return;
+    if (toastReturnFocus.has(toast)) return;
     const from = event.relatedTarget;
-    if (from && !toast.contains(from)) returnFocus = focusReturnRecord(from);
+    if (!from || toast.contains(from)) return;
+    // From another toast: share where that one came from.
+    const fromToast = toastStackEl.contains(from) ? from.closest('.toast') : null;
+    const record = fromToast ? toastReturnFocus.get(fromToast) : focusReturnRecord(from);
+    if (record) toastReturnFocus.set(toast, record);
   });
   const dismiss = () => {
     window.clearTimeout(timer);
-    if (toast.contains(document.activeElement)) restoreFocusTo(returnFocus);
+    if (toast.contains(document.activeElement)) restoreFocusTo(toastReturnFocus.get(toast));
     toast.remove();
   };
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'toast-action';
-  button.textContent = options.actionLabel;
   button.addEventListener('click', () => {
     options.onAction();
     dismiss();
   });
-  toast.appendChild(button);
 
   // A toast with an action stays while the pointer is on it or focus is
   // inside it (so Undo cannot vanish under the cursor), then gets its full
@@ -155,6 +206,9 @@ function syncBodyOverlayLock() {
     || !!goalModalEl?.classList.contains('open')
     || !!feedbackModalEl?.classList.contains('open');
   document.body.classList.toggle('overlay-open', locked);
+  // A layer opened or closed: move any toast on screen off its header. After
+  // the caller's render, so the rows are measured where they end up.
+  if (toastStackEl?.childElementCount) window.requestAnimationFrame(placeToastStack);
 }
 
 function updateStartupPrompt() {

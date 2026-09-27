@@ -291,16 +291,34 @@ function renderSettingsPanel() {
   healthPanelEl.replaceChildren(grid);
 }
 
+// The drawer is a modal dialog: opening it moves focus to its Close button,
+// and closing it puts focus back on the control that opened it (or that
+// control's re-rendered copy, via focusReturnRecord in 09). When nothing had
+// focus (a digit shortcut, a search result), focus returns to the sidebar
+// Settings item, which is where the view now is.
+let rulesDrawerReturnFocus = null;
+
 function openRulesDrawer() {
+  const wasOpen = rulesDrawerOverlayEl.classList.contains('open');
   renderRuleInputs();
   renderSettingsPanel();
   rulesDrawerOverlayEl.classList.add('open');
   rulesDrawerOverlayEl.setAttribute('aria-hidden', 'false');
   syncBodyOverlayLock();
+  if (wasOpen) return;
+  const activeEl = document.activeElement;
+  rulesDrawerReturnFocus = activeEl && !rulesDrawerOverlayEl.contains(activeEl) ? focusReturnRecord(activeEl) : null;
+  closeRulesDrawerBtn.focus({ preventScroll: true });
 }
 
 function closeRulesDrawer() {
+  const wasOpen = rulesDrawerOverlayEl.classList.contains('open');
   rulesDrawerOverlayEl.classList.remove('open');
   rulesDrawerOverlayEl.setAttribute('aria-hidden', 'true');
   syncBodyOverlayLock();
+  if (!wasOpen) return;
+  const saved = rulesDrawerReturnFocus;
+  rulesDrawerReturnFocus = null;
+  const target = focusReturnTarget(saved) || document.querySelector('#sidebarNav [data-nav-main="settings"]');
+  if (target && !target.disabled && typeof target.focus === 'function') target.focus({ preventScroll: true });
 }

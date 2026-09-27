@@ -184,8 +184,12 @@ function runGlobalSearch(rawQuery) {
 
 // The results follow the combobox and listbox pattern: focus stays in the
 // field, the arrow keys move the active option (aria-activedescendant), and
-// each group of rows is a labelled group. With no match the list is hidden and
-// the message goes to the status region under it, so it is read out.
+// each group of rows is a labelled group. The rows are left out of the Tab
+// order (tabindex -1), so there is only ever one active row: the first row,
+// or the one the arrow keys last picked. Hovering a row only highlights it
+// (CSS); Enter always runs the active row, as before. With no match the list
+// is hidden and the message goes to the status region under it, so it is read
+// out.
 function renderGlobalSearchResults() {
   gsResults = runGlobalSearch(globalSearchInputEl.value);
   gsActiveIndex = 0;
@@ -214,8 +218,8 @@ function renderGlobalSearchResults() {
     }
     const iconHtml = res.avatarId
       ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
-      : `<span class="gs-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>`;
-    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" data-gs-index="${i}">
+      : `<span class="gs-icon" aria-hidden="true">→</span>`;
+    html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" tabindex="-1" data-gs-index="${i}">
       ${iconHtml}
       <span class="gs-main">
         <span class="gs-title">${escapeHtml(res.title)}</span>

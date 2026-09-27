@@ -107,10 +107,10 @@ function renderReportTileHtml(report, options = {}) {
       </span>
       <span class="report-tile-foot">
         <span class="report-tile-vitals">
-          <span class="report-tile-vital"><span class="report-tile-caption">Meetings, 12 weeks</span>${renderTileSparkline(report)}</span>
-          ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
+          <span class="report-tile-vital">${renderTileSparkline(report)}</span>
+          ${pulseHtml ? `<span class="report-tile-vital is-pulse">${pulseHtml}</span>` : ''}
         </span>
-        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBarPhrasing(metrics.primaryGoal, { compact: true })}</span>` : ''}
+        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
         ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
       </span>
     </button>
@@ -126,6 +126,17 @@ function renderReportTileHtml(report, options = {}) {
 function renderGoalProgressBarPhrasing(goal, options = {}) {
   return renderGoalProgressBar(goal, options).replace(/<(\/?)div\b/g, '<$1span');
 }
+
+// The goal's status as a tag before the compact bar, as on the PDC board and
+// in the 1:1 room, so At risk, Paused and On track never rely on the bar
+// color alone. Used by the tile and the table.
+function renderGoalStatusAndBar(goal) {
+  return `${statusPillHtml('goal', goal.status || GOAL_STATUSES[0])}${renderGoalProgressBarPhrasing(goal, { compact: true })}`;
+}
+
+// An overdue last 1:1 is amber, and always carries this triangle and a
+// screen reader word, so it never relies on color alone.
+const REPORTS_OVERDUE_GLYPH = '<svg class="tt-overdue-glyph" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"></path><path d="M12 9.6v4.8M12 17.4v.2"></path></svg>';
 
 // Monday-style table lens for Direct Reports: grouped by attention state,
 // status selects editable inline, next 1:1 editable in place. Same filtered
@@ -156,10 +167,10 @@ function renderReportsTableHtml(filtered, total) {
       </button></td>
       <td>${pillSelect('data-table-pdc', report.id, PDC_STATUSES, pdcValue, 'pdc')}</td>
       <td>${pillSelect('data-table-support', report.id, SUPPORT_LEVELS, supportValue, 'support')}</td>
-      <td><span class="tt-last${metrics.oneOnOneOverdue ? ' tt-overdue' : ''}">${escapeHtml(lastText)}</span></td>
+      <td><span class="tt-last${metrics.oneOnOneOverdue ? ' tt-overdue' : ''}">${metrics.oneOnOneOverdue ? REPORTS_OVERDUE_GLYPH : ''}<span>${escapeHtml(lastText)}</span>${metrics.oneOnOneOverdue ? '<span class="sr-only">overdue</span>' : ''}</span></td>
       <td class="tt-date"><input type="date" data-table-next="${escapeHtml(report.id)}" value="${escapeHtml(report.nextOneOnOneDate || '')}" aria-label="Next planned 1:1"></td>
       <td><span class="tt-count${openFu ? '' : ' zero'}">${openFu}</span></td>
-      <td>${metrics.primaryGoal ? `<span title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBarPhrasing(metrics.primaryGoal, { compact: true })}</span>` : '<span class="tt-empty">No goal</span>'}</td>
+      <td>${metrics.primaryGoal ? `<span class="tt-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : '<span class="tt-empty">No goal</span>'}</td>
       <td>${renderPulseDots(metrics.pulseSeries, { emptyHtml: '<span class="tt-empty">No pulse</span>' })}</td>
       <td><span class="tt-actions">
         <button type="button" class="tt-action-btn" data-open-room="${escapeHtml(report.id)}" title="Open the 1:1 meeting room">1:1 room</button>
@@ -212,5 +223,9 @@ function renderTileSparkline(report) {
     const h = Math.round(STUB + ((H - STUB) * b.count) / max);
     return `<rect class="tile-spark-bar" x="${i * PITCH}" y="${H - h}" width="${BAR}" height="${h}" rx="1.5">${tip}</rect>`;
   }).join('');
-  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="Meetings per week, last 12 weeks">${bars}</svg>`;
+  // The label keeps its wording and adds the 12-week total, since the
+  // per-week <title>s are hidden inside role="img".
+  const total = buckets.reduce((sum, b) => sum + b.count, 0);
+  const label = `Meetings per week, last 12 weeks: ${total} meeting${total === 1 ? '' : 's'}`;
+  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="${escapeHtml(label)}">${bars}</svg>`;
 }

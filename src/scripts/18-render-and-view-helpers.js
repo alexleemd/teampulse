@@ -294,6 +294,15 @@ function renderSidebar() {
   const isPdcSummary = mainView === 'pdcSummary';
   const isSettings = mainView === 'settings';
 
+  // The nav is rebuilt below. When one of its items has focus (a keyboard
+  // user just pressed Enter on it), the same item in the new markup gets
+  // focus back, so the next Tab carries on from there.
+  const focusedEl = document.activeElement;
+  const focusedHook = focusedEl && mount.contains(focusedEl)
+    ? ['data-nav-main', 'data-nav-team-health'].find((name) => focusedEl.hasAttribute(name))
+    : '';
+  const refocusSelector = focusedHook ? `[${focusedHook}="${CSS.escape(focusedEl.getAttribute(focusedHook))}"]` : '';
+
   mount.innerHTML = `
     <div class="sidebar-group">
       <div class="sidebar-group-label">Team Health</div>
@@ -327,6 +336,7 @@ function renderSidebar() {
       </button>
     </div>
   `;
+  if (refocusSelector) mount.querySelector(refocusSelector)?.focus({ preventScroll: true });
   sidebarRevealTarget = `${mainView}:${thTab}`;
   watchSidebarRowSize(mount);
   revealActiveSidebarItem(mount, sidebarRevealTarget);
