@@ -47,6 +47,8 @@ Edit the files in `src/`, never `index.html` directly. The `index.html` at the r
 - `node build.mjs` rebuilds `index.html`. Run it after every change in `src/` and commit both. `node build.mjs --out <file>` writes a preview somewhere else.
 - `node build.mjs --check` fails if `index.html` is not the current build. The Build workflow (`.github/workflows/build.yml`) runs this on every pull request and on every push to main, and keeps a copy of `index.html` with each passing run.
 - `npm install` and `npx playwright install chromium` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run.
+- `npm test` runs the automated tests in `tools/tests` (save and reload round trip, migrations from every old schema version, time zones) against a fresh build. The Build workflow runs them on every pull request. Add a test when you fix a bug.
+- `TZ=Europe/Copenhagen node tools/screenshots/shoot.cjs ...` takes the screenshots in another time zone (the default is UTC).
 - `node tools/screenshots/compare.cjs <runA> <runB>` compares two screenshot runs pixel for pixel. Use it to prove a change has no visual effect, and use the PNGs for before and after pictures.
 
 ## Design
