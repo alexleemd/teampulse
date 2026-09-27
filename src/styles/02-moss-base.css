@@ -52,15 +52,21 @@ svg { flex-shrink: 0; }
 
 /* --- Behavior: overlays, dialogs and drawers --------------------------- */
 body.overlay-open { overflow: hidden; }
+/* Closed layers also leave the tab order: visibility follows the open state,
+   on at once when opening, off after the 120ms fade when closing. */
 .overlay, .drawer-overlay {
   position: fixed; inset: 0; background: var(--scrim);
-  opacity: 0; pointer-events: none; transition: opacity 120ms ease;
+  opacity: 0; pointer-events: none; visibility: hidden;
+  transition: opacity 120ms ease, visibility 0s linear 120ms;
 }
 .drawer-overlay { z-index: 40; }
 .overlay { z-index: 70; }
 #meetingModal { z-index: 90; }
 #saveConflictOverlay { z-index: 125; }
-.overlay.open, .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.overlay.open, .drawer-overlay.open {
+  opacity: 1; pointer-events: auto; visibility: visible;
+  transition: opacity 120ms ease, visibility 0s linear 0s;
+}
 
 .drawer, .rules-drawer {
   position: absolute; right: 0; top: 0; bottom: 0; height: 100vh;

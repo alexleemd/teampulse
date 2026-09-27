@@ -8,6 +8,12 @@ function normalizeInitials(value) {
   return normalizeText(value).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
 }
 
+// Avatar initials: the first letter of the first two words of the name,
+// uppercased, "?" when there is none. Every avatar uses this one helper.
+function personInitials(name) {
+  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+}
+
 // Splits a trailing parenthesized initials token off a name, the pattern used
 // before initials became a first-class field ("Maria Moreira (MAMO)"). Returns
 // { name, initials } with initials empty when the pattern does not match.

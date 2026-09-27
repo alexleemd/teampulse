@@ -201,17 +201,21 @@ function undoDestructiveAction(action) {
   return false;
 }
 
-function syncBodyOverlayLock() {
-  const goalModalEl = document.getElementById('goalModal');
-  const feedbackModalEl = document.getElementById('feedbackModal');
-  const locked = startupPromptOverlayEl.classList.contains('open')
-    || !!document.getElementById('saveConflictOverlay')?.classList.contains('open')
+// True while search, a dialog, the Settings drawer, the startup prompt or the
+// save conflict prompt is open. The page behind is locked then, and the
+// keyboard shortcuts (29) do nothing.
+function anyOverlayOpen() {
+  return startupPromptOverlayEl.classList.contains('open')
+    || isSaveConflictPromptOpen()
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || globalSearchEl.classList.contains('open')
-    || !!goalModalEl?.classList.contains('open')
-    || !!feedbackModalEl?.classList.contains('open');
-  document.body.classList.toggle('overlay-open', locked);
+    || !!document.getElementById('goalModal')?.classList.contains('open')
+    || !!document.getElementById('feedbackModal')?.classList.contains('open');
+}
+
+function syncBodyOverlayLock() {
+  document.body.classList.toggle('overlay-open', anyOverlayOpen());
   // A layer opened or closed: move any toast on screen off its header. After
   // the caller's render, so the rows are measured where they end up.
   if (toastStackEl?.childElementCount) window.requestAnimationFrame(placeToastStack);
