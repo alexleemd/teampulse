@@ -82,7 +82,7 @@ function renderMeetingRoomView() {
           <section class="mr-panel">
             <div class="mr-panel-head">
               <h2>Talking Points</h2>
-              <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
+              <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up, and unticked ones carry over automatically.</p>
             </div>
             ${pointsHtml}
             <div class="tp-add">
