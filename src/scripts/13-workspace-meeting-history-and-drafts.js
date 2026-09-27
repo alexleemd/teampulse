@@ -10,13 +10,13 @@ function renderOpenFollowUpsPanel(report, metrics) {
       </div>
       <div class="sharp-panel-body">
         <div class="followup-list">
-          ${openFollowUps.map((item) => `
+          ${openFollowUps.map((item, itemIndex) => `
             <label class="followup-item">
-              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="wsfu-${itemIndex}-text wsfu-${itemIndex}-meta">
               <span class="followup-copy">
-                <strong>${escapeHtml(item.text)}</strong>
+                <strong id="wsfu-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                 <span class="followup-meta">
-                  <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                  <span id="wsfu-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                   <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
                 </span>
               </span>

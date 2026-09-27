@@ -241,7 +241,7 @@ function renderDetailDrawer() {
               <div class="drawer-section" id="notesSection">
                 <div class="drawer-section-head">
                   <div>
-                    <h3>Manager Notes</h3>
+                    <h3 id="managerNotesHeading">Manager Notes</h3>
                     <p class="section-note">Keep quick context, coaching notes, and review reminders here.</p>
                   </div>
                 </div>
@@ -251,7 +251,7 @@ function renderDetailDrawer() {
                     <button type="button" class="md-tab" data-md-target="detailNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
                   </div>
                   <div class="md-panel-write" role="tabpanel">
-                    <textarea name="notes" id="detailNotes" class="notes-textarea" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
+                    <textarea name="notes" id="detailNotes" class="notes-textarea" aria-labelledby="managerNotesHeading" placeholder="Anything else you want to keep track of">${escapeHtml(editorReport.notes || '')}</textarea>
                   </div>
                   <div class="md-panel-preview note-markdown" id="detailNotesPreview" role="tabpanel">${renderNoteMarkdown(editorReport.notes, { emptyHtml: '<p class="note-preview-empty">Nothing to preview yet.</p>' })}</div>
                 </div>
@@ -565,3 +565,17 @@ function renderDetailDrawer() {
 
 
 
+// The initials field shows its value in capitals while typing, the way
+// normalizeInitials stores it on save. The value itself is set in capitals
+// (no text-transform styling), so the placeholder keeps its written case.
+function uppercaseInitialsField(event) {
+  const field = event.target;
+  if (event.isComposing || !(field instanceof HTMLInputElement) || !field.matches('#detailEditorForm input[name="initials"]')) return;
+  const upper = field.value.toUpperCase();
+  if (upper === field.value) return;
+  const { selectionStart, selectionEnd } = field;
+  field.value = upper;
+  field.setSelectionRange(selectionStart, selectionEnd);
+}
+document.addEventListener('input', uppercaseInitialsField, true);
+document.addEventListener('compositionend', uppercaseInitialsField, true);

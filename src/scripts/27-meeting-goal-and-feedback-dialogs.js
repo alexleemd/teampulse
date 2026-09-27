@@ -9,13 +9,16 @@ function meetingExistsForReport(report, meetingType, meetingDate, notes, externa
 
 // Dialog focus: remember what had focus when a dialog opened and put focus
 // back there when it closes. If a re-render replaced that element, its new
-// copy gets focus instead (focusReturnTarget in 09).
+// copy gets focus instead (focusReturnTarget in 09). A dialog opened from a
+// toast action (such as Log the PDC) returns focus to where it was before the
+// toast, because the toast and its button are gone by then.
 const dialogReturnFocus = new Map();
 
 function rememberDialogOpener(key, modalEl) {
   const activeEl = document.activeElement;
   if (activeEl && modalEl && modalEl.contains(activeEl)) return;
-  dialogReturnFocus.set(key, focusReturnRecord(activeEl));
+  const toastEl = activeEl && toastStackEl?.contains(activeEl) ? activeEl.closest('.toast') : null;
+  dialogReturnFocus.set(key, toastEl ? toastReturnFocus.get(toastEl) || null : focusReturnRecord(activeEl));
 }
 
 function restoreDialogOpener(key) {

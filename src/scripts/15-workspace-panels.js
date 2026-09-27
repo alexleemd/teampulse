@@ -48,7 +48,7 @@ function renderTalkingPointsPanel(report) {
       </div>
       ${openList}
       <div class="tp-add">
-        <input type="text" id="drawerTpInput" placeholder="Add a talking point and press Enter" autocomplete="off">
+        <input type="text" id="drawerTpInput" placeholder="Add a talking point and press Enter" autocomplete="off" aria-label="New talking point">
         <button type="button" class="secondary" id="drawerTpAddBtn">Add</button>
       </div>
       ${doneList}
@@ -294,7 +294,7 @@ function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
         </div>
         ${isCreating ? '' : (inEditMode
           ? `<div class="actions">
-              <button type="button" id="addVacationBtn" class="small">Add Vacation</button>
+              <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
               <button type="button" class="small" id="cancelVacationEditBtn">Cancel</button>
             </div>`
           : '<button type="button" class="small" id="openVacationEditBtn">Edit</button>')}

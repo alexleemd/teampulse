@@ -183,7 +183,8 @@ function renderPulseDots(pulseSeries = [], options = {}) {
   const limit = options.limit || 5;
   const items = [...(pulseSeries || [])].slice(0, limit).reverse();
   if (!items.length) return options.emptyHtml !== undefined ? options.emptyHtml : '<span class="pulse-dots-empty">No pulse yet</span>';
-  return `<span class="pulse-dots" role="img" aria-label="Recent 1:1 pulse, oldest to newest">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
+  const spoken = items.map((item) => PULSE_LABELS[item.pulse] || item.pulse).join(', ');
+  return `<span class="pulse-dots" role="img" aria-label="${escapeHtml(`Recent 1:1 pulse, oldest to newest: ${spoken}`)}">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
 }
 
 function statusPillHtml(kind, value) {

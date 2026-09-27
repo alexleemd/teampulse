@@ -5,6 +5,11 @@
 // written to the event log until Wrap up; the in-flight draft lives in the
 // module-level meetingRoomDraft.
 // -----------------------------------------------------------------------
+// The overdue triangle on the Last 1:1 chip (the reports table's shape, drawn
+// in the tag's text color). Hidden from screen readers; the chip carries an
+// sr-only "overdue" instead.
+const MEETING_ROOM_OVERDUE_GLYPH = '<svg class="mr-overdue-glyph" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"/><path d="M12 9.6v4.8M12 17.4v.2"/></svg>';
+
 function renderMeetingRoomView() {
   const sectionEl = document.getElementById('meetingRoomSection');
   const mount = document.getElementById('meetingRoomBody');
@@ -24,8 +29,13 @@ function renderMeetingRoomView() {
   const lastOneOnOneText = metrics.lastOneOnOne
     ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${dateDiffInDays(metrics.lastOneOnOne) !== null ? ` · ${dateDiffInDays(metrics.lastOneOnOne)}d ago` : ''}`
     : 'No 1:1 logged yet';
+  // An overdue last 1:1 is amber, with a leading triangle and a screen reader
+  // "overdue" (as in the reports table), so it never relies on color alone.
+  const lastOneOnOneChip = metrics.oneOnOneOverdue
+    ? `<span class="badge amber mr-overdue">${MEETING_ROOM_OVERDUE_GLYPH}${escapeHtml(lastOneOnOneText)}<span class="sr-only">overdue</span></span>`
+    : badge(lastOneOnOneText, 'neutral');
   const chips = [
-    badge(lastOneOnOneText, metrics.oneOnOneOverdue ? 'amber' : 'neutral'),
+    lastOneOnOneChip,
     statusPillHtml('pdc', metrics.pdcStatus),
     openFollowUps.length ? badge(`${openFollowUps.length} open follow-up${openFollowUps.length === 1 ? '' : 's'}`, 'neutral') : '',
     report.nextOneOnOneDate ? badge(`Next planned ${formatDate(report.nextOneOnOneDate)}`, 'neutral') : '',
@@ -36,11 +46,9 @@ function renderMeetingRoomView() {
   const pointsHtml = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item">
-          <label>
-            <input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} title="Covered in this meeting">
-            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}</span>
-          </label>
-          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          <label class="mr-tp-check"><input type="checkbox" data-mr-point="${escapeHtml(point.id)}" ${checkedIds.has(point.id) ? 'checked' : ''} aria-labelledby="mrTpText-${escapeHtml(point.id)}" title="Covered in this meeting"></label>
+          <span class="tp-item-text" id="mrTpText-${escapeHtml(point.id)}">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}</span>
+          <button type="button" class="tp-delete" data-mr-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued. Add the first talking point below.</p>';
 
@@ -73,7 +81,7 @@ function renderMeetingRoomView() {
         <div class="mr-col">
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Talking Points</h3>
+              <h2>Talking Points</h2>
               <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
             </div>
             ${pointsHtml}
@@ -85,14 +93,14 @@ function renderMeetingRoomView() {
           </section>
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Open Follow-Ups</h3>
+              <h2>Open Follow-Ups</h2>
               <p class="section-note">Ticking marks them complete immediately in the source meeting note.</p>
             </div>
             ${followUpsHtml}
           </section>
           <section class="mr-panel">
             <div class="mr-panel-head">
-              <h3>Goals</h3>
+              <h2>Goals</h2>
               <p class="section-note">The development thread this conversation should touch.</p>
             </div>
             <div class="mr-goal-list">${goalsHtml}</div>
@@ -106,7 +114,7 @@ function renderMeetingRoomView() {
           ${renderPrevMeetingPanelHtml(report, draft)}
           <section class="mr-panel mr-meeting">
             <div class="mr-panel-head">
-              <h3>This Meeting</h3>
+              <h2 id="mrMeetingTitle">This Meeting</h2>
             </div>
             <div class="mr-meta-row">
               <label><span>Type</span>
@@ -116,13 +124,13 @@ function renderMeetingRoomView() {
               <label><span>Duration (min)</span><input id="mrDuration" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 45" value="${escapeHtml(String(draft.durationMinutes || ''))}"></label>
             </div>
             <div class="pulse-field">
-              <span>How did it feel?</span>
-              <div class="pulse-picker" role="radiogroup" aria-label="Meeting pulse">
+              <span id="mrPulseLabel">How did it feel?</span>
+              <div class="pulse-picker" role="radiogroup" aria-labelledby="mrPulseLabel">
                 ${PULSE_VALUES.map((value) => `<label class="pulse-option" data-pulse="${value}"><input type="radio" name="mrPulse" value="${value}" ${draft.pulse === value ? 'checked' : ''}><span>${PULSE_LABELS[value]}</span></label>`).join('')}
                 <button type="button" class="pulse-clear" id="mrPulseClear" title="Clear pulse">Clear</button>
               </div>
             </div>
-            <textarea id="mrNotes" class="mr-notes" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
+            <textarea id="mrNotes" class="mr-notes" aria-labelledby="mrMeetingTitle" placeholder="Meeting notes in Markdown. Use [] lines for follow-ups you want tracked.">${escapeHtml(draft.notes || '')}</textarea>
             <div class="actions mr-insert-actions">
               <button type="button" class="secondary" id="mrInsertPointsBtn" ${openPoints.length ? '' : 'disabled'}>Insert talking points</button>
               <button type="button" class="secondary${draft.meetingType === 'PDC' ? '' : ' hidden'}" id="mrInsertPdcBtn">Insert PDC template</button>
@@ -226,7 +234,7 @@ function renderPrevMeetingPanelHtml(report, draft) {
         <span class="mr-prev-title">Last time</span>
         ${prev.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(prev.pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}" title="${escapeHtml(PULSE_LABELS[prev.pulse] || prev.pulse)}"></span>` : ''}
         <span class="mr-prev-meta">${escapeHtml(metaText)}</span>
-        <svg class="mr-prev-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        <span class="mr-prev-chevron" aria-hidden="true">▾</span>
       </summary>
       ${noteHtml}
     </details>`;

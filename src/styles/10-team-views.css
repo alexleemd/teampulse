@@ -193,12 +193,14 @@
   grid-template-columns: 36px 30px minmax(0, 1fr) auto auto;
   align-items: center;
   column-gap: 14px;
+  width: 100%;
   min-height: 60px;
   padding: 10px 16px;
   background: var(--surface);
   color: var(--ink);
   font-size: var(--text-small);
   line-height: 1.4;
+  text-align: left;
   cursor: pointer;
   transition: background-color 120ms ease;
 }
@@ -231,7 +233,7 @@
 .meetings-view-main {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 .meetings-view-main-title {
@@ -518,8 +520,8 @@
 .pdc-board-col-dot {
   display: block;
   flex-shrink: 0;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border: 1.5px solid var(--field-line);
   border-radius: 50%;
   background: transparent;
@@ -596,6 +598,12 @@
 }
 .pdc-board-card .goal-progress { display: flex; width: 100%; }
 .pdc-board-card .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
+/* The board card shows the goal's progress without its status (as v0.52.4
+   did), so the fill is one neutral ink for every status: the color must not
+   be the only sign of At risk or Paused. --ink-2 is 4.96:1 on the --sunken
+   track. The PDC Summary list and the workspace keep the status fills,
+   where the status tag sits beside the bar. */
+.pdc-board-card .goal-progress .goal-progress-fill { background: var(--ink-2); }
 .pdc-board-card-meta {
   color: var(--ink-2);
   font-size: var(--text-caption);

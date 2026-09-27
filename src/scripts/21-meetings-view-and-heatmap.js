@@ -219,8 +219,9 @@ function renderMeetingsView() {
   };
 
   // One list card. A month divider row starts each month, then one row per
-  // meeting: date, avatar, person, type tag, pulse glyph, the date and
-  // duration, the first line of the notes, and the follow-up count tag.
+  // meeting: date, avatar, "person · type · duration" with the pulse glyph,
+  // the full date on its own line, the first line of the notes, and the
+  // follow-up count tag. The title and date lines keep the v0.52.4 text.
   let lastMonthKey = '';
   const rows = items.map(({ report, meeting }) => {
     const monthKey = (meeting.meetingDate || '').slice(0, 7) || 'undated';
@@ -240,24 +241,23 @@ function renderMeetingsView() {
     const pulseGlyph = pulse
       ? `<span class="pulse-dot" data-pulse="${escapeHtml(pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[pulse])}" title="${escapeHtml(PULSE_LABELS[pulse])}"></span>`
       : '';
-    return `${divider}<div class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}" role="button" tabindex="0">
-        <div class="meetings-view-date">
+    return `${divider}<button type="button" class="meetings-view-item" data-meetings-edit-report="${escapeHtml(report.id)}" data-meetings-edit-meeting="${escapeHtml(meeting.id)}">
+        <span class="meetings-view-date">
           <span class="meetings-view-date-m">${escapeHtml(monthName(meeting.meetingDate))}</span>
           <span class="meetings-view-date-d">${escapeHtml(dayNum(meeting.meetingDate))}</span>
-        </div>
-        <div class="mv-avatar" aria-hidden="true">${escapeHtml(mInitials)}</div>
-        <div class="meetings-view-main">
+        </span>
+        <span class="mv-avatar" aria-hidden="true">${escapeHtml(mInitials)}</span>
+        <span class="meetings-view-main">
           <span class="meetings-view-main-title">
-            <span class="meetings-view-name">${escapeHtml(report.name || 'Unnamed')}</span>
-            <span class="tag neutral meetings-view-type">${escapeHtml(meeting.meetingType || '1:1')}</span>
+            <span class="meetings-view-name">${escapeHtml(report.name || 'Unnamed')} · ${escapeHtml(meeting.meetingType || '1:1')}${escapeHtml(duration)}</span>
             ${pulseGlyph}
-            <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}${escapeHtml(duration)}</span>
           </span>
+          <span class="meetings-view-main-sub">${escapeHtml(formatDate(meeting.meetingDate))}</span>
           <span class="meetings-view-main-snip">${escapeHtml(snippet)}</span>
-        </div>
+        </span>
         ${fuChip ? `<span class="meetings-view-chips">${fuChip}</span>` : ''}
-        <div class="meetings-view-edit">Edit →</div>
-      </div>`;
+        <span class="meetings-view-edit">Edit →</span>
+      </button>`;
   }).join('');
 
   mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view">${rows}</div>`;

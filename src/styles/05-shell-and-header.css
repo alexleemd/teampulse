@@ -158,6 +158,9 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  /* Tab scrolls a control into view flush with the pane edge; leave room for
+     the 2px focus outline and its 2px offset. */
+  scroll-padding-block: 8px;
   background: var(--page);
 }
 .content-pane-inner {

@@ -306,7 +306,8 @@
     padding-bottom: 4px;
   }
   .tenure-river-name { grid-column: 1; grid-row: 1; }
-  .tenure-river-duration { grid-column: 2; grid-row: 1; }
+  /* Right-aligned, so every duration ends on the same edge as the bars. */
+  .tenure-river-duration { grid-column: 2; grid-row: 1; justify-self: end; }
   .tenure-river-track { grid-column: 1 / -1; grid-row: 2; }
   .tenure-river-year:nth-child(even) { display: none; }
 }
@@ -395,9 +396,15 @@
 /* Completion is bucketed onto the six ramp steps. Ink text on the light steps,
    white on the two dark ones (both at least 4.5:1). The current stage has an
    ink ring, so it never depends on color. */
+/* The 4px border spacing would inset the table from the card's content edge,
+   so the scroll box reaches 4px past the content edge on the right and 12px
+   on the left: the last stage column ends on the content edge, and the name
+   button starts 8px left of it (the hover overhang the tenure rows use),
+   so its avatar lines up with the card title. The extra 4px on the left
+   keeps room for the name's focus ring inside the scroll box. */
 .cdp-hm-scroll {
   min-width: 0;
-  max-width: 100%;
+  margin: 0 -4px 0 -12px;
   overflow-x: auto;
 }
 .cdp-hm-table {
@@ -433,7 +440,7 @@
   width: 100%;
   min-width: 0;
   height: 40px;
-  padding: 0 8px 0 4px;
+  padding: 0 8px;
   border-radius: var(--radius-button);
   color: var(--ink);
   font-size: var(--text-small);
@@ -498,7 +505,8 @@
   }
   /* Covers the 4px gaps around the names too, where a scrolled cell or
      current-stage ring would otherwise show. The 4px left offset keeps room
-     for the focus ring, and a focused name sits above its neighbors. */
+     for the focus ring (the name text still starts on the card's content
+     edge), and a focused name sits above its neighbors. */
   .cdp-hm-table .cdp-hm-person-cell::before {
     content: "";
     position: absolute;
@@ -747,6 +755,8 @@
   right: 10px;
   border-top: 1px solid var(--line-soft);
 }
+/* The label reaches 5px into the row padding above and below, so a one-line
+   item still has a 29.6px hit area while the row keeps its height. */
 .cdp-item-main {
   display: flex;
   flex-direction: row;
@@ -754,6 +764,9 @@
   gap: 10px;
   flex: 1 1 320px;
   min-width: 0;
+  min-height: 28px;
+  margin: -5px 0;
+  padding: 5px 0;
   cursor: pointer;
 }
 .cdp-item-main input[type="checkbox"] { margin-top: 2px; }

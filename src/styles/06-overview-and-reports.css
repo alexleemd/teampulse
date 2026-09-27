@@ -398,10 +398,12 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
 }
 
 /* === Direct Reports ========================================================== */
+/* 18px from the toolbar to the tiles or table, as on the other People views
+   (10-team-views.css); 14px in compact density. */
 #reportsSection:not([hidden]) {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   min-width: 0;
 }
 
@@ -547,27 +549,24 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
 }
 .report-tile-vital {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
   min-width: 0;
 }
-.report-tile-vital.is-pulse { align-items: flex-end; }
-.report-tile-caption {
-  color: var(--ink-2);
-  font-size: var(--text-tag);
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-}
+.report-tile-vital.is-pulse { justify-content: flex-end; }
 /* Meeting sparkline: 3px accent bars, 2px line stubs for weeks with none. */
 .tile-spark { display: block; overflow: visible; }
 .tile-spark-bar { fill: var(--accent); }
 .tile-spark-stub { fill: var(--line); }
 .report-tile-vital .pulse-dots { height: 9px; }
-/* The first active goal, as a full width bar with its percentage. */
-.report-tile-goal { display: flex; min-width: 0; }
-.report-tile-goal .goal-progress { width: 100%; }
-.report-tile-goal .goal-progress.compact .goal-progress-track { flex: 1 1 auto; width: auto; }
+/* The first active goal: its status tag, then a bar that takes the rest of
+   the row, with its percentage. */
+.report-tile-goal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.report-tile-goal .goal-progress { flex: 1 1 auto; width: auto; }
+.report-tile-goal .goal-progress.compact .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
 /* The tile and table goal bars are built from spans (a button holds only
    phrasing content), so the fill span is made a block to take its size. */
 .report-tile-goal .goal-progress-fill,
@@ -607,9 +606,47 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
    at their natural width. */
 #reportsGrid.reports-table { display: block; min-width: 0; }
 .reports-table .tt-last { font-variant-numeric: tabular-nums; }
+/* An overdue last 1:1: amber (04) with a leading triangle, so it never
+   relies on color alone. */
+.reports-table .tt-last.tt-overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.tt-overdue-glyph {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--amber-strong);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The triangle makes the Last 1:1 column 18px wider. 04 fits the table to a
+   1134px area (1440 wide) with 7px cell padding below 1185px; to keep that
+   fit, this table keeps 7px up to 1200px and uses 6px below 1143px. */
+@container team-table (max-width: 1200px) {
+  .reports-table .team-table th,
+  .reports-table .team-table td { padding: 0 7px; }
+}
+@container team-table (max-width: 1142px) {
+  .reports-table .team-table th,
+  .reports-table .team-table td { padding: 0 6px; }
+}
+/* Goal cell: the status tag over the compact bar, so the column stays as
+   narrow as the bar alone. */
+.reports-table .tt-goal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  vertical-align: middle;
+}
 .reports-table .pill-select-wrap { max-width: 100%; }
 
 /* --- Compact density ---------------------------------------------------------- */
+body.density-compact #reportsSection:not([hidden]) { gap: 14px; }
 body.density-compact .reports-grid,
 body.density-compact .overview-reports-grid { gap: 10px; }
 body.density-compact .report-tile-main { gap: 7px; padding: 11px 12px; }
