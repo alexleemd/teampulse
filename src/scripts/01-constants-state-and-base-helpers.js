@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.54.4';
+const APP_VERSION = 'v0.54.5';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -241,12 +241,14 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+// Today's date on the user's own calendar (local time), as YYYY-MM-DD.
 function todayStamp() {
-  return new Date().toISOString().slice(0, 10);
+  return localDateStamp(new Date());
 }
 
+// The local YYYY-MM month of an ISO timestamp (default now).
 function monthStamp(value = nowIso()) {
-  return String(value).slice(0, 7);
+  return isoToLocalDateStamp(value).slice(0, 7);
 }
 
 function loadUiState() {

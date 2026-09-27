@@ -109,8 +109,8 @@ function pdcRoundInfo(settings = app.doc?.settings || normalizeSettings({}), sta
   const endYear = anchorYear + Math.floor(endAbs / 12);
   const endMonth0 = endAbs % 12;
   const startStamp = `${startYear}-${String(startMonth0 + 1).padStart(2, '0')}-01`;
-  const endStamp = new Date(Date.UTC(endYear, endMonth0 + 1, 0)).toISOString().slice(0, 10);
-  const monthLabel = (m0, y) => new Date(Date.UTC(y, m0, 1)).toLocaleString(undefined, { month: 'short' });
+  const endStamp = localDateStamp(new Date(endYear, endMonth0 + 1, 0));
+  const monthLabel = (m0, y) => new Date(y, m0, 1).toLocaleString(undefined, { month: 'short' });
   const rangeLabel = startYear === endYear
     ? `${monthLabel(startMonth0, startYear)} to ${monthLabel(endMonth0, endYear)} ${endYear}`
     : `${monthLabel(startMonth0, startYear)} ${startYear} to ${monthLabel(endMonth0, endYear)} ${endYear}`;

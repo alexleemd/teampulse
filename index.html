@@ -7513,7 +7513,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.4';
+const APP_VERSION = 'v0.54.5';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -7756,12 +7756,14 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+// Today's date on the user's own calendar (local time), as YYYY-MM-DD.
 function todayStamp() {
-  return new Date().toISOString().slice(0, 10);
+  return localDateStamp(new Date());
 }
 
+// The local YYYY-MM month of an ISO timestamp (default now).
 function monthStamp(value = nowIso()) {
-  return String(value).slice(0, 7);
+  return isoToLocalDateStamp(value).slice(0, 7);
 }
 
 function loadUiState() {
@@ -8100,7 +8102,8 @@ function dateDiffInDays(dateString) {
   if (Number.isNaN(date.getTime())) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return Math.floor((today - date) / 86400000);
+  // Round, not floor: a day across a daylight saving change is 23 or 25 hours.
+  return Math.round((today - date) / 86400000);
 }
 
 function daysSinceIso(value) {
@@ -8395,7 +8398,7 @@ function addDays(dateString, days) {
   const date = new Date(`${text}T00:00:00`);
   if (Number.isNaN(date.getTime())) return '';
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return localDateStamp(date);
 }
 
 function formatVacationRange(vacation) {
@@ -8509,6 +8512,15 @@ function isoToLocalDateStamp(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
   return localDateStamp(date);
+}
+
+// The local calendar date of a stored value: a plain YYYY-MM-DD stays as it is,
+// an ISO timestamp becomes the date it had where the user is.
+function localDateOf(value) {
+  const text = normalizeText(value);
+  if (!text) return '';
+  if (normalizeDate(text)) return text;
+  return (/^\d{4}-\d{2}-\d{2}T/.test(text) && isoToLocalDateStamp(text)) || normalizeDate(text.slice(0, 10));
 }
 
 function startOfCurrentWeek(referenceDate = new Date()) {
@@ -9089,7 +9101,7 @@ function projectDoc(doc) {
         if (from === to) return;
         if (!Array.isArray(report.changeLog)) report.changeLog = [];
         report.changeLog.push({
-          date: normalizeDate(String(event.createdAt).slice(0, 10)) || todayStamp(),
+          date: localDateOf(event.createdAt) || todayStamp(),
           createdAt: event.createdAt,
           field: TRACKED_CHANGE_FIELDS[field],
           from,
@@ -10027,7 +10039,7 @@ async function persistDocToFolder(options = {}) {
   const thisMonth = monthStamp();
   const dailySavedAt = await parseSavedAtFromFolderFile(DAILY_JSON_NAME);
   const monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
-  if (!dailySavedAt || normalizeText(dailySavedAt).slice(0, 10) !== today) {
+  if (!dailySavedAt || isoToLocalDateStamp(dailySavedAt) !== today) {
     await writeFolderFileText(DAILY_JSON_NAME, newText);
   }
   if (!monthlySavedAt || monthStamp(monthlySavedAt) !== thisMonth) {
@@ -10932,7 +10944,7 @@ function renderTalkingPointsPanel(report) {
         <summary class="tp-done-toggle">Discussed (${donePoints.length})</summary>
         <ul class="tp-list">${donePoints.map((point) => {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
-          const doneStamp = String(point.doneAt || '').slice(0, 10);
+          const doneStamp = localDateOf(point.doneAt);
           return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
             <label class="tp-check"><input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point"></label>
             <div class="tp-item-main">
@@ -11030,7 +11042,7 @@ function buildTimelineItems(report) {
   normalizeCapabilityTicks(report.capabilities || []).forEach((tick) => {
     const found = cdpCapabilityById(tick.id);
     if (!found) return;
-    const date = normalizeDate(String(tick.achievedAt || '').slice(0, 10));
+    const date = localDateOf(tick.achievedAt);
     if (!date) return;
     items.push({
       kind: 'capability',
@@ -13104,7 +13116,7 @@ function mondayOf(dateString) {
   if (Number.isNaN(d.getTime())) return '';
   const shift = (d.getDay() + 6) % 7;
   d.setDate(d.getDate() - shift);
-  return d.toISOString().slice(0, 10);
+  return localDateStamp(d);
 }
 
 // Buckets meetings into the trailing N weeks (oldest first), used by the
@@ -13809,8 +13821,8 @@ function pdcRoundInfo(settings = app.doc?.settings || normalizeSettings({}), sta
   const endYear = anchorYear + Math.floor(endAbs / 12);
   const endMonth0 = endAbs % 12;
   const startStamp = `${startYear}-${String(startMonth0 + 1).padStart(2, '0')}-01`;
-  const endStamp = new Date(Date.UTC(endYear, endMonth0 + 1, 0)).toISOString().slice(0, 10);
-  const monthLabel = (m0, y) => new Date(Date.UTC(y, m0, 1)).toLocaleString(undefined, { month: 'short' });
+  const endStamp = localDateStamp(new Date(endYear, endMonth0 + 1, 0));
+  const monthLabel = (m0, y) => new Date(y, m0, 1).toLocaleString(undefined, { month: 'short' });
   const rangeLabel = startYear === endYear
     ? `${monthLabel(startMonth0, startYear)} to ${monthLabel(endMonth0, endYear)} ${endYear}`
     : `${monthLabel(startMonth0, startYear)} ${startYear} to ${monthLabel(endMonth0, endYear)} ${endYear}`;
@@ -14442,7 +14454,7 @@ function openTalkingPointsFor(report) {
 function talkingPointIsCarriedOver(report, point) {
   const lastLogged = latestMeetingDate(report, '1:1') || '';
   if (!lastLogged) return false;
-  const createdStamp = String(point.createdAt || '').slice(0, 10);
+  const createdStamp = localDateOf(point.createdAt);
   return !!createdStamp && createdStamp <= lastLogged;
 }
 
@@ -17483,7 +17495,7 @@ function touchpointOverdueAsOf(report, lastDate, thresholdDays, dateStamp) {
 
 function healthScoreAsOf(reports, settings, dateStamp) {
   const cohort = reports.filter((report) => {
-    const created = normalizeDate(String(report.createdAt || '').slice(0, 10));
+    const created = localDateOf(report.createdAt);
     return created && created <= dateStamp;
   });
   if (!cohort.length) return null;
@@ -17808,7 +17820,7 @@ function normalizeCapabilityTick(entry = {}) {
   const safe = entry && typeof entry === 'object' ? entry : {};
   return {
     id: normalizeText(safe.id || safe.capabilityId),
-    achievedAt: normalizeDate(String(safe.achievedAt || '').slice(0, 10)) || todayStamp()
+    achievedAt: localDateOf(safe.achievedAt) || todayStamp()
   };
 }
 
