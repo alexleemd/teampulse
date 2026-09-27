@@ -7513,7 +7513,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.3';
+const APP_VERSION = 'v0.54.4';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -16126,6 +16126,14 @@ function bindStaticEvents() {
     const disconnectBtn = event.target.closest('#disconnectFolderBtn');
     if (disconnectBtn) disconnectAndWipeLocal();
   });
+  // Search, a dialog, the Settings drawer or the startup prompt is open.
+  // The keyboard shortcuts below do nothing then.
+  const anyOverlayUp = () => globalSearchEl.classList.contains('open')
+    || meetingModalEl.classList.contains('open')
+    || rulesDrawerOverlayEl.classList.contains('open')
+    || startupPromptOverlayEl.classList.contains('open')
+    || !!document.getElementById('goalModal')?.classList.contains('open')
+    || !!document.getElementById('feedbackModal')?.classList.contains('open');
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
   // The workspace itself is left alone so unsaved edits can never be lost to
   // a stray keypress. A dialog with unsaved changes asks before it closes.
@@ -16146,13 +16154,7 @@ function bindStaticEvents() {
     if (/^[1-7]$/.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
       const activeNow = document.activeElement;
       const typingNow = !!activeNow && (/^(input|textarea|select)$/i.test(activeNow.tagName) || activeNow.isContentEditable);
-      const overlayUp = globalSearchEl.classList.contains('open')
-        || meetingModalEl.classList.contains('open')
-        || rulesDrawerOverlayEl.classList.contains('open')
-        || startupPromptOverlayEl.classList.contains('open')
-        || document.getElementById('goalModal')?.classList.contains('open')
-        || document.getElementById('feedbackModal')?.classList.contains('open');
-      if (!typingNow && !overlayUp && app.doc && app.connectedFolderReady) {
+      if (!typingNow && !anyOverlayUp() && app.doc && app.connectedFolderReady) {
         event.preventDefault();
         keyboardNavigateToSlot(Number(event.key));
       }
@@ -16167,7 +16169,7 @@ function bindStaticEvents() {
     const active = document.activeElement;
     const typing = !!active && (/^(input|textarea|select)$/i.test(active.tagName) || active.isContentEditable);
     if (typing) return;
-    if (globalSearchEl.classList.contains('open') || meetingModalEl.classList.contains('open') || rulesDrawerOverlayEl.classList.contains('open') || startupPromptOverlayEl.classList.contains('open')) return;
+    if (anyOverlayUp()) return;
     event.preventDefault();
     openGlobalSearch();
   });
