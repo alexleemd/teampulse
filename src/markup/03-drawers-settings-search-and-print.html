@@ -2,16 +2,16 @@
 <div id="detailDrawerOverlay" class="hidden" aria-hidden="true" style="display:none !important"></div>
 
   <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
-    <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle">
+    <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle" aria-describedby="rulesDrawerCopy">
       <div class="drawer-shell">
         <div class="drawer-header">
           <div class="drawer-header-top">
             <div>
               <h2 id="rulesDrawerTitle">Settings</h2>
-              <p>Manage overdue rules, durability, exports, backups, and Stable mode.</p>
+              <p id="rulesDrawerCopy">Manage overdue rules, durability, exports, backups, and Stable mode.</p>
             </div>
             <div class="actions">
-              <button id="closeRulesDrawerBtn" class="secondary">Close</button>
+              <button id="closeRulesDrawerBtn" class="secondary small" type="button">Close</button>
             </div>
           </div>
         </div>
@@ -61,8 +61,8 @@
                     <strong>Missing mentor counts as attention</strong>
                     <p>Controls whether "No mentor assigned" appears in attention badges and filters.</p>
                   </div>
-                  <label class="switch" aria-label="Missing mentor counts as attention">
-                    <input id="missingMentorCounts" type="checkbox">
+                  <label class="switch">
+                    <input id="missingMentorCounts" type="checkbox" role="switch" aria-label="Missing mentor counts as attention">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -71,8 +71,8 @@
                     <strong>Blocked PDC status counts as attention</strong>
                     <p>Controls whether blocked PDC statuses appear in attention badges and filters.</p>
                   </div>
-                  <label class="switch" aria-label="Blocked PDC status counts as attention">
-                    <input id="blockedPlanCounts" type="checkbox">
+                  <label class="switch">
+                    <input id="blockedPlanCounts" type="checkbox" role="switch" aria-label="Blocked PDC status counts as attention">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -81,8 +81,8 @@
                     <strong>Downward 1:1 pulse counts as attention</strong>
                     <p>Flags a person when their latest logged pulse is Rough, or the last two are not Good.</p>
                   </div>
-                  <label class="switch" aria-label="Downward 1:1 pulse counts as attention">
-                    <input id="pulseTrendCounts" type="checkbox">
+                  <label class="switch">
+                    <input id="pulseTrendCounts" type="checkbox" role="switch" aria-label="Downward 1:1 pulse counts as attention">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -91,8 +91,8 @@
                     <strong>New PDC round resets the board</strong>
                     <p>The year splits into rounds from the PDC cadence rule (90 days means quarterly). When a round ends, every card moves back to Not started, logged per person in the change log.</p>
                   </div>
-                  <label class="switch" aria-label="New PDC round resets the board">
-                    <input id="pdcRoundAutoReset" type="checkbox">
+                  <label class="switch">
+                    <input id="pdcRoundAutoReset" type="checkbox" role="switch" aria-label="New PDC round resets the board">
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -101,8 +101,8 @@
                     <strong>PDC round start month</strong>
                     <p>Anchors the round calendar. January with a 90 day cadence gives Jan to Mar, Apr to Jun, and so on. Changing this adopts the new calendar without resetting any cards.</p>
                   </div>
-                  <label aria-label="PDC round start month">
-                    <select id="pdcRoundStartMonth">
+                  <label>
+                    <select id="pdcRoundStartMonth" aria-label="PDC round start month">
                       <option value="1">January</option>
                       <option value="2">February</option>
                       <option value="3">March</option>
@@ -123,8 +123,8 @@
                     <strong>Density</strong>
                     <p>Comfortable keeps today's spacing. Compact tightens tiles, tables, and the workspace for more rows per screen.</p>
                   </div>
-                  <label aria-label="Interface density">
-                    <select id="densitySetting">
+                  <label>
+                    <select id="densitySetting" aria-label="Interface density">
                       <option value="comfortable">Comfortable</option>
                       <option value="compact">Compact</option>
                     </select>
@@ -132,7 +132,7 @@
                 </div>
               </div>
 
-              <div class="actions full" style="margin-top: 4px;">
+              <div class="actions full drawer-form-actions">
                 <button type="submit">Save rules</button>
                 <button type="button" id="resetRulesBtn" class="secondary">Reset defaults</button>
               </div>
@@ -147,21 +147,21 @@
               </div>
             </div>
             <div id="dataHealthPanel"></div>
-            <div class="actions" style="margin-top: 14px;">
-              <button type="button" id="exportNowBtn">Export now</button>
+            <div class="actions">
+              <button type="button" id="exportNowBtn" class="secondary">Export now</button>
               <button type="button" class="secondary" id="restoreBackupBtn">Restore latest backup</button>
             </div>
             <div id="dataHealthStatus" class="status-line"></div>
           </div>
           <div class="drawer-section">
-            <h3>Stable Mode</h3>
+            <h3 id="stableModeTitle">Stable Mode</h3>
             <div class="toggle-row">
               <div class="toggle-copy">
-                <strong>Keep the interface calm</strong>
+                <strong id="stableModeLabel">Keep the interface calm</strong>
                 <p>Hides most helper copy so Team Pulse feels finished and steady.</p>
               </div>
-              <label class="switch" aria-label="Stable mode">
-                <input id="stableModeToggle" type="checkbox">
+              <label class="switch">
+                <input id="stableModeToggle" type="checkbox" role="switch" aria-labelledby="stableModeTitle stableModeLabel">
                 <span class="slider"></span>
               </label>
             </div>
@@ -184,11 +184,12 @@
   <div id="globalSearch" class="gs-overlay" aria-hidden="true">
     <div class="gs-panel" role="dialog" aria-modal="true" aria-label="Search everything">
       <div class="gs-input-row">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="globalSearchInput" type="text" placeholder="Search people, meeting notes, follow-ups, views…" autocomplete="off" spellcheck="false">
+        <svg class="gs-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="globalSearchInput" type="text" role="combobox" aria-expanded="false" aria-controls="globalSearchResults" aria-autocomplete="list" aria-label="Search everything" placeholder="Search people, meeting notes, follow-ups, views…" autocomplete="off" spellcheck="false">
         <kbd class="gs-kbd">Esc</kbd>
       </div>
-      <div class="gs-results" id="globalSearchResults"></div>
+      <div class="gs-results" id="globalSearchResults" role="listbox" aria-label="Search everything"></div>
+      <div class="gs-status" id="globalSearchStatus" role="status"></div>
     </div>
   </div>
 

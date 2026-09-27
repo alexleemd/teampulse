@@ -54,9 +54,9 @@ function renderCadenceStripMarkup(report, weeksShown = 12, options = {}) {
       <span class="pulse-bar cv-review ${cell.cvReview ? 'active' : ''}"></span>
     `;
     if (interactive) {
-      return `<button type="button" class="pulse-cell ${cell.isCurrentWeek ? 'current' : ''} interactive" ${cell.jumpMeetingId ? `data-pulse-jump-meeting="${escapeHtml(cell.jumpMeetingId)}"` : 'disabled'} title="${escapeHtml(cell.tooltip)}">${content}</button>`;
+      return `<button type="button" class="pulse-cell ${cell.isCurrentWeek ? 'current' : ''} interactive" ${cell.jumpMeetingId ? `data-pulse-jump-meeting="${escapeHtml(cell.jumpMeetingId)}"` : 'disabled'} title="${escapeHtml(cell.tooltip)}" aria-label="${escapeHtml(cell.tooltip)}">${content}</button>`;
     }
-    return `<div class="pulse-cell ${cell.isCurrentWeek ? 'current' : ''}" title="${escapeHtml(cell.tooltip)}">${content}</div>`;
+    return `<div class="pulse-cell ${cell.isCurrentWeek ? 'current' : ''}" title="${escapeHtml(cell.tooltip)}" role="img" aria-label="${escapeHtml(cell.tooltip)}">${content}</div>`;
   };
   return `<div class="${stripClass}">${cells.map((cell) => renderCell(cell)).join('')}</div>`;
 }
@@ -71,10 +71,10 @@ function renderCadencePulseSection(report) {
             <p class="section-note">Twelve weeks of rhythm, oldest to newest. Click a week to jump into the meeting history.</p>
           </div>
           <div class="pulse-legend">
-            <span class="legend-item"><span class="swatch accent"></span>1:1</span>
-            <span class="legend-item"><span class="swatch success"></span>PDC</span>
-            <span class="legend-item"><span class="swatch info"></span>CV Review</span>
-            <span class="legend-item"><span class="swatch empty"></span>No meeting</span>
+            <span class="legend-item"><span class="swatch ramp-6" aria-hidden="true"></span>1:1</span>
+            <span class="legend-item"><span class="swatch ramp-5" aria-hidden="true"></span>PDC</span>
+            <span class="legend-item"><span class="swatch ramp-4" aria-hidden="true"></span>CV Review</span>
+            <span class="legend-item"><span class="swatch empty" aria-hidden="true"></span>No meeting</span>
           </div>
         </div>
         ${renderCadenceStripMarkup(report, 12, { interactive: true })}
@@ -147,8 +147,8 @@ function renderAttentionControlsMarkup(editorReport, metrics) {
           <p class="section-note">Snooze noisy attention items for leave windows, assignments, or temporary exceptions.</p>
         </div>
         <div class="badges">
-          ${badge(`${metrics.attentionDetails.length} active`, metrics.attentionDetails.length ? 'warning' : 'success')}
-          ${metrics.activeSnoozes.length ? badge(`${metrics.activeSnoozes.length} snoozed`, 'soft') : ''}
+          ${badge(`${metrics.attentionDetails.length} active`, 'neutral')}
+          ${metrics.activeSnoozes.length ? badge(`${metrics.activeSnoozes.length} snoozed`, 'neutral') : ''}
         </div>
       </div>
       ${metrics.attentionDetails.length ? `
@@ -160,7 +160,7 @@ function renderAttentionControlsMarkup(editorReport, metrics) {
                 <span class="attention-item-meta">Use Snooze if this should stop counting for a fixed period.</span>
               </div>
               <div class="attention-item-actions">
-                <button type="button" class="secondary" data-prefill-snooze-rule="${escapeHtml(item.rule)}">Snooze</button>
+                <button type="button" class="small" data-prefill-snooze-rule="${escapeHtml(item.rule)}">Snooze</button>
               </div>
             </div>
           `).join('')}
@@ -171,20 +171,20 @@ function renderAttentionControlsMarkup(editorReport, metrics) {
           <label><span>Attention item</span><select id="attentionSnoozeRule">${options.map((option) => `<option value="${escapeHtml(option.rule)}">${escapeHtml(option.label)}</option>`).join('')}</select></label>
           <label><span>Until</span><input id="attentionSnoozeUntil" type="date" value="${escapeHtml(defaultUntil || todayStamp())}"></label>
           <label><span>Reason</span><input id="attentionSnoozeReason" type="text" placeholder="Optional"></label>
-          <button type="button" id="saveSnoozeBtn">Snooze</button>
+          <button type="button" class="secondary" id="saveSnoozeBtn">Snooze</button>
         </div>
         <div class="field-hint">Snoozed items stay out of attention counts until the selected date.</div>
       </div>
       ${metrics.activeSnoozes.length ? `
-        <div class="snooze-list" style="margin-top:14px;">
+        <div class="snooze-list">
           ${metrics.activeSnoozes.map((entry, index) => `
             <div class="snooze-item">
               <div class="snooze-item-copy">
-                ${badge(`Snoozed · ${snoozeRuleLabel(entry.rule)}`, 'soft')}
+                ${badge(`Snoozed · ${snoozeRuleLabel(entry.rule)}`, 'outline')}
                 <span class="snooze-item-meta">Until ${escapeHtml(formatDate(entry.until))}${entry.reason ? ` · ${escapeHtml(entry.reason)}` : ''}</span>
               </div>
               <div class="snooze-item-actions">
-                <button type="button" class="secondary" data-remove-snooze-index="${index}">Remove</button>
+                <button type="button" class="danger small" data-remove-snooze-index="${index}">Remove</button>
               </div>
             </div>
           `).join('')}

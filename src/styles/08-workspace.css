@@ -1,2 +1,845 @@
 /* Person workspace: header, tabs, profile, meetings tab, development tab frame, timeline, edit forms, danger zone, and its compact density.
-   Owner: W6 workspace. */
+   Owner: W6 workspace.
+
+   Built from the rules (there is no mockup): the workspace tabs from
+   Controls 2, panels as in the 1:1 room, fields from Controls 1. The shared
+   pieces (buttons, fields, tags, tabs, panels, talking points, follow-ups,
+   goal cards, markdown) come from 03 and 04. This file only lays them out
+   and adds variations scoped under #detailDrawer. The Development Path and
+   the tenure timeline inside the workspace are styled in 07. */
+
+/* --- Frame ----------------------------------------------------------------- */
+#detailDrawer .drawer-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+#detailDrawer .drawer-header { min-width: 0; }
+#detailDrawer .drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+#detailDrawer .drawer-workspace-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+#detailDrawer .drawer-workspace-content,
+#detailDrawer .workspace-form-grid,
+#detailDrawer .drawer-tab-panel { min-width: 0; }
+#detailDrawer .workspace-form-grid { display: block; margin: 0; }
+#detailDrawer .drawer-panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* --- Header: avatar and name, then initials, level and mentor -------------- */
+#detailDrawer .drawer-header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px 24px;
+}
+#detailDrawer .drawer-header-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+/* The name uses the page title style. */
+#drawerTitle {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.detail-subhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.4;
+}
+/* Under the name, not under the avatar (36px avatar plus the 12px gap). */
+.drawer-header-identity:has(.detail-page-header-avatar) .detail-subhead { padding-left: 48px; }
+.detail-level,
+.detail-mentor,
+.detail-supporting-meta {
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: 400;
+}
+/* A small dot between the level and the mentor, as the room's "level · Mentor"
+   line (and before the "not saved yet" note). It is drawn, so no text is
+   added. */
+.detail-level + :is(.detail-mentor, .detail-supporting-meta) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-level + :is(.detail-mentor, .detail-supporting-meta)::before {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+#detailDrawer .drawer-header-top > .actions {
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Status chips row. Empty when a direct report is being created. */
+#detailDrawer .drawer-header-status-block:not(:has(*)) { display: none; }
+.drawer-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Panels ---------------------------------------------------------------- */
+/* A button in a panel head is centered on the 18px title line, whether
+   Stable mode shows the note under the title or not: a 28px small button
+   moves up 5px, a 36px button 9px. The space under the button stays 12px.
+   When the head wraps on a narrow panel, the larger row gap keeps the
+   button 12px below the title and note. */
+#detailDrawer .drawer-section-head > button.small,
+#detailDrawer .drawer-section-head > .actions:has(> button.small) { margin: -5px 0 0; }
+#detailDrawer .drawer-section-head > button:not(.small),
+#detailDrawer .drawer-section-head > .actions:has(> button:not(.small)) { margin: -9px 0 0; }
+/* A count tag in a panel head (22px) sits on the title line too. */
+#detailDrawer .drawer-section-head > .badges { margin: -2px 0 0; }
+#detailDrawer .drawer-section-head:has(> button.small, > .actions > button.small) { row-gap: 17px; }
+#detailDrawer .drawer-section-head:has(> button:not(.small), > .actions > button:not(.small)) { row-gap: 21px; }
+
+/* The Open Follow-Ups and Meetings panels (sharp panels) follow the same
+   pattern as the other panels, as in the 1:1 room: the panel padding, the
+   title with no rule under it, then rows divided by line-soft inside the
+   padding, with a line above the first row and under the last. The padding
+   follows the other panels: 16px, 14px at 900px and below, and 14px 16px
+   in compact density. */
+#detailDrawer {
+  --ws-pad-y: 16px;
+  --ws-pad-x: 16px;
+}
+body.density-compact #detailDrawer {
+  --ws-pad-y: 14px;
+  --ws-pad-x: 16px;
+}
+#detailDrawer .sharp-panel-header {
+  align-items: flex-start;
+  padding: var(--ws-pad-y) var(--ws-pad-x) 12px;
+  border-bottom: 0;
+}
+/* The count tag and the Log Meeting button sit on the title line. */
+#detailDrawer .sharp-panel-header-meta > .badge { margin: -2px 0; }
+#detailDrawer .sharp-panel-header-meta > button:not(.small) { margin-top: -9px; }
+#detailDrawer .sharp-panel-body.padded { padding: 0 var(--ws-pad-x) var(--ws-pad-y); }
+#detailDrawer .followup-panel .followup-list { padding: 0 var(--ws-pad-x) var(--ws-pad-y); }
+#detailDrawer .followup-panel .followup-item {
+  padding-left: 0;
+  padding-right: 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+#detailDrawer .followup-panel .followup-item:first-child { border-top: 1px solid var(--line-soft); }
+
+/* Small danger: the small size with the danger look, for row actions that
+   remove something (a meeting, an evidence entry, a vacation window). */
+#detailDrawer button.danger.small {
+  border-color: var(--rough);
+  color: var(--rough);
+  font-weight: 600;
+}
+#detailDrawer button.danger.small:where(:hover, :active):not(:disabled) { background: var(--red-tint); }
+
+/* --- Profile: read-only grid ---------------------------------------------- */
+/* Label over value, three to a row, rows divided by line-soft. The space
+   between columns is padding, so the row lines run unbroken. */
+.profile-readonly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+.profile-readonly-field,
+.cadence-target-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 16px 10px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.profile-readonly-field .label,
+.cadence-target-readonly .label {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.profile-readonly-field .value,
+.cadence-target-readonly .value {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.profile-readonly-field .value.empty { color: var(--ink-2); }
+.profile-readonly-field .value .badge { flex-shrink: 1; }
+
+/* Profile edit form: the shared two column form grid (14px by 16px). The
+   initials field shows what is typed; normalizeInitials stores it in
+   capitals on save. */
+
+/* --- Vacation tracker ------------------------------------------------------ */
+.vacation-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.vacation-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.vacation-row {
+  --field-h: 36px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 14px 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line-soft);
+}
+/* A 28px button on the line of the 36px fields. */
+.vacation-row > button,
+.evidence-row-top > button { margin-bottom: 4px; }
+.vacation-row-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.vacation-row-readonly-range {
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.vacation-row-readonly-note {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+
+/* --- Cadence targets ------------------------------------------------------- */
+.cadence-target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+  min-width: 0;
+}
+.cadence-target-grid.cadence-target-grid-readonly {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+}
+.cadence-target-readonly .field-hint { margin-top: 1px; }
+
+/* --- Attention controls and snoozes --------------------------------------- */
+.attention-list,
+.snooze-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.attention-item-row,
+.snooze-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  min-width: 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.attention-item-row:last-child,
+.snooze-item:last-child { border-bottom: 1px solid var(--line-soft); }
+.attention-item-copy,
+.snooze-item-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.attention-item-meta,
+.snooze-item-meta {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+.attention-item-actions,
+.snooze-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.attention-form {
+  --field-h: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.attention-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 14px 16px;
+}
+
+/* --- Talking points (Meetings tab) ---------------------------------------- */
+/* A discussed point holds its label (box and text) and, under it, the meta
+   line with its View meeting button, which cannot sit inside the label. */
+.tp-item-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.tp-item-main > label {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.tp-item-main > label > input[type="checkbox"] { margin-top: 6px; }
+.tp-item-main > label > .tp-item-text { padding-top: 4px; }
+.tp-item-main > .tp-meta { margin: 0 0 2px 26px; }
+.tp-item:has(> .tp-item-main) { gap: 8px; }
+/* The Discussed (n) summary gets a chevron that turns when it is open. */
+.tp-done-toggle::before {
+  content: "";
+  order: 2;
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  transition: transform 120ms ease;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+}
+.tp-done-details[open] > .tp-done-toggle::before { transform: rotate(180deg); }
+
+/* --- Cadence Pulse strip --------------------------------------------------- */
+/* Twelve weeks, oldest to newest. Each week is a cell with three bars: 1:1
+   on top, PDC in the middle, CV review at the bottom. Meeting types are
+   categories, not status, so they use the ramp (decision 5) and the legend
+   names them: 1:1 ramp-6, PDC ramp-5, CV review ramp-4 (all reach 3:1 on
+   white). The current week has a field-line ring. */
+#cadencePulseSection .pulse-strip-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.pulse-strip-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 18px;
+}
+.pulse-strip-head > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.pulse-strip-head h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.pulse-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding-top: 2px;
+}
+.pulse-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+}
+.pulse-cell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(3, 10px);
+  gap: 3px;
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: default;
+  transition: box-shadow 120ms ease;
+}
+.pulse-cell.interactive:not(:disabled) { cursor: pointer; }
+.pulse-cell.interactive:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--button-line); }
+.pulse-cell:disabled { cursor: default; }
+.pulse-cell.current,
+.pulse-cell.current.interactive:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--field-line); }
+.pulse-bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border-radius: 2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+/* A week without that meeting is a 2px stub in field-line (3:1 on white),
+   as the rules' meeting sparkline marks weeks with no meeting. The legend's
+   "No meeting" key is the same stub. */
+.pulse-bar:not(.active) {
+  align-self: center;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--field-line);
+}
+#cadencePulseSection .pulse-legend .swatch.empty {
+  height: 2px;
+  border: 0;
+  border-radius: 1px;
+  background: var(--field-line);
+}
+.pulse-bar.one-on-one.active { background: var(--ramp-6); }
+.pulse-bar.pdc.active { background: var(--ramp-5); }
+.pulse-bar.cv-review.active { background: var(--ramp-4); }
+.pulse-strip.compact { gap: 2px; }
+.pulse-strip.compact .pulse-cell { grid-template-rows: repeat(3, 5px); gap: 2px; padding: 1px; border-radius: 3px; }
+.pulse-strip-caption {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+
+/* --- Meeting history: details rows ----------------------------------------- */
+/* The row lines sit inside the panel padding, as the other panel rows do.
+   The hover fill and the focus ring of a row reach 8px further out, so the
+   text stays on the panel padding line. */
+#detailDrawer .meeting-history {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 calc(var(--ws-pad-x) - 8px) var(--ws-pad-y);
+  list-style: none;
+}
+#detailDrawer .meeting-history > li { position: relative; }
+#detailDrawer .meeting-history > li::after,
+#detailDrawer .meeting-history > li:first-child::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 1px;
+  background: var(--line-soft);
+  pointer-events: none;
+}
+#detailDrawer .meeting-history > li:first-child::before {
+  top: 0;
+  bottom: auto;
+}
+.meeting-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 8px;
+  border-radius: var(--radius-button);
+  list-style: none;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.meeting-summary:hover { background: var(--sunken); }
+.meeting-summary-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.meeting-item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+}
+.meeting-date {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.meeting-summary-copy {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+/* "Open" and "Hide" come from 02-moss-base.css; a chevron follows them. */
+.meeting-summary-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 22px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+.meeting-summary-toggle::after {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  transition: transform 120ms ease;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+}
+details[open] > .meeting-summary .meeting-summary-toggle::after { transform: rotate(180deg); }
+.meeting-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 4px 8px 14px;
+}
+.meeting-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.meeting-item-subtle {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+.meeting-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.meeting-covered-points {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-field);
+  background: var(--page);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.meeting-covered-points strong {
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.meeting-covered-points ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* --- Development tab frame ------------------------------------------------- */
+.pdc-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 16px;
+}
+.pdc-status-field { flex: 0 1 260px; min-width: 200px; }
+.pdc-status-hint {
+  flex: 1 1 320px;
+  max-width: 640px;
+  padding-bottom: 1px;
+}
+.development-focus-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px 16px;
+}
+.development-field textarea { min-height: 110px; }
+
+/* Evidence Locker: groups, then one row of dense fields per entry. */
+.evidence-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.evidence-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.evidence-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.evidence-group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.evidence-group-head strong {
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.evidence-row {
+  --field-h: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 0 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.evidence-row-top {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 14px 16px;
+}
+.evidence-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+}
+.evidence-row textarea { min-height: 84px; }
+/* Detail spans two rows, so Shared with them sits right under Summary. */
+.evidence-row-bottom > label:nth-child(2) { grid-row: span 2; }
+.evidence-kind-shared { grid-column: 1; }
+
+/* --- Timeline -------------------------------------------------------------- */
+/* One stream on a thin rail. Kinds are categories, not status (decision 5):
+   every mark is the same neutral ring, told apart by a small icon drawn in
+   ink-2 (calendar for meetings, speech bubble for feedback, target for goal
+   updates, check for capabilities, pencil for notes, arrows for changes).
+   The title and the feedback kind tag name the entry in words. */
+#timelineSection .tl-filter-scroll { min-width: 0; }
+#timelineSection .tl-filter { max-width: 100%; }
+.tl-stream {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-left: 34px;
+}
+.tl-item {
+  --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px 0;
+}
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: -34px;
+  top: 9px;
+  width: 23px;
+  height: 23px;
+  border: 1px solid var(--field-line);
+  border-radius: 50%;
+  background: var(--surface);
+}
+.tl-item::after {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 15px;
+  width: 11px;
+  height: 11px;
+  background: var(--ink-2);
+  -webkit-mask: var(--tl-icon) center / 11px 11px no-repeat;
+  mask: var(--tl-icon) center / 11px 11px no-repeat;
+}
+.tl-item[data-tl-kind="meeting"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E"); }
+.tl-item[data-tl-kind="feedback"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H10l-5 4v-4H4z'/%3E%3C/svg%3E"); }
+.tl-item[data-tl-kind="goal"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E"); }
+.tl-item[data-tl-kind="capability"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E"); }
+.tl-item[data-tl-kind="note"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E"); }
+.tl-item[data-tl-kind="change"] { --tl-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h14l-3-3M20 16H6l3 3'/%3E%3C/svg%3E"); }
+/* The rail runs from each mark down to the next one, so it never sticks out
+   past the last entry. It is drawn by the head (positioned on the item). */
+.tl-item:not(:last-child) > .tl-item-head::before {
+  content: "";
+  position: absolute;
+  left: -23px;
+  top: 32px;
+  bottom: -9px;
+  width: 1px;
+  background: var(--line);
+}
+.tl-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 24px;
+  min-width: 0;
+}
+.tl-item-date {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.tl-item-title {
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.tl-item-head .tl-jump { font-size: var(--text-label); }
+.tl-item-body {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* --- Density: compact ------------------------------------------------------ */
+body.density-compact #detailDrawer .drawer-panel-stack { gap: 10px; }
+body.density-compact #detailDrawer .drawer-body,
+body.density-compact #detailDrawer .drawer-workspace-layout { gap: 14px; }
+body.density-compact .profile-readonly-field,
+body.density-compact .cadence-target-readonly,
+body.density-compact .vacation-row-readonly { padding: 7px 0; }
+body.density-compact .vacation-row,
+body.density-compact .evidence-row { padding: 9px 0 10px; }
+body.density-compact .meeting-summary { padding: 9px 8px; }
+body.density-compact .tl-item { padding: 6px 0; }
+body.density-compact .tl-item::before { top: 6px; }
+body.density-compact .tl-item::after { top: 12px; }
+body.density-compact .tl-item:not(:last-child) > .tl-item-head::before { top: 29px; bottom: -6px; }
+
+/* --- Narrow screens -------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .evidence-row-top { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evidence-row-top > button { justify-self: start; margin-bottom: 0; }
+}
+@media (max-width: 900px) {
+  #detailDrawer {
+    --ws-pad-y: 14px;
+    --ws-pad-x: 14px;
+  }
+  #detailDrawer .drawer-header-top > .actions { justify-content: flex-start; }
+  .profile-readonly-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vacation-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vacation-row > label:nth-of-type(3) { grid-column: 1 / -1; }
+  .vacation-row > button { justify-self: start; margin-bottom: 0; }
+  .attention-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .attention-form-grid > button { justify-self: start; }
+}
+@media (max-width: 640px) {
+  .drawer-header-identity:has(.detail-page-header-avatar) .detail-subhead { padding-left: 0; }
+  .cadence-target-grid,
+  .cadence-target-grid.cadence-target-grid-readonly,
+  .vacation-row,
+  .evidence-row-top,
+  .evidence-row-bottom { grid-template-columns: minmax(0, 1fr); }
+  .evidence-row-bottom > label:nth-child(2) { grid-row: auto; }
+  .pdc-status-field { flex-basis: 100%; }
+  /* The timeline filter stays one row and scrolls sideways, as the
+     workspace tabs do. The 4px of padding (taken back with a negative
+     margin) keeps the whole focus ring inside the scroll box. */
+  #timelineSection .tl-filter-scroll {
+    margin: -4px;
+    padding: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #timelineSection .tl-filter-scroll::-webkit-scrollbar { display: none; }
+  #timelineSection .tl-filter {
+    flex-wrap: nowrap;
+    max-width: none;
+  }
+  /* Twelve weeks at phone width: the strip uses the panel padding and drops
+     its gaps, so each week stays a 28px wide hit target. */
+  .pulse-strip { gap: 0; margin: 0 -6px; }
+  .pulse-cell { padding: 2px; }
+}

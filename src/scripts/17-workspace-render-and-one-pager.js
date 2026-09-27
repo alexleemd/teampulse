@@ -1,4 +1,11 @@
 
+// Jumps inside the workspace scroll smoothly, unless the person has asked the
+// system for reduced motion, in which case they jump straight there.
+function workspaceScrollBehavior() {
+  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return reduceMotion ? 'auto' : 'smooth';
+}
+
 function currentDetailDrawerTab() {
   // Clamp to the visible set: the workspace now only exposes Profile.
   return VISIBLE_DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
@@ -102,25 +109,27 @@ function renderDetailStatusStrip(editorReport, metrics, isCreating) {
   if (isCreating) return '';
   const items = [];
   if (metrics.vacationStatus.active) {
-    items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'info'));
+    items.push(badge(`On vacation · Back ${formatDate(vacationBackDate(metrics.vacationStatus.current))}`, 'neutral'));
   }
   items.push(badge(`PDC · ${metrics.pdcStatus}`, variantForPdcStatus(metrics.pdcStatus)));
   const openCount = (metrics.openFollowUps || []).length;
-  if (openCount) items.push(badge(`${openCount} open follow-up${openCount === 1 ? '' : 's'}`, 'warning'));
+  if (openCount) items.push(badge(`${openCount} open follow-up${openCount === 1 ? '' : 's'}`, 'neutral'));
   const attentionCount = (metrics.attentionDetails || []).length;
-  if (attentionCount) items.push(badge(`${attentionCount} attention item${attentionCount === 1 ? '' : 's'}`, 'warning'));
+  if (attentionCount) items.push(badge(`${attentionCount} attention item${attentionCount === 1 ? '' : 's'}`, 'neutral'));
   if (!items.length) return '';
   return `<div class="drawer-status-strip">${items.join('')}</div>`;
 }
 
-function renderProfileReadonlyField(label, rawValue, fill = '') {
+// A tone (from the status table) shows the value as a tag, as the support
+// level does; without one the value is plain text.
+function renderProfileReadonlyField(label, rawValue, tone = '') {
   const value = normalizeText(rawValue);
   const hasValue = value.length > 0;
-  const fillAttr = fill ? ` data-fill="${escapeHtml(fill)}"` : '';
+  const valueHtml = hasValue && tone ? badge(value, tone) : escapeHtml(hasValue ? value : 'Not set');
   return `
     <div class="profile-readonly-field">
       <span class="label">${escapeHtml(label)}</span>
-      <span class="value${hasValue ? '' : ' empty'}"${fillAttr}>${escapeHtml(hasValue ? value : 'Not set')}</span>
+      <span class="value${hasValue ? '' : ' empty'}">${valueHtml}</span>
     </div>
   `;
 }
@@ -170,15 +179,15 @@ function renderDetailDrawer() {
       <div class="drawer-header">
         <div class="drawer-header-top">
           <div class="drawer-header-identity">
-            ${isCreating ? '' : `<div class="detail-page-header-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
-            <div>
+            <div class="detail-title-row">
+              ${isCreating ? '' : `<div class="detail-page-header-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
               <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
-              <div class="detail-subhead">
-                ${!isCreating && editorReport.initials ? `<span class="initials-tag">${escapeHtml(editorReport.initials)}</span>` : ''}
-                <span class="detail-level">${escapeHtml(levelText)}</span>
-                ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
-              </div>
-              ${!isCreating && normalizeText(editorReport.mentors) ? `<div class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</div>` : ''}
+            </div>
+            <div class="detail-subhead">
+              ${!isCreating && editorReport.initials ? `<span class="initials-tag">${escapeHtml(editorReport.initials)}</span>` : ''}
+              <span class="detail-level">${escapeHtml(levelText)}</span>
+              ${!isCreating && normalizeText(editorReport.mentors) ? `<span class="detail-mentor">Mentor: ${escapeHtml(editorReport.mentors)}</span>` : ''}
+              ${isCreating ? '<span class="detail-supporting-meta">This direct report has not been saved yet.</span>' : ''}
             </div>
           </div>
           <div class="actions">
@@ -186,7 +195,7 @@ function renderDetailDrawer() {
             ${isCreating ? '' : `<button type="button" class="secondary" data-open-room="${escapeHtml(report.id)}">1:1 room</button>`}
             ${isCreating ? '' : '<button type="button" class="secondary" id="printOnePagerBtn">One-pager</button>'}
             <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
-            ${isCreating ? '' : '<button type="button" class="secondary" id="deleteSelectedBtn">Delete</button>'}
+            ${isCreating ? '' : '<button type="button" class="danger" id="deleteSelectedBtn">Delete</button>'}
           </div>
         </div>
       </div>
@@ -258,7 +267,7 @@ function renderDetailDrawer() {
                   <h3>Meetings</h3>
                 </div>
                 <div class="sharp-panel-body padded">
-                  <p class="section-note" style="margin:0;">Meeting history becomes available after the direct report has been created.</p>
+                  <p class="section-note empty-note">Meeting history becomes available after the direct report has been created.</p>
                 </div>
               </div>` : `
               ${renderTalkingPointsPanel(report)}
@@ -283,13 +292,13 @@ function renderDetailDrawer() {
                     ${profileInEditMode ? '<p class="section-note">Edit the fields below, then Save changes to apply.</p>' : ''}
                   </div>
                   ${isCreating ? '' : (profileInEditMode
-                    ? '<button type="button" class="secondary" id="cancelProfileEditBtn">Cancel</button>'
-                    : '<button type="button" class="secondary" id="openProfileEditBtn">Edit</button>')}
+                    ? '<button type="button" class="small" id="cancelProfileEditBtn">Cancel</button>'
+                    : '<button type="button" class="small" id="openProfileEditBtn">Edit</button>')}
                 </div>
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
-                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
@@ -304,7 +313,7 @@ function renderDetailDrawer() {
                   ${renderProfileReadonlyField('Initials', editorReport.initials)}
                   ${renderProfileReadonlyField('Level', editorReport.level)}
                   ${renderProfileReadonlyField('Mentor(s)', editorReport.mentors)}
-                  ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0], supportFillForLevel(editorReport.supportLevel || SUPPORT_LEVELS[0]))}
+                  ${renderProfileReadonlyField('Support level', editorReport.supportLevel || SUPPORT_LEVELS[0], variantForSupport(editorReport.supportLevel || SUPPORT_LEVELS[0]))}
                   ${renderProfileReadonlyField('Hire date', editorReport.hireDate ? formatDate(editorReport.hireDate) : '')}
                   ${renderProfileReadonlyField('Last promotion / remuneration', editorReport.lastPromotionDate ? formatDate(editorReport.lastPromotionDate) : '')}
                   ${renderProfileReadonlyField('Next planned 1:1', editorReport.nextOneOnOneDate ? formatDate(editorReport.nextOneOnOneDate) : '')}
@@ -328,7 +337,7 @@ function renderDetailDrawer() {
                     <h3>Danger Zone</h3>
                     <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document — the GDPR right-to-erasure path. It cannot be undone.</p>
                   </div>
-                  <button type="button" class="danger-outline" id="purgeReportBtn">Erase permanently</button>
+                  <button type="button" class="danger" id="purgeReportBtn">Erase permanently</button>
                 </div>
               </div>`}
             </div>
@@ -407,7 +416,7 @@ function renderDetailDrawer() {
     persistUiState();
     addEvidenceDraftRow();
     window.setTimeout(() => {
-      document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'start' });
       document.querySelector('#evidenceGroups [data-evidence-row] [data-evidence-summary]')?.focus();
     }, 0);
   });
@@ -497,7 +506,7 @@ function renderDetailDrawer() {
       window.setTimeout(() => {
         const target = [...document.querySelectorAll('[data-meeting-item]')].find((item) => item.getAttribute('data-meeting-item') === meetingId);
         if (target && typeof target.open === 'boolean') target.open = true;
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (target) target.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'center' });
       }, 60);
     });
   });
@@ -510,7 +519,7 @@ function renderDetailDrawer() {
   const jumpToMeeting = (meetingId) => {
     const target = [...document.querySelectorAll('[data-meeting-item]')].find((item) => item.getAttribute('data-meeting-item') === meetingId);
     if (target && typeof target.open === 'boolean') target.open = true;
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (target) target.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'center' });
   };
   document.querySelectorAll('[data-jump-meeting]').forEach((button) => {
     button.addEventListener('click', () => jumpToMeeting(button.getAttribute('data-jump-meeting')));
@@ -527,7 +536,7 @@ function renderDetailDrawer() {
         persistUiState();
         addEvidenceDraftRow({ linkedMeetingId: meetingId, date: meeting?.meetingDate || todayStamp() });
         window.setTimeout(() => {
-          document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'start' });
           const row = document.querySelector('#evidenceGroups [data-evidence-row]');
           row?.querySelector('[data-evidence-summary]')?.focus();
         }, 0);

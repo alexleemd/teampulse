@@ -11,24 +11,27 @@ function renderTalkingPointsPanel(report) {
   const openList = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item${tickPopClass(`tp:${point.id}`)}">
-          <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" aria-label="Mark discussed">
-          <span class="tp-item-text">${escapeHtml(point.text)}
-            ${talkingPointIsCarriedOver(report, point) ? '<span class="tp-chip">Carried over</span>' : ''}
-          </span>
+          <label>
+            <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" title="Mark discussed">
+            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? ' <span class="tp-chip">Carried over</span>' : ''}</span>
+          </label>
           <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued for the next conversation yet.</p>';
   const doneList = donePoints.length
     ? `<details class="tp-done-details">
         <summary class="tp-done-toggle">Discussed (${donePoints.length})</summary>
-        <ul class="tp-list" style="margin-top:8px;">${donePoints.map((point) => {
+        <ul class="tp-list">${donePoints.map((point) => {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
           const doneStamp = String(point.doneAt || '').slice(0, 10);
           return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
-            <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point">
-            <span class="tp-item-text">${escapeHtml(point.text)}
+            <div class="tp-item-main">
+              <label>
+                <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" title="Reopen talking point">
+                <span class="tp-item-text">${escapeHtml(point.text)}</span>
+              </label>
               <span class="tp-meta">${doneStamp ? `Discussed ${formatDate(doneStamp)}` : 'Discussed'}${linkedMeeting ? ` · <button type="button" class="tl-jump" data-jump-meeting="${escapeHtml(linkedMeeting.id)}">View meeting</button>` : ''}</span>
-            </span>
+            </div>
             <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
           </li>`;
         }).join('')}</ul>
@@ -185,7 +188,7 @@ function renderTimelinePanel(report, options = {}) {
         <div class="tl-item" data-tl-kind="${escapeHtml(item.kind)}">
           <div class="tl-item-head">
             <span class="tl-item-date">${escapeHtml(formatDate(item.date))}</span>
-            ${item.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(PULSE_LABELS[item.pulse] || item.pulse)}"></span>` : ''}
+            ${item.pulse ? `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" role="img" aria-label="${escapeHtml(PULSE_LABELS[item.pulse] || item.pulse)}" title="${escapeHtml(PULSE_LABELS[item.pulse] || item.pulse)}"></span>` : ''}
             <span class="tl-item-title">${escapeHtml(item.title)}</span>
             ${item.kindTag ? `<span class="tl-kind-badge" data-kind="${escapeHtml(item.kindTag)}">${escapeHtml(FEEDBACK_KIND_LABELS[item.kindTag] || item.kindTag)}</span>` : ''}
             ${item.meetingId ? `<button type="button" class="tl-jump" data-tl-jump-meeting="${escapeHtml(item.meetingId)}">View meeting</button>` : ''}
@@ -197,11 +200,11 @@ function renderTimelinePanel(report, options = {}) {
     <div class="drawer-section" id="timelineSection">
       <div class="drawer-section-head">
         <div>
-          <h3>Timeline</h3>
+          <h3 id="timelineHeading">Timeline</h3>
           <p class="section-note">Everything about this person in one stream: meetings with their pulse, feedback, goal progress, note updates, and status changes.</p>
         </div>
       </div>
-      <div class="tl-filter">${FILTERS.map(([key, label]) => `<button type="button" class="${key === activeFilter ? 'active' : ''}" data-tl-filter="${key}">${label}</button>`).join('')}</div>
+      <div class="tl-filter-scroll"><div class="tl-filter" role="group" aria-labelledby="timelineHeading">${FILTERS.map(([key, label]) => `<button type="button" class="${key === activeFilter ? 'active' : ''}" data-tl-filter="${key}" aria-pressed="${key === activeFilter ? 'true' : 'false'}">${label}</button>`).join('')}</div></div>
       ${stream}
     </div>`;
 }
@@ -258,7 +261,7 @@ function renderEvidenceLockerMarkup(editorReport) {
                       <label><span>Category</span><select data-evidence-category>${categoryOptions.map((category) => `<option value="${escapeHtml(category)}" ${category === entry.category ? 'selected' : ''}>${escapeHtml(category)}</option>`).join('')}</select></label>
                       <label><span>Kind</span><select data-evidence-kind>${FEEDBACK_KINDS.map((kind) => `<option value="${escapeHtml(kind)}" ${kind === (entry.kind || 'observation') ? 'selected' : ''}>${escapeHtml(FEEDBACK_KIND_LABELS[kind])}</option>`).join('')}</select></label>
                       <label><span>Linked meeting</span><select data-evidence-meeting>${meetingOptions}${entry.linkedMeetingId && !linkedMeeting ? `<option value="${escapeHtml(entry.linkedMeetingId)}" selected>Linked meeting no longer exists</option>` : ''}</select>${entry.linkedMeetingId && !linkedMeeting ? '<small class="field-hint">Linked meeting no longer exists.</small>' : ''}</label>
-                      <button type="button" class="secondary" data-remove-evidence="${escapeHtml(entry.id)}">Remove</button>
+                      <button type="button" class="danger small" data-remove-evidence="${escapeHtml(entry.id)}">Remove</button>
                     </div>
                     <div class="evidence-row-bottom">
                       <label><span>Summary</span><input type="text" data-evidence-summary value="${escapeHtml(entry.summary || '')}" placeholder="Short headline"></label>
@@ -291,14 +294,14 @@ function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
         </div>
         ${isCreating ? '' : (inEditMode
           ? `<div class="actions">
-              <button type="button" id="addVacationBtn" class="secondary">Add Vacation</button>
-              <button type="button" class="secondary" id="cancelVacationEditBtn">Cancel</button>
+              <button type="button" id="addVacationBtn" class="small">Add Vacation</button>
+              <button type="button" class="small" id="cancelVacationEditBtn">Cancel</button>
             </div>`
-          : '<button type="button" class="secondary" id="openVacationEditBtn">Edit</button>')}
+          : '<button type="button" class="small" id="openVacationEditBtn">Edit</button>')}
       </div>
       <div class="vacation-summary">
-        ${active ? badge(`On vacation · Back ${formatDate(vacationBackDate(active))}`, 'info') : ''}
-        ${!active && upcoming ? badge(`Upcoming · ${formatVacationRange(upcoming)}`, 'warning') : ''}
+        ${active ? badge(`On vacation · Back ${formatDate(vacationBackDate(active))}`, 'neutral') : ''}
+        ${!active && upcoming ? badge(`Upcoming · ${formatVacationRange(upcoming)}`, 'neutral') : ''}
         ${!active && !upcoming ? badge('No vacation scheduled', 'neutral') : ''}
       </div>
       ${inEditMode ? `
@@ -308,7 +311,7 @@ function renderVacationTrackerMarkup(editorReport, metrics, options = {}) {
             <label><span>Start date</span><input type="date" data-vacation-start value="${escapeHtml(vacation.startDate || '')}"></label>
             <label><span>End date</span><input type="date" data-vacation-end value="${escapeHtml(vacation.endDate || '')}"></label>
             <label><span>Note</span><input type="text" data-vacation-note value="${escapeHtml(vacation.note || '')}" placeholder="Optional"></label>
-            <button type="button" class="secondary" data-remove-vacation="${escapeHtml(vacation.id)}">Remove</button>
+            <button type="button" class="danger small" data-remove-vacation="${escapeHtml(vacation.id)}">Remove</button>
           </div>
         `).join('') : '<div class="vacation-empty">No vacation windows recorded yet.</div>'}
       </div>
@@ -354,8 +357,8 @@ function renderCadenceTargetsMarkup(editorReport, options = {}) {
           <p class="section-note">Leave a field blank to keep using the team default.</p>
         </div>
         ${isCreating ? '' : (inEditMode
-          ? '<button type="button" class="secondary" id="cancelCadenceEditBtn">Cancel</button>'
-          : '<button type="button" class="secondary" id="openCadenceEditBtn">Edit</button>')}
+          ? '<button type="button" class="small" id="cancelCadenceEditBtn">Cancel</button>'
+          : '<button type="button" class="small" id="openCadenceEditBtn">Edit</button>')}
       </div>
       ${inEditMode ? `
       <div class="cadence-target-grid">

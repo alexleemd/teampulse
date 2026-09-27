@@ -13,7 +13,7 @@
   <input id="icsFileInput" type="file" accept=".ics,text/calendar" class="hidden" multiple>
 
 <div id="startupPromptOverlay" class="overlay" aria-hidden="true">
-  <div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="startupPromptTitle">
+  <div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="startupPromptTitle" aria-describedby="startupPromptCopy">
     <div class="modal-header">
       <div>
         <h2 id="startupPromptTitle">Choose a Team Pulse folder</h2>
@@ -36,13 +36,13 @@
 </div>
 
 <div id="meetingModal" class="overlay" aria-hidden="true">
-  <div class="modal meeting-modal">
+  <div class="modal meeting-modal" role="dialog" aria-modal="true" aria-labelledby="meetingModalTitle" aria-describedby="meetingModalSubtitle">
     <div class="modal-header">
       <div>
         <h2 id="meetingModalTitle">Log Meeting</h2>
         <p id="meetingModalSubtitle">Log or import a meeting for this direct report.</p>
       </div>
-      <button id="closeMeetingModalBtn" class="secondary">Close</button>
+      <button id="closeMeetingModalBtn" class="secondary small" type="button">Close</button>
     </div>
     <div class="modal-body">
       <form id="meetingForm">
@@ -80,18 +80,18 @@
             </div>
           </div>
           <div class="full md-shell" id="meetingNotesShell" data-md-active="write">
-            <span>Notes</span>
+            <span id="meetingNotesLabel">Notes</span>
             <div class="md-tabs" role="tablist" aria-label="Notes editor mode">
               <button type="button" class="md-tab active" data-md-target="meetingNotesShell" data-md-mode="write" role="tab" aria-selected="true">Markdown</button>
               <button type="button" class="md-tab" data-md-target="meetingNotesShell" data-md-mode="preview" role="tab" aria-selected="false">Preview</button>
             </div>
             <div class="md-panel-write" role="tabpanel">
-              <textarea id="meetingNotes" name="meetingNotes" placeholder="Optional notes or follow-ups"></textarea>
+              <textarea id="meetingNotes" name="meetingNotes" aria-labelledby="meetingNotesLabel" placeholder="Optional notes or follow-ups"></textarea>
             </div>
             <div class="md-panel-preview note-markdown" id="meetingNotesPreview" role="tabpanel"><p class="note-preview-empty">Nothing to preview yet.</p></div>
           </div>
         </div>
-        <div class="actions" style="margin-top:16px;">
+        <div class="actions modal-actions">
           <button type="submit" id="saveMeetingBtn">Save meeting</button>
           <button type="button" id="insertAgendaBtn" class="secondary hidden">Insert talking points</button>
           <button type="button" id="insertPdcTemplateBtn" class="secondary hidden">Insert PDC template</button>
@@ -105,13 +105,13 @@
 </div>
 
 <div id="goalModal" class="overlay" aria-hidden="true">
-  <div class="modal goal-modal">
+  <div class="modal goal-modal" role="dialog" aria-modal="true" aria-labelledby="goalModalTitle" aria-describedby="goalModalSubtitle">
     <div class="modal-header">
       <div>
         <h2 id="goalModalTitle">Add Goal</h2>
         <p id="goalModalSubtitle">A concrete development goal with a status and progress.</p>
       </div>
-      <button id="closeGoalModalBtn" class="secondary" type="button">Close</button>
+      <button id="closeGoalModalBtn" class="secondary small" type="button">Close</button>
     </div>
     <div class="modal-body">
       <form id="goalForm">
@@ -130,7 +130,7 @@
           <label class="full"><span>Detail (optional)</span><textarea id="goalDetail" name="goalDetail" placeholder="What good looks like, how it will be assessed"></textarea></label>
           <label class="full"><span>Progress note (optional)</span><input id="goalUpdateNote" name="goalUpdateNote" placeholder="Short dated note added to the goal's progress log"></label>
         </div>
-        <div class="actions" style="margin-top:16px;">
+        <div class="actions modal-actions">
           <button type="submit" id="saveGoalBtn">Save goal</button>
           <button type="button" class="secondary" id="cancelGoalModalBtn">Cancel</button>
           <button type="button" class="danger-outline hidden" id="deleteGoalBtn">Remove goal</button>
@@ -142,13 +142,13 @@
 </div>
 
 <div id="feedbackModal" class="overlay" aria-hidden="true">
-  <div class="modal feedback-modal">
+  <div class="modal feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle" aria-describedby="feedbackModalSubtitle">
     <div class="modal-header">
       <div>
         <h2 id="feedbackModalTitle">Log Feedback</h2>
         <p id="feedbackModalSubtitle">A dated feedback entry stored in the evidence locker.</p>
       </div>
-      <button id="closeFeedbackModalBtn" class="secondary" type="button">Close</button>
+      <button id="closeFeedbackModalBtn" class="secondary small" type="button">Close</button>
     </div>
     <div class="modal-body">
       <form id="feedbackForm">
@@ -162,7 +162,7 @@
           <label class="full"><span>Detail (optional)</span><textarea id="feedbackDetail" name="feedbackDetail" placeholder="What happened, why it mattered, who saw it"></textarea></label>
           <label class="full feedback-shared-field"><input type="checkbox" id="feedbackShared" name="feedbackShared"><span>Shared with the person</span></label>
         </div>
-        <div class="actions" style="margin-top:16px;">
+        <div class="actions modal-actions">
           <button type="submit" id="saveFeedbackBtn">Log feedback</button>
           <button type="button" class="secondary" id="cancelFeedbackModalBtn">Cancel</button>
         </div>
