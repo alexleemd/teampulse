@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.55.1';
+const APP_VERSION = 'v0.55.2';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -173,6 +173,8 @@ const app = {
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
   exportReminderVisible: false,
+  // True once the backup file dates below were read from the connected folder.
+  fileStatsLoaded: false,
   fileStats: {
     mainSavedAt: '',
     backupSavedAt: '',

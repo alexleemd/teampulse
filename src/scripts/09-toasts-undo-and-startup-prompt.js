@@ -342,6 +342,7 @@ async function disconnectAndWipeLocal() {
   app.saveConflict = false;
   app.knownMainSavedAt = '';
   app.backupRotatedAt = 0;
+  app.fileStatsLoaded = false;
   closeSaveConflictPrompt();
   app.fileStats = { mainSavedAt: '', backupSavedAt: '', dailySavedAt: '', monthlySavedAt: '', schemaWrittenAt: '', folderLabel: '' };
   app.projections = { reports: [], reportMap: new Map(), metrics: new Map() };
