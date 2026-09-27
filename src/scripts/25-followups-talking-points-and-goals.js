@@ -166,10 +166,6 @@ async function saveFeedbackEntry(reportId, entryInput) {
   return ok;
 }
 
-function goalStatusVariant(status) {
-  return { 'On track': 'good', 'At risk': 'red', 'Paused': 'outline', 'Done': 'solid-good' }[status] || 'neutral';
-}
-
 function renderGoalProgressBar(goal, options = {}) {
   const progress = Math.max(0, Math.min(100, Number(goal?.progress) || 0));
   const compact = options.compact ? ' compact' : '';
@@ -191,13 +187,6 @@ function statusPillHtml(kind, value) {
   return `<span class="status-pill" data-pill-kind="${escapeHtml(kind)}" data-pill-value="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
 }
 
-// Moss avatars are flat: initials on --sunken in --ink, styled by the avatar
-// classes in src/styles/04-moss-components.css. The function stays so every
-// call site keeps working; it adds no per-person color.
-function avatarGradient(personId) {
-  return '';
-}
-
 // --- Illustrated empty states -------------------------------------------
 // Inline stroke icons in the same style as the sidebar set, so the zero
 // network promise holds. Used by the big first-run and all-clear states;
@@ -212,7 +201,7 @@ const EMPTY_HERO_ICONS = Object.freeze({
 function emptyHeroHtml(kind, title, body, actionHtml = '') {
   const icon = EMPTY_HERO_ICONS[kind] || EMPTY_HERO_ICONS.inbox;
   return `
-    <div class="empty-hero${kind === 'clear' ? ' celebrate' : ''}">
+    <div class="empty-hero">
       <div class="empty-hero-icon" aria-hidden="true">${icon}</div>
       <h3>${escapeHtml(title)}</h3>
       <p>${escapeHtml(body)}</p>

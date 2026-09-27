@@ -54,7 +54,7 @@ function gsGoMain(view, extra = {}) {
     openRulesDrawer();
     return;
   }
-  navigateRender(() => render());
+  render();
 }
 
 function buildGoToEntries() {
@@ -67,7 +67,7 @@ function buildGoToEntries() {
     { label: 'PDC Summary', meta: 'List view', run: () => gsGoMain('pdcSummary', { boardMode: false }) },
     { label: 'PDC Board', meta: 'Kanban view', run: () => gsGoMain('pdcSummary', { boardMode: true }) },
     { label: 'Settings', meta: 'View', run: () => gsGoMain('settings') },
-    { label: 'Add direct report', meta: 'Action', run: () => navigateRender(() => openCreateWorkspace()) },
+    { label: 'Add direct report', meta: 'Action', run: () => openCreateWorkspace() },
     { label: 'Export data now', meta: 'Action', run: () => exportPlainFiles() }
   ];
 }
@@ -81,7 +81,7 @@ function gsPersonResult(report, group) {
     title: report.name || 'Unnamed',
     meta: `${report.initials ? `${report.initials} · ` : ''}${report.level || 'Level not set'} · PDC ${metrics.pdcStatus}`,
     snippet: '',
-    run: () => navigateRender(() => selectReport(report.id))
+    run: () => selectReport(report.id)
   };
 }
 
@@ -217,7 +217,7 @@ function renderGlobalSearchResults() {
       lastGroup = res.group;
     }
     const iconHtml = res.avatarId
-      ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
+      ? `<span class="gs-avatar" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
       : `<span class="gs-icon" aria-hidden="true">→</span>`;
     html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" tabindex="-1" data-gs-index="${i}">
       ${iconHtml}

@@ -39,7 +39,6 @@ function collectWorkspaceVacations() {
   }).filter((vacation) => vacation.startDate || vacation.endDate || vacation.note);
 }
 
-
 function collectWorkspaceEvidence() {
   return [...document.querySelectorAll('#evidenceGroups [data-evidence-row]')].map((row) => {
     const fallbackId = row.getAttribute('data-evidence-row') || '';
@@ -57,10 +56,7 @@ function collectWorkspaceEvidence() {
 }
 
 function buildReportPayloadFromForm(formData, existingReport = null) {
-  const customFieldContainer = document.getElementById('detailCustomFieldsList');
-  const customFields = customFieldContainer
-    ? collectWorkspaceCustomFields(existingReport?.customFields || [])
-    : deepCopy(existingReport?.customFields || []);
+  const customFields = deepCopy(existingReport?.customFields || []);
   const cadenceOverrideInputsPresent = !!document.querySelector('[name="cadenceOneOnOneDays"], [name="cadencePdcDays"], [name="cadenceCvReviewDays"]');
   const evidenceInputsPresent = !!document.getElementById('evidenceGroups');
   const profileInputsPresent = !!document.querySelector('[name="name"]');
@@ -96,13 +92,9 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     pdcStatus: document.querySelector('[name="pdcStatus"]')
       ? normalizePdcStatus(formData.get('pdcStatus'))
       : normalizePdcStatus(existingReport?.rawPdcStatus !== undefined ? existingReport.rawPdcStatus : existingReport?.pdcStatus),
-    developmentGoalSummary: document.querySelector('[name="developmentGoalSummary"]')
-      ? normalizeText(formData.get('developmentGoalSummary'))
-      : normalizeText(existingReport?.developmentGoalSummary),
+    developmentGoalSummary: normalizeText(existingReport?.developmentGoalSummary),
     promotionReadiness: normalizeText(formData.get('promotionReadiness')),
-    agenda: document.querySelector('[name="agenda"]')
-      ? normalizeText(formData.get('agenda'))
-      : normalizeText(existingReport?.agenda),
+    agenda: normalizeText(existingReport?.agenda),
     talkingPoints: normalizeTalkingPoints(existingReport?.talkingPoints || []),
     goals: normalizeGoals(existingReport?.goals || []),
     notes: normalizeText(formData.get('notes')),
@@ -119,19 +111,6 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     evidence: evidenceInputsPresent ? collectWorkspaceEvidence() : deepCopy(existingReport?.evidence || []),
     customFields
   };
-}
-
-function collectWorkspaceCustomFields(existingFields = []) {
-  return [...document.querySelectorAll('#detailCustomFieldsList [data-custom-field]')]
-    .map((row, index) => {
-      const id = row.getAttribute('data-custom-field') || existingFields[index]?.id || nextId('customField');
-      return normalizeCustomField({
-        id,
-        label: row.querySelector('[data-custom-field-label]')?.value,
-        value: row.querySelector('[data-custom-field-value]')?.value
-      }, id);
-    })
-    .filter((field) => field.label || field.value);
 }
 
 function appendEvent(event) {

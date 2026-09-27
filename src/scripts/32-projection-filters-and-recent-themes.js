@@ -241,11 +241,3 @@ function currentTeamHealthTab() {
   else if (raw === 'pdc-mix' || raw === 'cadence' || raw === 'attention' || raw === 'support') mapped = 'overview';
   return TEAM_HEALTH_TABS.includes(mapped) ? mapped : 'overview';
 }
-
-function renderTeamHealthTabBar() {
-  const activeTab = currentTeamHealthTab();
-  teamHealthTabBarEl.innerHTML = TEAM_HEALTH_TABS.map((tab) => {
-    const isActive = tab === activeTab;
-    return `<button type="button" role="tab" class="team-health-tab${isActive ? ' active' : ''}" data-team-health-tab="${escapeHtml(tab)}" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</button>`;
-  }).join('');
-}

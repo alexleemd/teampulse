@@ -39,7 +39,7 @@ function openMeetingRoom(reportId, options = {}) {
   meetingRoomDraftFor(reportId);
   if (options.presetType && MEETING_TYPES.includes(options.presetType)) meetingRoomDraft.meetingType = options.presetType;
   persistUiState();
-  navigateRender(() => render());
+  render();
 }
 
 // True while the room holds notes or ticked talking points that are not
@@ -62,7 +62,7 @@ function closeMeetingRoom(options = {}) {
   app.ui.meetingRoomReportId = '';
   app.ui.mainView = returnView;
   persistUiState();
-  navigateRender(() => render());
+  render();
 }
 
 function captureMeetingRoomDraftFromDom() {
@@ -149,5 +149,4 @@ async function saveWorkspaceChanges(event, reportId) {
   renderDetailDrawer();
   showToast('Changes saved.', 'success');
 }
-
 

@@ -11,12 +11,6 @@ function effectiveThreshold(report, type, settings = app.doc?.settings || { thre
   return overrides[key] || settings.thresholds[key] || DEFAULT_THRESHOLDS[key];
 }
 
-function thresholdSourceLabel(report, type, settings = app.doc?.settings || { thresholds: DEFAULT_THRESHOLDS }) {
-  const key = thresholdKeyForMeetingType(type);
-  const overrides = normalizeCadenceOverrides(report?.cadenceOverrides || {});
-  return overrides[key] ? 'custom' : 'team';
-}
-
 function addDays(dateString, days) {
   const text = normalizeDate(dateString);
   if (!text) return '';
@@ -82,10 +76,6 @@ function serializeVacations(vacations = []) {
 
 function serializeSnoozes(snoozes = []) {
   return normalizeSnoozeEntries(snoozes).map((entry) => `${snoozeRuleLabel(entry.rule)} until ${entry.until}${entry.reason ? ` (${entry.reason})` : ''}`).join(' | ');
-}
-
-function serializeEvidence(evidence = []) {
-  return normalizeEvidenceEntries(evidence).map((entry) => [entry.date, entry.category, entry.summary].filter(Boolean).join(' · ')).join(' | ');
 }
 
 function parseLocalDate(dateString) {
@@ -156,12 +146,6 @@ function startOfCurrentWeek(referenceDate = new Date()) {
   return date;
 }
 
-function weekRangeLabel(weekStart, weekEnd) {
-  const start = formatDate(localDateStamp(weekStart));
-  const end = formatDate(localDateStamp(weekEnd));
-  return weekStart.getMonth() === weekEnd.getMonth() ? `${start} to ${end}` : `${start} to ${end}`;
-}
-
 function latestInteractionDate(report) {
   return [...(report.meetings || [])].map((meeting) => normalizeDate(meeting.meetingDate)).filter(Boolean).sort().pop() || '';
 }
@@ -185,29 +169,7 @@ function extractFollowUps(report) {
   return results.sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)) || String(a.text).localeCompare(String(b.text)));
 }
 
-function latestMeeting(report, type) {
-  return (report?.meetings || []).find((meeting) => canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(type)) || null;
-}
-
 function firstMeaningfulLine(value) {
   return String(value || '').split('\n').map((line) => stripMarkdownLineToText(line)).find(Boolean) || '';
 }
-
-function formatValueForSummary(value) {
-  const text = normalizeText(value);
-  if (!text) return '';
-  const date = normalizeDate(text);
-  return date ? formatDate(date) : text;
-}
-
-function customFieldComparisonKey(field = {}) {
-  return normalizeText(field.id) || normalizeText(field.label).toLowerCase();
-}
-
-
-
-function reportHasActiveVacation(report) {
-  return getVacationStatus(report).active;
-}
-
 

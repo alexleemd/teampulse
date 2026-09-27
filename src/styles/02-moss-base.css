@@ -49,7 +49,6 @@ svg { flex-shrink: 0; }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
-.tabular, .num { font-variant-numeric: tabular-nums; }
 
 /* --- Behavior: overlays, dialogs and drawers --------------------------- */
 body.overlay-open { overflow: hidden; }
@@ -88,7 +87,6 @@ body.overlay-open { overflow: hidden; }
 .md-shell[data-md-active="preview"] .md-panel-write { display: none; }
 .md-shell[data-md-active="write"] .md-panel-preview { display: none; }
 .drawer-tab-panel[hidden] { display: none !important; }
-.team-health-tabbar.hidden { display: none; }
 .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
 .pulse-option input { position: absolute; opacity: 0; pointer-events: none; }
 

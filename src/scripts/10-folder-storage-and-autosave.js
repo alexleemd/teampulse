@@ -76,7 +76,6 @@ async function connectFolderHandle(handle, options = {}) {
     app.doc = ensureDocShape(initialDoc);
     await persistDocToFolder({ reason: 'import' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     applyProjectedState();
     render();
@@ -115,7 +114,6 @@ async function loadDocFromConnectedFolder(options = {}) {
     applyProjectedState();
     await persistDocToFolder({ reason: 'init' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     render();
     if (showSuccessToast) showToast(`Created ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
@@ -136,7 +134,6 @@ async function loadDocFromConnectedFolder(options = {}) {
     applyProjectedState();
     await persistDocToFolder({ reason: 'init' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     render();
     if (showSuccessToast) showToast(`Created a new ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
@@ -178,7 +175,6 @@ async function adoptLoadedDoc(doc, options = {}) {
   const { saveReason = '' } = options;
   app.doc = doc;
   app.connectedFolderReady = true;
-  app.ui.startupHasConnectedFolder = true;
   persistUiState();
   let drawError = null;
   try {

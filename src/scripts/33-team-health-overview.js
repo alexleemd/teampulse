@@ -344,9 +344,9 @@ function renderOverviewTabHtml(reports) {
   `;
 }
 
-function renderInsightsTabHtml(reports, entering = false) {
+function renderInsightsTabHtml(reports) {
   return `
-    <div class="insights-tab${entering ? ' anim-entry' : ''}">
+    <div class="insights-tab">
       ${renderHealthTrendCard(reports)}
       ${renderCdpTeamCard(reports)}
       ${renderTeamTenureCard(reports)}
@@ -355,11 +355,9 @@ function renderInsightsTabHtml(reports, entering = false) {
   `;
 }
 
-
 function renderTeamHealth() {
   if (viewSectionHidden('teamHealthSection')) return;
   const reports = getReports();
-  teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
   if (!reports.length) {
     teamHealthBodyEl.innerHTML = emptyHeroHtml(
       'people',
@@ -367,15 +365,13 @@ function renderTeamHealth() {
       'Add your first direct report and Team Pulse starts tracking 1:1 cadence, development, and follow-ups from day one.',
       '<button id="teamHealthEmptyAddBtn" type="button">Add your first direct report</button>'
     );
-    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
+    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => openCreateWorkspace());
     return;
   }
-  renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
-  const insightsEntering = viewJustEntered('insightsTab', app.ui.mainView === 'teamHealth' && tab === 'insights');
   let panelHtml = '';
   if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
-  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports, insightsEntering);
+  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
 }
 
