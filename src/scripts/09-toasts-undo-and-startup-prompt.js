@@ -205,6 +205,7 @@ function syncBodyOverlayLock() {
   const goalModalEl = document.getElementById('goalModal');
   const feedbackModalEl = document.getElementById('feedbackModal');
   const locked = startupPromptOverlayEl.classList.contains('open')
+    || !!document.getElementById('saveConflictOverlay')?.classList.contains('open')
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || globalSearchEl.classList.contains('open')
@@ -338,6 +339,10 @@ async function disconnectAndWipeLocal() {
   app.lastSaveAt = '';
   app.lastSaveError = '';
   app.saveQueued = false;
+  app.saveConflict = false;
+  app.knownMainSavedAt = '';
+  app.backupRotatedAt = 0;
+  closeSaveConflictPrompt();
   app.fileStats = { mainSavedAt: '', backupSavedAt: '', dailySavedAt: '', monthlySavedAt: '', schemaWrittenAt: '', folderLabel: '' };
   app.projections = { reports: [], reportMap: new Map(), metrics: new Map() };
   app.ui = { ...DEFAULT_UI };

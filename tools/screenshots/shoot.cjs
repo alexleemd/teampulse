@@ -144,6 +144,8 @@ const screens = [
   ['search-results', {}, async (p) => { await p.keyboard.press('/'); await p.fill('#globalSearchInput', 'workload'); await p.waitForTimeout(250); }],
   ['search-no-match', {}, async (p) => { await p.keyboard.press('/'); await p.fill('#globalSearchInput', 'zzzz'); await p.waitForTimeout(250); }],
   ['data-menu', {}, async (p) => { await p.click('#dataMenu > summary'); }],
+  // Another tab saves team-pulse.json, then this tab comes back into view.
+  ['modal-save-conflict', {}, async (p) => { await p.evaluate(() => { const other = JSON.parse(window.__tpFiles.get('team-pulse.json')); other.savedAt = '2026-01-01T00:00:00.000Z'; window.__tpFiles.set('team-pulse.json', JSON.stringify(other)); document.dispatchEvent(new Event('visibilitychange')); }); await p.waitForSelector('#saveConflictOverlay.open'); }],
   ['toast-undo', {}, async (p) => { await p.keyboard.press('3'); await p.click('[data-report-card="p_006"]'); await p.click('#deleteSelectedBtn'); }, { keepToasts: true }],
   ['print-one-pager', {}, async (p) => { await p.evaluate(() => { window.print = () => {}; }); await p.keyboard.press('3'); await p.click('[data-report-card="p_001"]'); await p.click('#printOnePagerBtn'); await p.emulateMedia({ media: 'print' }); }, { fullPane: true }],
   // ---- variants ----

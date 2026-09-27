@@ -184,6 +184,7 @@
     .drawer-overlay { z-index: 40; }
     .overlay { z-index: 70; }
     #meetingModal { z-index: 90; }
+    #saveConflictOverlay { z-index: 125; }
     .overlay.open, .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
     .drawer, .rules-drawer {
@@ -7191,6 +7192,24 @@
   </div>
 </div>
 
+<div id="saveConflictOverlay" class="overlay" aria-hidden="true">
+  <div class="modal startup-modal" role="alertdialog" aria-modal="true" aria-labelledby="saveConflictTitle" aria-describedby="saveConflictCopy">
+    <div class="modal-header">
+      <div>
+        <h2 id="saveConflictTitle">Team Pulse was saved from another tab or computer</h2>
+        <p id="saveConflictCopy">The file in your folder changed after this tab loaded it. Autosave is paused until you choose which version to keep.</p>
+      </div>
+    </div>
+    <div class="modal-body startup-modal-body">
+      <div class="setup-actions">
+        <button id="saveConflictReloadBtn" type="button">Reload file from disk</button>
+        <button id="saveConflictKeepBtn" type="button" class="secondary">Keep this tab's version</button>
+      </div>
+      <p class="help-text">The version you do not keep is saved in the folder as a dated copy.</p>
+    </div>
+  </div>
+</div>
+
 <div id="meetingModal" class="overlay" aria-hidden="true">
   <div class="modal meeting-modal" role="dialog" aria-modal="true" aria-labelledby="meetingModalTitle" aria-describedby="meetingModalSubtitle">
     <div class="modal-header">
@@ -7513,7 +7532,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.8';
+const APP_VERSION = 'v0.54.9';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -7679,6 +7698,10 @@ const app = {
   saveTimer: null,
   backupRotatedAt: 0,
   lastSafetyCopyName: '',
+  // savedAt of team-pulse.json as this tab last read or wrote it. A different
+  // value in the file means another tab or computer saved in between.
+  knownMainSavedAt: '',
+  saveConflict: false,
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
   exportReminderVisible: false,
@@ -9593,6 +9616,7 @@ function syncBodyOverlayLock() {
   const goalModalEl = document.getElementById('goalModal');
   const feedbackModalEl = document.getElementById('feedbackModal');
   const locked = startupPromptOverlayEl.classList.contains('open')
+    || !!document.getElementById('saveConflictOverlay')?.classList.contains('open')
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || globalSearchEl.classList.contains('open')
@@ -9726,6 +9750,10 @@ async function disconnectAndWipeLocal() {
   app.lastSaveAt = '';
   app.lastSaveError = '';
   app.saveQueued = false;
+  app.saveConflict = false;
+  app.knownMainSavedAt = '';
+  app.backupRotatedAt = 0;
+  closeSaveConflictPrompt();
   app.fileStats = { mainSavedAt: '', backupSavedAt: '', dailySavedAt: '', monthlySavedAt: '', schemaWrittenAt: '', folderLabel: '' };
   app.projections = { reports: [], reportMap: new Map(), metrics: new Map() };
   app.ui = { ...DEFAULT_UI };
@@ -9898,6 +9926,8 @@ async function loadDocFromConnectedFolder(options = {}) {
 
   app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
   app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+  app.knownMainSavedAt = readSavedAtFromJsonText(text);
+  app.saveConflict = false;
   await adoptLoadedDoc(loadedDoc, { saveReason: parsed.lastMigrationApplied ? 'migration' : '' });
   if (showSuccessToast) {
     showToast(parsed.lastMigrationApplied
@@ -10041,7 +10071,8 @@ async function flushAutosaveQueue(force = false) {
     app.lastSaveError = error?.message || 'Could not save Team Pulse.';
     app.saveQueued = true;
     updateFileUi();
-    showToast(app.lastSaveError, 'error');
+    // A conflict already shows its own question.
+    if (!error?.saveConflict) showToast(app.lastSaveError, 'error');
     return false;
   } finally {
     app.saveInFlight = false;
@@ -10075,7 +10106,17 @@ function readSavedAtFromJsonText(text) {
 
 // Saves that replace team-pulse.json with different data first keep a dated
 // copy of the file they replace, named after what happened.
-const SAFETY_COPY_KIND_BY_REASON = { import: 'import', restore: 'restore', recover: 'restore' };
+const SAFETY_COPY_KIND_BY_REASON = { import: 'import', restore: 'restore', recover: 'restore', overwrite: 'overwrite' };
+// These saves replace the file on purpose, so they skip the check for a
+// change made by another tab or computer.
+const REPLACING_SAVE_REASONS = ['import', 'restore', 'recover', 'overwrite'];
+const SAVE_CONFLICT_MESSAGE = `${MAIN_JSON_NAME} was changed from another tab or computer. Choose which version to keep.`;
+
+function makeSaveConflictError() {
+  const error = new Error(SAVE_CONFLICT_MESSAGE);
+  error.saveConflict = true;
+  return error;
+}
 
 function safetyCopyStamp(date = new Date()) {
   const pad = (value) => String(value).padStart(2, '0');
@@ -10099,15 +10140,40 @@ function safetyCopyNote() {
   return app.lastSafetyCopyName ? ` The previous data was saved as ${app.lastSafetyCopyName}.` : '';
 }
 
+// How many saves are running. The change check skips while one is, since a
+// save writes the file before it records the new savedAt.
+let persistsRunning = 0;
+
 async function persistDocToFolder(options = {}) {
+  persistsRunning += 1;
+  try {
+    await writeDocToFolder(options);
+  } finally {
+    persistsRunning -= 1;
+  }
+}
+
+async function writeDocToFolder(options = {}) {
   const { reason = 'autosave' } = options;
   if (!app.folderHandle) throw new Error('Choose a Team Pulse folder first.');
+  const replacing = REPLACING_SAVE_REASONS.includes(reason);
+  if (app.saveConflict && !replacing) {
+    openSaveConflictPrompt();
+    throw makeSaveConflictError();
+  }
   const doc = buildDocForSave();
   app.doc = doc;
   applyProjectedState();
 
   const previousMainText = await readFolderFileText(MAIN_JSON_NAME);
   const previousSavedAt = readSavedAtFromJsonText(previousMainText);
+  // Another tab or computer saved since this tab last read or wrote the file:
+  // stop and ask, never overwrite its work silently.
+  if (!replacing && previousMainText.trim() && previousSavedAt !== app.knownMainSavedAt) {
+    app.saveConflict = true;
+    openSaveConflictPrompt();
+    throw makeSaveConflictError();
+  }
   const newText = JSON.stringify(doc, null, 2);
   const schemaText = generateSchemaMarkdown();
 
@@ -10139,6 +10205,7 @@ async function persistDocToFolder(options = {}) {
   await writeFolderFileText(SCHEMA_DOC_NAME, schemaText);
 
   app.lastSaveAt = doc.savedAt;
+  app.knownMainSavedAt = doc.savedAt;
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
@@ -10156,6 +10223,104 @@ async function refreshFileStats() {
   app.fileStats.monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
   app.fileStats.schemaWrittenAt = app.fileStats.mainSavedAt || app.lastSaveAt || '';
   app.fileStats.folderLabel = app.folderName || app.folderHandle?.name || '';
+}
+
+// --- Save conflict: another tab or computer saved team-pulse.json -----------
+
+function saveConflictOverlayEl() {
+  return document.getElementById('saveConflictOverlay');
+}
+
+function isSaveConflictPromptOpen() {
+  return !!saveConflictOverlayEl()?.classList.contains('open');
+}
+
+function openSaveConflictPrompt() {
+  const overlayEl = saveConflictOverlayEl();
+  if (!overlayEl) return;
+  app.lastSaveError = SAVE_CONFLICT_MESSAGE;
+  updateFileUi();
+  if (overlayEl.classList.contains('open')) return;
+  overlayEl.classList.add('open');
+  overlayEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  window.setTimeout(() => document.getElementById('saveConflictReloadBtn')?.focus(), 0);
+}
+
+function closeSaveConflictPrompt() {
+  const overlayEl = saveConflictOverlayEl();
+  if (!overlayEl) return;
+  overlayEl.classList.remove('open');
+  overlayEl.setAttribute('aria-hidden', 'true');
+  syncBodyOverlayLock();
+}
+
+function setSaveConflictButtonsBusy(busy) {
+  ['saveConflictReloadBtn', 'saveConflictKeepBtn'].forEach((id) => {
+    const button = document.getElementById(id);
+    if (button) button.disabled = busy;
+  });
+}
+
+// Reads only the savedAt of team-pulse.json and asks the conflict question if
+// another tab or computer saved since this tab last read or wrote it.
+async function checkMainFileUnchanged() {
+  if (!app.folderHandle || !app.connectedFolderReady || app.saveConflict || app.saveInFlight || persistsRunning) return;
+  try {
+    const text = await readFolderFileText(MAIN_JSON_NAME);
+    if (app.saveInFlight || app.saveConflict || persistsRunning || !text.trim()) return;
+    if (readSavedAtFromJsonText(text) !== app.knownMainSavedAt) {
+      app.saveConflict = true;
+      openSaveConflictPrompt();
+    }
+  } catch (error) {
+    console.error('Could not check team-pulse.json for changes', error);
+  }
+}
+
+// choice 'reload': this tab's version goes to a dated copy, then the file is
+// loaded again. choice 'keep': the file goes to a dated copy, then this tab's
+// version is saved over it. Either way nothing is lost.
+async function resolveSaveConflict(choice) {
+  if (!app.saveConflict || !app.folderHandle) {
+    closeSaveConflictPrompt();
+    return;
+  }
+  setSaveConflictButtonsBusy(true);
+  window.clearTimeout(app.saveTimer);
+  try {
+    // Let a save that is still running finish first. It stops at the conflict.
+    while (app.saveInFlight) await new Promise((resolve) => window.setTimeout(resolve, 50));
+    if (choice === 'reload') {
+      const copyName = await writeSafetyCopy('reload', JSON.stringify(buildDocForSave(), null, 2));
+      app.saveConflict = false;
+      app.saveQueued = false;
+      app.lastSaveError = '';
+      closeSaveConflictPrompt();
+      const loaded = await loadDocFromConnectedFolder({ showSuccessToast: false });
+      if (loaded) showToast(`Reloaded ${MAIN_JSON_NAME}. This tab's version was saved as ${copyName}.`, 'success');
+    } else {
+      app.saveInFlight = true;
+      updateFileUi();
+      try {
+        await persistDocToFolder({ reason: 'overwrite' });
+      } finally {
+        app.saveInFlight = false;
+      }
+      app.saveConflict = false;
+      app.saveQueued = false;
+      app.lastSaveError = '';
+      closeSaveConflictPrompt();
+      updateFileUi();
+      showToast(`Saved this tab's version to ${MAIN_JSON_NAME}.${safetyCopyNote()}`, 'success');
+    }
+  } catch (error) {
+    console.error('Could not settle the save conflict', error);
+    showToast(error?.message || 'Could not save Team Pulse.', 'error');
+    updateFileUi();
+  } finally {
+    setSaveConflictButtonsBusy(false);
+  }
 }
 
 
@@ -14867,6 +15032,7 @@ function restoreDialogOpener(key) {
 // Shift+Tab from the first goes to the last, and Tab from outside moves in.
 // The topmost open layer wins, in z-index order (02-moss-base.css).
 const FOCUS_TRAP_LAYERS = [
+  '#saveConflictOverlay.open .modal',
   '#globalSearch.open .gs-panel',
   '#meetingModal.open .modal',
   '.overlay.open .modal',
@@ -15932,6 +16098,13 @@ function bindStaticEvents() {
       chooseFolderAndConnect();
     }
   });
+  document.getElementById('saveConflictReloadBtn')?.addEventListener('click', () => resolveSaveConflict('reload'));
+  document.getElementById('saveConflictKeepBtn')?.addEventListener('click', () => resolveSaveConflict('keep'));
+  // Coming back to this tab: check whether another tab or computer saved the
+  // file meanwhile, before any edit is made on top of old data.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') checkMainFileUnchanged();
+  });
   connectDataFileBtn.addEventListener('click', () => {
     closeDataMenu();
     importLegacyJsonFlow();
@@ -15953,6 +16126,8 @@ function bindStaticEvents() {
     if (!dataMenuEl.hasAttribute('open')) return;
     const trigger = dataMenuEl.querySelector('summary');
     if (event.key === 'Escape') {
+      // The save conflict question has no Close: one of its two choices is needed.
+      if (isSaveConflictPromptOpen()) return;
       if (trigger && dataMenuEl.querySelector('.toolbar-menu-popover')?.contains(document.activeElement)) trigger.focus();
       return;
     }
@@ -16235,12 +16410,14 @@ function bindStaticEvents() {
     const disconnectBtn = event.target.closest('#disconnectFolderBtn');
     if (disconnectBtn) disconnectAndWipeLocal();
   });
-  // Search, a dialog, the Settings drawer or the startup prompt is open.
+  // Search, a dialog, the Settings drawer, the startup prompt or the save
+  // conflict prompt is open.
   // The keyboard shortcuts below do nothing then.
   const anyOverlayUp = () => globalSearchEl.classList.contains('open')
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || startupPromptOverlayEl.classList.contains('open')
+    || isSaveConflictPromptOpen()
     || !!document.getElementById('goalModal')?.classList.contains('open')
     || !!document.getElementById('feedbackModal')?.classList.contains('open');
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
@@ -16786,6 +16963,7 @@ function generateSchemaMarkdown() {
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
   lines.push('- **team-pulse.before-import-*.json / team-pulse.before-restore-*.json**: Dated copies of team-pulse.json, written just before an import or a backup restore replaces it. They are never rotated. Delete them when you no longer need them.');
+  lines.push('- **team-pulse.before-reload-*.json / team-pulse.before-overwrite-*.json**: Written when another tab or computer saved team-pulse.json in between. before-reload holds the version the tab had when it reloaded the file, before-overwrite the file version the tab replaced with its own.');
   lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
   lines.push('- **Erase permanently** (Profile tab danger zone) removes the person record and every event referencing them from the document. This is the right-to-erasure path. It cannot be undone and takes effect in the JSON on the next save. Rolling backups in this folder may still hold prior copies until they rotate. Delete them manually if a full purge is required.');
   lines.push('');
