@@ -68,11 +68,15 @@ function collectRecentNoteTexts(report, windowDays = getThemeWindowDays()) {
   return texts;
 }
 
+// Keeps letters from every language (\p{L}, plus accent marks \p{M}), so
+// "café" or "Übergabe" stay whole words. NFC joins a letter typed as letter
+// plus accent into one character, so both spellings count as the same word.
 function normalizeThemeSearchText(value) {
   return String(value || '')
+    .normalize('NFC')
     .toLowerCase()
     .replace(/https?:\/\/\S+/g, ' ')
-    .replace(/[^a-z\s]/g, ' ')
+    .replace(/[^\p{L}\p{M}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
