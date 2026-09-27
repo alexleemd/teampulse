@@ -23,7 +23,6 @@ function normalizeSettings(rawSettings = {}) {
   merged.evidenceCategories = normalizeEvidenceCategories(merged.evidenceCategories || rawSettings.evidenceCategories);
   merged.promotionConversationMonths = safePositiveInteger(merged.promotionConversationMonths || rawSettings.promotionConversationMonths, DEFAULT_PROMOTION_CONVERSATION_MONTHS);
   merged.themesWindowDays = safePositiveInteger(merged.themesWindowDays || rawSettings.themesWindowDays, THEMES_WINDOW_DEFAULT);
-  merged.stableMode = rawSettings.stableMode === undefined ? true : !!merged.stableMode;
   merged.pulseTrendCounts = rawSettings.pulseTrendCounts === undefined ? true : !!merged.pulseTrendCounts;
   merged.density = merged.density === 'compact' ? 'compact' : 'comfortable';
   merged.pdcRoundAutoReset = rawSettings.pdcRoundAutoReset === undefined ? true : !!merged.pdcRoundAutoReset;
