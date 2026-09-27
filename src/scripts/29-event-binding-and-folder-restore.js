@@ -13,7 +13,7 @@ function bindStaticEvents() {
   const sidebarEl = document.getElementById('sidebar');
   if (sidebarEl) {
     sidebarEl.addEventListener('click', (event) => {
-      // Team Health sub-tab (Overview / Cadence / Attention / Support / Insights).
+      // Team Health sub-tab (Overview / Insights).
       const thBtn = event.target.closest('[data-nav-team-health]');
       if (thBtn) {
         const nextTab = thBtn.getAttribute('data-nav-team-health');

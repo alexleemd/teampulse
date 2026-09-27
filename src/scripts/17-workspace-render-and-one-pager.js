@@ -7,7 +7,7 @@ function workspaceScrollBehavior() {
 }
 
 function currentDetailDrawerTab() {
-  // Clamp to the visible set: the workspace now only exposes Profile.
+  // A stored tab that is not a workspace tab falls back to Profile.
   return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
