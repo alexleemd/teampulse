@@ -2568,9 +2568,6 @@
     #dataMenu .toolbar-menu-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: none; }
     #dataMenu .toolbar-menu-item:disabled { background: transparent; color: var(--disabled-text); cursor: not-allowed; }
 
-    /* Mobile only: the legacy back button (small secondary look). */
-    #contentHeader .mobile-back-btn { display: none; }
-
     /* --- Backup banner (Controls 3) -----------------------------------------
        The mockup draws the banner 440px wide with the buttons under the text.
        Across the full content width the buttons sit on the text's row, aligned
@@ -2739,29 +2736,6 @@
       .content-header { flex-direction: column; align-items: stretch; gap: 14px; }
       .content-header-title { flex: none; }
       .content-header-meta { justify-content: flex-start; gap: 8px; }
-      #contentHeader .mobile-back-btn {
-        appearance: none;
-        display: inline-flex;
-        align-items: center;
-        align-self: flex-start;
-        gap: 6px;
-        height: var(--small-height);
-        min-height: var(--small-height);
-        margin: 0;
-        padding: 0 10px;
-        background: var(--surface);
-        border: 1px solid var(--button-line);
-        border-radius: var(--radius-small);
-        box-shadow: none;
-        font-family: inherit;
-        font-size: var(--text-label);
-        line-height: 1;
-        font-weight: 500;
-        color: var(--ink);
-        cursor: pointer;
-      }
-      #contentHeader .mobile-back-btn:hover { background: var(--sunken); }
-      #contentHeader .mobile-back-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       #startupGate.startup-gate { margin-top: 4vh; padding: 20px; }
     }
 
@@ -7068,7 +7042,6 @@
         <!-- Content header: eyebrow, view title, caption line, then Search, save status and the Data menu.
              Shown before a folder is connected too (Search disabled, No folder connected, Data menu). -->
         <header class="content-header" id="contentHeader">
-          <button type="button" class="mobile-back-btn" id="mobileBackBtn" aria-label="Back to list">← Back</button>
           <div class="content-header-title">
             <span class="content-header-eyebrow" id="contentHeaderEyebrow"></span>
             <h1 id="contentHeaderTitle">Team Health</h1>
@@ -7564,7 +7537,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.53.4';
+const APP_VERSION = 'v0.53.5';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -15787,18 +15760,6 @@ function bindStaticEvents() {
     settingsBody.addEventListener('click', (event) => {
       const openBtn = event.target.closest('[data-settings-open]');
       if (openBtn) openRulesDrawer();
-    });
-  }
-
-  // Mobile: back button returns to list pane. (Legacy — may be no-op now.)
-  const mobileBackBtn = document.getElementById('mobileBackBtn');
-  if (mobileBackBtn) {
-    mobileBackBtn.addEventListener('click', () => {
-      if (!confirmWorkspaceClose()) return;
-      app.ui.selectedId = null;
-      app.ui.creatingReport = false;
-      persistUiState();
-      navigateRender(() => render());
     });
   }
 
