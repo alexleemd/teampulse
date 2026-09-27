@@ -1,0 +1,635 @@
+/* Settings drawer, dialogs (meeting, goal, feedback, startup), startup gate, global search, toasts, data health grid.
+   Owner: W9 overlays.
+
+   Built from Controls 3 (dialog and toasts), Controls 1 (fields) and
+   Controls 2 (switch rows). Shared controls (buttons, fields, switches,
+   tabs, the pulse picker, callouts) come from 03 and 04; this file only lays
+   out the floating layers and adds variations scoped to them. The show and
+   hide behavior (opacity, pointer events, z-index, the drawer slide) lives
+   in 02-moss-base.css. */
+
+/* --- Closed layers leave the tab order ----------------------------------
+   The base file hides closed overlays with opacity only, so their buttons
+   and fields could still be reached with Tab. Visibility follows the open
+   state: on at once when opening, off after the 120ms fade when closing. */
+.overlay,
+.drawer-overlay {
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 0s linear 120ms;
+}
+.overlay.open,
+.drawer-overlay.open {
+  visibility: visible;
+  transition: opacity 120ms ease, visibility 0s linear 0s;
+}
+
+/* --- Dialogs (meeting, goal, feedback, startup prompt) -------------------
+   Scrim behind, white, radius 14, floating shadow, 560px wide, padding
+   22 24 24. Header: 20px 600 title, 13.5px ink-2 description, small Close.
+   The overlay scrolls when a dialog is taller than the window, and the
+   dialog is centered with auto margins so its top is never cut off. */
+.overlay {
+  display: flex;
+  padding: 32px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+  margin: auto;
+  padding: 22px 24px 24px;
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  color: var(--ink);
+  text-align: left;
+}
+/* The header is a grid so the description can use the full width: the title
+   and Close share the first row, the description spans both columns under
+   them. Close hangs 4px into the row gap, so the description starts 4px under
+   the title as in the mockup. */
+.modal-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 16px;
+  row-gap: 4px;
+  min-width: 0;
+}
+.modal-header > div { display: contents; }
+.modal-header h2 { grid-column: 1; grid-row: 1; min-width: 0; }
+.modal-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-dialog);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.modal-header p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.modal-header > button {
+  grid-column: 2;
+  grid-row: 1;
+  margin-bottom: -4px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  padding: 0;
+}
+.modal-body > form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  margin: 0;
+}
+/* Actions sit at the bottom left: primary, then secondary, then danger. */
+.modal .modal-actions { justify-content: flex-start; }
+/* The status line only takes room when it has something to say, 10px under
+   the actions. */
+.modal .status-line:empty { display: none; }
+.modal-body > form > .status-line { margin-top: -8px; }
+
+/* The meeting dialog: the pulse field and the notes editor span both
+   columns (they carry .full); the notes editor keeps its write and preview
+   tabs from the shared markdown pieces. */
+.meeting-modal .md-shell { gap: 8px; }
+
+/* --- Startup prompt dialog --------------------------------------------------
+   Title and description, the saved folder card, then one primary and the
+   secondary choices, then the help line. No Close: a folder is needed. */
+.startup-modal-body { gap: 16px; }
+.startup-modal .setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+/* The saved folder card: a quiet page box with a small label over the
+   folder name. */
+.startup-modal .startup-saved-folder {
+  gap: 2px;
+  padding: 12px 14px;
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-menu);
+}
+.startup-modal .startup-saved-folder strong {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.startup-modal .startup-saved-folder p {
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.startup-modal .help-text { margin: 0; }
+
+/* --- Toasts -------------------------------------------------------------------
+   Top right, white, 1px line, radius 12, floating shadow, 360px wide. A
+   leading 18px status icon, the message in 13.5px, an optional link button
+   such as Undo. No colored side borders. The icon color follows the kind:
+   good for success, mixed for warning, rough for error, ink-2 for info.
+   --toast-top is set by placeToastStack (09) when a header row with
+   buttons sits in the top right spot, so the stack starts under it. */
+.toast-stack {
+  position: fixed;
+  top: var(--toast-top, 20px);
+  right: 20px;
+  z-index: 130;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-toast);
+  box-shadow: var(--shadow-float);
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.4;
+  pointer-events: none;
+  animation: mossToastIn 120ms ease-out 1;
+}
+/* A toast is see-through for the pointer, so it never blocks the header or
+   drawer buttons under it. Only a toast with an action (such as Undo) takes
+   clicks. */
+.toast:has(.toast-action) { pointer-events: auto; }
+@keyframes mossToastIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.toast-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.5px;
+  color: var(--ink-2);
+}
+.toast:is(.success, [data-toast-icon="success"]) .toast-icon { color: var(--good); }
+.toast:is(.warning, [data-toast-icon="warning"]) .toast-icon { color: var(--mixed); }
+.toast:is(.error, .danger, [data-toast-icon="error"]) .toast-icon { color: var(--rough); }
+.toast[data-toast-icon="info"] .toast-icon { color: var(--ink-2); }
+.toast-message {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.toast .toast-action {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* --- Settings drawer (the rules drawer) ------------------------------------
+   A floating layer (decision 7): the scrim, the slide and the floating
+   shadow come from the base file. White header with the title, the
+   description and a small Close; the body is the paper page with one card
+   per section. */
+.rules-drawer .drawer-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.rules-drawer .drawer-header {
+  flex: none;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+/* Same header grid as the dialogs: the title and Close in the first row, the
+   description under them across the full width. */
+.rules-drawer .drawer-header-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 16px;
+  row-gap: 4px;
+}
+.rules-drawer .drawer-header-top > div:first-child { display: contents; }
+.rules-drawer .drawer-header h2 {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-dialog);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.rules-drawer .drawer-header p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.rules-drawer .drawer-header-top > .actions {
+  grid-column: 2;
+  grid-row: 1;
+  margin-bottom: -4px;
+}
+/* The body has the header's 24px side padding, so the section cards line up
+   under the title. */
+.rules-drawer .drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 18px 24px 28px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--page);
+}
+.rules-drawer .drawer-section { gap: 14px; padding: 18px 20px 20px; }
+.rules-drawer .drawer-section > h3 { margin: 0; }
+
+/* Overdue windows: the unit fields from Controls 1 in the two column form
+   grid, then the switch rows from Controls 2, then Save rules (the one
+   primary) and Reset defaults. */
+.rules-drawer #thresholdForm { gap: 14px 16px; }
+.rules-drawer #thresholdForm > .full:has(> .toggle-row) {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  border-top: 1px solid var(--line);
+}
+.rules-drawer #thresholdForm > .full > .toggle-row:first-child { border-top: 0; }
+.rules-drawer .drawer-form-actions { margin-top: 2px; }
+.rules-drawer #thresholdStatus { grid-column: 1 / -1; }
+.rules-drawer .status-line:empty { display: none; }
+.rules-drawer .actions + .status-line { margin-top: -4px; }
+
+/* A switch row right under a section title needs no divider above it. */
+.rules-drawer .drawer-section > h3 + .toggle-row { padding-top: 0; border-top: 0; }
+.rules-drawer .toggle-row { padding: 12px 0; }
+.rules-drawer .toggle-row:last-child { padding-bottom: 0; }
+.rules-drawer .toggle-row > label:not(.switch) { width: 172px; }
+
+/* Data health: label and value rows divided by soft lines. When a row
+   carries data-state (good or attention) its value gets a status mark: a
+   check circle in good or a triangle in mixed. The value text is always
+   there, so the mark never carries the meaning alone. */
+.health-grid {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.health-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 36px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.health-item:first-child { border-top: 0; }
+.health-item > strong {
+  flex: 0 0 auto;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.health-item > span {
+  flex: 0 1 auto;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.health-item:is([data-state="good"], [data-state="attention"]) > span::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  background: var(--good);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m8 12.5 2.8 2.8L16.5 9.5'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m8 12.5 2.8 2.8L16.5 9.5'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+}
+.health-item[data-state="attention"] > span::before {
+  background: var(--mixed);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5 2.5 20h19L12 3.5z'/%3E%3Cpath d='M12 10v4.5M12 17.5v.01'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5 2.5 20h19L12 3.5z'/%3E%3Cpath d='M12 10v4.5M12 17.5v.01'/%3E%3C/svg%3E");
+}
+
+/* Privacy: the note, the disconnect action, then the fine print. */
+.rules-drawer .privacy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+/* --- Global search --------------------------------------------------------------
+   A dialog with a search field and list rows: 13.5px, 36px rows, group
+   labels 12px 500 ink-2. The one active row (the arrow keys move it, 22;
+   Enter runs it) is sunken with a 2px accent ring inside its edge; a hovered
+   row gets the sunken fill only. The overlay placement comes from the base
+   file. */
+.gs-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 640px;
+  max-height: min(78vh, 660px);
+  min-width: 0;
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+}
+/* The search field: one Moss field holding the icon, the input and the Esc
+   hint. It shows the field focus (accent border and ring) while typing. */
+.gs-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: var(--field-height);
+  margin: 16px 16px 0;
+  padding: 0 8px 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-field);
+  color: var(--ink-2);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.gs-input-row:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.gs-input-row .gs-input-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--ink-2);
+}
+.gs-input-row input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--ink);
+  font-size: var(--text-body);
+}
+.gs-input-row input:focus,
+.gs-input-row input:focus-visible {
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+.gs-input-row .gs-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: var(--text-tag);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.gs-results {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 12px;
+  padding: 6px 8px 10px;
+  border-top: 1px solid var(--line-soft);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.gs-group {
+  padding: 10px 10px 4px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.gs-section:first-child > .gs-group { padding-top: 6px; }
+.gs-results .gs-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 3px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-button);
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.gs-results .gs-row:hover { background: var(--sunken); }
+/* The ring sits inside the row (offset -2px), so the results scroller never
+   clips it when the active row is scrolled to its edge. */
+.gs-results .gs-row.active {
+  background: var(--sunken);
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.gs-results .gs-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* On a sunken row the avatar turns white so it keeps its shape. */
+.gs-row.active .gs-avatar,
+.gs-row:hover .gs-avatar { background: var(--surface); }
+/* The go-to arrow: the "→" text glyph in ink-2. Instrument Sans draws it
+   low in its line, so 4px of bottom padding lifts it 2px onto the middle of
+   the title's lowercase letters. */
+.gs-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding-bottom: 4px;
+  color: var(--ink-2);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+.gs-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 3px 0;
+}
+.gs-title {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gs-snippet {
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The matched words: ink 600 on a sunken chip (white on the sunken row). */
+.gs-snippet mark {
+  padding: 0 1px;
+  background: var(--sunken);
+  border-radius: 3px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.gs-row.active .gs-snippet mark,
+.gs-row:hover .gs-snippet mark { background: var(--surface); }
+.gs-meta {
+  flex-shrink: 0;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.3;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+/* No match: the results list is hidden and the status region under it
+   shows the Moss empty state box, 16px in from the panel edges under the
+   same soft divider. The region stays in place (empty, with no size) so
+   screen readers announce the message when it appears. */
+.gs-status:not(:empty) {
+  margin-top: 12px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--line-soft);
+}
+.gs-panel .gs-empty {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--page);
+  border: 1px dashed var(--button-line);
+  border-radius: var(--radius-menu);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+
+/* --- Narrow screens ------------------------------------------------------------
+   Under 900px only the toasts move (the sidebar turns into a top bar). The
+   dialogs and the drawer keep their full padding while they are 560px wide,
+   and the padding shrinks (keeping the 16px phone gutter) only where they
+   get narrower: a dialog under 592px (560 plus two 16px gutters), the drawer
+   under 596px (its width is min(560px, 94vw) in the base file). */
+@media (max-width: 900px) {
+  .toast-stack { top: var(--toast-top, 12px); right: 16px; }
+}
+@media (max-width: 640px) {
+  .gs-input-row .gs-kbd { display: none; }
+  /* Once the panel narrows below its 640px, a one-line snippet can cut off
+     the matched word. A row with a snippet becomes a grid: the title with the
+     date on its right, then the snippet under both, full width, on up to two
+     lines, so the match stays in view. The spacing sits on the icon and the
+     date, not in a column gap, so a row with no date keeps the full width. */
+  .gs-results .gs-row:has(.gs-snippet) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon title meta"
+      "icon snippet snippet";
+    align-items: center;
+    column-gap: 0;
+    row-gap: 2px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  .gs-row:has(.gs-snippet) > .gs-avatar,
+  .gs-row:has(.gs-snippet) > .gs-icon { grid-area: icon; align-self: start; margin-right: 10px; }
+  .gs-row:has(.gs-snippet) > .gs-main { display: contents; }
+  .gs-row:has(.gs-snippet) .gs-title { grid-area: title; }
+  .gs-row:has(.gs-snippet) > .gs-meta { grid-area: meta; padding-left: 10px; }
+  .gs-row:has(.gs-snippet) .gs-snippet {
+    grid-area: snippet;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 595px) {
+  .rules-drawer .drawer-header { padding: 18px 16px 16px; }
+  .rules-drawer .drawer-body { padding: 14px 16px 24px; }
+  .rules-drawer .drawer-section { padding: 16px 14px 18px; }
+  .rules-drawer .toggle-row > label:not(.switch) { width: 150px; }
+}
+@media (max-width: 591px) {
+  .overlay { padding: 16px; }
+  .modal { padding: 20px 16px 20px; }
+}

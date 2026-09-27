@@ -1,4 +1,4 @@
-// Renders the global Follow-Ups view// Renders the global Follow-Ups view: every open [ ] line from meeting notes
+// Renders the global Follow-Ups view: every open [ ] line from meeting notes
 // across the team, grouped by person, toggleable in place.
 function renderFollowUpsView() {
   const mount = document.getElementById('followUpsBody');
@@ -12,7 +12,6 @@ function renderFollowUpsView() {
     );
     return;
   }
-  const followUpsEntering = viewJustEntered('followUpsView', app.ui.mainView === 'followUps');
   const groups = reports.map((report) => {
     const metrics = getMetrics(report.id);
     return { report, items: metrics.openFollowUps || [] };
@@ -32,24 +31,27 @@ function renderFollowUpsView() {
     return;
   }
 
+  // Each checkbox is named by its item text and source meta only (through
+  // aria-labelledby), so the "Open meeting" button inside the row label does
+  // not become part of the checkbox's name.
   mount.innerHTML = `
-    <div class="followups-summary">${badge(`${totalOpen} open across ${groups.length} ${groups.length === 1 ? 'person' : 'people'}`, 'warning')}</div>
-    <div class="followups-view${followUpsEntering ? ' anim-entry' : ''}">
-      ${groups.map(({ report, items }, panelIndex) => `
-        <div class="sharp-panel followup-panel" style="--i:${Math.min(panelIndex, 14)}">
+    <div class="followups-summary">${badge(`${totalOpen} open across ${groups.length} ${groups.length === 1 ? 'person' : 'people'}`, 'neutral')}</div>
+    <div class="followups-view">
+      ${groups.map(({ report, items }, groupIndex) => `
+        <div class="sharp-panel followup-panel">
           <div class="sharp-panel-header">
-            <h3><span class="fu-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
-            <div class="sharp-panel-header-meta">${badge(`${items.length} open`, 'warning')}</div>
+            <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
+            <div class="sharp-panel-header-meta">${badge(`${items.length} open`, 'neutral')}</div>
           </div>
           <div class="sharp-panel-body">
             <div class="followup-list">
-              ${items.map((item) => `
+              ${items.map((item, itemIndex) => `
                 <label class="followup-item">
-                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+                  <input type="checkbox" data-followup-global="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="fuv-${groupIndex}-${itemIndex}-text fuv-${groupIndex}-${itemIndex}-meta">
                   <span class="followup-copy">
-                    <strong>${escapeHtml(item.text)}</strong>
+                    <strong id="fuv-${groupIndex}-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                     <span class="followup-meta">
-                      <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                      <span id="fuv-${groupIndex}-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                       <button type="button" class="followup-jump" data-followup-open="${escapeHtml(report.id)}::${escapeHtml(item.meetingId)}">Open meeting</button>
                     </span>
                   </span>
@@ -184,13 +186,12 @@ async function performBoardMove(personId, targetStatus) {
   }
 }
 
-function renderPdcBoardHtml(reports, entering) {
+function renderPdcBoardHtml(reports) {
   const grouped = new Map(PDC_BOARD_COLUMNS.map((status) => [status, []]));
   reports.forEach((r) => {
     const status = getMetrics(r.id).pdcStatus;
     (grouped.get(status) || grouped.get('Not started')).push(r);
   });
-  let cardIndex = 0;
   const columns = PDC_BOARD_COLUMNS.map((status) => {
     const people = grouped.get(status);
     const cards = people.map((r) => {
@@ -198,7 +199,9 @@ function renderPdcBoardHtml(reports, entering) {
       const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
       const primaryGoal = metrics.primaryGoal;
       const goal = primaryGoal ? primaryGoal.title : 'No development goal set';
-      const meta = `Last: ${metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never'} · Next: ${r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned'}`;
+      // Two unbreakable parts, so a date never splits across lines.
+      const metaLast = `Last: ${metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never'} ·`;
+      const metaNext = `Next: ${r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned'}`;
       const isDatePrompt = app.ui.pdcBoardDateId === r.id;
       const moveOptions = PDC_BOARD_COLUMNS
         .filter((s) => s !== status)
@@ -206,39 +209,38 @@ function renderPdcBoardHtml(reports, entering) {
         .join('') + `<option value="open-room">Open 1:1 room…</option><option value="plan-date">Plan PDC date…</option><option value="log-pdc">Log PDC meeting…</option>`;
       const nextPdc = normalizeDate(r.nextPdcDate);
       const cardChips = [];
-      if (nextPdc && nextPdc < todayStamp()) cardChips.push('<span class="mv-chip" data-tone="warning">Planned date passed</span>');
-      else if (metrics.pdcOverdue) cardChips.push('<span class="mv-chip" data-tone="warning">PDC overdue</span>');
+      if (nextPdc && nextPdc < todayStamp()) cardChips.push('<span class="mv-chip" data-tone="amber">Planned date passed</span>');
+      else if (metrics.pdcOverdue) cardChips.push('<span class="mv-chip" data-tone="amber">PDC overdue</span>');
       const chipRow = cardChips.length ? `<div class="pdc-board-card-chips">${cardChips.join('')}</div>` : '';
       const dateBlock = isDatePrompt ? `
         <div class="pdc-board-date">
           <input type="date" data-board-date-input="${escapeHtml(r.id)}" value="${escapeHtml(addDays(todayStamp(), 14))}" min="${escapeHtml(todayStamp())}" aria-label="Planned PDC date">
           <div class="pdc-board-date-actions">
-            <button type="button" data-board-date-save="${escapeHtml(r.id)}">Plan</button>
+            <button type="button" class="primary" data-board-date-save="${escapeHtml(r.id)}">Plan</button>
             <button type="button" class="secondary" data-board-date-cancel="${escapeHtml(r.id)}">Cancel</button>
           </div>
         </div>` : '';
-      const idx = Math.min(cardIndex, 14);
-      cardIndex += 1;
-      return `<div class="pdc-board-card${isDatePrompt ? ' date-open' : ''}" draggable="${isDatePrompt ? 'false' : 'true'}" data-board-card="${escapeHtml(r.id)}" style="--i:${idx}">
+      return `<div class="pdc-board-card${isDatePrompt ? ' date-open' : ''}" draggable="${isDatePrompt ? 'false' : 'true'}" data-board-card="${escapeHtml(r.id)}">
         <div class="pdc-board-card-top">
-          <div class="pdc-board-card-avatar" style="${avatarGradient(r.id)}" aria-hidden="true">${escapeHtml(initials)}</div>
+          <div class="pdc-board-card-avatar" aria-hidden="true">${escapeHtml(initials)}</div>
           <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(r.id)}" title="Open profile">${escapeHtml(r.name || 'Unnamed')}</button>
         </div>
         <span class="pdc-board-card-goal">${escapeHtml(goal)}</span>
-        ${primaryGoal ? renderGoalProgressBar(primaryGoal, { compact: true }) : ''}
-        <span class="pdc-board-card-meta">${escapeHtml(meta)}</span>
+        ${primaryGoal ? `<span class="pdc-board-card-goal-row">${statusPillHtml('goal', primaryGoal.status || GOAL_STATUSES[0])}${renderGoalProgressBar(primaryGoal, { compact: true })}</span>` : ''}
+        <span class="pdc-board-card-meta"><span>${escapeHtml(metaLast)}</span> <span>${escapeHtml(metaNext)}</span></span>
         ${chipRow}
         ${dateBlock}
-        <select class="pdc-board-move" data-board-move="${escapeHtml(r.id)}" aria-label="Move ${escapeHtml(r.name || 'Unnamed')}">
+        <span class="select-wrap pdc-board-move-wrap"><select class="pdc-board-move" data-board-move="${escapeHtml(r.id)}" aria-label="Move ${escapeHtml(r.name || 'Unnamed')}">
           <option value="">Move…</option>
           ${moveOptions}
-        </select>
+        </select></span>
       </div>`;
     }).join('');
+    // Decision 5: board columns are categories, so the column itself carries
+    // no status color. The label and the count say what it holds.
     const emptyBody = '<div class="pdc-board-empty">Drop here</div>';
-    return `<div class="pdc-board-col" data-tone="${escapeHtml(variantForPdcStatus(status))}">
+    return `<div class="pdc-board-col" data-status="${escapeHtml(status)}">
       <div class="pdc-board-col-head">
-        <span class="pdc-board-col-dot" aria-hidden="true"></span>
         <h3>${escapeHtml(status)}</h3>
         <span class="pdc-board-count">${people.length}</span>
       </div>
@@ -246,7 +248,7 @@ function renderPdcBoardHtml(reports, entering) {
       <div class="pdc-board-drop" data-board-drop="${escapeHtml(status)}">${cards || emptyBody}</div>
     </div>`;
   }).join('');
-  return `<div class="pdc-board${entering ? ' anim-entry' : ''}">${columns}</div>`;
+  return `<div class="pdc-board">${columns}</div>`;
 }
 
 // v0.44.1: a derived kanban for 1:1 hygiene. Columns are computed from the
@@ -254,14 +256,16 @@ function renderPdcBoardHtml(reports, entering) {
 // dragged. Every card carries the fastest paths to act: open the 1:1 room,
 // log a meeting, or set the next planned date inline.
 const ONE_ON_ONE_BOARD_COLUMNS = Object.freeze(['Overdue', 'Due soon', 'Planned', 'On track']);
-const ONE_ON_ONE_BOARD_TONES = Object.freeze({ 'Overdue': 'danger', 'Due soon': 'warning', 'Planned': 'info', 'On track': 'success' });
+// Column headers stay neutral. The status mark next to each label: an
+// overdue 1:1 is amber, on track is good, the other two are a neutral ring.
+const ONE_ON_ONE_BOARD_TONES = Object.freeze({ 'Overdue': 'amber', 'Due soon': 'neutral', 'Planned': 'neutral', 'On track': 'good' });
 const ONE_ON_ONE_BOARD_HINTS = Object.freeze({
   'Overdue': 'Past the cadence rule with nothing planned',
   'Due soon': 'Due within 7 days, nothing planned yet',
   'Planned': 'A future 1:1 date is set',
   'On track': 'Inside cadence, on vacation, or snoozed'
 });
-function renderOneOnOneBoardHtml(reports, entering) {
+function renderOneOnOneBoardHtml(reports) {
   const today = todayStamp();
   const buckets = new Map(ONE_ON_ONE_BOARD_COLUMNS.map((column) => [column, []]));
   reports.forEach((report) => {
@@ -273,7 +277,6 @@ function renderOneOnOneBoardHtml(reports, entering) {
     else if (Number.isFinite(metrics.oneOnOneDueInDays) && metrics.oneOnOneDueInDays <= 7) column = 'Due soon';
     buckets.get(column).push(report);
   });
-  let cardIndex = 0;
   const columns = ONE_ON_ONE_BOARD_COLUMNS.map((column) => {
     const people = buckets.get(column);
     const cards = people.map((report) => {
@@ -285,16 +288,15 @@ function renderOneOnOneBoardHtml(reports, entering) {
         : 'No 1:1 logged yet';
       const planned = normalizeDate(report.nextOneOnOneDate);
       const chips = [];
-      if (column === 'Planned' && planned) chips.push(`<span class="mv-chip" data-tone="info">${escapeHtml(formatDate(planned))}</span>`);
-      if (column === 'Due soon' && Number.isFinite(metrics.oneOnOneDueInDays)) chips.push(`<span class="mv-chip" data-tone="warning">Due in ${Math.max(0, metrics.oneOnOneDueInDays)}d</span>`);
+      // Counts, next planned dates and On vacation are neutral tags.
+      if (column === 'Planned' && planned) chips.push(`<span class="mv-chip" data-tone="neutral">${escapeHtml(formatDate(planned))}</span>`);
+      if (column === 'Due soon' && Number.isFinite(metrics.oneOnOneDueInDays)) chips.push(`<span class="mv-chip" data-tone="neutral">Due in ${Math.max(0, metrics.oneOnOneDueInDays)}d</span>`);
       const openFu = (metrics.openFollowUps || []).length;
-      if (openFu) chips.push(`<span class="mv-chip" data-tone="info">${openFu} follow-up${openFu === 1 ? '' : 's'}</span>`);
-      if (metrics.vacationStatus?.active) chips.push('<span class="mv-chip" data-tone="info">On vacation</span>');
-      const idx = Math.min(cardIndex, 14);
-      cardIndex += 1;
-      return `<div class="pdc-board-card oo-board-card" data-board-card="${escapeHtml(report.id)}" style="--i:${idx}">
+      if (openFu) chips.push(`<span class="mv-chip" data-tone="neutral">${openFu} follow-up${openFu === 1 ? '' : 's'}</span>`);
+      if (metrics.vacationStatus?.active) chips.push('<span class="mv-chip" data-tone="neutral">On vacation</span>');
+      return `<div class="pdc-board-card oo-board-card" data-board-card="${escapeHtml(report.id)}">
         <div class="pdc-board-card-top">
-          <div class="pdc-board-card-avatar" style="${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml(initials)}</div>
+          <div class="pdc-board-card-avatar" aria-hidden="true">${escapeHtml(initials)}</div>
           <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(report.id)}" title="Open profile">${escapeHtml(report.name || 'Unnamed')}</button>
         </div>
         <span class="pdc-board-card-meta">${escapeHtml(lastText)}</span>
@@ -302,12 +304,12 @@ function renderOneOnOneBoardHtml(reports, entering) {
         ${chips.length ? `<div class="pdc-board-card-chips">${chips.join('')}</div>` : ''}
         <label class="oo-plan"><span>Next 1:1</span><input type="date" data-oo-plan="${escapeHtml(report.id)}" value="${escapeHtml(planned || '')}" aria-label="Next planned 1:1 for ${escapeHtml(report.name || 'Unnamed')}"></label>
         <div class="oo-card-actions">
-          <button type="button" data-open-room="${escapeHtml(report.id)}">1:1 room</button>
-          <button type="button" class="secondary" data-oo-log="${escapeHtml(report.id)}">Log 1:1</button>
+          <button type="button" class="small" data-open-room="${escapeHtml(report.id)}">1:1 room</button>
+          <button type="button" class="small" data-oo-log="${escapeHtml(report.id)}">Log 1:1</button>
         </div>
       </div>`;
     }).join('');
-    return `<div class="pdc-board-col" data-tone="${ONE_ON_ONE_BOARD_TONES[column]}">
+    return `<div class="pdc-board-col" data-status="${escapeHtml(column)}" data-mark="${ONE_ON_ONE_BOARD_TONES[column]}">
       <div class="pdc-board-col-head">
         <span class="pdc-board-col-dot" aria-hidden="true"></span>
         <h3>${escapeHtml(column)}</h3>
@@ -317,7 +319,7 @@ function renderOneOnOneBoardHtml(reports, entering) {
       <div class="pdc-board-drop">${cards || '<div class="pdc-board-empty">No one here</div>'}</div>
     </div>`;
   }).join('');
-  return `<div class="pdc-board oo-board${entering ? ' anim-entry' : ''}">${columns}</div>`;
+  return `<div class="pdc-board oo-board">${columns}</div>`;
 }
 
 // Renders a global PDC Summary across all reports. Each card shows the derived
@@ -328,13 +330,10 @@ function renderPdcSummaryView() {
   if (!mount) return;
   const reports = getSortedReports();
   if (reports.length === 0) {
-    mount.innerHTML = `<div class="sharp-panel"><div class="sharp-panel-body padded">
-      <p class="section-note" style="margin:0;">Add a direct report first — their PDC summaries will show up here.</p>
-    </div></div>`;
+    mount.innerHTML = `<p class="section-note empty-note">Add a direct report first — their PDC summaries will show up here.</p>`;
     return;
   }
   const editingId = app.ui.pdcSummaryEditId || '';
-  const pdcEntering = viewJustEntered('pdcSummaryView', app.ui.mainView === 'pdcSummary');
   const mode = ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list';
   const roundInfo = pdcRoundInfo(app.doc?.settings);
   const roundChip = mode === 'oneOnOneBoard' ? '' : `<span class="pdc-round-chip" title="Derived from the PDC cadence rule (every ${roundInfo.pdcDays} days, so ${roundInfo.roundsPerYear} round${roundInfo.roundsPerYear === 1 ? '' : 's'} per year, anchored to month ${roundInfo.startMonth}).${app.doc?.settings?.pdcRoundAutoReset ? ' Cards move back to Not started when a new round begins.' : ' Automatic reset is off in Settings.'}">${escapeHtml(roundInfo.label)} · ${escapeHtml(roundInfo.rangeLabel)} · ${roundInfo.daysLeft} days left</span>`;
@@ -347,15 +346,15 @@ function renderPdcSummaryView() {
     ${roundChip}
   </div>`;
   if (mode === 'board') {
-    mount.innerHTML = `${toolbar}${renderPdcBoardHtml(reports, pdcEntering)}`;
+    mount.innerHTML = `${toolbar}${renderPdcBoardHtml(reports)}`;
     return;
   }
   if (mode === 'oneOnOneBoard') {
-    mount.innerHTML = `${toolbar}${renderOneOnOneBoardHtml(reports, pdcEntering)}`;
+    mount.innerHTML = `${toolbar}${renderOneOnOneBoardHtml(reports)}`;
     return;
   }
-  mount.innerHTML = `${toolbar}<div class="pdc-summary-view${pdcEntering ? ' anim-entry' : ''}">
-    ${reports.map((r, cardIndex) => {
+  mount.innerHTML = `${toolbar}<div class="pdc-summary-view">
+    ${reports.map((r) => {
       const metrics = getMetrics(r.id);
       const cardGoals = metrics.goals || [];
       const cardPrimaryGoal = metrics.primaryGoal;
@@ -366,12 +365,12 @@ function renderPdcSummaryView() {
       const nextPdcText = r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned';
       const actions = isEditing
         ? `<div class="pdc-summary-card-actions">
-             <button type="button" data-pdc-save="${escapeHtml(r.id)}">Save</button>
+             <button type="button" class="primary" data-pdc-save="${escapeHtml(r.id)}">Save</button>
              <button type="button" class="secondary" data-pdc-cancel="${escapeHtml(r.id)}">Cancel</button>
            </div>`
         : `<div class="pdc-summary-card-actions">
-             <button type="button" class="secondary" data-pdc-edit="${escapeHtml(r.id)}">Edit</button>
-             <button type="button" class="secondary pdc-summary-card-open" data-pdc-summary-open="${escapeHtml(r.id)}">Open profile →</button>
+             <button type="button" class="small" data-pdc-edit="${escapeHtml(r.id)}">Edit</button>
+             <button type="button" class="link-button pdc-summary-card-open" data-pdc-summary-open="${escapeHtml(r.id)}">Open profile →</button>
            </div>`;
       const body = isEditing
         ? `<div class="pdc-summary-card-body">
@@ -394,9 +393,9 @@ function renderPdcSummaryView() {
               ${prom ? `<p>${escapeHtml(prom)}</p>` : `<p class="pdc-summary-block-empty">Not set</p>`}
             </div>
           </div>`;
-      return `<article class="pdc-summary-card${isEditing ? ' editing' : ''}" data-pdc-card="${escapeHtml(r.id)}" style="--i:${Math.min(cardIndex, 14)}">
+      return `<article class="pdc-summary-card${isEditing ? ' editing' : ''}" data-pdc-card="${escapeHtml(r.id)}">
         <header class="pdc-summary-card-head">
-          <div class="pdc-summary-card-avatar" style="${avatarGradient(r.id)}">${escapeHtml(initials)}</div>
+          <div class="pdc-summary-card-avatar" aria-hidden="true">${escapeHtml(initials)}</div>
           <div class="pdc-summary-card-title">
             <h3>${escapeHtml(r.name || 'Unnamed')}</h3>
             <span class="pdc-summary-card-meta">${escapeHtml(r.level || 'Level not set')}</span>

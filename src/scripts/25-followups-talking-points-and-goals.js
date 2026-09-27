@@ -167,7 +167,7 @@ async function saveFeedbackEntry(reportId, entryInput) {
 }
 
 function goalStatusVariant(status) {
-  return { 'On track': 'success', 'At risk': 'danger', 'Paused': 'neutral', 'Done': 'info' }[status] || 'neutral';
+  return { 'On track': 'good', 'At risk': 'red', 'Paused': 'outline', 'Done': 'solid-good' }[status] || 'neutral';
 }
 
 function renderGoalProgressBar(goal, options = {}) {
@@ -183,10 +183,39 @@ function renderPulseDots(pulseSeries = [], options = {}) {
   const limit = options.limit || 5;
   const items = [...(pulseSeries || [])].slice(0, limit).reverse();
   if (!items.length) return options.emptyHtml !== undefined ? options.emptyHtml : '<span class="pulse-dots-empty">No pulse yet</span>';
-  return `<span class="pulse-dots" role="img" aria-label="Recent 1:1 pulse, oldest to newest">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
+  const spoken = items.map((item) => PULSE_LABELS[item.pulse] || item.pulse).join(', ');
+  return `<span class="pulse-dots" role="img" aria-label="${escapeHtml(`Recent 1:1 pulse, oldest to newest: ${spoken}`)}">${items.map((item) => `<span class="pulse-dot" data-pulse="${escapeHtml(item.pulse)}" title="${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)} · ${PULSE_LABELS[item.pulse] || item.pulse}`)}"></span>`).join('')}</span>`;
 }
 
 function statusPillHtml(kind, value) {
   return `<span class="status-pill" data-pill-kind="${escapeHtml(kind)}" data-pill-value="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
 }
 
+// Moss avatars are flat: initials on --sunken in --ink, styled by the avatar
+// classes in src/styles/04-moss-components.css. The function stays so every
+// call site keeps working; it adds no per-person color.
+function avatarGradient(personId) {
+  return '';
+}
+
+// --- Illustrated empty states -------------------------------------------
+// Inline stroke icons in the same style as the sidebar set, so the zero
+// network promise holds. Used by the big first-run and all-clear states;
+// small filter-result notes keep their plain text.
+const EMPTY_HERO_ICONS = Object.freeze({
+  people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
+  clear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.6L16 9.5"/></svg>',
+  inbox: '<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
+});
+
+function emptyHeroHtml(kind, title, body, actionHtml = '') {
+  const icon = EMPTY_HERO_ICONS[kind] || EMPTY_HERO_ICONS.inbox;
+  return `
+    <div class="empty-hero${kind === 'clear' ? ' celebrate' : ''}">
+      <div class="empty-hero-icon" aria-hidden="true">${icon}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(body)}</p>
+      ${actionHtml}
+    </div>`;
+}

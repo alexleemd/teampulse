@@ -6,17 +6,17 @@ function renderOpenFollowUpsPanel(report, metrics) {
     <div class="sharp-panel followup-panel">
       <div class="sharp-panel-header">
         <h3>Open Follow-Ups</h3>
-        <div class="sharp-panel-header-meta">${badge(`${openFollowUps.length} open`, 'warning')}</div>
+        <div class="sharp-panel-header-meta">${badge(`${openFollowUps.length} open`, 'neutral')}</div>
       </div>
       <div class="sharp-panel-body">
         <div class="followup-list">
-          ${openFollowUps.map((item) => `
+          ${openFollowUps.map((item, itemIndex) => `
             <label class="followup-item">
-              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''}>
+              <input type="checkbox" data-followup-toggle="${escapeHtml(item.meetingId)}::${item.lineIndex}" ${item.done ? 'checked' : ''} aria-labelledby="wsfu-${itemIndex}-text wsfu-${itemIndex}-meta">
               <span class="followup-copy">
-                <strong>${escapeHtml(item.text)}</strong>
+                <strong id="wsfu-${itemIndex}-text">${escapeHtml(item.text)}</strong>
                 <span class="followup-meta">
-                  <span>${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
+                  <span id="wsfu-${itemIndex}-meta">${escapeHtml(`${item.meetingType} · ${formatDate(item.meetingDate)}`)}</span>
                   <button type="button" class="followup-jump" data-jump-meeting="${escapeHtml(item.meetingId)}">Jump to meeting</button>
                 </span>
               </span>
@@ -43,7 +43,7 @@ function renderMeetingHistory(report) {
         const followUps = followUpMap.get(meeting.id) || [];
         const openCount = followUps.filter((item) => !item.done).length;
         const followUpBadge = followUps.length
-          ? badge(`${openCount ? `${openCount} open` : 'All done'} · ${followUps.length} follow-up${followUps.length === 1 ? '' : 's'}`, openCount ? 'warning' : 'soft')
+          ? badge(`${openCount ? `${openCount} open` : 'All done'} · ${followUps.length} follow-up${followUps.length === 1 ? '' : 's'}`, openCount ? 'neutral' : 'outline')
           : '';
         const summaryText = firstMeaningfulLine(meeting.notes) || 'No notes captured for this meeting.';
         return `
@@ -52,9 +52,9 @@ function renderMeetingHistory(report) {
             <summary class="meeting-summary">
               <div class="meeting-summary-main">
                 <div class="meeting-item-meta">
-                  ${badge(meeting.meetingType, 'info')}
+                  ${badge(meeting.meetingType, 'neutral')}
                   <span class="meeting-date">${escapeHtml(formatDate(meeting.meetingDate))}${Number.isFinite(Number(meeting.durationMinutes)) && Number(meeting.durationMinutes) > 0 ? escapeHtml(` · ${Number(meeting.durationMinutes)} min`) : ''}</span>
-                  ${normalizePulse(meeting.pulse) ? `<span class="meeting-pulse-inline"><span class="pulse-dot" data-pulse="${escapeHtml(normalizePulse(meeting.pulse))}"></span>${escapeHtml(PULSE_LABELS[normalizePulse(meeting.pulse)])}</span>` : ''}
+                  ${normalizePulse(meeting.pulse) ? `<span class="meeting-pulse-inline"><span class="pulse-dot" aria-hidden="true" data-pulse="${escapeHtml(normalizePulse(meeting.pulse))}"></span>${escapeHtml(PULSE_LABELS[normalizePulse(meeting.pulse)])}</span>` : ''}
                   ${followUpBadge}
                 </div>
                 <div class="meeting-summary-copy">${escapeHtml(summaryText)}</div>
@@ -67,15 +67,15 @@ function renderMeetingHistory(report) {
                   <span class="meeting-item-subtle">${escapeHtml(meeting.source === 'ics' ? 'Imported from .ics' : 'Logged in Team Pulse')}</span>
                 </div>
                 <div class="meeting-item-actions">
-                  <button type="button" class="secondary" data-edit-meeting="${escapeHtml(meeting.id)}">Edit</button>
-                  <button type="button" class="secondary" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
+                  <button type="button" class="small" data-edit-meeting="${escapeHtml(meeting.id)}">Edit</button>
+                  <button type="button" class="danger small" data-delete-meeting="${escapeHtml(meeting.id)}">Delete</button>
                 </div>
               </div>
               ${(() => {
                 const covered = normalizeTalkingPoints(report.talkingPoints || []).filter((point) => point.done && point.meetingId === meeting.id);
                 return covered.length ? `<div class="meeting-covered-points"><strong>Covered talking points</strong><ul>${covered.map((point) => `<li>${escapeHtml(point.text)}</li>`).join('')}</ul></div>` : '';
               })()}
-              ${meeting.notes ? `<div class="meeting-notes note-markdown">${renderNoteMarkdown(meeting.notes)}</div>` : '<p class="section-note">No meeting notes.</p>'}
+              ${meeting.notes ? `<div class="meeting-notes note-markdown">${renderNoteMarkdown(meeting.notes)}</div>` : '<p class="section-note empty-note">No meeting notes.</p>'}
             </div>
           </details>
         </li>
@@ -84,7 +84,7 @@ function renderMeetingHistory(report) {
     </ul>
   ` : `
     <div class="sharp-panel-body padded">
-      <p class="section-note" style="margin:0;">No meetings logged yet.</p>
+      <p class="section-note empty-note">No meetings logged yet.</p>
     </div>
   `;
   return `
@@ -92,7 +92,7 @@ function renderMeetingHistory(report) {
       <div class="sharp-panel-header">
         <h3>Meetings</h3>
         <div class="sharp-panel-header-meta">
-          <button type="button" id="openMeetingModalBtn">Log Meeting</button>
+          <button type="button" class="secondary" id="openMeetingModalBtn">Log Meeting</button>
         </div>
       </div>
       ${bodyMarkup}
