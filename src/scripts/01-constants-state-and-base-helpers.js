@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.55.8';
+const APP_VERSION = 'v0.55.9';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -82,7 +82,6 @@ const DEFAULT_SETTINGS = Object.freeze({
   promotionConversationMonths: DEFAULT_PROMOTION_CONVERSATION_MONTHS,
   themesWindowDays: 90,
   lastExportDate: '',
-  stableMode: true,
   latestExportFiles: [],
   pulseTrendCounts: true,
   density: 'comfortable',
