@@ -78,6 +78,60 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+// Unsaved dialog changes: each dialog remembers its fields as they were when
+// it opened. Closing it with Escape, a click outside, Close or Cancel asks
+// first if anything was typed or changed since. Saving closes without asking,
+// and closing the app asks too (beforeunload in 29).
+const DIALOG_UNSAVED_MESSAGE = 'There are unsaved changes. Are you sure you want to close without saving?';
+const dialogOpenFields = new Map();
+
+function dialogParts(key) {
+  if (key === 'meeting') return { modalEl: meetingModalEl, formEl: meetingFormEl };
+  if (key === 'goal') return { modalEl: document.getElementById('goalModal'), formEl: document.getElementById('goalForm') };
+  if (key === 'feedback') return { modalEl: document.getElementById('feedbackModal'), formEl: document.getElementById('feedbackForm') };
+  return {};
+}
+
+function dialogFieldState(formEl) {
+  if (!formEl) return '';
+  return JSON.stringify([...formEl.elements]
+    .filter((el) => el.name && !/^(hidden|button|submit|reset)$/.test(el.type))
+    .map((el) => [el.name, el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value]));
+}
+
+function rememberDialogFields(key) {
+  dialogOpenFields.set(key, dialogFieldState(dialogParts(key).formEl));
+}
+
+function dialogHasUnsavedChanges(key) {
+  const { modalEl, formEl } = dialogParts(key);
+  if (!modalEl?.classList.contains('open') || !dialogOpenFields.has(key)) return false;
+  return dialogOpenFields.get(key) !== dialogFieldState(formEl);
+}
+
+function anyDialogHasUnsavedChanges() {
+  return ['meeting', 'goal', 'feedback'].some(dialogHasUnsavedChanges);
+}
+
+function confirmDialogClose(key) {
+  if (!dialogHasUnsavedChanges(key)) return true;
+  return window.confirm(DIALOG_UNSAVED_MESSAGE);
+}
+
+// What Escape, a click outside, Close and Cancel call. Saving and other code
+// paths call the close functions below directly.
+function dismissMeetingModal() {
+  if (confirmDialogClose('meeting')) closeMeetingModal();
+}
+
+function dismissGoalModal() {
+  if (confirmDialogClose('goal')) closeGoalModal();
+}
+
+function dismissFeedbackModal() {
+  if (confirmDialogClose('feedback')) closeFeedbackModal();
+}
+
 // Fills a select with options built by DOM methods.
 function fillSelectOptions(selectEl, entries, selectedValue) {
   if (!selectEl) return;
@@ -130,6 +184,7 @@ function openMeetingModal(reportId, options = {}) {
       btn.setAttribute('aria-selected', isWrite ? 'true' : 'false');
     });
   }
+  rememberDialogFields('meeting');
   rememberDialogOpener('meeting', meetingModalEl);
   meetingModalEl.classList.add('open');
   meetingModalEl.setAttribute('aria-hidden', 'false');
@@ -144,6 +199,7 @@ function closeMeetingModal() {
   setStatus(meetingStatusEl, '');
   syncBodyOverlayLock();
   if (wasOpen) restoreDialogOpener('meeting');
+  dialogOpenFields.delete('meeting');
 }
 
 function openGoalModal(reportId, goalId = '') {
@@ -171,6 +227,7 @@ function openGoalModal(reportId, goalId = '') {
     ? `Update the goal for ${report.name}. A progress note or changed progress is added to the goal's log.`
     : `A concrete development goal for ${report.name}, with a status and progress.`;
   setStatus(document.getElementById('goalStatusLine'), '');
+  rememberDialogFields('goal');
   rememberDialogOpener('goal', modalEl);
   modalEl.classList.add('open');
   modalEl.setAttribute('aria-hidden', 'false');
@@ -187,6 +244,7 @@ function closeGoalModal() {
   setStatus(document.getElementById('goalStatusLine'), '');
   syncBodyOverlayLock();
   if (wasOpen) restoreDialogOpener('goal');
+  dialogOpenFields.delete('goal');
 }
 
 function openFeedbackModal(reportId, template = {}) {
@@ -211,6 +269,7 @@ function openFeedbackModal(reportId, template = {}) {
   const subtitleEl = document.getElementById('feedbackModalSubtitle');
   if (subtitleEl) subtitleEl.textContent = `A dated feedback entry for ${report.name}, stored in the evidence locker.`;
   setStatus(document.getElementById('feedbackStatusLine'), '');
+  rememberDialogFields('feedback');
   rememberDialogOpener('feedback', modalEl);
   modalEl.classList.add('open');
   modalEl.setAttribute('aria-hidden', 'false');
@@ -227,6 +286,7 @@ function closeFeedbackModal() {
   setStatus(document.getElementById('feedbackStatusLine'), '');
   syncBodyOverlayLock();
   if (wasOpen) restoreDialogOpener('feedback');
+  dialogOpenFields.delete('feedback');
 }
 
 function buildMeetingPayloadFromForm(formData) {
