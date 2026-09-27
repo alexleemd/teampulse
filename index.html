@@ -7508,7 +7508,7 @@
             <div class="privacy-actions">
               <button type="button" class="danger" id="disconnectFolderBtn">Disconnect folder &amp; clear browser copies</button>
             </div>
-            <p class="field-hint">Removes the saved folder connection, the cached document, and remembered view state from this browser. Your JSON file and backups stay untouched in the folder. To erase a single person permanently, use the Danger Zone on their Profile tab.</p>
+            <p class="field-hint">Removes the saved folder connection and remembered view state from this browser. Your JSON file and backups stay untouched in the folder. To erase a single person permanently, use the Danger Zone on their Profile tab.</p>
           </div>
         </div>
       </div>
@@ -7532,11 +7532,13 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.9';
+const APP_VERSION = 'v0.55.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
 const UI_STATE_KEY = 'team-pulse-ui-state';
+// Older versions kept a copy of the whole document here. Nothing reads it, so
+// startup and Disconnect remove it.
 const CACHED_DOC_KEY = 'team-pulse-cached-doc';
 const HANDLE_DB_NAME = 'team-pulse-file-db';
 const HANDLE_STORE = 'handles';
@@ -7823,6 +7825,8 @@ function loadUiState() {
   }
 }
 
+let uiStateWriteFailed = false;
+
 function persistUiState() {
   const payload = {
     searchTerm: app.ui.searchTerm,
@@ -7840,15 +7844,21 @@ function persistUiState() {
     cdpTeamMode: app.ui.cdpTeamMode === 'web' ? 'web' : 'heatmap',
     exportReminderSnoozedUntil: app.ui.exportReminderSnoozedUntil || ''
   };
-  localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+  // View state is a convenience. A full or blocked browser storage must never
+  // stop the app, so a failed write is only logged, once.
+  try {
+    localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    if (!uiStateWriteFailed) console.warn('Could not remember view state in this browser', error);
+    uiStateWriteFailed = true;
+  }
 }
 
-function cacheDocSnapshot() {
+function removeOldDocCache() {
   try {
-    if (!app.doc) return;
-    localStorage.setItem(CACHED_DOC_KEY, JSON.stringify(app.doc));
+    localStorage.removeItem(CACHED_DOC_KEY);
   } catch (error) {
-    console.error('Failed to cache doc snapshot', error);
+    console.error('Failed to remove the old browser copy of the data', error);
   }
 }
 
@@ -9724,8 +9734,8 @@ async function clearStoredFolderHandle() {
 }
 
 // Privacy control: forget the folder connection and remove every copy of the
-// data this browser holds (cached document, remembered folder handle, view
-// state). The JSON file and backups in the folder are not touched.
+// data this browser holds (remembered folder handle, view state, and the old
+// document copy earlier versions kept). The JSON file and backups in the folder are not touched.
 async function disconnectAndWipeLocal() {
   const unsaved = app.saveQueued || app.saveInFlight || hasUnsavedWorkspaceChanges();
   const message = unsaved
@@ -9949,7 +9959,6 @@ async function adoptLoadedDoc(doc, options = {}) {
   let drawError = null;
   try {
     applyProjectedState();
-    cacheDocSnapshot();
   } catch (error) {
     drawError = error;
   }
@@ -10209,7 +10218,6 @@ async function writeDocToFolder(options = {}) {
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
-  cacheDocSnapshot();
   await refreshFileStats();
   if (reason === 'manual') {
     showToast(`Saved ${MAIN_JSON_NAME} at ${formatClock(new Date(doc.savedAt))}.`, 'success');
@@ -16961,7 +16969,7 @@ function generateSchemaMarkdown() {
   lines.push('- **v11 -> v12**: Adds empty capabilities[] arrays to people records and person_created snapshots. Additive and lossless.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
-  lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
+  lines.push('- All data lives in this folder. The browser profile keeps only the folder connection (IndexedDB) and view preferences (localStorage), never a copy of the data. Settings > Privacy & Data can disconnect the folder and clear what the browser keeps.');
   lines.push('- **team-pulse.before-import-*.json / team-pulse.before-restore-*.json**: Dated copies of team-pulse.json, written just before an import or a backup restore replaces it. They are never rotated. Delete them when you no longer need them.');
   lines.push('- **team-pulse.before-reload-*.json / team-pulse.before-overwrite-*.json**: Written when another tab or computer saved team-pulse.json in between. before-reload holds the version the tab had when it reloaded the file, before-overwrite the file version the tab replaced with its own.');
   lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
@@ -18439,6 +18447,7 @@ function renderCdpTeamCard(reports) {
 // works. We render the error directly into the toast stack since that
 // element exists in the static HTML and is independent of render().
 try {
+  removeOldDocCache();
   bindStaticEvents();
   applyProjectedState();
   updateFileUi();

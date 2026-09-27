@@ -1,8 +1,10 @@
-const APP_VERSION = 'v0.54.9';
+const APP_VERSION = 'v0.55.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
 const UI_STATE_KEY = 'team-pulse-ui-state';
+// Older versions kept a copy of the whole document here. Nothing reads it, so
+// startup and Disconnect remove it.
 const CACHED_DOC_KEY = 'team-pulse-cached-doc';
 const HANDLE_DB_NAME = 'team-pulse-file-db';
 const HANDLE_STORE = 'handles';
@@ -289,6 +291,8 @@ function loadUiState() {
   }
 }
 
+let uiStateWriteFailed = false;
+
 function persistUiState() {
   const payload = {
     searchTerm: app.ui.searchTerm,
@@ -306,15 +310,21 @@ function persistUiState() {
     cdpTeamMode: app.ui.cdpTeamMode === 'web' ? 'web' : 'heatmap',
     exportReminderSnoozedUntil: app.ui.exportReminderSnoozedUntil || ''
   };
-  localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+  // View state is a convenience. A full or blocked browser storage must never
+  // stop the app, so a failed write is only logged, once.
+  try {
+    localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    if (!uiStateWriteFailed) console.warn('Could not remember view state in this browser', error);
+    uiStateWriteFailed = true;
+  }
 }
 
-function cacheDocSnapshot() {
+function removeOldDocCache() {
   try {
-    if (!app.doc) return;
-    localStorage.setItem(CACHED_DOC_KEY, JSON.stringify(app.doc));
+    localStorage.removeItem(CACHED_DOC_KEY);
   } catch (error) {
-    console.error('Failed to cache doc snapshot', error);
+    console.error('Failed to remove the old browser copy of the data', error);
   }
 }
 
