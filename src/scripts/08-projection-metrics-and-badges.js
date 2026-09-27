@@ -1,5 +1,9 @@
-function projectDoc(doc) {
-  const workingDoc = ensureDocShape(doc);
+// Builds the reports, the report map and the metrics from the event log.
+// Pass { normalized: true } when doc has just come out of ensureDocShape, so
+// the document is not deep copied and normalized a second time. projectDoc
+// only reads the document, it never changes it.
+function projectDoc(doc, options = {}) {
+  const workingDoc = options.normalized ? doc : ensureDocShape(doc);
   const reportMap = new Map();
 
   workingDoc.people.forEach((person) => {
