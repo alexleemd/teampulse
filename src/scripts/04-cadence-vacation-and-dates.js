@@ -23,7 +23,7 @@ function addDays(dateString, days) {
   const date = new Date(`${text}T00:00:00`);
   if (Number.isNaN(date.getTime())) return '';
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return localDateStamp(date);
 }
 
 function formatVacationRange(vacation) {
@@ -137,6 +137,15 @@ function isoToLocalDateStamp(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
   return localDateStamp(date);
+}
+
+// The local calendar date of a stored value: a plain YYYY-MM-DD stays as it is,
+// an ISO timestamp becomes the date it had where the user is.
+function localDateOf(value) {
+  const text = normalizeText(value);
+  if (!text) return '';
+  if (normalizeDate(text)) return text;
+  return (/^\d{4}-\d{2}-\d{2}T/.test(text) && isoToLocalDateStamp(text)) || normalizeDate(text.slice(0, 10));
 }
 
 function startOfCurrentWeek(referenceDate = new Date()) {

@@ -158,7 +158,7 @@ function touchpointOverdueAsOf(report, lastDate, thresholdDays, dateStamp) {
 
 function healthScoreAsOf(reports, settings, dateStamp) {
   const cohort = reports.filter((report) => {
-    const created = normalizeDate(String(report.createdAt || '').slice(0, 10));
+    const created = localDateOf(report.createdAt);
     return created && created <= dateStamp;
   });
   if (!cohort.length) return null;

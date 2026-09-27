@@ -6,7 +6,7 @@ function mondayOf(dateString) {
   if (Number.isNaN(d.getTime())) return '';
   const shift = (d.getDay() + 6) % 7;
   d.setDate(d.getDate() - shift);
-  return d.toISOString().slice(0, 10);
+  return localDateStamp(d);
 }
 
 // Buckets meetings into the trailing N weeks (oldest first), used by the

@@ -83,7 +83,7 @@ function openTalkingPointsFor(report) {
 function talkingPointIsCarriedOver(report, point) {
   const lastLogged = latestMeetingDate(report, '1:1') || '';
   if (!lastLogged) return false;
-  const createdStamp = String(point.createdAt || '').slice(0, 10);
+  const createdStamp = localDateOf(point.createdAt);
   return !!createdStamp && createdStamp <= lastLogged;
 }
 
