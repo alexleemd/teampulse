@@ -176,15 +176,21 @@
 
     /* --- Behavior: overlays, dialogs and drawers --------------------------- */
     body.overlay-open { overflow: hidden; }
+    /* Closed layers also leave the tab order: visibility follows the open state,
+       on at once when opening, off after the 120ms fade when closing. */
     .overlay, .drawer-overlay {
       position: fixed; inset: 0; background: var(--scrim);
-      opacity: 0; pointer-events: none; transition: opacity 120ms ease;
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity 120ms ease, visibility 0s linear 120ms;
     }
     .drawer-overlay { z-index: 40; }
     .overlay { z-index: 70; }
     #meetingModal { z-index: 90; }
     #saveConflictOverlay { z-index: 125; }
-    .overlay.open, .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .overlay.open, .drawer-overlay.open {
+      opacity: 1; pointer-events: auto; visibility: visible;
+      transition: opacity 120ms ease, visibility 0s linear 0s;
+    }
 
     .drawer, .rules-drawer {
       position: absolute; right: 0; top: 0; bottom: 0; height: 100vh;
@@ -6184,23 +6190,8 @@
        Controls 2 (switch rows). Shared controls (buttons, fields, switches,
        tabs, the pulse picker, callouts) come from 03 and 04; this file only lays
        out the floating layers and adds variations scoped to them. The show and
-       hide behavior (opacity, pointer events, z-index, the drawer slide) lives
-       in 02-moss-base.css. */
-
-    /* --- Closed layers leave the tab order ----------------------------------
-       The base file hides closed overlays with opacity only, so their buttons
-       and fields could still be reached with Tab. Visibility follows the open
-       state: on at once when opening, off after the 120ms fade when closing. */
-    .overlay,
-    .drawer-overlay {
-      visibility: hidden;
-      transition: opacity 120ms ease, visibility 0s linear 120ms;
-    }
-    .overlay.open,
-    .drawer-overlay.open {
-      visibility: visible;
-      transition: opacity 120ms ease, visibility 0s linear 0s;
-    }
+       hide behavior (opacity, pointer events, visibility, z-index, the drawer
+       slide) lives in 02-moss-base.css. */
 
     /* --- Dialogs (meeting, goal, feedback, startup prompt) -------------------
        Scrim behind, white, radius 14, floating shadow, 560px wide, padding
@@ -7497,7 +7488,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.10';
+const APP_VERSION = 'v0.55.11';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -8012,6 +8003,12 @@ function normalizeText(value) {
 // uppercased, capped at 8 characters. Empty stays empty.
 function normalizeInitials(value) {
   return normalizeText(value).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
+}
+
+// Avatar initials: the first letter of the first two words of the name,
+// uppercased, "?" when there is none. Every avatar uses this one helper.
+function personInitials(name) {
+  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
 }
 
 // Splits a trailing parenthesized initials token off a name, the pattern used
@@ -9508,17 +9505,21 @@ function undoDestructiveAction(action) {
   return false;
 }
 
-function syncBodyOverlayLock() {
-  const goalModalEl = document.getElementById('goalModal');
-  const feedbackModalEl = document.getElementById('feedbackModal');
-  const locked = startupPromptOverlayEl.classList.contains('open')
-    || !!document.getElementById('saveConflictOverlay')?.classList.contains('open')
+// True while search, a dialog, the Settings drawer, the startup prompt or the
+// save conflict prompt is open. The page behind is locked then, and the
+// keyboard shortcuts (29) do nothing.
+function anyOverlayOpen() {
+  return startupPromptOverlayEl.classList.contains('open')
+    || isSaveConflictPromptOpen()
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || globalSearchEl.classList.contains('open')
-    || !!goalModalEl?.classList.contains('open')
-    || !!feedbackModalEl?.classList.contains('open');
-  document.body.classList.toggle('overlay-open', locked);
+    || !!document.getElementById('goalModal')?.classList.contains('open')
+    || !!document.getElementById('feedbackModal')?.classList.contains('open');
+}
+
+function syncBodyOverlayLock() {
+  document.body.classList.toggle('overlay-open', anyOverlayOpen());
   // A layer opened or closed: move any toast on screen off its header. After
   // the caller's render, so the rows are measured where they end up.
   if (toastStackEl?.childElementCount) window.requestAnimationFrame(placeToastStack);
@@ -12040,7 +12041,7 @@ function renderDetailDrawer() {
         <div class="drawer-header-top">
           <div class="drawer-header-identity">
             <div class="detail-title-row">
-              ${isCreating ? '' : `<div class="detail-page-header-avatar" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
+              ${isCreating ? '' : `<div class="detail-page-header-avatar" aria-hidden="true">${escapeHtml(personInitials(titleText))}</div>`}
               <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
             </div>
             <div class="detail-subhead">
@@ -13049,10 +13050,6 @@ function renderReportsGrid() {
   mount.innerHTML = `${tiles}${addTile}`;
 }
 
-function reportInitialsFromName(name) {
-  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-}
-
 // One direct report tile, shared by the Direct Reports grid and the Overview
 // (Overview.html). The tile is a wrapper holding two sibling buttons, so no
 // button sits inside another: the main button covers the whole tile and opens
@@ -13079,7 +13076,7 @@ function renderReportTileHtml(report, options = {}) {
   else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-tile-chip" data-tone="red">Support needed</span>`);
   else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="neutral">Monitor</span>`);
   else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
-  const initials = reportInitialsFromName(report.name);
+  const initials = personInitials(report.name);
   // Company initials are the tile title when present: short, uniform, and
   // immune to the truncation that crushed long names next to the 1:1 room
   // button. The full name moves to its own full-width line underneath, where
@@ -13150,7 +13147,7 @@ function renderReportsTableHtml(filtered, total) {
   const pillSelect = (attr, reportId, options, current, kind) => `<span class="pill-select-wrap"><select class="pill-select" ${attr}="${escapeHtml(reportId)}" data-pill-kind="${kind}" data-pill-value="${escapeHtml(current)}" aria-label="${kind === 'pdc' ? 'PDC status' : 'Support level'}">${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select></span>`;
   const row = (report) => {
     const metrics = getMetrics(report.id);
-    const initials = reportInitialsFromName(report.name);
+    const initials = personInitials(report.name);
     const pdcValue = normalizePdcStatus(report.rawPdcStatus !== undefined ? report.rawPdcStatus : report.pdcStatus);
     const supportValue = normalizeSupportLevel(report.supportLevel);
     const openFu = (metrics.openFollowUps || []).length;
@@ -13472,7 +13469,7 @@ function renderMeetingsView() {
       : '';
     lastMonthKey = monthKey;
     const snippet = firstMeaningfulLine(meeting.notes) || 'No notes captured.';
-    const mInitials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    const mInitials = personInitials(report.name);
     const fu = followUpsByMeeting.get(meeting.id);
     const fuChip = fu && fu.open
       ? `<span class="mv-chip" data-tone="neutral">${fu.open} open follow-up${fu.open === 1 ? '' : 's'}</span>`
@@ -13586,10 +13583,6 @@ const globalSearchResultsEl = document.getElementById('globalSearchResults');
 let gsResults = [];
 let gsActiveIndex = 0;
 let gsDebounce = 0;
-
-function personInitials(name) {
-  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-}
 
 // Escapes around a case-insensitive hit and wraps the hit in <mark>.
 function searchSnippet(text, query, radius = 46) {
@@ -13905,7 +13898,7 @@ function renderFollowUpsView() {
       ${groups.map(({ report, items }, groupIndex) => `
         <div class="sharp-panel followup-panel">
           <div class="sharp-panel-header">
-            <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
+            <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml(personInitials(report.name))}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
             <div class="sharp-panel-header-meta">${badge(`${items.length} open`, 'neutral')}</div>
           </div>
           <div class="sharp-panel-body">
@@ -14061,7 +14054,7 @@ function renderPdcBoardHtml(reports) {
     const people = grouped.get(status);
     const cards = people.map((r) => {
       const metrics = getMetrics(r.id);
-      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(r.name);
       const primaryGoal = metrics.primaryGoal;
       const goal = primaryGoal ? primaryGoal.title : 'No development goal set';
       // Two unbreakable parts, so a date never splits across lines.
@@ -14146,7 +14139,7 @@ function renderOneOnOneBoardHtml(reports) {
     const people = buckets.get(column);
     const cards = people.map((report) => {
       const metrics = getMetrics(report.id);
-      const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(report.name);
       const daysSince = metrics.lastOneOnOne ? dateDiffInDays(metrics.lastOneOnOne) : null;
       const lastText = metrics.lastOneOnOne
         ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${daysSince !== null ? ` · ${daysSince}d ago` : ''}`
@@ -14226,7 +14219,7 @@ function renderPdcSummaryView() {
       const cardPrimaryGoal = metrics.primaryGoal;
       const prom = normalizeText(r.promotionReadiness);
       const isEditing = editingId === r.id;
-      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(r.name);
       const lastPdcText = metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never';
       const nextPdcText = r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned';
       const actions = isEditing
@@ -16268,16 +16261,6 @@ function bindStaticEvents() {
     const disconnectBtn = event.target.closest('#disconnectFolderBtn');
     if (disconnectBtn) disconnectAndWipeLocal();
   });
-  // Search, a dialog, the Settings drawer, the startup prompt or the save
-  // conflict prompt is open.
-  // The keyboard shortcuts below do nothing then.
-  const anyOverlayUp = () => globalSearchEl.classList.contains('open')
-    || meetingModalEl.classList.contains('open')
-    || rulesDrawerOverlayEl.classList.contains('open')
-    || startupPromptOverlayEl.classList.contains('open')
-    || isSaveConflictPromptOpen()
-    || !!document.getElementById('goalModal')?.classList.contains('open')
-    || !!document.getElementById('feedbackModal')?.classList.contains('open');
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
   // The workspace itself is left alone so unsaved edits can never be lost to
   // a stray keypress. A dialog with unsaved changes asks before it closes.
@@ -16298,7 +16281,7 @@ function bindStaticEvents() {
     if (/^[1-7]$/.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
       const activeNow = document.activeElement;
       const typingNow = !!activeNow && (/^(input|textarea|select)$/i.test(activeNow.tagName) || activeNow.isContentEditable);
-      if (!typingNow && !anyOverlayUp() && app.doc && app.connectedFolderReady) {
+      if (!typingNow && !anyOverlayOpen() && app.doc && app.connectedFolderReady) {
         event.preventDefault();
         keyboardNavigateToSlot(Number(event.key));
       }
@@ -16313,7 +16296,7 @@ function bindStaticEvents() {
     const active = document.activeElement;
     const typing = !!active && (/^(input|textarea|select)$/i.test(active.tagName) || active.isContentEditable);
     if (typing) return;
-    if (anyOverlayUp()) return;
+    if (anyOverlayOpen()) return;
     event.preventDefault();
     openGlobalSearch();
   });
@@ -18252,7 +18235,7 @@ function renderCdpTeamCard(reports) {
         <tr>
           <th scope="row" class="cdp-hm-person-cell">
             <button type="button" class="cdp-hm-person" data-cdp-open="${escapeHtml(report.id)}">
-              <span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span>
+              <span class="fu-avatar" aria-hidden="true">${escapeHtml(personInitials(report.name))}</span>
               <span class="cdp-hm-name">${escapeHtml(report.name || 'Unnamed')}</span>
             </button>
           </th>

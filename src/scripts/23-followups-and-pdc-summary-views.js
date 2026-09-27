@@ -41,7 +41,7 @@ function renderFollowUpsView() {
       ${groups.map(({ report, items }, groupIndex) => `
         <div class="sharp-panel followup-panel">
           <div class="sharp-panel-header">
-            <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
+            <h3><span class="fu-avatar" aria-hidden="true">${escapeHtml(personInitials(report.name))}</span><button type="button" class="fu-person-link" data-followup-open-profile="${escapeHtml(report.id)}">${escapeHtml(report.name || 'Unnamed')}</button></h3>
             <div class="sharp-panel-header-meta">${badge(`${items.length} open`, 'neutral')}</div>
           </div>
           <div class="sharp-panel-body">
@@ -197,7 +197,7 @@ function renderPdcBoardHtml(reports) {
     const people = grouped.get(status);
     const cards = people.map((r) => {
       const metrics = getMetrics(r.id);
-      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(r.name);
       const primaryGoal = metrics.primaryGoal;
       const goal = primaryGoal ? primaryGoal.title : 'No development goal set';
       // Two unbreakable parts, so a date never splits across lines.
@@ -282,7 +282,7 @@ function renderOneOnOneBoardHtml(reports) {
     const people = buckets.get(column);
     const cards = people.map((report) => {
       const metrics = getMetrics(report.id);
-      const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(report.name);
       const daysSince = metrics.lastOneOnOne ? dateDiffInDays(metrics.lastOneOnOne) : null;
       const lastText = metrics.lastOneOnOne
         ? `Last 1:1 ${formatDate(metrics.lastOneOnOne)}${daysSince !== null ? ` · ${daysSince}d ago` : ''}`
@@ -362,7 +362,7 @@ function renderPdcSummaryView() {
       const cardPrimaryGoal = metrics.primaryGoal;
       const prom = normalizeText(r.promotionReadiness);
       const isEditing = editingId === r.id;
-      const initials = (r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+      const initials = personInitials(r.name);
       const lastPdcText = metrics.lastPdc ? formatDate(metrics.lastPdc) : 'Never';
       const nextPdcText = r.nextPdcDate ? formatDate(r.nextPdcDate) : 'Not planned';
       const actions = isEditing

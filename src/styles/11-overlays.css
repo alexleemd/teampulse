@@ -5,23 +5,8 @@
    Controls 2 (switch rows). Shared controls (buttons, fields, switches,
    tabs, the pulse picker, callouts) come from 03 and 04; this file only lays
    out the floating layers and adds variations scoped to them. The show and
-   hide behavior (opacity, pointer events, z-index, the drawer slide) lives
-   in 02-moss-base.css. */
-
-/* --- Closed layers leave the tab order ----------------------------------
-   The base file hides closed overlays with opacity only, so their buttons
-   and fields could still be reached with Tab. Visibility follows the open
-   state: on at once when opening, off after the 120ms fade when closing. */
-.overlay,
-.drawer-overlay {
-  visibility: hidden;
-  transition: opacity 120ms ease, visibility 0s linear 120ms;
-}
-.overlay.open,
-.drawer-overlay.open {
-  visibility: visible;
-  transition: opacity 120ms ease, visibility 0s linear 0s;
-}
+   hide behavior (opacity, pointer events, visibility, z-index, the drawer
+   slide) lives in 02-moss-base.css. */
 
 /* --- Dialogs (meeting, goal, feedback, startup prompt) -------------------
    Scrim behind, white, radius 14, floating shadow, 560px wide, padding

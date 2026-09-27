@@ -320,7 +320,7 @@ function renderCdpTeamCard(reports) {
         <tr>
           <th scope="row" class="cdp-hm-person-cell">
             <button type="button" class="cdp-hm-person" data-cdp-open="${escapeHtml(report.id)}">
-              <span class="fu-avatar" aria-hidden="true">${escapeHtml((report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</span>
+              <span class="fu-avatar" aria-hidden="true">${escapeHtml(personInitials(report.name))}</span>
               <span class="cdp-hm-name">${escapeHtml(report.name || 'Unnamed')}</span>
             </button>
           </th>

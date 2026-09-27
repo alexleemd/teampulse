@@ -54,10 +54,6 @@ function renderReportsGrid() {
   mount.innerHTML = `${tiles}${addTile}`;
 }
 
-function reportInitialsFromName(name) {
-  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-}
-
 // One direct report tile, shared by the Direct Reports grid and the Overview
 // (Overview.html). The tile is a wrapper holding two sibling buttons, so no
 // button sits inside another: the main button covers the whole tile and opens
@@ -84,7 +80,7 @@ function renderReportTileHtml(report, options = {}) {
   else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-tile-chip" data-tone="red">Support needed</span>`);
   else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="neutral">Monitor</span>`);
   else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
-  const initials = reportInitialsFromName(report.name);
+  const initials = personInitials(report.name);
   // Company initials are the tile title when present: short, uniform, and
   // immune to the truncation that crushed long names next to the 1:1 room
   // button. The full name moves to its own full-width line underneath, where
@@ -155,7 +151,7 @@ function renderReportsTableHtml(filtered, total) {
   const pillSelect = (attr, reportId, options, current, kind) => `<span class="pill-select-wrap"><select class="pill-select" ${attr}="${escapeHtml(reportId)}" data-pill-kind="${kind}" data-pill-value="${escapeHtml(current)}" aria-label="${kind === 'pdc' ? 'PDC status' : 'Support level'}">${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select></span>`;
   const row = (report) => {
     const metrics = getMetrics(report.id);
-    const initials = reportInitialsFromName(report.name);
+    const initials = personInitials(report.name);
     const pdcValue = normalizePdcStatus(report.rawPdcStatus !== undefined ? report.rawPdcStatus : report.pdcStatus);
     const supportValue = normalizeSupportLevel(report.supportLevel);
     const openFu = (metrics.openFollowUps || []).length;
