@@ -403,10 +403,11 @@ async function deleteMeeting(reportId, meetingId) {
   clearLastDestructiveAction();
   const eventId = nextId('event');
   appendEvent({ id: eventId, type: 'meeting_deleted', personId: reportId, meetingId, createdAt: nowIso() });
-  app.lastDestructiveAction = { kind: 'deleteMeeting', eventId, undoMessage: 'Meeting restored.' };
+  const undoAction = { kind: 'deleteMeeting', eventId, undoMessage: 'Meeting restored.' };
+  app.lastDestructiveAction = undoAction;
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast('Meeting deleted.', 'success', { actionLabel: 'Undo', duration: 8000, onAction: undoLastDestructiveAction });
+  showToast('Meeting deleted.', 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 

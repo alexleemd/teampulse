@@ -7510,7 +7510,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.54.1';
+const APP_VERSION = 'v0.54.2';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -9545,12 +9545,17 @@ function clearLastDestructiveAction() {
   app.lastDestructiveAction = null;
 }
 
-function undoLastDestructiveAction() {
-  const action = app.lastDestructiveAction;
-  if (!action) return false;
+// Each Undo toast is bound to its own action (undoDestructiveAction), so an
+// older toast's Undo reverses what that toast reported and never a later
+// delete. It removes the delete event only if it is still in the log, so an
+// Undo after an import, restore or erasure changes nothing.
+function undoDestructiveAction(action) {
+  if (!action || !app.doc) return false;
   if (action.kind === 'deleteReport' || action.kind === 'deleteMeeting') {
-    app.doc.events = (app.doc.events || []).filter((event) => event.id !== action.eventId);
-    clearLastDestructiveAction();
+    const events = app.doc.events || [];
+    if (!events.some((event) => event.id === action.eventId)) return false;
+    app.doc.events = events.filter((event) => event.id !== action.eventId);
+    if (app.lastDestructiveAction === action) clearLastDestructiveAction();
     applyProjectedState();
     render();
     scheduleAutosave();
@@ -14318,11 +14323,12 @@ async function deleteReport(reportId) {
   appendEvent({ id: eventId, type: 'person_archived', personId: reportId, createdAt: nowIso() });
   clearWorkspaceDraft();
   app.ui.selectedId = null;
-  app.lastDestructiveAction = { kind: 'deleteReport', eventId, undoMessage: `${report.name} restored.` };
+  const undoAction = { kind: 'deleteReport', eventId, undoMessage: `${report.name} restored.` };
+  app.lastDestructiveAction = undoAction;
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: undoLastDestructiveAction });
+  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 
 // GDPR right-to-erasure: removes the person record and every event that
@@ -15127,11 +15133,12 @@ async function deleteMeeting(reportId, meetingId) {
   clearLastDestructiveAction();
   const eventId = nextId('event');
   appendEvent({ id: eventId, type: 'meeting_deleted', personId: reportId, meetingId, createdAt: nowIso() });
-  app.lastDestructiveAction = { kind: 'deleteMeeting', eventId, undoMessage: 'Meeting restored.' };
+  const undoAction = { kind: 'deleteMeeting', eventId, undoMessage: 'Meeting restored.' };
+  app.lastDestructiveAction = undoAction;
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast('Meeting deleted.', 'success', { actionLabel: 'Undo', duration: 8000, onAction: undoLastDestructiveAction });
+  showToast('Meeting deleted.', 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 
 function unescapeIcsText(value) {
