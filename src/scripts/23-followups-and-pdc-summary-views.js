@@ -330,7 +330,7 @@ function renderPdcSummaryView() {
   if (!mount) return;
   const reports = getSortedReports();
   if (reports.length === 0) {
-    mount.innerHTML = `<p class="section-note empty-note">Add a direct report first — their PDC summaries will show up here.</p>`;
+    mount.innerHTML = `<p class="section-note empty-note">Add a direct report first. Their PDC summaries will show up here.</p>`;
     return;
   }
   const editingId = app.ui.pdcSummaryEditId || '';

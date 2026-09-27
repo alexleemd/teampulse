@@ -69,7 +69,7 @@ function buildNotesMarkdown() {
       lines.push('');
       if (report.notesHistory.length) {
         report.notesHistory.forEach((note) => {
-          lines.push(`- ${note.noteDate || ''} — ${note.noteText || ''}`);
+          lines.push(`- ${note.noteDate || ''}: ${note.noteText || ''}`);
         });
       } else if (report.notes) {
         lines.push(`- ${report.notes}`);
@@ -81,7 +81,7 @@ function buildNotesMarkdown() {
       lines.push('### Meeting notes');
       lines.push('');
       meetingNotes.forEach((meeting) => {
-        lines.push(`- ${meeting.meetingDate} — ${meeting.meetingType}: ${meeting.notes}`);
+        lines.push(`- ${meeting.meetingDate} (${meeting.meetingType}): ${meeting.notes}`);
       });
       lines.push('');
     }
@@ -277,7 +277,7 @@ function renderSettingsPanel() {
     ['Event count', String(app.doc?.events?.length || 0)],
     ['Event range', firstEvent ? `${formatDateTime(firstEvent)} → ${formatDateTime(lastEvent)}` : 'No events yet'],
     ['Last export', app.doc?.settings?.lastExportDate ? formatDateTime(app.doc.settings.lastExportDate) : 'Never'],
-    ['Days since export', daysSinceExport === null ? '—' : String(daysSinceExport)]
+    ['Days since export', daysSinceExport === null ? 'Never' : String(daysSinceExport)]
   ];
   const grid = document.createElement('div');
   grid.className = 'health-grid';

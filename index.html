@@ -7536,7 +7536,7 @@
           </div>
           <div class="drawer-section">
             <h3>Privacy &amp; Data Lifecycle</h3>
-            <p class="section-note">Everything lives in your Team Pulse folder plus a convenience copy in this browser's local storage. Nothing ever leaves this machine — the app makes zero network requests.</p>
+            <p class="section-note">Everything lives in your Team Pulse folder plus a convenience copy in this browser's local storage. Nothing ever leaves this machine. The app makes zero network requests.</p>
             <div class="privacy-actions">
               <button type="button" class="secondary" id="disconnectFolderBtn">Disconnect folder &amp; clear browser copies</button>
             </div>
@@ -7564,7 +7564,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.53.1';
+const APP_VERSION = 'v0.53.2';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -10172,7 +10172,7 @@ function buildNotesMarkdown() {
       lines.push('');
       if (report.notesHistory.length) {
         report.notesHistory.forEach((note) => {
-          lines.push(`- ${note.noteDate || ''} — ${note.noteText || ''}`);
+          lines.push(`- ${note.noteDate || ''}: ${note.noteText || ''}`);
         });
       } else if (report.notes) {
         lines.push(`- ${report.notes}`);
@@ -10184,7 +10184,7 @@ function buildNotesMarkdown() {
       lines.push('### Meeting notes');
       lines.push('');
       meetingNotes.forEach((meeting) => {
-        lines.push(`- ${meeting.meetingDate} — ${meeting.meetingType}: ${meeting.notes}`);
+        lines.push(`- ${meeting.meetingDate} (${meeting.meetingType}): ${meeting.notes}`);
       });
       lines.push('');
     }
@@ -10380,7 +10380,7 @@ function renderSettingsPanel() {
     ['Event count', String(app.doc?.events?.length || 0)],
     ['Event range', firstEvent ? `${formatDateTime(firstEvent)} → ${formatDateTime(lastEvent)}` : 'No events yet'],
     ['Last export', app.doc?.settings?.lastExportDate ? formatDateTime(app.doc.settings.lastExportDate) : 'Never'],
-    ['Days since export', daysSinceExport === null ? '—' : String(daysSinceExport)]
+    ['Days since export', daysSinceExport === null ? 'Never' : String(daysSinceExport)]
   ];
   const grid = document.createElement('div');
   grid.className = 'health-grid';
@@ -12080,7 +12080,7 @@ function renderDetailDrawer() {
                 <div class="drawer-section-head">
                   <div>
                     <h3>Danger Zone</h3>
-                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document — the GDPR right-to-erasure path. It cannot be undone.</p>
+                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
                   </div>
                   <button type="button" class="danger" id="purgeReportBtn">Erase permanently</button>
                 </div>
@@ -12499,7 +12499,7 @@ function renderContentHeader(mainView) {
     subtitle = 'Open action items from meeting notes across the team.';
   } else if (mainView === 'pdcSummary') {
     title = 'PDC Summary';
-    subtitle = `PDC outcomes across ${reportCount} ${reportLabel} — edit development focus and readiness right here.`;
+    subtitle = `PDC outcomes across ${reportCount} ${reportLabel}. Edit development focus and readiness right here.`;
   } else if (mainView === 'meetingRoom') {
     // The 1:1 room: the person's name is the title (it appears once on the
     // page), with level and mentor on the line below. The old subtitle
@@ -12769,7 +12769,7 @@ function renderMeetingRoomView() {
           <section class="mr-panel">
             <div class="mr-panel-head">
               <h2>Talking Points</h2>
-              <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up; unticked ones carry over automatically.</p>
+              <p class="section-note">Tick what you cover. Ticked points are marked discussed when you wrap up, and unticked ones carry over automatically.</p>
             </div>
             ${pointsHtml}
             <div class="tp-add">
@@ -14091,7 +14091,7 @@ function renderPdcSummaryView() {
   if (!mount) return;
   const reports = getSortedReports();
   if (reports.length === 0) {
-    mount.innerHTML = `<p class="section-note empty-note">Add a direct report first — their PDC summaries will show up here.</p>`;
+    mount.innerHTML = `<p class="section-note empty-note">Add a direct report first. Their PDC summaries will show up here.</p>`;
     return;
   }
   const editingId = app.ui.pdcSummaryEditId || '';
@@ -16629,56 +16629,56 @@ function generateSchemaMarkdown() {
   lines.push('- **Document model:** Event-backed people records.');
   lines.push('');
   lines.push('## Root fields');
-  lines.push('- **schemaVersion** — Current schema version.');
-  lines.push('- **appVersion** — Team Pulse app version that wrote the file.');
-  lines.push('- **createdAt / savedAt** — Document timestamps.');
-  lines.push('- **idCounters** — Monotonic counters for durable IDs.');
-  lines.push('- **people** — Base person records.');
-  lines.push('- **events** — Append-only event log.');
-  lines.push('- **settings** — Team-level rules and UI durability settings.');
+  lines.push('- **schemaVersion**: Current schema version.');
+  lines.push('- **appVersion**: Team Pulse app version that wrote the file.');
+  lines.push('- **createdAt / savedAt**: Document timestamps.');
+  lines.push('- **idCounters**: Monotonic counters for durable IDs.');
+  lines.push('- **people**: Base person records.');
+  lines.push('- **events**: Append-only event log.');
+  lines.push('- **settings**: Team-level rules and UI durability settings.');
   lines.push('');
   lines.push('## Added in schema v6');
-  lines.push('- **settings.themesWindowDays** — Window for Recent Themes token analysis (default 90 days).');
+  lines.push('- **settings.themesWindowDays**: Window for Recent Themes token analysis (default 90 days).');
   lines.push('');
   lines.push('## Removed in schema v7');
-  lines.push('- **weeklySnapshots[]** — Previously held weekly support/PDC snapshots feeding the Trend tab. The Trend tab and the snapshot readers/writers were removed in v0.25.0; the field is stripped on migration. One-way change — take a backup of any v6 file before first open in v0.25 if you need the history.');
+  lines.push('- **weeklySnapshots[]**: Previously held weekly support/PDC snapshots feeding the Trend tab. The Trend tab and the snapshot readers/writers were removed in v0.25.0, and the field is stripped on migration. One-way change: take a backup of any v6 file before first open in v0.25 if you need the history.');
   lines.push('');
   lines.push('## Added in schema v8');
-  lines.push('- **people[].agenda** — Markdown talking points for the next 1:1, edited on the Meetings & Agenda tab of the person workspace.');
+  lines.push('- **people[].agenda**: Markdown talking points for the next 1:1, edited on the Meetings & Agenda tab of the person workspace.');
   lines.push('');
   lines.push('## Changed in schema v9');
-  lines.push('- **people[].pdcStatus** — Fully manual (kanban model): the stored value is exactly what every view shows, and only the user moves it (board drag, card menu, or the Development tab select). The v8->v9 migration baked each person\'s previously displayed, date-derived status into this field so boards did not shift at upgrade. Dates still power the attention rules and appear as chips on board cards, but never move a status by themselves.');
+  lines.push('- **people[].pdcStatus**: Fully manual (kanban model): the stored value is exactly what every view shows, and only the user moves it (board drag, card menu, or the Development tab select). The v8->v9 migration baked each person\'s previously displayed, date-derived status into this field so boards did not shift at upgrade. Dates still power the attention rules and appear as chips on board cards, but never move a status by themselves.');
   lines.push('');
   lines.push('## Added in schema v10');
-  lines.push('- **people[].talkingPoints[]** — Structured queue for the next conversation: { id, text, createdAt, done, doneAt, meetingId }. Replaces the free-text agenda; the v9->v10 migration converts each agenda line into an open talking point ([x] lines arrive as done) and blanks the agenda field everywhere, including inside historical events.');
-  lines.push('- **people[].goals[]** — Development goals: { id, title, detail, status (On track / At risk / Paused / Done), targetDate, progress 0-100, createdAt, updates[] }. Each update is { id, date, text, progress }. Replaces the development goal summary text; the migration converts the summary\'s first line into goal #1\'s title and the rest into its detail.');
-  lines.push('- **events meeting_logged.pulse** — Optional per-meeting pulse: green, amber, or red. Shown as dots on tiles, the table, meeting history, and the timeline; a downward trend can raise an attention flag (settings.pulseTrendCounts).');
-  lines.push('- **people[].evidence[].kind / .shared** — Every evidence entry now carries a feedback kind (observation, praise, growth) and a shared-with-them flag, powering the feedback log and timeline.');
-  lines.push('- **settings.pulseTrendCounts** — Whether a downward 1:1 pulse counts as attention (default true).');
-  lines.push('- **settings.density** — Interface density: comfortable or compact.');
-  lines.push('- **settings.pdcRoundAutoReset / settings.pdcRoundStartMonth / settings.lastPdcRoundKey** — PDC rounds derive from thresholds.pdcDays (90 days gives 4 rounds per year), anchored to pdcRoundStartMonth (default January). When a new round begins and auto reset is on, every person whose PDC status is not Not started gets a person_updated event resetting it, and the handled round key is stored so the reset runs once per rollover. Saving the rules re-adopts the current key so reconfiguring never triggers a reset.');
-  lines.push('- **people[].agenda / people[].developmentGoalSummary** — Still present for import compatibility but drained by the migration; the app no longer writes to them.');
+  lines.push('- **people[].talkingPoints[]**: Structured queue for the next conversation: { id, text, createdAt, done, doneAt, meetingId }. Replaces the free-text agenda. The v9->v10 migration converts each agenda line into an open talking point ([x] lines arrive as done) and blanks the agenda field everywhere, including inside historical events.');
+  lines.push('- **people[].goals[]**: Development goals: { id, title, detail, status (On track / At risk / Paused / Done), targetDate, progress 0-100, createdAt, updates[] }. Each update is { id, date, text, progress }. Replaces the development goal summary text. The migration converts the summary\'s first line into goal #1\'s title and the rest into its detail.');
+  lines.push('- **events meeting_logged.pulse**: Optional per-meeting pulse: green, amber, or red. Shown as dots on tiles, the table, meeting history, and the timeline. A downward trend can raise an attention flag (settings.pulseTrendCounts).');
+  lines.push('- **people[].evidence[].kind / .shared**: Every evidence entry now carries a feedback kind (observation, praise, growth) and a shared-with-them flag, powering the feedback log and timeline.');
+  lines.push('- **settings.pulseTrendCounts**: Whether a downward 1:1 pulse counts as attention (default true).');
+  lines.push('- **settings.density**: Interface density: comfortable or compact.');
+  lines.push('- **settings.pdcRoundAutoReset / settings.pdcRoundStartMonth / settings.lastPdcRoundKey**: PDC rounds derive from thresholds.pdcDays (90 days gives 4 rounds per year), anchored to pdcRoundStartMonth (default January). When a new round begins and auto reset is on, every person whose PDC status is not Not started gets a person_updated event resetting it, and the handled round key is stored so the reset runs once per rollover. Saving the rules re-adopts the current key so reconfiguring never triggers a reset.');
+  lines.push('- **people[].agenda / people[].developmentGoalSummary**: Still present for import compatibility but drained by the migration. The app no longer writes to them.');
   lines.push('');
   lines.push('## Added in schema v11');
-  lines.push('- **people[].initials** — Company-style initials (e.g. MAMO), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Maria Moreira (MAMO)" becomes name "Maria Moreira" + initials "MAMO") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
+  lines.push('- **people[].initials**: Company-style initials (e.g. MAMO), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Maria Moreira (MAMO)" becomes name "Maria Moreira" + initials "MAMO") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
   lines.push('');
   lines.push('## Added in schema v12');
-  lines.push('- **people[].capabilities[]** — Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view; the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
+  lines.push('- **people[].capabilities[]**: Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view, and the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
   lines.push('');
   lines.push('## Migration path');
-  lines.push('- **v0 -> v11** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
-  lines.push('- **v5 -> v6** — Adds settings.themesWindowDays. (Historically also seeded weeklySnapshots; that field no longer persists past v6->v7.)');
-  lines.push('- **v6 -> v7** — Removes the weeklySnapshots field from the document root.');
-  lines.push('- **v7 -> v8** — Adds the per-person agenda field (defaults to empty).');
-  lines.push('- **v8 -> v9** — Bakes the previously derived PDC status into people[].pdcStatus; statuses are manual from v9 on.');
-  lines.push('- **v9 -> v10** — Converts agenda text into talkingPoints[] and the development goal summary into goals[0], stripping both raw fields from people records and from historical person_created/person_updated events so replays cannot resurrect the old text.');
-  lines.push('- **v10 -> v11** — Extracts trailing parenthesized initials from person names into people[].initials and cleans the suffix out of names in people records and historical events.');
-  lines.push('- **v11 -> v12** — Adds empty capabilities[] arrays to people records and person_created snapshots. Additive and lossless.');
+  lines.push('- **v0 -> v11**: Legacy flat files migrate through the durable event model. Any weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
+  lines.push('- **v5 -> v6**: Adds settings.themesWindowDays. (Historically also seeded weeklySnapshots, but that field no longer persists past v6->v7.)');
+  lines.push('- **v6 -> v7**: Removes the weeklySnapshots field from the document root.');
+  lines.push('- **v7 -> v8**: Adds the per-person agenda field (defaults to empty).');
+  lines.push('- **v8 -> v9**: Bakes the previously derived PDC status into people[].pdcStatus. Statuses are manual from v9 on.');
+  lines.push('- **v9 -> v10**: Converts agenda text into talkingPoints[] and the development goal summary into goals[0], stripping both raw fields from people records and from historical person_created/person_updated events so replays cannot resurrect the old text.');
+  lines.push('- **v10 -> v11**: Extracts trailing parenthesized initials from person names into people[].initials and cleans the suffix out of names in people records and historical events.');
+  lines.push('- **v11 -> v12**: Adds empty capabilities[] arrays to people records and person_created snapshots. Additive and lossless.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
   lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
-  lines.push('- **Erase permanently** (Profile tab danger zone) removes the person record and every event referencing them from the document. This is the right-to-erasure path; it cannot be undone and takes effect in the JSON on the next save. Rolling backups in this folder may still hold prior copies until they rotate — delete them manually if a full purge is required.');
+  lines.push('- **Erase permanently** (Profile tab danger zone) removes the person record and every event referencing them from the document. This is the right-to-erasure path. It cannot be undone and takes effect in the JSON on the next save. Rolling backups in this folder may still hold prior copies until they rotate. Delete them manually if a full purge is required.');
   lines.push('');
   return lines.join('\n');
 }
@@ -18171,7 +18171,7 @@ try {
       const message = (error && error.message) ? error.message : String(error);
       const messageEl = document.createElement('div');
       messageEl.className = 'toast-message';
-      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page. If this persists, open your browser's developer tools for details.`;
       panel.appendChild(messageEl);
       stack.appendChild(panel);
     }
