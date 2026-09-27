@@ -131,6 +131,7 @@ function generateSchemaMarkdown() {
   lines.push('## Data lifecycle & GDPR notes');
   lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
   lines.push('- **team-pulse.before-import-*.json / team-pulse.before-restore-*.json**: Dated copies of team-pulse.json, written just before an import or a backup restore replaces it. They are never rotated. Delete them when you no longer need them.');
+  lines.push('- **team-pulse.before-reload-*.json / team-pulse.before-overwrite-*.json**: Written when another tab or computer saved team-pulse.json in between. before-reload holds the version the tab had when it reloaded the file, before-overwrite the file version the tab replaced with its own.');
   lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
   lines.push('- **Erase permanently** (Profile tab danger zone) removes the person record and every event referencing them from the document. This is the right-to-erasure path. It cannot be undone and takes effect in the JSON on the next save. Rolling backups in this folder may still hold prior copies until they rotate. Delete them manually if a full purge is required.');
   lines.push('');

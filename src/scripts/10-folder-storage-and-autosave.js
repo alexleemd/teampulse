@@ -158,6 +158,8 @@ async function loadDocFromConnectedFolder(options = {}) {
 
   app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
   app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+  app.knownMainSavedAt = readSavedAtFromJsonText(text);
+  app.saveConflict = false;
   await adoptLoadedDoc(loadedDoc, { saveReason: parsed.lastMigrationApplied ? 'migration' : '' });
   if (showSuccessToast) {
     showToast(parsed.lastMigrationApplied
@@ -301,7 +303,8 @@ async function flushAutosaveQueue(force = false) {
     app.lastSaveError = error?.message || 'Could not save Team Pulse.';
     app.saveQueued = true;
     updateFileUi();
-    showToast(app.lastSaveError, 'error');
+    // A conflict already shows its own question.
+    if (!error?.saveConflict) showToast(app.lastSaveError, 'error');
     return false;
   } finally {
     app.saveInFlight = false;
@@ -335,7 +338,17 @@ function readSavedAtFromJsonText(text) {
 
 // Saves that replace team-pulse.json with different data first keep a dated
 // copy of the file they replace, named after what happened.
-const SAFETY_COPY_KIND_BY_REASON = { import: 'import', restore: 'restore', recover: 'restore' };
+const SAFETY_COPY_KIND_BY_REASON = { import: 'import', restore: 'restore', recover: 'restore', overwrite: 'overwrite' };
+// These saves replace the file on purpose, so they skip the check for a
+// change made by another tab or computer.
+const REPLACING_SAVE_REASONS = ['import', 'restore', 'recover', 'overwrite'];
+const SAVE_CONFLICT_MESSAGE = `${MAIN_JSON_NAME} was changed from another tab or computer. Choose which version to keep.`;
+
+function makeSaveConflictError() {
+  const error = new Error(SAVE_CONFLICT_MESSAGE);
+  error.saveConflict = true;
+  return error;
+}
 
 function safetyCopyStamp(date = new Date()) {
   const pad = (value) => String(value).padStart(2, '0');
@@ -359,15 +372,40 @@ function safetyCopyNote() {
   return app.lastSafetyCopyName ? ` The previous data was saved as ${app.lastSafetyCopyName}.` : '';
 }
 
+// How many saves are running. The change check skips while one is, since a
+// save writes the file before it records the new savedAt.
+let persistsRunning = 0;
+
 async function persistDocToFolder(options = {}) {
+  persistsRunning += 1;
+  try {
+    await writeDocToFolder(options);
+  } finally {
+    persistsRunning -= 1;
+  }
+}
+
+async function writeDocToFolder(options = {}) {
   const { reason = 'autosave' } = options;
   if (!app.folderHandle) throw new Error('Choose a Team Pulse folder first.');
+  const replacing = REPLACING_SAVE_REASONS.includes(reason);
+  if (app.saveConflict && !replacing) {
+    openSaveConflictPrompt();
+    throw makeSaveConflictError();
+  }
   const doc = buildDocForSave();
   app.doc = doc;
   applyProjectedState();
 
   const previousMainText = await readFolderFileText(MAIN_JSON_NAME);
   const previousSavedAt = readSavedAtFromJsonText(previousMainText);
+  // Another tab or computer saved since this tab last read or wrote the file:
+  // stop and ask, never overwrite its work silently.
+  if (!replacing && previousMainText.trim() && previousSavedAt !== app.knownMainSavedAt) {
+    app.saveConflict = true;
+    openSaveConflictPrompt();
+    throw makeSaveConflictError();
+  }
   const newText = JSON.stringify(doc, null, 2);
   const schemaText = generateSchemaMarkdown();
 
@@ -399,6 +437,7 @@ async function persistDocToFolder(options = {}) {
   await writeFolderFileText(SCHEMA_DOC_NAME, schemaText);
 
   app.lastSaveAt = doc.savedAt;
+  app.knownMainSavedAt = doc.savedAt;
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
@@ -416,4 +455,102 @@ async function refreshFileStats() {
   app.fileStats.monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
   app.fileStats.schemaWrittenAt = app.fileStats.mainSavedAt || app.lastSaveAt || '';
   app.fileStats.folderLabel = app.folderName || app.folderHandle?.name || '';
+}
+
+// --- Save conflict: another tab or computer saved team-pulse.json -----------
+
+function saveConflictOverlayEl() {
+  return document.getElementById('saveConflictOverlay');
+}
+
+function isSaveConflictPromptOpen() {
+  return !!saveConflictOverlayEl()?.classList.contains('open');
+}
+
+function openSaveConflictPrompt() {
+  const overlayEl = saveConflictOverlayEl();
+  if (!overlayEl) return;
+  app.lastSaveError = SAVE_CONFLICT_MESSAGE;
+  updateFileUi();
+  if (overlayEl.classList.contains('open')) return;
+  overlayEl.classList.add('open');
+  overlayEl.setAttribute('aria-hidden', 'false');
+  syncBodyOverlayLock();
+  window.setTimeout(() => document.getElementById('saveConflictReloadBtn')?.focus(), 0);
+}
+
+function closeSaveConflictPrompt() {
+  const overlayEl = saveConflictOverlayEl();
+  if (!overlayEl) return;
+  overlayEl.classList.remove('open');
+  overlayEl.setAttribute('aria-hidden', 'true');
+  syncBodyOverlayLock();
+}
+
+function setSaveConflictButtonsBusy(busy) {
+  ['saveConflictReloadBtn', 'saveConflictKeepBtn'].forEach((id) => {
+    const button = document.getElementById(id);
+    if (button) button.disabled = busy;
+  });
+}
+
+// Reads only the savedAt of team-pulse.json and asks the conflict question if
+// another tab or computer saved since this tab last read or wrote it.
+async function checkMainFileUnchanged() {
+  if (!app.folderHandle || !app.connectedFolderReady || app.saveConflict || app.saveInFlight || persistsRunning) return;
+  try {
+    const text = await readFolderFileText(MAIN_JSON_NAME);
+    if (app.saveInFlight || app.saveConflict || persistsRunning || !text.trim()) return;
+    if (readSavedAtFromJsonText(text) !== app.knownMainSavedAt) {
+      app.saveConflict = true;
+      openSaveConflictPrompt();
+    }
+  } catch (error) {
+    console.error('Could not check team-pulse.json for changes', error);
+  }
+}
+
+// choice 'reload': this tab's version goes to a dated copy, then the file is
+// loaded again. choice 'keep': the file goes to a dated copy, then this tab's
+// version is saved over it. Either way nothing is lost.
+async function resolveSaveConflict(choice) {
+  if (!app.saveConflict || !app.folderHandle) {
+    closeSaveConflictPrompt();
+    return;
+  }
+  setSaveConflictButtonsBusy(true);
+  window.clearTimeout(app.saveTimer);
+  try {
+    // Let a save that is still running finish first. It stops at the conflict.
+    while (app.saveInFlight) await new Promise((resolve) => window.setTimeout(resolve, 50));
+    if (choice === 'reload') {
+      const copyName = await writeSafetyCopy('reload', JSON.stringify(buildDocForSave(), null, 2));
+      app.saveConflict = false;
+      app.saveQueued = false;
+      app.lastSaveError = '';
+      closeSaveConflictPrompt();
+      const loaded = await loadDocFromConnectedFolder({ showSuccessToast: false });
+      if (loaded) showToast(`Reloaded ${MAIN_JSON_NAME}. This tab's version was saved as ${copyName}.`, 'success');
+    } else {
+      app.saveInFlight = true;
+      updateFileUi();
+      try {
+        await persistDocToFolder({ reason: 'overwrite' });
+      } finally {
+        app.saveInFlight = false;
+      }
+      app.saveConflict = false;
+      app.saveQueued = false;
+      app.lastSaveError = '';
+      closeSaveConflictPrompt();
+      updateFileUi();
+      showToast(`Saved this tab's version to ${MAIN_JSON_NAME}.${safetyCopyNote()}`, 'success');
+    }
+  } catch (error) {
+    console.error('Could not settle the save conflict', error);
+    showToast(error?.message || 'Could not save Team Pulse.', 'error');
+    updateFileUi();
+  } finally {
+    setSaveConflictButtonsBusy(false);
+  }
 }

@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.54.8';
+const APP_VERSION = 'v0.54.9';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -164,6 +164,10 @@ const app = {
   saveTimer: null,
   backupRotatedAt: 0,
   lastSafetyCopyName: '',
+  // savedAt of team-pulse.json as this tab last read or wrote it. A different
+  // value in the file means another tab or computer saved in between.
+  knownMainSavedAt: '',
+  saveConflict: false,
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
   exportReminderVisible: false,

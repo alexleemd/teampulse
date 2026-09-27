@@ -429,6 +429,13 @@ function bindStaticEvents() {
       chooseFolderAndConnect();
     }
   });
+  document.getElementById('saveConflictReloadBtn')?.addEventListener('click', () => resolveSaveConflict('reload'));
+  document.getElementById('saveConflictKeepBtn')?.addEventListener('click', () => resolveSaveConflict('keep'));
+  // Coming back to this tab: check whether another tab or computer saved the
+  // file meanwhile, before any edit is made on top of old data.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') checkMainFileUnchanged();
+  });
   connectDataFileBtn.addEventListener('click', () => {
     closeDataMenu();
     importLegacyJsonFlow();
@@ -450,6 +457,8 @@ function bindStaticEvents() {
     if (!dataMenuEl.hasAttribute('open')) return;
     const trigger = dataMenuEl.querySelector('summary');
     if (event.key === 'Escape') {
+      // The save conflict question has no Close: one of its two choices is needed.
+      if (isSaveConflictPromptOpen()) return;
       if (trigger && dataMenuEl.querySelector('.toolbar-menu-popover')?.contains(document.activeElement)) trigger.focus();
       return;
     }
@@ -732,12 +741,14 @@ function bindStaticEvents() {
     const disconnectBtn = event.target.closest('#disconnectFolderBtn');
     if (disconnectBtn) disconnectAndWipeLocal();
   });
-  // Search, a dialog, the Settings drawer or the startup prompt is open.
+  // Search, a dialog, the Settings drawer, the startup prompt or the save
+  // conflict prompt is open.
   // The keyboard shortcuts below do nothing then.
   const anyOverlayUp = () => globalSearchEl.classList.contains('open')
     || meetingModalEl.classList.contains('open')
     || rulesDrawerOverlayEl.classList.contains('open')
     || startupPromptOverlayEl.classList.contains('open')
+    || isSaveConflictPromptOpen()
     || !!document.getElementById('goalModal')?.classList.contains('open')
     || !!document.getElementById('feedbackModal')?.classList.contains('open');
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
