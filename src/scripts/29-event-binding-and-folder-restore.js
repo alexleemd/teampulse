@@ -421,9 +421,15 @@ function bindStaticEvents() {
   });
   createJsonFileBtn.addEventListener('click', () => chooseFolderAndConnect());
   openJsonFileBtn.addEventListener('click', importLegacyJsonFlow);
-  saveFileBtn.addEventListener('click', () => {
+  saveFileBtn.addEventListener('click', async () => {
     closeDataMenu();
     if (app.folderHandle && app.connectedFolderReady) {
+      // A click can ask the browser for folder access again, which saves
+      // that run by themselves cannot.
+      if (!(await verifyPermission(app.folderHandle, true))) {
+        showToast('Read and write permission was not granted for that folder.', 'error');
+        return;
+      }
       flushAutosaveQueue(true);
     } else {
       chooseFolderAndConnect();
