@@ -18,6 +18,14 @@ function meetingRoomDraftFor(reportId) {
   return meetingRoomDraft;
 }
 
+// Ends the draft and removes the room's page content, which stays in the
+// page while hidden. Without this, reopening the room for the same person
+// read the old notes, pulse and duration back out of that content.
+function discardMeetingRoomDraft() {
+  meetingRoomDraft = null;
+  document.getElementById('meetingRoomBody')?.replaceChildren();
+}
+
 function openMeetingRoom(reportId, options = {}) {
   const report = getReportById(reportId);
   if (!report) return;
@@ -39,7 +47,7 @@ function closeMeetingRoom(options = {}) {
   if (!options.force && draft && (normalizeText(draft.notes) || draft.checkedPointIds.length)) {
     if (!window.confirm('Leave the meeting room? The unlogged notes draft stays until you close the app.')) return;
   }
-  if (options.discardDraft) meetingRoomDraft = null;
+  if (options.discardDraft) discardMeetingRoomDraft();
   const returnView = MAIN_VIEWS.includes(app.ui.meetingRoomReturnView) && app.ui.meetingRoomReturnView !== 'meetingRoom'
     ? app.ui.meetingRoomReturnView
     : 'reports';
@@ -100,7 +108,7 @@ async function wrapUpMeetingRoom() {
       : point));
     await updateReport(report.id, payload, { silentToast: true });
   }
-  meetingRoomDraft = null;
+  discardMeetingRoomDraft();
   closeMeetingRoom({ force: true });
 }
 
