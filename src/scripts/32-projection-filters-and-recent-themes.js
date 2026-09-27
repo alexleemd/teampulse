@@ -132,6 +132,8 @@ function reportMatchesThemeFilter(report, term, windowDays = getThemeWindowDays(
   return ` ${haystack} `.includes(` ${needle} `);
 }
 
+// The reports that pass the search, the PDC and Show selects and the theme
+// filter, in the projection's order (by name). The caller sorts them.
 function getFilteredReports() {
   const term = normalizeText(app.ui.searchTerm).toLowerCase();
   const plan = normalizeText(app.ui.planFilter);
@@ -170,7 +172,7 @@ function getFilteredReports() {
     if (attentionFilter === 'on-vacation' && !metrics.vacationStatus.active) return false;
     if (activeTheme && !reportMatchesThemeFilter(report, activeTheme, themeWindowDays)) return false;
     return true;
-  }).sort(compareReportsForTable);
+  });
 }
 
 function renderQuickFilterBar() {
