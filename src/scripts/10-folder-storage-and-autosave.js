@@ -65,6 +65,8 @@ async function connectFolderHandle(handle, options = {}) {
   }
 
   app.folderHandle = handle;
+  app.fileStatsLoaded = false;
+  app.backupRotatedAt = 0;
   startupStoredFolderHandle = handle;
   app.folderName = handle.name || '';
   app.fileStats.folderLabel = handle.name || '';
@@ -456,15 +458,20 @@ async function writeDocToFolder(options = {}) {
     app.fileStats.backupSavedAt = previousSavedAt;
   }
 
+  // The dates of the daily and monthly copies are read from the folder once,
+  // then kept in memory, so a save does not read those files again.
+  if (!app.fileStatsLoaded) await refreshFileStats();
   const today = todayStamp();
   const thisMonth = monthStamp();
-  const dailySavedAt = await parseSavedAtFromFolderFile(DAILY_JSON_NAME);
-  const monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
+  const dailySavedAt = app.fileStats.dailySavedAt;
+  const monthlySavedAt = app.fileStats.monthlySavedAt;
   if (!dailySavedAt || isoToLocalDateStamp(dailySavedAt) !== today) {
     await writeFolderFileText(DAILY_JSON_NAME, newText);
+    app.fileStats.dailySavedAt = doc.savedAt;
   }
   if (!monthlySavedAt || monthStamp(monthlySavedAt) !== thisMonth) {
     await writeFolderFileText(MONTHLY_JSON_NAME, newText);
+    app.fileStats.monthlySavedAt = doc.savedAt;
   }
   await writeFolderFileText(SCHEMA_DOC_NAME, schemaText);
 
@@ -473,7 +480,7 @@ async function writeDocToFolder(options = {}) {
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
-  await refreshFileStats();
+  app.fileStats.folderLabel = app.folderName || app.folderHandle?.name || '';
   if (reason === 'manual') {
     showToast(`Saved ${MAIN_JSON_NAME} at ${formatClock(new Date(doc.savedAt))}.`, 'success');
   }
@@ -486,6 +493,7 @@ async function refreshFileStats() {
   app.fileStats.monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
   app.fileStats.schemaWrittenAt = app.fileStats.mainSavedAt || app.lastSaveAt || '';
   app.fileStats.folderLabel = app.folderName || app.folderHandle?.name || '';
+  app.fileStatsLoaded = true;
 }
 
 // --- Save conflict: another tab or computer saved team-pulse.json -----------
