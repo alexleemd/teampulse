@@ -1,7 +1,7 @@
 function migrateV11ToV12(docV11) {
   const safeDoc = docV11 && typeof docV11 === 'object' ? deepCopy(docV11) : makeEmptyDoc();
   // v12 introduces people[].capabilities — Consultant Development Path ticks
-  // mirrored from the Devote PDP template ({ id, achievedAt }). The migration
+  // mirrored from the PDP template ({ id, achievedAt }). The migration
   // only guarantees the array exists on base records and person_created
   // snapshots. No data is transformed, so this is additive and lossless.
   (Array.isArray(safeDoc.people) ? safeDoc.people : []).forEach((person) => {
@@ -116,7 +116,7 @@ function generateSchemaMarkdown() {
   lines.push('- **people[].initials** — Company-style initials (e.g. MAMO), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Maria Moreira (MAMO)" becomes name "Maria Moreira" + initials "MAMO") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
   lines.push('');
   lines.push('## Added in schema v12');
-  lines.push('- **people[].capabilities[]** — Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Devote Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view; the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
+  lines.push('- **people[].capabilities[]** — Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view; the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
   lines.push('');
   lines.push('## Migration path');
   lines.push('- **v0 -> v11** — Legacy flat files migrate through the durable event model; weeklySnapshots that might appear during the legacy walk are stripped by the v6->v7 step.');
