@@ -13,8 +13,7 @@ function projectDoc(doc, options = {}) {
       notesHistory: [],
       changeLog: [],
       archived: false,
-      updatedAt: person.createdAt,
-      _meetingUidSet: new Set()
+      updatedAt: person.createdAt
     });
   });
 
@@ -29,8 +28,7 @@ function projectDoc(doc, options = {}) {
           notesHistory: [],
           changeLog: [],
           archived: false,
-          updatedAt: event.createdAt,
-          _meetingUidSet: new Set()
+          updatedAt: event.createdAt
         });
       }
       return;
@@ -87,7 +85,6 @@ function projectDoc(doc, options = {}) {
         externalUid: normalizeText(event.externalUid),
         createdAt: event.createdAt
       };
-      if (meeting.externalUid) report._meetingUidSet.add(meeting.externalUid);
       report.meetings.push(meeting);
       report.updatedAt = event.createdAt;
       return;
@@ -304,15 +301,6 @@ function variantForSupport(flag) {
     'Support needed': 'red',
     'Urgent': 'solid-red'
   }[flag] || 'neutral';
-}
-
-function supportFillForLevel(flag) {
-  return {
-    'Good': 'good',
-    'Monitor': 'neutral',
-    'Support needed': 'red',
-    'Urgent': 'solid-red'
-  }[flag] || 'none';
 }
 
 function badge(label, variant = 'neutral') {

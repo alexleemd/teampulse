@@ -173,7 +173,6 @@
       position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
       overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
     }
-    .tabular, .num { font-variant-numeric: tabular-nums; }
 
     /* --- Behavior: overlays, dialogs and drawers --------------------------- */
     body.overlay-open { overflow: hidden; }
@@ -212,7 +211,6 @@
     .md-shell[data-md-active="preview"] .md-panel-write { display: none; }
     .md-shell[data-md-active="write"] .md-panel-preview { display: none; }
     .drawer-tab-panel[hidden] { display: none !important; }
-    .team-health-tabbar.hidden { display: none; }
     .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
     .pulse-option input { position: absolute; opacity: 0; pointer-events: none; }
 
@@ -436,7 +434,6 @@
     /* Icon: 28px square, ink-2 icon, hover sunken. Needs an aria-label.
        .tp-delete still carries a text "×" in its markup; the glyph is hidden and
        the Moss x icon is drawn with a mask so it matches the controls sheet. */
-    .icon-button,
     .tp-delete {
       display: inline-flex;
       align-items: center;
@@ -453,9 +450,7 @@
       cursor: pointer;
       transition: background-color 120ms ease;
     }
-    .icon-button:hover,
     .tp-delete:hover { background: var(--sunken); }
-    .icon-button svg,
     .tp-delete svg { width: 16px; height: 16px; stroke: currentColor; }
     .tp-delete:has(svg)::before { display: none; }
     .tp-delete { font-size: 0; line-height: 0; }
@@ -478,7 +473,6 @@
       min-width: 0;
     }
     label > span:where(:first-child),
-    .field-label,
     .pulse-field > span:where(:first-child),
     .md-shell > span:where(:first-child) {
       font-size: var(--text-label);
@@ -644,16 +638,14 @@
       accent-color: var(--accent);
       cursor: pointer;
     }
-    .goal-progress-inputs,
-    .range-row {
+    .goal-progress-inputs {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 12px;
       height: 30px;
     }
-    .goal-progress-value,
-    .range-value {
+    .goal-progress-value {
       width: 38px;
       flex-shrink: 0;
       color: var(--ink);
@@ -816,7 +808,6 @@
     /* Sunken track, radius 9px, padding 3px. The current option is white with a
        1px line ring and 600 text. Used for Tiles/Table, the PDC views, the
        Insights chart modes and the timeline filter. */
-    .segmented,
     .view-switch,
     .pdc-view-toggle,
     .tenure-mode-toggle,
@@ -833,7 +824,6 @@
       border-radius: var(--radius-field);
       background: var(--sunken);
     }
-    .segmented > button,
     .view-switch > button,
     .pdc-view-toggle > button,
     .tenure-mode-toggle > button,
@@ -856,12 +846,10 @@
       text-decoration: none;
       transition: background-color 120ms ease, color 120ms ease;
     }
-    .segmented > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
     .view-switch > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
     .pdc-view-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
     .tenure-mode-toggle > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active),
     .tl-filter > button:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active) { color: var(--ink); background: transparent; }
-    .segmented > button:where([aria-pressed="true"], [aria-selected="true"], .active),
     .view-switch > button:where([aria-pressed="true"], .active),
     .pdc-view-toggle > button:where([aria-pressed="true"], .active),
     .tenure-mode-toggle > button:where([aria-pressed="true"], [aria-selected="true"], .active),
@@ -929,7 +917,6 @@
     .tab:focus-visible,
     .md-tab:focus-visible,
     .drawer-workspace-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .tab-count,
     .drawer-tab-count {
       display: inline-flex;
       align-items: center;
@@ -1100,7 +1087,6 @@
 
     /* Outline */
     :is(.tag, .badge, .pill).outline,
-    :is(.tag, .badge, .pill).soft,
     .tp-chip,
     .note-task.open .note-task-status,
     .status-pill:is([data-pill-value="Not started"], [data-pill-value="Paused"]),
@@ -1230,7 +1216,6 @@
     /* --- Avatars --------------------------------------------------------------- */
     /* Initials on sunken in ink. No per person colors. 30px radius 8, 36px radius 10. */
     .avatar,
-    .avatar-sm,
     .tt-avatar,
     .mv-avatar,
     .gs-avatar,
@@ -1238,8 +1223,7 @@
     .pdc-board-card-avatar,
     .report-tile-avatar,
     .pdc-summary-card-avatar,
-    .detail-page-header-avatar,
-    .mr-avatar {
+    .detail-page-header-avatar {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1257,7 +1241,6 @@
       font-variant-numeric: tabular-nums;
       user-select: none;
     }
-    .avatar-sm,
     .mv-avatar,
     .gs-avatar,
     .fu-avatar,
@@ -1417,8 +1400,7 @@
       background: var(--surface);
     }
     .drawer-section > h3,
-    .drawer-section-head h3,
-    .panel-title {
+    .drawer-section-head h3 {
       margin: 0;
       color: var(--ink);
       font-size: var(--text-panel);
@@ -1495,8 +1477,7 @@
     /* Helper copy. Stable mode hides it (see 02-moss-base.css). */
     .section-note,
     .help-text,
-    .hint,
-    .panel-note {
+    .hint {
       margin: 0;
       color: var(--ink-2);
       font-size: var(--text-label);
@@ -1585,8 +1566,7 @@
     /* --- Tables (Controls 4) --------------------------------------------------- */
     /* White wrapper, radius 14px. Header row 38px with 12px 500 ink-2 labels.
        Group rows 34px on page with a 7px status dot. Rows 52px, line-soft dividers. */
-    .team-table-wrap,
-    .table-wrap {
+    .team-table-wrap {
       min-width: 0;
       border: 1px solid var(--line);
       border-radius: var(--radius-card);
@@ -1722,10 +1702,8 @@
     /* --- Empty states (Controls 3) --------------------------------------------- */
     /* 13.5px ink-2 text in a page box with a dashed button-line border, radius 10px. */
     .empty-note,
-    .empty-state,
     .tp-empty,
     .vacation-empty,
-    .followup-empty,
     .attention-empty,
     .evidence-empty,
     .theme-empty,
@@ -1747,7 +1725,6 @@
       line-height: 1.45;
       text-align: left;
     }
-    .empty-state p { margin: 0; }
     /* The PDC board's empty column is a drop target: the same dashed box, text
        centered. */
     .pdc-board-empty { text-align: center; }
@@ -7082,8 +7059,6 @@
         <!-- Team Health section (Overview and Insights). Not a card itself: the
              overview draws its own cards, as in Overview.html. -->
         <section class="team-health-card" id="teamHealthSection" hidden>
-          <!-- Tab bar moved to the sidebar; kept hidden for legacy click handlers. -->
-          <div class="team-health-tabbar hidden" id="teamHealthTabBar" role="tablist" aria-label="Team Health sections" style="display:none"></div>
           <div class="team-health-content">
             <div id="teamHealthBody" role="tabpanel"></div>
           </div>
@@ -7160,17 +7135,6 @@
 
   </div>
 <!-- end .app-shell -->
-
-  <div id="saveDock" class="save-dock hidden" role="status" aria-live="polite">
-    <div>
-      <strong id="saveDockTitle">Unsaved changes</strong>
-      <p id="saveDockText">Your latest changes are safe in this browser, but they are not in your JSON file yet.</p>
-    </div>
-    <div class="save-dock-actions">
-      <button id="saveDockBtn">Save to JSON</button>
-      <button id="dismissDockBtn" class="secondary">Later</button>
-    </div>
-  </div>
 
   <input id="icsFileInput" type="file" accept=".ics,text/calendar" class="hidden" multiple>
 
@@ -7352,8 +7316,6 @@
   </div>
 </div>
 
-<!-- Detail drawer overlay: legacy stub only. The real #detailDrawer now lives inline in the content pane. -->
-<div id="detailDrawerOverlay" class="hidden" aria-hidden="true" style="display:none !important"></div>
 
   <div id="rulesDrawerOverlay" class="drawer-overlay" aria-hidden="true">
     <aside class="drawer rules-drawer" role="dialog" aria-modal="true" aria-labelledby="rulesDrawerTitle" aria-describedby="rulesDrawerCopy">
@@ -7537,7 +7499,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.7';
+const APP_VERSION = 'v0.55.8';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -7636,7 +7598,6 @@ const DEFAULT_UI = Object.freeze({
   planFilter: '',
   attentionFilter: '',
   exportReminderSnoozedUntil: '',
-  startupHasConnectedFolder: false,
   creatingReport: false,
   detailDrawerTab: 'profile',
   profileEditMode: false,
@@ -7670,7 +7631,6 @@ const TEAM_HEALTH_TAB_LABELS = Object.freeze({
 // sidebar views are the cross-team rollups; these tabs are the per-person deep
 // dive (and the only place PDC focus, notes, evidence, and snoozes are edited).
 const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary', 'timeline']);
-const VISIBLE_DETAIL_DRAWER_TABS = DETAIL_DRAWER_TABS;
 const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
   'profile': 'Profile',
   'meetings': 'Meetings & Talking Points',
@@ -7679,7 +7639,6 @@ const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
 });
 
 const FORMATTERS = {
-  shortDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
   longDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
   dateTime: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
   monthDay: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
@@ -7688,7 +7647,6 @@ const FORMATTERS = {
   monthYear: new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }),
   weekdayDate: new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 };
-
 
 const app = {
   doc: null,
@@ -7711,7 +7669,6 @@ const app = {
   saveConflict: false,
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
-  exportReminderVisible: false,
   // True once the backup file dates below were read from the connected folder.
   fileStatsLoaded: false,
   fileStats: {
@@ -7744,8 +7701,6 @@ const createJsonFileBtn = document.getElementById('createJsonFileBtn');
 const openJsonFileBtn = document.getElementById('openJsonFileBtn');
 const teamHealthSectionEl = document.getElementById('teamHealthSection');
 const teamHealthBodyEl = document.getElementById('teamHealthBody');
-const teamHealthTabBarEl = document.getElementById('teamHealthTabBar');
-const detailDrawerOverlayEl = document.getElementById('detailDrawerOverlay');
 const detailDrawerEl = document.getElementById('detailDrawer');
 const rulesDrawerOverlayEl = document.getElementById('rulesDrawerOverlay');
 const addReportBtn = document.getElementById('addReportBtn');
@@ -7757,11 +7712,6 @@ const icsFileInputEl = document.getElementById('icsFileInput');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const appVersionEl = document.getElementById('appVersion');
 const fileStatePillEl = document.getElementById('fileStatePill');
-const saveDockEl = document.getElementById('saveDock');
-const saveDockTitleEl = document.getElementById('saveDockTitle');
-const saveDockTextEl = document.getElementById('saveDockText');
-const saveDockBtn = document.getElementById('saveDockBtn');
-const dismissDockBtn = document.getElementById('dismissDockBtn');
 const thresholdFormEl = document.getElementById('thresholdForm');
 const oneOnOneThresholdEl = document.getElementById('oneOnOneThreshold');
 const developmentThresholdEl = document.getElementById('developmentThreshold');
@@ -7843,7 +7793,6 @@ function persistUiState() {
     teamTenureMode: app.ui.teamTenureMode === 'promotion' ? 'promotion' : 'tenure',
     teamHealthTab: currentTeamHealthTab(),
     mainView: MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth',
-    startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder,
     meetingsFilterReportId: app.ui.meetingsFilterReportId || '',
     meetingsTypeFilter: app.ui.meetingsTypeFilter || '',
     pdcViewMode: ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list',
@@ -8107,17 +8056,6 @@ function formatDate(dateString) {
   if (!text) return 'Not logged';
   const date = new Date(`${text}T00:00:00`);
   return Number.isNaN(date.getTime()) ? 'Not logged' : FORMATTERS.longDate.format(date);
-}
-
-function formatShortDate(dateString) {
-  const text = normalizeDate(dateString);
-  if (!text) return '';
-  const date = new Date(`${text}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? '' : FORMATTERS.shortDate.format(date);
-}
-
-function formatDateOrFallback(dateString, fallback = 'Not logged') {
-  return formatShortDate(dateString) || fallback;
 }
 
 function formatDateTime(value) {
@@ -8412,16 +8350,6 @@ function activeSnoozeEntries(report) {
   return normalizeSnoozeEntries(report?.snoozes || []);
 }
 
-function activeSnoozeRuleSet(report) {
-  return new Set(activeSnoozeEntries(report).map((entry) => entry.rule));
-}
-
-function findActiveSnooze(report, rule) {
-  const normalizedRule = normalizeSnoozeRule(rule);
-  const entries = activeSnoozeEntries(report);
-  return entries.find((entry) => entry.rule === 'all' || entry.rule === normalizedRule) || null;
-}
-
 function thresholdKeyForMeetingType(type) {
   const meetingType = canonicalMeetingType(type);
   if (meetingType === '1:1') return 'oneOnOneDays';
@@ -8433,12 +8361,6 @@ function effectiveThreshold(report, type, settings = app.doc?.settings || { thre
   const key = thresholdKeyForMeetingType(type);
   const overrides = normalizeCadenceOverrides(report?.cadenceOverrides || {});
   return overrides[key] || settings.thresholds[key] || DEFAULT_THRESHOLDS[key];
-}
-
-function thresholdSourceLabel(report, type, settings = app.doc?.settings || { thresholds: DEFAULT_THRESHOLDS }) {
-  const key = thresholdKeyForMeetingType(type);
-  const overrides = normalizeCadenceOverrides(report?.cadenceOverrides || {});
-  return overrides[key] ? 'custom' : 'team';
 }
 
 function addDays(dateString, days) {
@@ -8506,10 +8428,6 @@ function serializeVacations(vacations = []) {
 
 function serializeSnoozes(snoozes = []) {
   return normalizeSnoozeEntries(snoozes).map((entry) => `${snoozeRuleLabel(entry.rule)} until ${entry.until}${entry.reason ? ` (${entry.reason})` : ''}`).join(' | ');
-}
-
-function serializeEvidence(evidence = []) {
-  return normalizeEvidenceEntries(evidence).map((entry) => [entry.date, entry.category, entry.summary].filter(Boolean).join(' · ')).join(' | ');
 }
 
 function parseLocalDate(dateString) {
@@ -8580,12 +8498,6 @@ function startOfCurrentWeek(referenceDate = new Date()) {
   return date;
 }
 
-function weekRangeLabel(weekStart, weekEnd) {
-  const start = formatDate(localDateStamp(weekStart));
-  const end = formatDate(localDateStamp(weekEnd));
-  return weekStart.getMonth() === weekEnd.getMonth() ? `${start} to ${end}` : `${start} to ${end}`;
-}
-
 function latestInteractionDate(report) {
   return [...(report.meetings || [])].map((meeting) => normalizeDate(meeting.meetingDate)).filter(Boolean).sort().pop() || '';
 }
@@ -8609,31 +8521,9 @@ function extractFollowUps(report) {
   return results.sort((a, b) => String(b.meetingDate).localeCompare(String(a.meetingDate)) || String(a.text).localeCompare(String(b.text)));
 }
 
-function latestMeeting(report, type) {
-  return (report?.meetings || []).find((meeting) => canonicalMeetingType(meeting.meetingType) === canonicalMeetingType(type)) || null;
-}
-
 function firstMeaningfulLine(value) {
   return String(value || '').split('\n').map((line) => stripMarkdownLineToText(line)).find(Boolean) || '';
 }
-
-function formatValueForSummary(value) {
-  const text = normalizeText(value);
-  if (!text) return '';
-  const date = normalizeDate(text);
-  return date ? formatDate(date) : text;
-}
-
-function customFieldComparisonKey(field = {}) {
-  return normalizeText(field.id) || normalizeText(field.label).toLowerCase();
-}
-
-
-
-function reportHasActiveVacation(report) {
-  return getVacationStatus(report).active;
-}
-
 
 function workspaceDraftKeyFor(isCreating = app.ui.creatingReport, reportId = app.ui.selectedId) {
   if (isCreating) return 'create:new';
@@ -9118,8 +9008,7 @@ function projectDoc(doc, options = {}) {
       notesHistory: [],
       changeLog: [],
       archived: false,
-      updatedAt: person.createdAt,
-      _meetingUidSet: new Set()
+      updatedAt: person.createdAt
     });
   });
 
@@ -9134,8 +9023,7 @@ function projectDoc(doc, options = {}) {
           notesHistory: [],
           changeLog: [],
           archived: false,
-          updatedAt: event.createdAt,
-          _meetingUidSet: new Set()
+          updatedAt: event.createdAt
         });
       }
       return;
@@ -9192,7 +9080,6 @@ function projectDoc(doc, options = {}) {
         externalUid: normalizeText(event.externalUid),
         createdAt: event.createdAt
       };
-      if (meeting.externalUid) report._meetingUidSet.add(meeting.externalUid);
       report.meetings.push(meeting);
       report.updatedAt = event.createdAt;
       return;
@@ -9409,15 +9296,6 @@ function variantForSupport(flag) {
     'Support needed': 'red',
     'Urgent': 'solid-red'
   }[flag] || 'neutral';
-}
-
-function supportFillForLevel(flag) {
-  return {
-    'Good': 'good',
-    'Monitor': 'neutral',
-    'Support needed': 'red',
-    'Urgent': 'solid-red'
-  }[flag] || 'none';
 }
 
 function badge(label, variant = 'neutral') {
@@ -9866,7 +9744,6 @@ async function connectFolderHandle(handle, options = {}) {
     app.doc = ensureDocShape(initialDoc);
     await persistDocToFolder({ reason: 'import' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     applyProjectedState();
     render();
@@ -9905,7 +9782,6 @@ async function loadDocFromConnectedFolder(options = {}) {
     applyProjectedState();
     await persistDocToFolder({ reason: 'init' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     render();
     if (showSuccessToast) showToast(`Created ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
@@ -9926,7 +9802,6 @@ async function loadDocFromConnectedFolder(options = {}) {
     applyProjectedState();
     await persistDocToFolder({ reason: 'init' });
     app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
     persistUiState();
     render();
     if (showSuccessToast) showToast(`Created a new ${MAIN_JSON_NAME} in ${app.folderHandle.name}.`, 'success');
@@ -9968,7 +9843,6 @@ async function adoptLoadedDoc(doc, options = {}) {
   const { saveReason = '' } = options;
   app.doc = doc;
   app.connectedFolderReady = true;
-  app.ui.startupHasConnectedFolder = true;
   persistUiState();
   let drawError = null;
   try {
@@ -10516,9 +10390,6 @@ async function exportPlainFiles(options = {}) {
 // (is-failed) and No folder connected (is-disconnected). The dot is drawn in CSS.
 function updateFileUi() {
   const connected = !!app.folderHandle && app.connectedFolderReady;
-  saveDockEl.classList.add('hidden');
-  saveDockEl.classList.remove('nudge');
-
   if (!connected) {
     fileStatePillEl.textContent = 'No folder connected';
     fileStatePillEl.className = 'save-status is-disconnected';
@@ -10759,31 +10630,6 @@ function clearSelectedReport(options = {}) {
   return true;
 }
 
-
-function meetingTone(report, type, thresholdDays) {
-  const lastDate = latestMeetingDate(report, type);
-  const age = lastDate ? dateDiffInDays(lastDate) : report.hireDate ? dateDiffInDays(report.hireDate) : null;
-  if (age === null) return 'danger';
-  if (reportHasActiveVacation(report) && age > thresholdDays) return 'success';
-  if (age > thresholdDays) return 'warning';
-  return 'success';
-}
-
-
-
-
-
-
-
-
-
-function renderAttentionBadges(metrics) {
-  if (!metrics.attention.length) return badge('On track', 'success');
-  const visible = metrics.attention.slice(0, 2).map((issue) => badge(issue, attentionTone(issue))).join('');
-  const overflow = metrics.attention.length > 2 ? badge(`+${metrics.attention.length - 2} more`, 'soft') : '';
-  return `${visible}${overflow}`;
-}
-
 function cadenceDueDate(anchorDate, fallbackDate, thresholdDays) {
   const sourceDate = normalizeDate(anchorDate || fallbackDate);
   return sourceDate ? addDays(sourceDate, thresholdDays) : '';
@@ -10828,15 +10674,6 @@ function compareReportsForTable(left, right) {
   if (leftDate !== rightDate) return leftDate.localeCompare(rightDate);
   return String(left.name || '').localeCompare(String(right.name || ''));
 }
-
-
-
-function scrollToReports() {
-  // In the 3-pane shell, the content pane is the scroll container.
-  const contentPane = document.getElementById('contentPane');
-  if (contentPane) contentPane.scrollTop = 0;
-}
-
 
 
 function renderOpenFollowUpsPanel(report, metrics) {
@@ -12034,7 +11871,7 @@ function workspaceScrollBehavior() {
 
 function currentDetailDrawerTab() {
   // Clamp to the visible set: the workspace now only exposes Profile.
-  return VISIBLE_DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
+  return DETAIL_DRAWER_TABS.includes(app.ui.detailDrawerTab) ? app.ui.detailDrawerTab : 'profile';
 }
 
 // Composes a clean A4 one-pager for a person (profile facts, development
@@ -12117,12 +11954,12 @@ function printPdcOnePager(reportId) {
 }
 
 function renderDetailDrawerTabBar(metrics = null, isCreating = false) {
-  if (VISIBLE_DETAIL_DRAWER_TABS.length <= 1) return '';
+  if (DETAIL_DRAWER_TABS.length <= 1) return '';
   const activeTab = currentDetailDrawerTab();
   const openCount = !isCreating && metrics ? (metrics.openFollowUps || []).length : 0;
   return `
     <div class="drawer-workspace-tabs" id="detailWorkspaceTabBar" role="tablist" aria-label="Direct report workspace sections">
-      ${VISIBLE_DETAIL_DRAWER_TABS.map((tab) => {
+      ${DETAIL_DRAWER_TABS.map((tab) => {
         const isActive = tab === activeTab;
         const countChip = tab === 'meetings' && openCount ? `<span class="drawer-tab-count" title="${openCount} open follow-up${openCount === 1 ? '' : 's'}">${openCount}</span>` : '';
         return `<button type="button" class="drawer-workspace-tab${isActive ? ' active' : ''}" data-drawer-tab="${escapeHtml(tab)}" role="tab" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(DETAIL_DRAWER_TAB_LABELS[tab])}${countChip}</button>`;
@@ -12381,7 +12218,7 @@ function renderDetailDrawer() {
     if (newContentEl) newContentEl.scrollTop = previousContentScroll;
   }
 
-  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => navigateRender(() => clearSelectedReport()));
+  document.getElementById('closeDetailDrawerBtn')?.addEventListener('click', () => clearSelectedReport());
   document.getElementById('deleteSelectedBtn')?.addEventListener('click', () => deleteReport(report.id));
   document.getElementById('saveDetailChangesHeaderBtn')?.addEventListener('click', () => {
     document.getElementById('detailEditorForm')?.requestSubmit();
@@ -12426,7 +12263,7 @@ function renderDetailDrawer() {
       captureWorkspaceDraftFromDom(detailEditorFormEl);
       app.ui.detailDrawerTab = nextTab;
       persistUiState();
-      navigateRender(() => renderDetailDrawer());
+      renderDetailDrawer();
     });
   });
   const detailNotesInputEl = document.getElementById('detailNotes');
@@ -12554,20 +12391,6 @@ function renderDetailDrawer() {
     button.addEventListener('click', () => jumpToMeeting(button.getAttribute('data-pulse-jump-meeting')));
   });
   if (!isCreating) {
-    document.querySelectorAll('[data-add-evidence-meeting]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const meetingId = button.getAttribute('data-add-evidence-meeting');
-        const meeting = getReportById(report.id)?.meetings.find((item) => item.id === meetingId);
-        app.ui.detailDrawerTab = 'pdc-summary';
-        persistUiState();
-        addEvidenceDraftRow({ linkedMeetingId: meetingId, date: meeting?.meetingDate || todayStamp() });
-        window.setTimeout(() => {
-          document.getElementById('evidenceLockerSection')?.scrollIntoView({ behavior: workspaceScrollBehavior(), block: 'start' });
-          const row = document.querySelector('#evidenceGroups [data-evidence-row]');
-          row?.querySelector('[data-evidence-summary]')?.focus();
-        }, 0);
-      });
-    });
     document.getElementById('openMeetingModalBtn')?.addEventListener('click', () => openMeetingModal(report.id));
     document.querySelectorAll('[data-edit-meeting]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -12585,23 +12408,6 @@ function renderDetailDrawer() {
     document.querySelector('#detailEditorForm [name="name"]')?.focus();
   }
 }
-// Tracks which collection views were visible on the previous render so entry
-// animations (staggered tiles and cards) fire only when a view first appears,
-// never on in-place re-renders like search keystrokes, filter changes, or
-// saves. Each render function reports its visibility every pass.
-const viewEntryState = new Map();
-function viewJustEntered(viewKey, isVisibleNow) {
-  const wasVisible = viewEntryState.get(viewKey) === true;
-  viewEntryState.set(viewKey, isVisibleNow);
-  return isVisibleNow && !wasVisible;
-}
-
-// Runs a navigation-level DOM update. Views switch instantly (no page fade),
-// which is how Team Pulse always behaved with Stable mode on.
-function navigateRender(update) {
-  update();
-}
-
 // True when a view's section is hidden. Each view renderer returns early then,
 // so render() only rebuilds the view that is on screen. Every way of showing a
 // view goes through render(), which un-hides the section before it calls the
@@ -12760,9 +12566,6 @@ function renderContentHeader(mainView) {
     title = TEAM_HEALTH_TAB_LABELS[tab] || 'Team Health';
     const subs = {
       overview: `${reportCount} ${reportLabel} · quick scan before opening a workspace`,
-      cadence: `How the team is tracking on 1:1, PDC, and CV review rhythms`,
-      attention: `What's driving attention across the team, by rule`,
-      support: `Distribution of manager-assessed support levels across the team`,
       insights: `Tenure river and recent themes across the team`
     };
     subtitle = subs[tab] || '';
@@ -12838,10 +12641,6 @@ function renderSidebar() {
   const thTab = currentTeamHealthTab();
   const reports = getReports();
   const reportCount = reports.length;
-  const attentionCount = reports.filter((r) => {
-    const m = getMetrics(r.id);
-    return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
-  }).length;
   const openFollowUpsTotal = reports.reduce((sum, r) => sum + ((getMetrics(r.id).openFollowUps || []).length), 0);
 
   // Icons from the Moss mockups: 24 grid, 1.8 stroke, round caps and joins.
@@ -12849,9 +12648,6 @@ function renderSidebar() {
   const thIcon = (tab) => {
     switch (tab) {
       case 'overview':  return navIcon('<path d="M3 12h3l2-5 4 10 2-5h7"/>');
-      case 'cadence':   return navIcon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
-      case 'attention': return navIcon('<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/>');
-      case 'support':   return navIcon('<path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"/>');
       case 'insights':  return navIcon('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>');
       default:          return navIcon('<circle cx="12" cy="12" r="3"/>');
     }
@@ -12860,14 +12656,9 @@ function renderSidebar() {
 
   const teamHealthItems = TEAM_HEALTH_TABS.map((tab, tabIndex) => {
     const isActive = mainView === 'teamHealth' && tab === thTab;
-    let badge = '';
-    if (tab === 'attention' && attentionCount > 0) {
-      badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
-    }
     return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}"${current(isActive)} title="${escapeHtml(`${TEAM_HEALTH_TAB_LABELS[tab]} · press ${tabIndex + 1}`)}">
       ${thIcon(tab)}
       <span class="sidebar-item-label">${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
-      ${badge}
     </button>`;
   }).join('');
 
@@ -13158,7 +12949,7 @@ function renderMeetingRoomView() {
     const id = mount.querySelector('[data-open-report-meetings]').getAttribute('data-open-report-meetings');
     closeMeetingRoom({ force: true });
     app.ui.detailDrawerTab = 'meetings';
-    window.setTimeout(() => navigateRender(() => selectReport(id, { keepTab: true })), 0);
+    window.setTimeout(() => selectReport(id, { keepTab: true }), 0);
   });
   document.getElementById('mrInsertPointsBtn')?.addEventListener('click', () => {
     const notesEl = document.getElementById('mrNotes');
@@ -13842,7 +13633,7 @@ function gsGoMain(view, extra = {}) {
     openRulesDrawer();
     return;
   }
-  navigateRender(() => render());
+  render();
 }
 
 function buildGoToEntries() {
@@ -13855,7 +13646,7 @@ function buildGoToEntries() {
     { label: 'PDC Summary', meta: 'List view', run: () => gsGoMain('pdcSummary', { boardMode: false }) },
     { label: 'PDC Board', meta: 'Kanban view', run: () => gsGoMain('pdcSummary', { boardMode: true }) },
     { label: 'Settings', meta: 'View', run: () => gsGoMain('settings') },
-    { label: 'Add direct report', meta: 'Action', run: () => navigateRender(() => openCreateWorkspace()) },
+    { label: 'Add direct report', meta: 'Action', run: () => openCreateWorkspace() },
     { label: 'Export data now', meta: 'Action', run: () => exportPlainFiles() }
   ];
 }
@@ -13869,7 +13660,7 @@ function gsPersonResult(report, group) {
     title: report.name || 'Unnamed',
     meta: `${report.initials ? `${report.initials} · ` : ''}${report.level || 'Level not set'} · PDC ${metrics.pdcStatus}`,
     snippet: '',
-    run: () => navigateRender(() => selectReport(report.id))
+    run: () => selectReport(report.id)
   };
 }
 
@@ -14005,7 +13796,7 @@ function renderGlobalSearchResults() {
       lastGroup = res.group;
     }
     const iconHtml = res.avatarId
-      ? `<span class="gs-avatar" style="${avatarGradient(res.avatarId)}" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
+      ? `<span class="gs-avatar" aria-hidden="true">${escapeHtml(personInitials(res.avatarName || res.title))}</span>`
       : `<span class="gs-icon" aria-hidden="true">→</span>`;
     html += `<button type="button" class="gs-row${i === gsActiveIndex ? ' active' : ''}" role="option" id="gs-opt-${i}" aria-selected="${i === gsActiveIndex ? 'true' : 'false'}" tabindex="-1" data-gs-index="${i}">
       ${iconHtml}
@@ -14531,7 +14322,6 @@ function collectWorkspaceVacations() {
   }).filter((vacation) => vacation.startDate || vacation.endDate || vacation.note);
 }
 
-
 function collectWorkspaceEvidence() {
   return [...document.querySelectorAll('#evidenceGroups [data-evidence-row]')].map((row) => {
     const fallbackId = row.getAttribute('data-evidence-row') || '';
@@ -14549,10 +14339,7 @@ function collectWorkspaceEvidence() {
 }
 
 function buildReportPayloadFromForm(formData, existingReport = null) {
-  const customFieldContainer = document.getElementById('detailCustomFieldsList');
-  const customFields = customFieldContainer
-    ? collectWorkspaceCustomFields(existingReport?.customFields || [])
-    : deepCopy(existingReport?.customFields || []);
+  const customFields = deepCopy(existingReport?.customFields || []);
   const cadenceOverrideInputsPresent = !!document.querySelector('[name="cadenceOneOnOneDays"], [name="cadencePdcDays"], [name="cadenceCvReviewDays"]');
   const evidenceInputsPresent = !!document.getElementById('evidenceGroups');
   const profileInputsPresent = !!document.querySelector('[name="name"]');
@@ -14588,13 +14375,9 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     pdcStatus: document.querySelector('[name="pdcStatus"]')
       ? normalizePdcStatus(formData.get('pdcStatus'))
       : normalizePdcStatus(existingReport?.rawPdcStatus !== undefined ? existingReport.rawPdcStatus : existingReport?.pdcStatus),
-    developmentGoalSummary: document.querySelector('[name="developmentGoalSummary"]')
-      ? normalizeText(formData.get('developmentGoalSummary'))
-      : normalizeText(existingReport?.developmentGoalSummary),
+    developmentGoalSummary: normalizeText(existingReport?.developmentGoalSummary),
     promotionReadiness: normalizeText(formData.get('promotionReadiness')),
-    agenda: document.querySelector('[name="agenda"]')
-      ? normalizeText(formData.get('agenda'))
-      : normalizeText(existingReport?.agenda),
+    agenda: normalizeText(existingReport?.agenda),
     talkingPoints: normalizeTalkingPoints(existingReport?.talkingPoints || []),
     goals: normalizeGoals(existingReport?.goals || []),
     notes: normalizeText(formData.get('notes')),
@@ -14611,19 +14394,6 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     evidence: evidenceInputsPresent ? collectWorkspaceEvidence() : deepCopy(existingReport?.evidence || []),
     customFields
   };
-}
-
-function collectWorkspaceCustomFields(existingFields = []) {
-  return [...document.querySelectorAll('#detailCustomFieldsList [data-custom-field]')]
-    .map((row, index) => {
-      const id = row.getAttribute('data-custom-field') || existingFields[index]?.id || nextId('customField');
-      return normalizeCustomField({
-        id,
-        label: row.querySelector('[data-custom-field-label]')?.value,
-        value: row.querySelector('[data-custom-field-value]')?.value
-      }, id);
-    })
-    .filter((field) => field.label || field.value);
 }
 
 function appendEvent(event) {
@@ -14903,10 +14673,6 @@ async function saveFeedbackEntry(reportId, entryInput) {
   return ok;
 }
 
-function goalStatusVariant(status) {
-  return { 'On track': 'good', 'At risk': 'red', 'Paused': 'outline', 'Done': 'solid-good' }[status] || 'neutral';
-}
-
 function renderGoalProgressBar(goal, options = {}) {
   const progress = Math.max(0, Math.min(100, Number(goal?.progress) || 0));
   const compact = options.compact ? ' compact' : '';
@@ -14928,13 +14694,6 @@ function statusPillHtml(kind, value) {
   return `<span class="status-pill" data-pill-kind="${escapeHtml(kind)}" data-pill-value="${escapeHtml(value)}">${escapeHtml(value)}</span>`;
 }
 
-// Moss avatars are flat: initials on --sunken in --ink, styled by the avatar
-// classes in src/styles/04-moss-components.css. The function stays so every
-// call site keeps working; it adds no per-person color.
-function avatarGradient(personId) {
-  return '';
-}
-
 // --- Illustrated empty states -------------------------------------------
 // Inline stroke icons in the same style as the sidebar set, so the zero
 // network promise holds. Used by the big first-run and all-clear states;
@@ -14949,7 +14708,7 @@ const EMPTY_HERO_ICONS = Object.freeze({
 function emptyHeroHtml(kind, title, body, actionHtml = '') {
   const icon = EMPTY_HERO_ICONS[kind] || EMPTY_HERO_ICONS.inbox;
   return `
-    <div class="empty-hero${kind === 'clear' ? ' celebrate' : ''}">
+    <div class="empty-hero">
       <div class="empty-hero-icon" aria-hidden="true">${icon}</div>
       <h3>${escapeHtml(title)}</h3>
       <p>${escapeHtml(body)}</p>
@@ -14997,7 +14756,7 @@ function openMeetingRoom(reportId, options = {}) {
   meetingRoomDraftFor(reportId);
   if (options.presetType && MEETING_TYPES.includes(options.presetType)) meetingRoomDraft.meetingType = options.presetType;
   persistUiState();
-  navigateRender(() => render());
+  render();
 }
 
 // True while the room holds notes or ticked talking points that are not
@@ -15020,7 +14779,7 @@ function closeMeetingRoom(options = {}) {
   app.ui.meetingRoomReportId = '';
   app.ui.mainView = returnView;
   persistUiState();
-  navigateRender(() => render());
+  render();
 }
 
 function captureMeetingRoomDraftFromDom() {
@@ -15107,7 +14866,6 @@ async function saveWorkspaceChanges(event, reportId) {
   renderDetailDrawer();
   showToast('Changes saved.', 'success');
 }
-
 
 function meetingExistsForReport(report, meetingType, meetingDate, notes, externalUid = '', excludeMeetingId = '') {
   if (externalUid && report.meetings.some((meeting) => meeting.id !== excludeMeetingId && meeting.externalUid && meeting.externalUid === externalUid)) return true;
@@ -15772,8 +15530,6 @@ async function importLegacyJsonFlow() {
   }
 }
 
-
-
 function closeDataMenu() {
   dataMenuEl?.removeAttribute('open');
 }
@@ -15808,7 +15564,7 @@ function bindStaticEvents() {
         }
         app.ui.teamHealthTab = nextTab;
         persistUiState();
-        navigateRender(() => render());
+        render();
         return;
       }
       // Main-view nav (Direct Reports / Meetings / Settings).
@@ -15829,7 +15585,7 @@ function bindStaticEvents() {
           openRulesDrawer();
           return;
         }
-        navigateRender(() => render());
+        render();
         return;
       }
     });
@@ -15841,7 +15597,7 @@ function bindStaticEvents() {
     reportsGridEl.addEventListener('click', (event) => {
       const addBtn = event.target.closest('[data-report-add]');
       if (addBtn) {
-        navigateRender(() => openCreateWorkspace());
+        openCreateWorkspace();
         return;
       }
       const roomBtn = event.target.closest('[data-open-room]');
@@ -15857,13 +15613,13 @@ function bindStaticEvents() {
       }
       const personBtn = event.target.closest('[data-table-person]');
       if (personBtn) {
-        navigateRender(() => selectReport(personBtn.getAttribute('data-table-person')));
+        selectReport(personBtn.getAttribute('data-table-person'));
         return;
       }
       const tile = event.target.closest('[data-report-card]');
       if (tile) {
         const id = tile.getAttribute('data-report-card');
-        navigateRender(() => selectReport(id));
+        selectReport(id);
       }
     });
     reportsGridEl.addEventListener('keydown', (event) => {
@@ -15921,7 +15677,7 @@ function bindStaticEvents() {
       if (nextMode === (app.ui.reportsViewMode === 'table' ? 'table' : 'tiles')) return;
       app.ui.reportsViewMode = nextMode;
       persistUiState();
-      navigateRender(() => renderReportsGrid());
+      renderReportsGrid();
     });
   }
 
@@ -16027,7 +15783,7 @@ function bindStaticEvents() {
         return;
       }
       const profileBtn = event.target.closest('[data-followup-open-profile]');
-      if (profileBtn) navigateRender(() => selectReport(profileBtn.getAttribute('data-followup-open-profile')));
+      if (profileBtn) selectReport(profileBtn.getAttribute('data-followup-open-profile'));
     });
   }
 
@@ -16072,7 +15828,7 @@ function bindStaticEvents() {
       const openBtn = event.target.closest('[data-pdc-summary-open]');
       if (openBtn) {
         const id = openBtn.getAttribute('data-pdc-summary-open');
-        if (id) navigateRender(() => selectReport(id));
+        if (id) selectReport(id);
         return;
       }
       const roomBtn = event.target.closest('[data-open-room]');
@@ -16093,7 +15849,7 @@ function bindStaticEvents() {
           app.ui.pdcViewMode = nextMode;
           app.ui.pdcBoardDateId = '';
           persistUiState();
-          navigateRender(() => renderPdcSummaryView());
+          renderPdcSummaryView();
         }
         return;
       }
@@ -16185,7 +15941,7 @@ function bindStaticEvents() {
     });
   }
 
-  addReportBtn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
+  addReportBtn.addEventListener('click', () => openCreateWorkspace());
   startupChooseFolderBtn?.addEventListener('click', async () => {
     const connected = await chooseFolderAndConnect();
     if (connected) closeStartupPrompt();
@@ -16260,8 +16016,6 @@ function bindStaticEvents() {
     event.preventDefault();
     items[next].focus();
   });
-  saveDockBtn.addEventListener('click', () => flushAutosaveQueue(true));
-  dismissDockBtn.addEventListener('click', () => saveDockEl.classList.add('hidden'));
 
   reportsPlanFilterEl?.addEventListener('change', () => {
     app.ui.planFilter = reportsPlanFilterEl.value || '';
@@ -16424,16 +16178,6 @@ function bindStaticEvents() {
     showToast('Settings reset to defaults.', 'success');
   });
 
-  teamHealthTabBarEl.addEventListener('click', (event) => {
-    const tabBtn = event.target.closest('[data-team-health-tab]');
-    if (!tabBtn) return;
-    const nextTab = tabBtn.getAttribute('data-team-health-tab');
-    if (!TEAM_HEALTH_TABS.includes(nextTab)) return;
-    if (currentTeamHealthTab() === nextTab) return;
-    app.ui.teamHealthTab = nextTab;
-    persistUiState();
-    navigateRender(() => renderTeamHealth());
-  });
   teamHealthBodyEl.addEventListener('click', (event) => {
     const briefBtn = event.target.closest('[data-briefing-go]');
     if (briefBtn) {
@@ -16445,14 +16189,14 @@ function bindStaticEvents() {
           app.ui.selectedId = null;
           app.ui.creatingReport = false;
           persistUiState();
-          navigateRender(() => render());
+          render();
         }
       } else if (target.startsWith('tab:')) {
         const nextTab = target.slice(4);
         if (TEAM_HEALTH_TABS.includes(nextTab)) {
           app.ui.teamHealthTab = nextTab;
           persistUiState();
-          navigateRender(() => renderTeamHealth());
+          renderTeamHealth();
         }
       }
       return;
@@ -16470,7 +16214,7 @@ function bindStaticEvents() {
     const cdpOpenBtn = event.target.closest('[data-cdp-open]');
     if (cdpOpenBtn) {
       app.ui.detailDrawerTab = 'pdc-summary';
-      navigateRender(() => selectReport(cdpOpenBtn.getAttribute('data-cdp-open')));
+      selectReport(cdpOpenBtn.getAttribute('data-cdp-open'));
       return;
     }
     const modeBtn = event.target.closest('[data-tenure-mode]');
@@ -16485,12 +16229,12 @@ function bindStaticEvents() {
     }
     const reportTrigger = event.target.closest('[data-tenure-open]');
     if (reportTrigger) {
-      navigateRender(() => selectReport(reportTrigger.getAttribute('data-tenure-open')));
+      selectReport(reportTrigger.getAttribute('data-tenure-open'));
       return;
     }
     const glyphBtn = event.target.closest('[data-glyph-open]');
     if (glyphBtn) {
-      navigateRender(() => selectReport(glyphBtn.getAttribute('data-glyph-open')));
+      selectReport(glyphBtn.getAttribute('data-glyph-open'));
       return;
     }
     const themeBtn = event.target.closest('[data-theme-filter]');
@@ -16504,7 +16248,7 @@ function bindStaticEvents() {
         app.ui.creatingReport = false;
       }
       persistUiState();
-      navigateRender(() => render());
+      render();
       return;
     }
   });
@@ -16514,7 +16258,7 @@ function bindStaticEvents() {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       const id = trigger.getAttribute('data-tenure-open') || trigger.getAttribute('data-glyph-open');
-      if (id) navigateRender(() => selectReport(id));
+      if (id) selectReport(id);
     }
   });
 
@@ -17330,14 +17074,6 @@ function currentTeamHealthTab() {
   return TEAM_HEALTH_TABS.includes(mapped) ? mapped : 'overview';
 }
 
-function renderTeamHealthTabBar() {
-  const activeTab = currentTeamHealthTab();
-  teamHealthTabBarEl.innerHTML = TEAM_HEALTH_TABS.map((tab) => {
-    const isActive = tab === activeTab;
-    return `<button type="button" role="tab" class="team-health-tab${isActive ? ' active' : ''}" data-team-health-tab="${escapeHtml(tab)}" aria-selected="${isActive ? 'true' : 'false'}">${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</button>`;
-  }).join('');
-}
-
 // ============================================================================
 // Overview dashboard (Team Health > Overview tab)
 // ============================================================================
@@ -17683,9 +17419,9 @@ function renderOverviewTabHtml(reports) {
   `;
 }
 
-function renderInsightsTabHtml(reports, entering = false) {
+function renderInsightsTabHtml(reports) {
   return `
-    <div class="insights-tab${entering ? ' anim-entry' : ''}">
+    <div class="insights-tab">
       ${renderHealthTrendCard(reports)}
       ${renderCdpTeamCard(reports)}
       ${renderTeamTenureCard(reports)}
@@ -17694,11 +17430,9 @@ function renderInsightsTabHtml(reports, entering = false) {
   `;
 }
 
-
 function renderTeamHealth() {
   if (viewSectionHidden('teamHealthSection')) return;
   const reports = getReports();
-  teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
   if (!reports.length) {
     teamHealthBodyEl.innerHTML = emptyHeroHtml(
       'people',
@@ -17706,15 +17440,13 @@ function renderTeamHealth() {
       'Add your first direct report and Team Pulse starts tracking 1:1 cadence, development, and follow-ups from day one.',
       '<button id="teamHealthEmptyAddBtn" type="button">Add your first direct report</button>'
     );
-    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
+    document.getElementById('teamHealthEmptyAddBtn')?.addEventListener('click', () => openCreateWorkspace());
     return;
   }
-  renderTeamHealthTabBar();
   const tab = currentTeamHealthTab();
-  const insightsEntering = viewJustEntered('insightsTab', app.ui.mainView === 'teamHealth' && tab === 'insights');
   let panelHtml = '';
   if (tab === 'overview') panelHtml = renderOverviewTabHtml(reports);
-  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports, insightsEntering);
+  else if (tab === 'insights') panelHtml = renderInsightsTabHtml(reports);
   teamHealthBodyEl.innerHTML = panelHtml;
 }
 
@@ -17761,7 +17493,7 @@ function keyboardNavigateToSlot(slot) {
     }
     app.ui.teamHealthTab = nextTab;
     persistUiState();
-    navigateRender(() => render());
+    render();
     return;
   }
   const viewBySlot = { 3: 'reports', 4: 'meetings', 5: 'followUps', 6: 'pdcSummary', 7: 'settings' };
@@ -17780,7 +17512,7 @@ function keyboardNavigateToSlot(slot) {
     openRulesDrawer();
     return;
   }
-  navigateRender(() => render());
+  render();
 }
 
 // --- Tick feedback ------------------------------------------------------

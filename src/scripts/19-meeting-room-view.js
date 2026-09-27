@@ -192,7 +192,7 @@ function renderMeetingRoomView() {
     const id = mount.querySelector('[data-open-report-meetings]').getAttribute('data-open-report-meetings');
     closeMeetingRoom({ force: true });
     app.ui.detailDrawerTab = 'meetings';
-    window.setTimeout(() => navigateRender(() => selectReport(id, { keepTab: true })), 0);
+    window.setTimeout(() => selectReport(id, { keepTab: true }), 0);
   });
   document.getElementById('mrInsertPointsBtn')?.addEventListener('click', () => {
     const notesEl = document.getElementById('mrNotes');

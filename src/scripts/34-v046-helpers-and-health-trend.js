@@ -24,7 +24,7 @@ function keyboardNavigateToSlot(slot) {
     }
     app.ui.teamHealthTab = nextTab;
     persistUiState();
-    navigateRender(() => render());
+    render();
     return;
   }
   const viewBySlot = { 3: 'reports', 4: 'meetings', 5: 'followUps', 6: 'pdcSummary', 7: 'settings' };
@@ -43,7 +43,7 @@ function keyboardNavigateToSlot(slot) {
     openRulesDrawer();
     return;
   }
-  navigateRender(() => render());
+  render();
 }
 
 // --- Tick feedback ------------------------------------------------------

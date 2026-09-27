@@ -1,20 +1,3 @@
-// Tracks which collection views were visible on the previous render so entry
-// animations (staggered tiles and cards) fire only when a view first appears,
-// never on in-place re-renders like search keystrokes, filter changes, or
-// saves. Each render function reports its visibility every pass.
-const viewEntryState = new Map();
-function viewJustEntered(viewKey, isVisibleNow) {
-  const wasVisible = viewEntryState.get(viewKey) === true;
-  viewEntryState.set(viewKey, isVisibleNow);
-  return isVisibleNow && !wasVisible;
-}
-
-// Runs a navigation-level DOM update. Views switch instantly (no page fade),
-// which is how Team Pulse always behaved with Stable mode on.
-function navigateRender(update) {
-  update();
-}
-
 // True when a view's section is hidden. Each view renderer returns early then,
 // so render() only rebuilds the view that is on screen. Every way of showing a
 // view goes through render(), which un-hides the section before it calls the
@@ -173,9 +156,6 @@ function renderContentHeader(mainView) {
     title = TEAM_HEALTH_TAB_LABELS[tab] || 'Team Health';
     const subs = {
       overview: `${reportCount} ${reportLabel} · quick scan before opening a workspace`,
-      cadence: `How the team is tracking on 1:1, PDC, and CV review rhythms`,
-      attention: `What's driving attention across the team, by rule`,
-      support: `Distribution of manager-assessed support levels across the team`,
       insights: `Tenure river and recent themes across the team`
     };
     subtitle = subs[tab] || '';
@@ -251,10 +231,6 @@ function renderSidebar() {
   const thTab = currentTeamHealthTab();
   const reports = getReports();
   const reportCount = reports.length;
-  const attentionCount = reports.filter((r) => {
-    const m = getMetrics(r.id);
-    return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
-  }).length;
   const openFollowUpsTotal = reports.reduce((sum, r) => sum + ((getMetrics(r.id).openFollowUps || []).length), 0);
 
   // Icons from the Moss mockups: 24 grid, 1.8 stroke, round caps and joins.
@@ -262,9 +238,6 @@ function renderSidebar() {
   const thIcon = (tab) => {
     switch (tab) {
       case 'overview':  return navIcon('<path d="M3 12h3l2-5 4 10 2-5h7"/>');
-      case 'cadence':   return navIcon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
-      case 'attention': return navIcon('<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/>');
-      case 'support':   return navIcon('<path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"/>');
       case 'insights':  return navIcon('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>');
       default:          return navIcon('<circle cx="12" cy="12" r="3"/>');
     }
@@ -273,14 +246,9 @@ function renderSidebar() {
 
   const teamHealthItems = TEAM_HEALTH_TABS.map((tab, tabIndex) => {
     const isActive = mainView === 'teamHealth' && tab === thTab;
-    let badge = '';
-    if (tab === 'attention' && attentionCount > 0) {
-      badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
-    }
     return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}"${current(isActive)} title="${escapeHtml(`${TEAM_HEALTH_TAB_LABELS[tab]} · press ${tabIndex + 1}`)}">
       ${thIcon(tab)}
       <span class="sidebar-item-label">${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
-      ${badge}
     </button>`;
   }).join('');
 

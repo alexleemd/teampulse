@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.55.7';
+const APP_VERSION = 'v0.55.8';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -97,7 +97,6 @@ const DEFAULT_UI = Object.freeze({
   planFilter: '',
   attentionFilter: '',
   exportReminderSnoozedUntil: '',
-  startupHasConnectedFolder: false,
   creatingReport: false,
   detailDrawerTab: 'profile',
   profileEditMode: false,
@@ -131,7 +130,6 @@ const TEAM_HEALTH_TAB_LABELS = Object.freeze({
 // sidebar views are the cross-team rollups; these tabs are the per-person deep
 // dive (and the only place PDC focus, notes, evidence, and snoozes are edited).
 const DETAIL_DRAWER_TABS = Object.freeze(['profile', 'meetings', 'pdc-summary', 'timeline']);
-const VISIBLE_DETAIL_DRAWER_TABS = DETAIL_DRAWER_TABS;
 const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
   'profile': 'Profile',
   'meetings': 'Meetings & Talking Points',
@@ -140,7 +138,6 @@ const DETAIL_DRAWER_TAB_LABELS = Object.freeze({
 });
 
 const FORMATTERS = {
-  shortDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
   longDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
   dateTime: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
   monthDay: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
@@ -149,7 +146,6 @@ const FORMATTERS = {
   monthYear: new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }),
   weekdayDate: new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 };
-
 
 const app = {
   doc: null,
@@ -172,7 +168,6 @@ const app = {
   saveConflict: false,
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
-  exportReminderVisible: false,
   // True once the backup file dates below were read from the connected folder.
   fileStatsLoaded: false,
   fileStats: {
@@ -205,8 +200,6 @@ const createJsonFileBtn = document.getElementById('createJsonFileBtn');
 const openJsonFileBtn = document.getElementById('openJsonFileBtn');
 const teamHealthSectionEl = document.getElementById('teamHealthSection');
 const teamHealthBodyEl = document.getElementById('teamHealthBody');
-const teamHealthTabBarEl = document.getElementById('teamHealthTabBar');
-const detailDrawerOverlayEl = document.getElementById('detailDrawerOverlay');
 const detailDrawerEl = document.getElementById('detailDrawer');
 const rulesDrawerOverlayEl = document.getElementById('rulesDrawerOverlay');
 const addReportBtn = document.getElementById('addReportBtn');
@@ -218,11 +211,6 @@ const icsFileInputEl = document.getElementById('icsFileInput');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const appVersionEl = document.getElementById('appVersion');
 const fileStatePillEl = document.getElementById('fileStatePill');
-const saveDockEl = document.getElementById('saveDock');
-const saveDockTitleEl = document.getElementById('saveDockTitle');
-const saveDockTextEl = document.getElementById('saveDockText');
-const saveDockBtn = document.getElementById('saveDockBtn');
-const dismissDockBtn = document.getElementById('dismissDockBtn');
 const thresholdFormEl = document.getElementById('thresholdForm');
 const oneOnOneThresholdEl = document.getElementById('oneOnOneThreshold');
 const developmentThresholdEl = document.getElementById('developmentThreshold');
@@ -304,7 +292,6 @@ function persistUiState() {
     teamTenureMode: app.ui.teamTenureMode === 'promotion' ? 'promotion' : 'tenure',
     teamHealthTab: currentTeamHealthTab(),
     mainView: MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth',
-    startupHasConnectedFolder: !!app.ui.startupHasConnectedFolder,
     meetingsFilterReportId: app.ui.meetingsFilterReportId || '',
     meetingsTypeFilter: app.ui.meetingsTypeFilter || '',
     pdcViewMode: ['board', 'oneOnOneBoard'].includes(app.ui.pdcViewMode) ? app.ui.pdcViewMode : 'list',
