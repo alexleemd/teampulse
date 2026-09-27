@@ -335,7 +335,7 @@ function renderDetailDrawer() {
                 <div class="drawer-section-head">
                   <div>
                     <h3>Danger Zone</h3>
-                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document — the GDPR right-to-erasure path. It cannot be undone.</p>
+                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
                   </div>
                   <button type="button" class="danger" id="purgeReportBtn">Erase permanently</button>
                 </div>
