@@ -180,7 +180,7 @@ function renderDetailDrawer() {
         <div class="drawer-header-top">
           <div class="drawer-header-identity">
             <div class="detail-title-row">
-              ${isCreating ? '' : `<div class="detail-page-header-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
+              ${isCreating ? '' : `<div class="detail-page-header-avatar" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
               <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
             </div>
             <div class="detail-subhead">

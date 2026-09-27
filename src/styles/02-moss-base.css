@@ -35,9 +35,6 @@ svg { flex-shrink: 0; }
 
 /* --- Motion policy ------------------------------------------------------
    Motion only answers the user and lasts 150 ms or less. Nothing loops. */
-::view-transition-group(*),
-::view-transition-old(*),
-::view-transition-new(*) { animation-duration: 150ms; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
@@ -100,17 +97,6 @@ body.overlay-open { overflow: hidden; }
 .meeting-summary-toggle::before { content: "Open"; }
 details[open] > .meeting-summary .meeting-summary-toggle::before { content: "Hide"; }
 .mr-prev-summary::-webkit-details-marker { display: none; }
-
-/* --- Setting: Stable mode hides helper copy ----------------------------
-   Kept exactly as before the redesign (see the pull request for the note on
-   how this interacts with the mockups). Empty state messages carry the class
-   .empty-note and stay visible. */
-body.stable-mode .section-note:not(.empty-note),
-body.stable-mode .table-tip,
-body.stable-mode .drawer-header p,
-body.stable-mode .help-text:not(.empty-note),
-body.stable-mode .toggle-copy p,
-body.stable-mode .panel-header p { display: none; }
 
 /* --- Behavior: print ---------------------------------------------------- */
 #printSheet { display: none; }

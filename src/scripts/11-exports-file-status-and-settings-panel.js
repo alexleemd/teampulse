@@ -252,9 +252,7 @@ function renderExportReminderBanner() {
 
 function renderSettingsPanel() {
   const healthPanelEl = document.getElementById('dataHealthPanel');
-  const stableModeToggleEl = document.getElementById('stableModeToggle');
   if (!healthPanelEl) return;
-  if (stableModeToggleEl) stableModeToggleEl.checked = !!app.doc?.settings?.stableMode;
 
   const eventDates = (app.doc?.events || []).map((event) => event.createdAt).filter(Boolean).sort();
   const firstEvent = eventDates[0] || '';
