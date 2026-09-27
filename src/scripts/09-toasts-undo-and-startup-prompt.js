@@ -181,12 +181,17 @@ function clearLastDestructiveAction() {
   app.lastDestructiveAction = null;
 }
 
-function undoLastDestructiveAction() {
-  const action = app.lastDestructiveAction;
-  if (!action) return false;
+// Each Undo toast is bound to its own action (undoDestructiveAction), so an
+// older toast's Undo reverses what that toast reported and never a later
+// delete. It removes the delete event only if it is still in the log, so an
+// Undo after an import, restore or erasure changes nothing.
+function undoDestructiveAction(action) {
+  if (!action || !app.doc) return false;
   if (action.kind === 'deleteReport' || action.kind === 'deleteMeeting') {
-    app.doc.events = (app.doc.events || []).filter((event) => event.id !== action.eventId);
-    clearLastDestructiveAction();
+    const events = app.doc.events || [];
+    if (!events.some((event) => event.id === action.eventId)) return false;
+    app.doc.events = events.filter((event) => event.id !== action.eventId);
+    if (app.lastDestructiveAction === action) clearLastDestructiveAction();
     applyProjectedState();
     render();
     scheduleAutosave();
