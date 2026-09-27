@@ -272,7 +272,7 @@ function renderBriefingSection(reportStates) {
   if (!reportStates.length) return '';
   const items = buildBriefingItems(reportStates);
   if (!items.length) return '';
-  const dateLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  const dateLabel = FORMATTERS.weekdayDate.format(new Date());
   const rows = items.map((item) => {
     if (item.people && item.people.length) {
       const chips = item.people.map((person) => `
