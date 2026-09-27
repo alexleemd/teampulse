@@ -7532,7 +7532,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.5';
+const APP_VERSION = 'v0.55.6';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -13206,9 +13206,10 @@ function renderReportsGrid() {
   if (!mount) return;
   const total = getReports().length;
   // getFilteredReports applies search, PDC status, attention state, and the
-  // Insights theme filter. The grid re-sorts alphabetically for scannability;
-  // urgency is signaled by the chips on each tile instead of by ordering.
-  const filtered = [...getFilteredReports()].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  // Insights theme filter. Tiles and table are sorted alphabetically for
+  // scannability; urgency is signaled by the chips on each tile instead of by
+  // ordering. People with the same name keep the urgency order.
+  const filtered = getFilteredReports().sort((a, b) => (a.name || '').localeCompare(b.name || '') || compareReportsForTable(a, b));
 
   // Sync toolbar controls without clobbering focus.
   const searchEl = document.getElementById('reportsGridSearch');
@@ -17180,6 +17181,8 @@ function reportMatchesThemeFilter(report, term, windowDays = getThemeWindowDays(
   return ` ${haystack} `.includes(` ${needle} `);
 }
 
+// The reports that pass the search, the PDC and Show selects and the theme
+// filter, in the projection's order (by name). The caller sorts them.
 function getFilteredReports() {
   const term = normalizeText(app.ui.searchTerm).toLowerCase();
   const plan = normalizeText(app.ui.planFilter);
@@ -17218,7 +17221,7 @@ function getFilteredReports() {
     if (attentionFilter === 'on-vacation' && !metrics.vacationStatus.active) return false;
     if (activeTheme && !reportMatchesThemeFilter(report, activeTheme, themeWindowDays)) return false;
     return true;
-  }).sort(compareReportsForTable);
+  });
 }
 
 function renderQuickFilterBar() {
