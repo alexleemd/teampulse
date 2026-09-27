@@ -1,7 +1,7 @@
 
 function applyProjectedState() {
   app.doc = ensureDocShape(app.doc || makeEmptyDoc());
-  app.projections = projectDoc(app.doc || makeEmptyDoc());
+  app.projections = projectDoc(app.doc, { normalized: true });
   if (app.ui.selectedId && !app.projections.reportMap.has(app.ui.selectedId)) {
     app.ui.selectedId = null;
     clearWorkspaceDraft();
