@@ -486,8 +486,8 @@ function bindStaticEvents() {
     renderReportsGrid();
   });
 
-  closeMeetingModalBtn.addEventListener('click', closeMeetingModal);
-  cancelMeetingModalBtn.addEventListener('click', closeMeetingModal);
+  closeMeetingModalBtn.addEventListener('click', dismissMeetingModal);
+  cancelMeetingModalBtn.addEventListener('click', dismissMeetingModal);
   meetingFormEl.addEventListener('submit', handleMeetingSubmit);
   bindMarkdownShell('meetingNotesShell', { textareaEl: meetingNotesInputEl, previewEl: meetingNotesPreviewEl, onSync: syncMeetingNotesPreview });
   meetingImportIcsBtn.addEventListener('click', () => {
@@ -553,8 +553,8 @@ function bindStaticEvents() {
     if (ok) closeGoalModal();
     else setStatus(document.getElementById('goalStatusLine'), 'Check the goal fields and try again.', 'error');
   });
-  document.getElementById('closeGoalModalBtn')?.addEventListener('click', closeGoalModal);
-  document.getElementById('cancelGoalModalBtn')?.addEventListener('click', closeGoalModal);
+  document.getElementById('closeGoalModalBtn')?.addEventListener('click', dismissGoalModal);
+  document.getElementById('cancelGoalModalBtn')?.addEventListener('click', dismissGoalModal);
   document.getElementById('deleteGoalBtn')?.addEventListener('click', async () => {
     const reportId = normalizeText(document.getElementById('goalReportId')?.value);
     const goalId = normalizeText(document.getElementById('goalId')?.value);
@@ -562,7 +562,7 @@ function bindStaticEvents() {
     const ok = await deleteGoal(reportId, goalId);
     if (ok) closeGoalModal();
   });
-  goalModalEl?.addEventListener('click', (event) => { if (event.target === goalModalEl) closeGoalModal(); });
+  goalModalEl?.addEventListener('click', (event) => { if (event.target === goalModalEl) dismissGoalModal(); });
   feedbackFormEl?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(feedbackFormEl);
@@ -580,9 +580,9 @@ function bindStaticEvents() {
     if (ok) closeFeedbackModal();
     else setStatus(document.getElementById('feedbackStatusLine'), 'Check the feedback fields and try again.', 'error');
   });
-  document.getElementById('closeFeedbackModalBtn')?.addEventListener('click', closeFeedbackModal);
-  document.getElementById('cancelFeedbackModalBtn')?.addEventListener('click', closeFeedbackModal);
-  feedbackModalEl?.addEventListener('click', (event) => { if (event.target === feedbackModalEl) closeFeedbackModal(); });
+  document.getElementById('closeFeedbackModalBtn')?.addEventListener('click', dismissFeedbackModal);
+  document.getElementById('cancelFeedbackModalBtn')?.addEventListener('click', dismissFeedbackModal);
+  feedbackModalEl?.addEventListener('click', (event) => { if (event.target === feedbackModalEl) dismissFeedbackModal(); });
 
   closeRulesDrawerBtn.addEventListener('click', closeRulesDrawer);
   thresholdFormEl.addEventListener('submit', async (event) => {
@@ -734,13 +734,13 @@ function bindStaticEvents() {
   });
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
   // The workspace itself is left alone so unsaved edits can never be lost to
-  // a stray keypress.
+  // a stray keypress. A dialog with unsaved changes asks before it closes.
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       if (globalSearchEl.classList.contains('open')) { closeGlobalSearch(); return; }
-      if (document.getElementById('goalModal')?.classList.contains('open')) { closeGoalModal(); return; }
-      if (document.getElementById('feedbackModal')?.classList.contains('open')) { closeFeedbackModal(); return; }
-      if (meetingModalEl.classList.contains('open')) { closeMeetingModal(); return; }
+      if (document.getElementById('goalModal')?.classList.contains('open')) { dismissGoalModal(); return; }
+      if (document.getElementById('feedbackModal')?.classList.contains('open')) { dismissFeedbackModal(); return; }
+      if (meetingModalEl.classList.contains('open')) { dismissMeetingModal(); return; }
       if (rulesDrawerOverlayEl.classList.contains('open')) { closeRulesDrawer(); return; }
       if (dataMenuEl?.hasAttribute('open')) closeDataMenu();
       return;
@@ -799,7 +799,10 @@ function bindStaticEvents() {
     }
   });
   window.addEventListener('beforeunload', (event) => {
-    if (!app.saveQueued && !app.saveInFlight && !app.lastSaveError && !hasUnsavedWorkspaceChanges()) return;
+    // Also guards typed text that is not saved yet: an open dialog's changes
+    // and the 1:1 room's notes draft (kept after leaving the room).
+    if (!app.saveQueued && !app.saveInFlight && !app.lastSaveError && !hasUnsavedWorkspaceChanges()
+      && !anyDialogHasUnsavedChanges() && !meetingRoomDraftHasContent()) return;
     event.preventDefault();
     event.returnValue = '';
   });
