@@ -255,7 +255,7 @@ function renderDevelopmentPathPanel(editorReport) {
       <div class="drawer-section-head">
         <div>
           <h3>Consultant Development Path</h3>
-          <p class="section-note">Mirrors the capability grid from the Devote PDP template. These ticks are your manager view and save instantly. The consultant's own PDP document stays theirs, and a gap between the two is PDC conversation material.</p>
+          <p class="section-note">Mirrors the capability grid from the PDP template. These ticks are your manager view and save instantly. The consultant's own PDP document stays theirs, and a gap between the two is PDC conversation material.</p>
         </div>
       </div>
       <div class="cdp-layout">
