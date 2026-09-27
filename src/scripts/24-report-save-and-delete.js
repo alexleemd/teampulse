@@ -212,11 +212,12 @@ async function deleteReport(reportId) {
   appendEvent({ id: eventId, type: 'person_archived', personId: reportId, createdAt: nowIso() });
   clearWorkspaceDraft();
   app.ui.selectedId = null;
-  app.lastDestructiveAction = { kind: 'deleteReport', eventId, undoMessage: `${report.name} restored.` };
+  const undoAction = { kind: 'deleteReport', eventId, undoMessage: `${report.name} restored.` };
+  app.lastDestructiveAction = undoAction;
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: undoLastDestructiveAction });
+  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 
 // GDPR right-to-erasure: removes the person record and every event that
