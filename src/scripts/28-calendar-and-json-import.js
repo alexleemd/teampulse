@@ -1,9 +1,7 @@
+// One pass, so an escaped backslash followed by "n" ("\\n") stays a
+// backslash and an "n" instead of turning into a line break.
 function unescapeIcsText(value) {
-  return String(value || '')
-    .replace(/\\n/gi, '\n')
-    .replace(/\\,/g, ',')
-    .replace(/\\;/g, ';')
-    .replace(/\\\\/g, '\\');
+  return String(value || '').replace(/\\([\\;,nN])/g, (match, char) => (char === 'n' || char === 'N' ? '\n' : char));
 }
 
 function parseIcsDate(value) {
@@ -12,7 +10,13 @@ function parseIcsDate(value) {
   if (/^\d{8}$/.test(text)) {
     return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
   }
-  if (/^\d{8}T\d{6}Z?$/.test(text)) {
+  if (/^\d{8}T\d{6}Z$/.test(text)) {
+    // A UTC time: the meeting's date is the local date of that moment, which
+    // near midnight can be the day before or after the UTC date.
+    const date = new Date(`${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}T${text.slice(9, 11)}:${text.slice(11, 13)}:${text.slice(13, 15)}Z`);
+    return localDateStamp(date);
+  }
+  if (/^\d{8}T\d{6}$/.test(text)) {
     return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
   }
   return '';
