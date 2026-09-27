@@ -156,9 +156,6 @@
 
     /* --- Motion policy ------------------------------------------------------
        Motion only answers the user and lasts 150 ms or less. Nothing loops. */
-    ::view-transition-group(*),
-    ::view-transition-old(*),
-    ::view-transition-new(*) { animation-duration: 150ms; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         transition: none !important;
@@ -221,17 +218,6 @@
     .meeting-summary-toggle::before { content: "Open"; }
     details[open] > .meeting-summary .meeting-summary-toggle::before { content: "Hide"; }
     .mr-prev-summary::-webkit-details-marker { display: none; }
-
-    /* --- Setting: Stable mode hides helper copy ----------------------------
-       Kept exactly as before the redesign (see the pull request for the note on
-       how this interacts with the mockups). Empty state messages carry the class
-       .empty-note and stay visible. */
-    body.stable-mode .section-note:not(.empty-note),
-    body.stable-mode .table-tip,
-    body.stable-mode .drawer-header p,
-    body.stable-mode .help-text:not(.empty-note),
-    body.stable-mode .toggle-copy p,
-    body.stable-mode .panel-header p { display: none; }
 
     /* --- Behavior: print ---------------------------------------------------- */
     #printSheet { display: none; }
@@ -7349,7 +7335,7 @@
           <div class="drawer-header-top">
             <div>
               <h2 id="rulesDrawerTitle">Settings</h2>
-              <p id="rulesDrawerCopy">Manage overdue rules, durability, exports, backups, and Stable mode.</p>
+              <p id="rulesDrawerCopy">Manage overdue rules, durability, exports, and backups.</p>
             </div>
             <div class="actions">
               <button id="closeRulesDrawerBtn" class="secondary small" type="button">Close</button>
@@ -7495,19 +7481,6 @@
             <div id="dataHealthStatus" class="status-line"></div>
           </div>
           <div class="drawer-section">
-            <h3 id="stableModeTitle">Stable Mode</h3>
-            <div class="toggle-row">
-              <div class="toggle-copy">
-                <strong id="stableModeLabel">Keep the interface calm</strong>
-                <p>Hides most helper copy so Team Pulse feels finished and steady.</p>
-              </div>
-              <label class="switch">
-                <input id="stableModeToggle" type="checkbox" role="switch" aria-labelledby="stableModeTitle stableModeLabel">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-          <div class="drawer-section">
             <h3>Privacy &amp; Data Lifecycle</h3>
             <p class="section-note">Everything lives in your Team Pulse folder plus a convenience copy in this browser's local storage. Nothing ever leaves this machine. The app makes zero network requests.</p>
             <div class="privacy-actions">
@@ -7537,7 +7510,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.53.5';
+const APP_VERSION = 'v0.54.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -10328,9 +10301,7 @@ function renderExportReminderBanner() {
 
 function renderSettingsPanel() {
   const healthPanelEl = document.getElementById('dataHealthPanel');
-  const stableModeToggleEl = document.getElementById('stableModeToggle');
   if (!healthPanelEl) return;
-  if (stableModeToggleEl) stableModeToggleEl.checked = !!app.doc?.settings?.stableMode;
 
   const eventDates = (app.doc?.events || []).map((event) => event.createdAt).filter(Boolean).sort();
   const firstEvent = eventDates[0] || '';
@@ -11898,7 +11869,7 @@ function renderDetailDrawer() {
         <div class="drawer-header-top">
           <div class="drawer-header-identity">
             <div class="detail-title-row">
-              ${isCreating ? '' : `<div class="detail-page-header-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
+              ${isCreating ? '' : `<div class="detail-page-header-avatar" aria-hidden="true">${escapeHtml((titleText || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?')}</div>`}
               <h2 id="drawerTitle">${escapeHtml(titleText)}</h2>
             </div>
             <div class="detail-subhead">
@@ -12288,28 +12259,16 @@ function viewJustEntered(viewKey, isVisibleNow) {
   return isVisibleNow && !wasVisible;
 }
 
-// Wraps a navigation-level DOM update in the View Transitions API so view
-// switches crossfade and same-named elements morph between states. Only
-// user-gesture navigation goes through here: frequent in-place re-renders
-// (search debounce, draft typing) call render functions directly so text
-// entry never flickers. Falls back to a plain synchronous update when the
-// API is unavailable or the user prefers reduced motion. Callers must not
-// rely on the DOM being updated synchronously after this returns.
+// Runs a navigation-level DOM update. Views switch instantly (no page fade),
+// which is how Team Pulse always behaved with Stable mode on.
 function navigateRender(update) {
-  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const stableMode = !!app.doc?.settings?.stableMode;
-  if (typeof document.startViewTransition === 'function' && !reduceMotion && !stableMode) {
-    document.startViewTransition(() => { update(); });
-  } else {
-    update();
-  }
+  update();
 }
 
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
   if (ready) maybeResetPdcRoundOnRollover();
-  document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
   document.body.classList.toggle('density-compact', app.doc?.settings?.density === 'compact');
 
   // Inline startup gate is only used as a fallback when the modal flow isn't shown
@@ -12476,7 +12435,7 @@ function renderContentHeader(mainView) {
   } else if (mainView === 'meetingRoom') {
     // The 1:1 room: the person's name is the title (it appears once on the
     // page), with level and mentor on the line below. The old subtitle
-    // sentence is helper copy, so Stable mode hides it like the other notes.
+    // sentence is helper copy, shown as a note under the header.
     const roomReport = getReportById(app.ui.meetingRoomReportId);
     title = roomReport ? (roomReport.name || 'Unnamed') : '1:1 meeting room';
     subtitle = roomReport ? `${roomReport.level || 'Level not set'}${roomReport.mentors ? ` · Mentor: ${roomReport.mentors}` : ''}` : '';
@@ -12511,7 +12470,7 @@ function renderSettingsView() {
     <button type="button" class="settings-open-card" data-settings-open="rules">
       <span class="settings-open-card-text">
         <strong>Overdue rules, data health &amp; privacy</strong>
-        <span>Thresholds, toggles, exports, backups, Stable mode, and the disconnect &amp; wipe control.</span>
+        <span>Thresholds, toggles, exports, backups, and the disconnect &amp; wipe control.</span>
       </span>
       <svg class="settings-open-card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
     </button>
@@ -12993,12 +12952,11 @@ function renderReportTileHtml(report, options = {}) {
   const tileTitle = report.initials || report.name || 'Unnamed';
   const openHook = onOverview ? `data-glyph-open="${id}"` : `data-report-card="${id}"`;
   const roomHook = onOverview ? `data-overview-room="${id}"` : `data-open-room="${id}"`;
-  const avatarMorph = onOverview ? '' : ` style="view-transition-name:vt-${id}"`;
   const pulseHtml = renderPulseDots(metrics.pulseSeries, { emptyHtml: '' });
   return `<div class="report-tile">
     <button type="button" class="report-tile-main" ${openHook}>
       <span class="report-tile-head">
-        <span class="report-tile-avatar" aria-hidden="true"${avatarMorph}>${escapeHtml(initials)}</span>
+        <span class="report-tile-avatar" aria-hidden="true">${escapeHtml(initials)}</span>
         <span class="report-tile-name${report.initials ? ' is-code' : ''}" ${hasCode ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
       </span>
       <span class="report-tile-meta">
@@ -16156,17 +16114,6 @@ function bindStaticEvents() {
       runGsResult(gsActiveIndex);
     }
   });
-  document.addEventListener('change', (event) => {
-    if (event.target && event.target.id === 'stableModeToggle') {
-      if (!app.doc) return;
-      clearLastDestructiveAction();
-      app.doc.settings.stableMode = !!event.target.checked;
-      document.body.classList.toggle('stable-mode', !!app.doc.settings.stableMode);
-      scheduleAutosave();
-      render();
-    }
-  });
-
   window.addEventListener('beforeunload', (event) => {
     if (!app.saveQueued && !app.saveInFlight && !app.lastSaveError && !hasUnsavedWorkspaceChanges()) return;
     event.preventDefault();
@@ -16660,7 +16607,6 @@ function applyProjectedState() {
     clearWorkspaceDraft();
   }
   persistUiState();
-  document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
 }
 
 function getThemeWindowDays(settings = app.doc?.settings || normalizeSettings({})) {
