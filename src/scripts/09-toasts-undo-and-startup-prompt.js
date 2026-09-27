@@ -313,8 +313,8 @@ async function clearStoredFolderHandle() {
 }
 
 // Privacy control: forget the folder connection and remove every copy of the
-// data this browser holds (cached document, remembered folder handle, view
-// state). The JSON file and backups in the folder are not touched.
+// data this browser holds (remembered folder handle, view state, and the old
+// document copy earlier versions kept). The JSON file and backups in the folder are not touched.
 async function disconnectAndWipeLocal() {
   const unsaved = app.saveQueued || app.saveInFlight || hasUnsavedWorkspaceChanges();
   const message = unsaved
