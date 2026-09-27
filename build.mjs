@@ -13,7 +13,9 @@
 //
 // In style files, url() references to local files (for example the fonts in
 // src/fonts) are embedded as base64 data URLs, so the page never loads anything.
-// The build stops if the finished page would load anything from the network.
+// The build stops if the finished page would load anything from the network,
+// either through a tag or url() or through a script call such as fetch(),
+// XMLHttpRequest, WebSocket, EventSource, sendBeacon() or a dynamic import().
 //
 //   node build.mjs              write index.html
 //   node build.mjs --check      exit with an error if index.html is not the current build
@@ -37,6 +39,8 @@ const EMBED_TYPES = { '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': '
 const CSS_URL = /url\(\s*(['"]?)([^'")]+)\1\s*\)/g;
 // Anything in the finished page that would make the browser fetch from the network.
 const NETWORK_LOAD = /(?:url\(\s*['"]?|@import\s+(?:url\(\s*)?['"]?|<(?:link|script|img|iframe|source|video|audio|embed|object)\b[^>]*?\s(?:href|src|data)\s*=\s*['"]?)(?:https?:)?\/\//i;
+// Script calls that can reach the network at runtime. The app never needs any of them.
+const NETWORK_API = /\b(?:fetch|sendBeacon|import)\s*\(|\b(?:XMLHttpRequest|WebSocket|EventSource)\b/;
 
 function fail(message) {
   console.error(`build: ${message}`);
@@ -103,6 +107,11 @@ function build() {
   const html = out.join('\n');
   const load = NETWORK_LOAD.exec(html);
   if (load) fail(`the page would load from the network: ${html.slice(load.index, load.index + 80)}`);
+  const api = NETWORK_API.exec(html);
+  if (api) {
+    const line = html.slice(0, api.index).split('\n').length;
+    fail(`the page uses ${api[0].replace(/\s*\($/, '(')} on line ${line}, which could reach the network. Team Pulse must not load anything at runtime.`);
+  }
   return html;
 }
 
