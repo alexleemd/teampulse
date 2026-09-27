@@ -110,6 +110,14 @@ function renderMeetingHeatmapHtml(meetings) {
     </div>`;
 }
 
+// The Meetings list shows the newest MEETINGS_VIEW_PAGE meetings at first and
+// that many more per "Show more" click, so a long history does not build
+// thousands of rows at once. The count goes back to the first page when the
+// person, type or search filter changes.
+const MEETINGS_VIEW_PAGE = 100;
+let meetingsViewLimit = MEETINGS_VIEW_PAGE;
+let meetingsViewLimitKey = '';
+
 function renderMeetingsView() {
   if (viewSectionHidden('meetingsSection')) return;
   const mount = document.getElementById('meetingsBody');
@@ -143,6 +151,12 @@ function renderMeetingsView() {
     });
   });
   items.sort((a, b) => (b.meeting.meetingDate || '').localeCompare(a.meeting.meetingDate || ''));
+  const limitKey = [validFilter, typeFilter, searchTerm].join('\n');
+  if (limitKey !== meetingsViewLimitKey) {
+    meetingsViewLimitKey = limitKey;
+    meetingsViewLimit = MEETINGS_VIEW_PAGE;
+  }
+  const shownItems = items.slice(0, meetingsViewLimit);
   const heatmapHtml = renderMeetingHeatmapHtml(heatmapMeetings);
 
   // Build the person filter options (sorted alphabetically).
@@ -224,7 +238,7 @@ function renderMeetingsView() {
   // the full date on its own line, the first line of the notes, and the
   // follow-up count tag. The title and date lines keep the v0.52.4 text.
   let lastMonthKey = '';
-  const rows = items.map(({ report, meeting }) => {
+  const rows = shownItems.map(({ report, meeting }) => {
     const monthKey = (meeting.meetingDate || '').slice(0, 7) || 'undated';
     const divider = monthKey !== lastMonthKey
       ? `<h3 class="meetings-month-divider">${escapeHtml(monthHeading(meeting.meetingDate))}</h3>`
@@ -262,7 +276,27 @@ function renderMeetingsView() {
   }).join('');
 
   mount.innerHTML = `${toolbar}${heatmapHtml}<div class="meetings-view">${rows}</div>`;
+  if (items.length > shownItems.length) mount.appendChild(meetingsShowMoreEl(mount));
   showLatestHeatmapWeeks(mount);
+}
+
+// "Show more" under the Meetings list. After the click, keyboard focus goes to
+// the first newly shown meeting, which sits where the button was.
+function meetingsShowMoreEl(mount) {
+  const wrap = document.createElement('div');
+  wrap.className = 'meetings-view-more';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'secondary';
+  button.textContent = 'Show more';
+  button.addEventListener('click', () => {
+    const firstNew = meetingsViewLimit;
+    meetingsViewLimit += MEETINGS_VIEW_PAGE;
+    renderMeetingsView();
+    mount.querySelectorAll('.meetings-view-item')[firstNew]?.focus();
+  });
+  wrap.appendChild(button);
+  return wrap;
 }
 
 // When the heatmap is wider than its card (narrow screens), start it scrolled
