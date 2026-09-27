@@ -60,6 +60,7 @@ body.overlay-open { overflow: hidden; }
 .drawer-overlay { z-index: 40; }
 .overlay { z-index: 70; }
 #meetingModal { z-index: 90; }
+#saveConflictOverlay { z-index: 125; }
 .overlay.open, .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
 .drawer, .rules-drawer {
