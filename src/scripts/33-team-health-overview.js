@@ -357,6 +357,7 @@ function renderInsightsTabHtml(reports, entering = false) {
 
 
 function renderTeamHealth() {
+  if (viewSectionHidden('teamHealthSection')) return;
   const reports = getReports();
   teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
   if (!reports.length) {
