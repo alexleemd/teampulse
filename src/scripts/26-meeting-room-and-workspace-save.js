@@ -42,9 +42,17 @@ function openMeetingRoom(reportId, options = {}) {
   navigateRender(() => render());
 }
 
-function closeMeetingRoom(options = {}) {
+// True while the room holds notes or ticked talking points that are not
+// logged yet. The draft outlives leaving the room, so closing the app checks
+// this too (beforeunload in 29).
+function meetingRoomDraftHasContent() {
+  captureMeetingRoomDraftFromDom();
   const draft = meetingRoomDraft;
-  if (!options.force && draft && (normalizeText(draft.notes) || draft.checkedPointIds.length)) {
+  return !!(draft && (normalizeText(draft.notes) || draft.checkedPointIds.length));
+}
+
+function closeMeetingRoom(options = {}) {
+  if (!options.force && meetingRoomDraftHasContent()) {
     if (!window.confirm('Leave the meeting room? The unlogged notes draft stays until you close the app.')) return;
   }
   if (options.discardDraft) discardMeetingRoomDraft();
