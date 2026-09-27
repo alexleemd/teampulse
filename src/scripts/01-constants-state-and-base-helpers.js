@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.54.5';
+const APP_VERSION = 'v0.54.6';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -138,7 +138,10 @@ const FORMATTERS = {
   longDate: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
   dateTime: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
   monthDay: new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }),
-  clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' })
+  clock: new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }),
+  monthShort: new Intl.DateTimeFormat(undefined, { month: 'short' }),
+  monthYear: new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }),
+  weekdayDate: new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 };
 
 

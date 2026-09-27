@@ -259,7 +259,7 @@ function renderHealthTrendCard(reports) {
   const monthTicks = [];
   let prevMonth = '';
   series.forEach((point, i) => {
-    const monthName = new Date(`${point.weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    const monthName = FORMATTERS.monthShort.format(new Date(`${point.weekStart}T00:00:00`));
     if (monthName !== prevMonth) {
       monthTicks.push({ i, monthName });
       prevMonth = monthName;

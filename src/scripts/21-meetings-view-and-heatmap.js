@@ -58,7 +58,7 @@ function renderMeetingHeatmapHtml(meetings) {
   const monthStarts = [];
   let prevMonth = '';
   weekStarts.forEach((weekStart, col) => {
-    const monthName = new Date(`${weekStart}T00:00:00`).toLocaleString(undefined, { month: 'short' });
+    const monthName = FORMATTERS.monthShort.format(new Date(`${weekStart}T00:00:00`));
     if (monthName !== prevMonth) {
       monthStarts.push({ col, monthName });
       prevMonth = monthName;
@@ -202,7 +202,7 @@ function renderMeetingsView() {
     if (!iso) return '';
     try {
       const d = new Date(iso + 'T00:00:00');
-      return d.toLocaleString(undefined, { month: 'short' });
+      return FORMATTERS.monthShort.format(d);
     } catch (_) { return ''; }
   };
   const dayNum = (iso) => {
@@ -214,7 +214,7 @@ function renderMeetingsView() {
     if (!iso) return 'Undated';
     try {
       const d = new Date(iso + 'T00:00:00');
-      return d.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+      return FORMATTERS.monthYear.format(d);
     } catch (_) { return 'Undated'; }
   };
 
