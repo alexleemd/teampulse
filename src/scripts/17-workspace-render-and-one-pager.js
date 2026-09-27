@@ -298,7 +298,7 @@ function renderDetailDrawer() {
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
-                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters"></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
@@ -559,23 +559,3 @@ function renderDetailDrawer() {
     document.querySelector('#detailEditorForm [name="name"]')?.focus();
   }
 }
-
-
-
-
-
-
-// The initials field shows its value in capitals while typing, the way
-// normalizeInitials stores it on save. The value itself is set in capitals
-// (no text-transform styling), so the placeholder keeps its written case.
-function uppercaseInitialsField(event) {
-  const field = event.target;
-  if (event.isComposing || !(field instanceof HTMLInputElement) || !field.matches('#detailEditorForm input[name="initials"]')) return;
-  const upper = field.value.toUpperCase();
-  if (upper === field.value) return;
-  const { selectionStart, selectionEnd } = field;
-  field.value = upper;
-  field.setSelectionRange(selectionStart, selectionEnd);
-}
-document.addEventListener('input', uppercaseInitialsField, true);
-document.addEventListener('compositionend', uppercaseInitialsField, true);

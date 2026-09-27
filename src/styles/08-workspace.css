@@ -230,8 +230,8 @@ body.density-compact #detailDrawer {
 .profile-readonly-field .value .badge { flex-shrink: 1; }
 
 /* Profile edit form: the shared two column form grid (14px by 16px). The
-   initials field shows its value in capitals while typing: 17 sets the value
-   in capitals (as normalizeInitials stores it), so no text-transform here. */
+   initials field keeps its inline capitals style from v0.52.4 (typed text,
+   not a label). */
 
 /* --- Vacation tracker ------------------------------------------------------ */
 .vacation-summary {
@@ -364,7 +364,7 @@ body.density-compact #detailDrawer {
 }
 .tp-item-main > label > input[type="checkbox"] { margin-top: 6px; }
 .tp-item-main > label > .tp-item-text { padding-top: 4px; }
-.tp-item-main > .tp-meta { margin: 0 0 2px 26px; }
+.tp-item-main > .tp-meta { margin: 0 0 2px; }
 .tp-item:has(> .tp-item-main) { gap: 8px; }
 /* The Discussed (n) summary in the workspace gets a chevron that turns when
    it is open. Scoped to the workspace details, so the 1:1 room's

@@ -549,9 +549,18 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
 }
 .report-tile-vital {
   display: flex;
+  flex-direction: column;
+  gap: 5px;
   min-width: 0;
 }
-.report-tile-vital.is-pulse { justify-content: flex-end; }
+.report-tile-vital.is-pulse { align-items: flex-end; }
+.report-tile-caption {
+  color: var(--ink-2);
+  font-size: var(--text-tag);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
 /* Meeting sparkline: 3px accent bars, 2px line stubs for weeks with none. */
 .tile-spark { display: block; overflow: visible; }
 .tile-spark-bar { fill: var(--accent); }

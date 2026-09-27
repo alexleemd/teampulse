@@ -119,15 +119,6 @@
       --small-height: 28px;
       --tag-height: 22px;
     }
-
-    /* Old token names still read by inline styles in some scripts. They point at
-       Moss values so nothing turns invisible. Remove once nothing uses them. */
-    :root {
-      --success: var(--good);
-      --warning: var(--mixed);
-      --danger: var(--rough);
-      --info: var(--ink-2);
-    }
     /* Moss base: reset, type, focus, motion policy, and the behavior rules the app
        needs to work (showing and hiding panels, overlays, drawers, menus, print).
        Owner: foundation. Area files restyle how things look but must keep this
@@ -157,6 +148,7 @@
     a:hover { color: var(--accent-strong); text-decoration: underline; }
     svg { flex-shrink: 0; }
     ::placeholder { color: var(--placeholder); opacity: 1; }
+    ::selection { background: var(--ramp-2); color: var(--ink); }
 
     /* --- Focus ------------------------------------------------------------- */
     :focus { outline: none; }
@@ -1862,6 +1854,25 @@
     .tp-item:has(> .tp-delete) > .tp-item-text { padding-top: 4px; }
     .tp-item:not(:has(> .tp-delete)) { --tp-pad-y: 8px; }
     .tp-item > .tp-delete { margin-left: -2px; }
+    /* Only the checkbox sits in its label, so clicking the text does not tick
+       it (as in v0.52.4). The label is a 28px hit area centered on the 16px box;
+       the negative side margins keep the box where the row puts it. */
+    .tp-item > .tp-check {
+      flex: none;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      align-self: flex-start;
+      justify-content: center;
+      gap: 0;
+      width: 28px;
+      height: 28px;
+      margin: 0 -6px;
+      padding: 0;
+    }
+    .tp-item:has(> .tp-check) > .tp-check > input[type="checkbox"] { margin: 0; }
+    .tp-item:has(> .tp-check) > .tp-item-text,
+    .tp-item:has(> .tp-check) > .tp-item-main { padding-top: 4px; }
     .tp-item:has(> label) { gap: 8px; }
     .tp-item:has(> label) > .tp-delete { margin-left: 0; }
     /* The same row when the checkbox and text are wrapped in a label. The label
@@ -3311,9 +3322,18 @@
     }
     .report-tile-vital {
       display: flex;
+      flex-direction: column;
+      gap: 5px;
       min-width: 0;
     }
-    .report-tile-vital.is-pulse { justify-content: flex-end; }
+    .report-tile-vital.is-pulse { align-items: flex-end; }
+    .report-tile-caption {
+      color: var(--ink-2);
+      font-size: var(--text-tag);
+      font-weight: 500;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
     /* Meeting sparkline: 3px accent bars, 2px line stubs for weeks with none. */
     .tile-spark { display: block; overflow: visible; }
     .tile-spark-bar { fill: var(--accent); }
@@ -4537,8 +4557,8 @@
     .profile-readonly-field .value .badge { flex-shrink: 1; }
 
     /* Profile edit form: the shared two column form grid (14px by 16px). The
-       initials field shows its value in capitals while typing: 17 sets the value
-       in capitals (as normalizeInitials stores it), so no text-transform here. */
+       initials field keeps its inline capitals style from v0.52.4 (typed text,
+       not a label). */
 
     /* --- Vacation tracker ------------------------------------------------------ */
     .vacation-summary {
@@ -4671,7 +4691,7 @@
     }
     .tp-item-main > label > input[type="checkbox"] { margin-top: 6px; }
     .tp-item-main > label > .tp-item-text { padding-top: 4px; }
-    .tp-item-main > .tp-meta { margin: 0 0 2px 26px; }
+    .tp-item-main > .tp-meta { margin: 0 0 2px; }
     .tp-item:has(> .tp-item-main) { gap: 8px; }
     /* The Discussed (n) summary in the workspace gets a chevron that turns when
        it is open. Scoped to the workspace details, so the 1:1 room's
@@ -6116,14 +6136,12 @@
       line-height: 1.45;
       overflow-wrap: anywhere;
     }
-    .pdc-board-card .goal-progress { display: flex; width: 100%; }
+    /* The goal's status tag, then its progress bar filling the rest of the row,
+       as on the tiles and in the table, so the status never rests on color. */
+    .pdc-board-card-goal-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .pdc-board-card-goal-row > .status-pill { flex: none; }
+    .pdc-board-card .goal-progress { display: flex; flex: 1 1 auto; min-width: 0; }
     .pdc-board-card .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
-    /* The board card shows the goal's progress without its status (as v0.52.4
-       did), so the fill is one neutral ink for every status: the color must not
-       be the only sign of At risk or Paused. --ink-2 is 4.96:1 on the --sunken
-       track. The PDC Summary list and the workspace keep the status fills,
-       where the status tag sits beside the bar. */
-    .pdc-board-card .goal-progress .goal-progress-fill { background: var(--ink-2); }
     .pdc-board-card-meta {
       color: var(--ink-2);
       font-size: var(--text-caption);
@@ -7025,7 +7043,7 @@
   </style>
 </head>
 <body>
-  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
   <div class="app-shell shell-loading" id="appShell" data-main-view="teamHealth" data-mobile-pane="content">
 
@@ -7546,7 +7564,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.52.4';
+const APP_VERSION = 'v0.53.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -10347,15 +10365,18 @@ function renderSettingsPanel() {
   const daysSinceExport = app.doc?.settings?.lastExportDate ? daysSinceIso(app.doc.settings.lastExportDate) : null;
   const folderLabel = app.fileStats.folderLabel || app.folderName || 'Not available';
 
+  // The third value marks a row good or needing attention; the row's text
+  // always says the same thing, so the mark never carries meaning alone.
+  const savedState = (stamp) => (stamp ? 'good' : 'attention');
   const items = [
     ['Schema', `File v${app.loadedSchemaVersion || CURRENT_SCHEMA_VERSION} · App ${APP_VERSION}`],
     ['Last migration', app.lastMigrationApplied || 'None'],
-    ['Folder', `${folderLabel}/${MAIN_JSON_NAME}`],
-    ['Last save', formatDateTime(app.fileStats.mainSavedAt || app.lastSaveAt)],
-    ['Latest backup', formatDateTime(app.fileStats.backupSavedAt) || '-'],
-    ['Daily backup', formatDateTime(app.fileStats.dailySavedAt) || '-'],
-    ['Monthly backup', formatDateTime(app.fileStats.monthlySavedAt) || '-'],
-    ['Schema doc', app.fileStats.schemaWrittenAt ? 'Up to date' : 'Will be written on save'],
+    ['Folder', `${folderLabel}/${MAIN_JSON_NAME}`, app.connectedFolderReady ? 'good' : 'attention'],
+    ['Last save', formatDateTime(app.fileStats.mainSavedAt || app.lastSaveAt), app.lastSaveError ? 'attention' : savedState(app.fileStats.mainSavedAt || app.lastSaveAt)],
+    ['Latest backup', formatDateTime(app.fileStats.backupSavedAt) || '-', savedState(app.fileStats.backupSavedAt)],
+    ['Daily backup', formatDateTime(app.fileStats.dailySavedAt) || '-', savedState(app.fileStats.dailySavedAt)],
+    ['Monthly backup', formatDateTime(app.fileStats.monthlySavedAt) || '-', savedState(app.fileStats.monthlySavedAt)],
+    ['Schema doc', app.fileStats.schemaWrittenAt ? 'Up to date' : 'Will be written on save', app.fileStats.schemaWrittenAt ? 'good' : ''],
     ['Event count', String(app.doc?.events?.length || 0)],
     ['Event range', firstEvent ? `${formatDateTime(firstEvent)} → ${formatDateTime(lastEvent)}` : 'No events yet'],
     ['Last export', app.doc?.settings?.lastExportDate ? formatDateTime(app.doc.settings.lastExportDate) : 'Never'],
@@ -10363,9 +10384,10 @@ function renderSettingsPanel() {
   ];
   const grid = document.createElement('div');
   grid.className = 'health-grid';
-  items.forEach(([label, value]) => {
+  items.forEach(([label, value, state]) => {
     const item = document.createElement('div');
     item.className = 'health-item';
+    if (state) item.dataset.state = state;
     const strong = document.createElement('strong');
     strong.textContent = label;
     const span = document.createElement('span');
@@ -10948,10 +10970,8 @@ function renderTalkingPointsPanel(report) {
   const openList = openPoints.length
     ? `<ul class="tp-list">${openPoints.map((point) => `
         <li class="tp-item${tickPopClass(`tp:${point.id}`)}">
-          <label>
-            <input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" title="Mark discussed">
-            <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? ' <span class="tp-chip">Carried over</span>' : ''}</span>
-          </label>
+          <label class="tp-check"><input type="checkbox" data-tp-toggle="${escapeHtml(point.id)}" aria-label="Mark discussed"></label>
+          <span class="tp-item-text">${escapeHtml(point.text)}${talkingPointIsCarriedOver(report, point) ? ' <span class="tp-chip">Carried over</span>' : ''}</span>
           <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
         </li>`).join('')}</ul>`
     : '<p class="tp-empty">Nothing queued for the next conversation yet.</p>';
@@ -10962,11 +10982,9 @@ function renderTalkingPointsPanel(report) {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
           const doneStamp = String(point.doneAt || '').slice(0, 10);
           return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
+            <label class="tp-check"><input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point"></label>
             <div class="tp-item-main">
-              <label>
-                <input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" title="Reopen talking point">
-                <span class="tp-item-text">${escapeHtml(point.text)}</span>
-              </label>
+              <span class="tp-item-text">${escapeHtml(point.text)}</span>
               <span class="tp-meta">${doneStamp ? `Discussed ${formatDate(doneStamp)}` : 'Discussed'}${linkedMeeting ? ` · <button type="button" class="tl-jump" data-jump-meeting="${escapeHtml(linkedMeeting.id)}">View meeting</button>` : ''}</span>
             </div>
             <button type="button" class="tp-delete" data-tp-delete="${escapeHtml(point.id)}" title="Remove talking point" aria-label="Remove talking point">×</button>
@@ -12025,7 +12043,7 @@ function renderDetailDrawer() {
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
-                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters"></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
@@ -12286,26 +12304,6 @@ function renderDetailDrawer() {
     document.querySelector('#detailEditorForm [name="name"]')?.focus();
   }
 }
-
-
-
-
-
-
-// The initials field shows its value in capitals while typing, the way
-// normalizeInitials stores it on save. The value itself is set in capitals
-// (no text-transform styling), so the placeholder keeps its written case.
-function uppercaseInitialsField(event) {
-  const field = event.target;
-  if (event.isComposing || !(field instanceof HTMLInputElement) || !field.matches('#detailEditorForm input[name="initials"]')) return;
-  const upper = field.value.toUpperCase();
-  if (upper === field.value) return;
-  const { selectionStart, selectionEnd } = field;
-  field.value = upper;
-  field.setSelectionRange(selectionStart, selectionEnd);
-}
-document.addEventListener('input', uppercaseInitialsField, true);
-document.addEventListener('compositionend', uppercaseInitialsField, true);
 // Tracks which collection views were visible on the previous render so entry
 // animations (staggered tiles and cards) fire only when a view first appears,
 // never on in-place re-renders like search keystrokes, filter changes, or
@@ -13037,8 +13035,8 @@ function renderReportTileHtml(report, options = {}) {
       </span>
       <span class="report-tile-foot">
         <span class="report-tile-vitals">
-          <span class="report-tile-vital">${renderTileSparkline(report)}</span>
-          ${pulseHtml ? `<span class="report-tile-vital is-pulse">${pulseHtml}</span>` : ''}
+          <span class="report-tile-vital"><span class="report-tile-caption">Meetings, 12 weeks</span>${renderTileSparkline(report)}</span>
+          ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
         </span>
         ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
         ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
@@ -13989,7 +13987,7 @@ function renderPdcBoardHtml(reports) {
           <button type="button" class="pdc-board-card-name" data-pdc-summary-open="${escapeHtml(r.id)}" title="Open profile">${escapeHtml(r.name || 'Unnamed')}</button>
         </div>
         <span class="pdc-board-card-goal">${escapeHtml(goal)}</span>
-        ${primaryGoal ? renderGoalProgressBar(primaryGoal, { compact: true }) : ''}
+        ${primaryGoal ? `<span class="pdc-board-card-goal-row">${statusPillHtml('goal', primaryGoal.status || GOAL_STATUSES[0])}${renderGoalProgressBar(primaryGoal, { compact: true })}</span>` : ''}
         <span class="pdc-board-card-meta"><span>${escapeHtml(metaLast)}</span> <span>${escapeHtml(metaNext)}</span></span>
         ${chipRow}
         ${dateBlock}
