@@ -308,7 +308,7 @@ async function persistDocToFolder(options = {}) {
   const thisMonth = monthStamp();
   const dailySavedAt = await parseSavedAtFromFolderFile(DAILY_JSON_NAME);
   const monthlySavedAt = await parseSavedAtFromFolderFile(MONTHLY_JSON_NAME);
-  if (!dailySavedAt || normalizeText(dailySavedAt).slice(0, 10) !== today) {
+  if (!dailySavedAt || isoToLocalDateStamp(dailySavedAt) !== today) {
     await writeFolderFileText(DAILY_JSON_NAME, newText);
   }
   if (!monthlySavedAt || monthStamp(monthlySavedAt) !== thisMonth) {

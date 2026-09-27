@@ -3,6 +3,8 @@
 //   node tools/screenshots/shoot.cjs [outDir] [appFile]
 //
 // outDir defaults to tools/screenshots/out, appFile to the built index.html.
+// The browser time zone is UTC unless the TZ environment variable names another
+// one, for example TZ=Europe/Copenhagen or TZ=America/Los_Angeles.
 // The clock, time zone, locale, random numbers and motion are all fixed, so two
 // runs of the same file give identical PNGs. hashes.json lists every screen with
 // a short hash of its PNG and any page errors. Exits with an error if a screen
@@ -16,6 +18,7 @@ const { TODAY, doc } = require('./sample-team.cjs');
 
 const OUT = path.resolve(process.argv[2] || path.join(__dirname, 'out'));
 const APP = 'file://' + path.resolve(process.argv[3] || path.join(__dirname, '..', '..', 'index.html'));
+const TIMEZONE = process.env.TZ || 'UTC';
 fs.mkdirSync(OUT, { recursive: true });
 
 const withSettings = (patch) => ({ ...doc, settings: { ...doc.settings, ...patch } });
@@ -23,7 +26,7 @@ const withSettings = (patch) => ({ ...doc, settings: { ...doc.settings, ...patch
 async function open(browser, o = {}) {
   const context = await browser.newContext({
     viewport: o.viewport || { width: 1440, height: 900 }, deviceScaleFactor: 1,
-    locale: 'en-US', timezoneId: 'UTC', reducedMotion: 'reduce', colorScheme: 'light'
+    locale: 'en-US', timezoneId: TIMEZONE, reducedMotion: 'reduce', colorScheme: 'light'
   });
   const page = await context.newPage();
   page.__errors = [];

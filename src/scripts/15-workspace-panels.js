@@ -21,7 +21,7 @@ function renderTalkingPointsPanel(report) {
         <summary class="tp-done-toggle">Discussed (${donePoints.length})</summary>
         <ul class="tp-list">${donePoints.map((point) => {
           const linkedMeeting = point.meetingId ? meetings.find((meeting) => meeting.id === point.meetingId) : null;
-          const doneStamp = String(point.doneAt || '').slice(0, 10);
+          const doneStamp = localDateOf(point.doneAt);
           return `<li class="tp-item done${tickPopClass(`tp:${point.id}`)}">
             <label class="tp-check"><input type="checkbox" checked data-tp-toggle="${escapeHtml(point.id)}" aria-label="Reopen talking point"></label>
             <div class="tp-item-main">
@@ -119,7 +119,7 @@ function buildTimelineItems(report) {
   normalizeCapabilityTicks(report.capabilities || []).forEach((tick) => {
     const found = cdpCapabilityById(tick.id);
     if (!found) return;
-    const date = normalizeDate(String(tick.achievedAt || '').slice(0, 10));
+    const date = localDateOf(tick.achievedAt);
     if (!date) return;
     items.push({
       kind: 'capability',

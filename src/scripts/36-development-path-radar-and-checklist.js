@@ -16,7 +16,7 @@ function normalizeCapabilityTick(entry = {}) {
   const safe = entry && typeof entry === 'object' ? entry : {};
   return {
     id: normalizeText(safe.id || safe.capabilityId),
-    achievedAt: normalizeDate(String(safe.achievedAt || '').slice(0, 10)) || todayStamp()
+    achievedAt: localDateOf(safe.achievedAt) || todayStamp()
   };
 }
 
