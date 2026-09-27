@@ -28,7 +28,7 @@ function bindStaticEvents() {
         }
         app.ui.teamHealthTab = nextTab;
         persistUiState();
-        navigateRender(() => render());
+        render();
         return;
       }
       // Main-view nav (Direct Reports / Meetings / Settings).
@@ -49,7 +49,7 @@ function bindStaticEvents() {
           openRulesDrawer();
           return;
         }
-        navigateRender(() => render());
+        render();
         return;
       }
     });
@@ -61,7 +61,7 @@ function bindStaticEvents() {
     reportsGridEl.addEventListener('click', (event) => {
       const addBtn = event.target.closest('[data-report-add]');
       if (addBtn) {
-        navigateRender(() => openCreateWorkspace());
+        openCreateWorkspace();
         return;
       }
       const roomBtn = event.target.closest('[data-open-room]');
@@ -77,13 +77,13 @@ function bindStaticEvents() {
       }
       const personBtn = event.target.closest('[data-table-person]');
       if (personBtn) {
-        navigateRender(() => selectReport(personBtn.getAttribute('data-table-person')));
+        selectReport(personBtn.getAttribute('data-table-person'));
         return;
       }
       const tile = event.target.closest('[data-report-card]');
       if (tile) {
         const id = tile.getAttribute('data-report-card');
-        navigateRender(() => selectReport(id));
+        selectReport(id);
       }
     });
     reportsGridEl.addEventListener('keydown', (event) => {
@@ -141,7 +141,7 @@ function bindStaticEvents() {
       if (nextMode === (app.ui.reportsViewMode === 'table' ? 'table' : 'tiles')) return;
       app.ui.reportsViewMode = nextMode;
       persistUiState();
-      navigateRender(() => renderReportsGrid());
+      renderReportsGrid();
     });
   }
 
@@ -247,7 +247,7 @@ function bindStaticEvents() {
         return;
       }
       const profileBtn = event.target.closest('[data-followup-open-profile]');
-      if (profileBtn) navigateRender(() => selectReport(profileBtn.getAttribute('data-followup-open-profile')));
+      if (profileBtn) selectReport(profileBtn.getAttribute('data-followup-open-profile'));
     });
   }
 
@@ -292,7 +292,7 @@ function bindStaticEvents() {
       const openBtn = event.target.closest('[data-pdc-summary-open]');
       if (openBtn) {
         const id = openBtn.getAttribute('data-pdc-summary-open');
-        if (id) navigateRender(() => selectReport(id));
+        if (id) selectReport(id);
         return;
       }
       const roomBtn = event.target.closest('[data-open-room]');
@@ -313,7 +313,7 @@ function bindStaticEvents() {
           app.ui.pdcViewMode = nextMode;
           app.ui.pdcBoardDateId = '';
           persistUiState();
-          navigateRender(() => renderPdcSummaryView());
+          renderPdcSummaryView();
         }
         return;
       }
@@ -405,7 +405,7 @@ function bindStaticEvents() {
     });
   }
 
-  addReportBtn.addEventListener('click', () => navigateRender(() => openCreateWorkspace()));
+  addReportBtn.addEventListener('click', () => openCreateWorkspace());
   startupChooseFolderBtn?.addEventListener('click', async () => {
     const connected = await chooseFolderAndConnect();
     if (connected) closeStartupPrompt();
@@ -480,8 +480,6 @@ function bindStaticEvents() {
     event.preventDefault();
     items[next].focus();
   });
-  saveDockBtn.addEventListener('click', () => flushAutosaveQueue(true));
-  dismissDockBtn.addEventListener('click', () => saveDockEl.classList.add('hidden'));
 
   reportsPlanFilterEl?.addEventListener('change', () => {
     app.ui.planFilter = reportsPlanFilterEl.value || '';
@@ -644,16 +642,6 @@ function bindStaticEvents() {
     showToast('Settings reset to defaults.', 'success');
   });
 
-  teamHealthTabBarEl.addEventListener('click', (event) => {
-    const tabBtn = event.target.closest('[data-team-health-tab]');
-    if (!tabBtn) return;
-    const nextTab = tabBtn.getAttribute('data-team-health-tab');
-    if (!TEAM_HEALTH_TABS.includes(nextTab)) return;
-    if (currentTeamHealthTab() === nextTab) return;
-    app.ui.teamHealthTab = nextTab;
-    persistUiState();
-    navigateRender(() => renderTeamHealth());
-  });
   teamHealthBodyEl.addEventListener('click', (event) => {
     const briefBtn = event.target.closest('[data-briefing-go]');
     if (briefBtn) {
@@ -665,14 +653,14 @@ function bindStaticEvents() {
           app.ui.selectedId = null;
           app.ui.creatingReport = false;
           persistUiState();
-          navigateRender(() => render());
+          render();
         }
       } else if (target.startsWith('tab:')) {
         const nextTab = target.slice(4);
         if (TEAM_HEALTH_TABS.includes(nextTab)) {
           app.ui.teamHealthTab = nextTab;
           persistUiState();
-          navigateRender(() => renderTeamHealth());
+          renderTeamHealth();
         }
       }
       return;
@@ -690,7 +678,7 @@ function bindStaticEvents() {
     const cdpOpenBtn = event.target.closest('[data-cdp-open]');
     if (cdpOpenBtn) {
       app.ui.detailDrawerTab = 'pdc-summary';
-      navigateRender(() => selectReport(cdpOpenBtn.getAttribute('data-cdp-open')));
+      selectReport(cdpOpenBtn.getAttribute('data-cdp-open'));
       return;
     }
     const modeBtn = event.target.closest('[data-tenure-mode]');
@@ -705,12 +693,12 @@ function bindStaticEvents() {
     }
     const reportTrigger = event.target.closest('[data-tenure-open]');
     if (reportTrigger) {
-      navigateRender(() => selectReport(reportTrigger.getAttribute('data-tenure-open')));
+      selectReport(reportTrigger.getAttribute('data-tenure-open'));
       return;
     }
     const glyphBtn = event.target.closest('[data-glyph-open]');
     if (glyphBtn) {
-      navigateRender(() => selectReport(glyphBtn.getAttribute('data-glyph-open')));
+      selectReport(glyphBtn.getAttribute('data-glyph-open'));
       return;
     }
     const themeBtn = event.target.closest('[data-theme-filter]');
@@ -724,7 +712,7 @@ function bindStaticEvents() {
         app.ui.creatingReport = false;
       }
       persistUiState();
-      navigateRender(() => render());
+      render();
       return;
     }
   });
@@ -734,7 +722,7 @@ function bindStaticEvents() {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       const id = trigger.getAttribute('data-tenure-open') || trigger.getAttribute('data-glyph-open');
-      if (id) navigateRender(() => selectReport(id));
+      if (id) selectReport(id);
     }
   });
 

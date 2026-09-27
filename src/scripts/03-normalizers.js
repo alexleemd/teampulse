@@ -49,17 +49,6 @@ function formatDate(dateString) {
   return Number.isNaN(date.getTime()) ? 'Not logged' : FORMATTERS.longDate.format(date);
 }
 
-function formatShortDate(dateString) {
-  const text = normalizeDate(dateString);
-  if (!text) return '';
-  const date = new Date(`${text}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? '' : FORMATTERS.shortDate.format(date);
-}
-
-function formatDateOrFallback(dateString, fallback = 'Not logged') {
-  return formatShortDate(dateString) || fallback;
-}
-
 function formatDateTime(value) {
   if (!value) return '-';
   const date = new Date(value);
@@ -350,15 +339,5 @@ function snoozeRuleLabel(rule) {
 
 function activeSnoozeEntries(report) {
   return normalizeSnoozeEntries(report?.snoozes || []);
-}
-
-function activeSnoozeRuleSet(report) {
-  return new Set(activeSnoozeEntries(report).map((entry) => entry.rule));
-}
-
-function findActiveSnooze(report, rule) {
-  const normalizedRule = normalizeSnoozeRule(rule);
-  const entries = activeSnoozeEntries(report);
-  return entries.find((entry) => entry.rule === 'all' || entry.rule === normalizedRule) || null;
 }
 

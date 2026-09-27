@@ -247,8 +247,6 @@ async function importLegacyJsonFlow() {
   }
 }
 
-
-
 function closeDataMenu() {
   dataMenuEl?.removeAttribute('open');
 }

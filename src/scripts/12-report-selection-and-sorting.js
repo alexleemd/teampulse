@@ -47,31 +47,6 @@ function clearSelectedReport(options = {}) {
   return true;
 }
 
-
-function meetingTone(report, type, thresholdDays) {
-  const lastDate = latestMeetingDate(report, type);
-  const age = lastDate ? dateDiffInDays(lastDate) : report.hireDate ? dateDiffInDays(report.hireDate) : null;
-  if (age === null) return 'danger';
-  if (reportHasActiveVacation(report) && age > thresholdDays) return 'success';
-  if (age > thresholdDays) return 'warning';
-  return 'success';
-}
-
-
-
-
-
-
-
-
-
-function renderAttentionBadges(metrics) {
-  if (!metrics.attention.length) return badge('On track', 'success');
-  const visible = metrics.attention.slice(0, 2).map((issue) => badge(issue, attentionTone(issue))).join('');
-  const overflow = metrics.attention.length > 2 ? badge(`+${metrics.attention.length - 2} more`, 'soft') : '';
-  return `${visible}${overflow}`;
-}
-
 function cadenceDueDate(anchorDate, fallbackDate, thresholdDays) {
   const sourceDate = normalizeDate(anchorDate || fallbackDate);
   return sourceDate ? addDays(sourceDate, thresholdDays) : '';
@@ -116,13 +91,4 @@ function compareReportsForTable(left, right) {
   if (leftDate !== rightDate) return leftDate.localeCompare(rightDate);
   return String(left.name || '').localeCompare(String(right.name || ''));
 }
-
-
-
-function scrollToReports() {
-  // In the 3-pane shell, the content pane is the scroll container.
-  const contentPane = document.getElementById('contentPane');
-  if (contentPane) contentPane.scrollTop = 0;
-}
-
 
