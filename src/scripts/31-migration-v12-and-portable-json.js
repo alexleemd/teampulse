@@ -129,7 +129,7 @@ function generateSchemaMarkdown() {
   lines.push('- **v11 -> v12**: Adds empty capabilities[] arrays to people records and person_created snapshots. Additive and lossless.');
   lines.push('');
   lines.push('## Data lifecycle & GDPR notes');
-  lines.push('- All data lives in this folder plus a convenience cache in the browser profile (localStorage). Settings > Privacy & Data can disconnect the folder and wipe the browser copies.');
+  lines.push('- All data lives in this folder. The browser profile keeps only the folder connection (IndexedDB) and view preferences (localStorage), never a copy of the data. Settings > Privacy & Data can disconnect the folder and clear what the browser keeps.');
   lines.push('- **team-pulse.before-import-*.json / team-pulse.before-restore-*.json**: Dated copies of team-pulse.json, written just before an import or a backup restore replaces it. They are never rotated. Delete them when you no longer need them.');
   lines.push('- **team-pulse.before-reload-*.json / team-pulse.before-overwrite-*.json**: Written when another tab or computer saved team-pulse.json in between. before-reload holds the version the tab had when it reloaded the file, before-overwrite the file version the tab replaced with its own.');
   lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');

@@ -4,6 +4,7 @@
 // works. We render the error directly into the toast stack since that
 // element exists in the static HTML and is independent of render().
 try {
+  removeOldDocCache();
   bindStaticEvents();
   applyProjectedState();
   updateFileUi();

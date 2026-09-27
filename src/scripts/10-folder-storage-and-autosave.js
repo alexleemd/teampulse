@@ -181,7 +181,6 @@ async function adoptLoadedDoc(doc, options = {}) {
   let drawError = null;
   try {
     applyProjectedState();
-    cacheDocSnapshot();
   } catch (error) {
     drawError = error;
   }
@@ -441,7 +440,6 @@ async function writeDocToFolder(options = {}) {
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
-  cacheDocSnapshot();
   await refreshFileStats();
   if (reason === 'manual') {
     showToast(`Saved ${MAIN_JSON_NAME} at ${formatClock(new Date(doc.savedAt))}.`, 'success');
