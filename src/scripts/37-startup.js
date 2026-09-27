@@ -22,7 +22,7 @@ try {
       const message = (error && error.message) ? error.message : String(error);
       const messageEl = document.createElement('div');
       messageEl.className = 'toast-message';
-      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page; if this persists, open your browser's developer tools for details.`;
+      messageEl.textContent = `Team Pulse could not start: ${message}. Try reloading the page. If this persists, open your browser's developer tools for details.`;
       panel.appendChild(messageEl);
       stack.appendChild(panel);
     }

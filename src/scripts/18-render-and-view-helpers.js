@@ -193,7 +193,7 @@ function renderContentHeader(mainView) {
     subtitle = 'Open action items from meeting notes across the team.';
   } else if (mainView === 'pdcSummary') {
     title = 'PDC Summary';
-    subtitle = `PDC outcomes across ${reportCount} ${reportLabel} — edit development focus and readiness right here.`;
+    subtitle = `PDC outcomes across ${reportCount} ${reportLabel}. Edit development focus and readiness right here.`;
   } else if (mainView === 'meetingRoom') {
     // The 1:1 room: the person's name is the title (it appears once on the
     // page), with level and mentor on the line below. The old subtitle
