@@ -1,0 +1,697 @@
+/* Team Health overview (health score and meter, briefing, upcoming), Direct Reports tiles and table, and their compact density.
+   Owner: W4 overview and reports.
+
+   Built from Overview.html (overview and tiles) and Controls 4 Lists.html
+   (table). Shared pieces (card, tags, buttons, fields, segmented control,
+   pulse glyphs, goal progress, table, empty states) come from 03 and 04;
+   this file only lays them out and adds view scoped variations. */
+
+/* === Team Health overview ================================================ */
+/* Health score and Briefing side by side (272px and the rest, 18px apart),
+   then Direct Reports, then Upcoming. Sections 22px apart. */
+.team-health-content { min-width: 0; }
+.overview-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  container: overview / inline-size;
+}
+.overview-top {
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 18px;
+  min-width: 0;
+}
+.overview-card { min-width: 0; }
+
+/* Card head: section title and a note (the date, the count). */
+.overview-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.overview-section-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.overview-section-note {
+  flex-shrink: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Health score card ---------------------------------------------------- */
+.health-score {
+  --band: var(--field-line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px;
+}
+.health-score[data-band="good"] { --band: var(--good); }
+.health-score[data-band="mixed"] { --band: var(--mixed); }
+.health-score[data-band="rough"] { --band: var(--rough); }
+.health-score-label {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
+}
+.health-score-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+.health-score-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.health-score-number {
+  color: var(--ink);
+  font-size: var(--text-score);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+.health-score-max {
+  color: var(--ink-2);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+/* 8px meter on sunken. The fill follows the band. */
+.health-meter {
+  display: block;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--sunken);
+  overflow: hidden;
+}
+.health-meter-fill {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 4px;
+  background: var(--band);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.health-score-headline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.health-band-mark {
+  display: block;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--band);
+}
+.health-score-sub {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+
+/* --- Briefing card ---------------------------------------------------------- */
+/* Rows: a status mark, a fixed 150px label column and the chips. */
+.briefing {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 8px;
+  container: briefing / inline-size;
+}
+.briefing > .overview-section-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.briefing-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.briefing-row {
+  display: grid;
+  grid-template-columns: 14px 150px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  text-align: left;
+}
+.briefing-row:last-child { border-bottom: 0; }
+/* Status marks: amber and red are filled, For information is an empty ring
+   (Overview.html, On vacation), good is filled. The label says what it is. */
+.briefing-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin-top: 9px;
+  border-radius: 50%;
+  background: var(--mixed);
+}
+.briefing-dot[data-tone="red"] { background: var(--rough); }
+.briefing-dot[data-tone="good"] { background: var(--good); }
+.briefing-dot[data-tone="neutral"] {
+  background: transparent;
+  border: 1.5px solid var(--ink-2);
+}
+.briefing-row.has-people .briefing-text { display: contents; }
+.briefing-text > strong {
+  grid-column: 2;
+  min-width: 0;
+  padding-top: 3px;
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.45;
+}
+.briefing-people {
+  grid-column: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+/* Aggregate rows (no people): the text spans the label and chip columns. */
+.briefing-row:not(.has-people) .briefing-text {
+  grid-column: 2 / -1;
+  min-width: 0;
+  padding-top: 3px;
+}
+button.briefing-row {
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+button.briefing-row:not(.has-people) .briefing-text { grid-column: 2; }
+/* Hover fill and focus ring share one 8px rounded area that reaches 8px
+   past the row on each side, so the ring clears the status mark. */
+button.briefing-row::before {
+  content: "";
+  position: absolute;
+  inset: 2px -8px;
+  z-index: -1;
+  border-radius: var(--radius-button);
+  background: transparent;
+  transition: background-color 120ms ease;
+}
+button.briefing-row:hover::before { background: var(--sunken); }
+button.briefing-row:focus-visible { outline: none; }
+button.briefing-row:focus-visible::before {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.briefing-go {
+  padding-top: 3px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
+/* Person chips: 26px small buttons, name then meta. A clear 1px band above
+   and below takes the hit area to 28px. */
+.briefing-person {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.briefing-person::after {
+  content: "";
+  position: absolute;
+  inset: -2px -1px;
+}
+.briefing-person:hover { background: var(--sunken); }
+.bp-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.bp-extra {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.bp-extra[data-tone="red"] { color: var(--red-text); font-weight: 600; }
+.briefing-people .briefing-link { margin-left: 4px; }
+
+/* --- Direct Reports on the overview ------------------------------------------- */
+.overview-reports {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.overview-reports-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.overview-reports-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.overview-reports-title h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.overview-reports-count {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.overview-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+/* --- Upcoming panel ------------------------------------------------------------- */
+/* Not in the mockup: a panel with divided list rows, like the Briefing. */
+.upcoming {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 8px;
+}
+.upcoming > .overview-section-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.upcoming > .upcoming-empty { margin: 12px 0; }
+.upcoming-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.upcoming-list > li { border-bottom: 1px solid var(--line-soft); }
+.upcoming-list > li:last-child { border-bottom: 0; }
+.upcoming-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.4;
+  text-align: left;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+/* Same shared hover and focus area as the Briefing rows: the ring clears
+   the kind tag. */
+.upcoming-row::before {
+  content: "";
+  position: absolute;
+  inset: 2px -8px;
+  z-index: -1;
+  border-radius: var(--radius-button);
+  background: transparent;
+  transition: background-color 120ms ease;
+}
+.upcoming-row:hover::before { background: var(--sunken); }
+.upcoming-row:focus-visible { outline: none; }
+.upcoming-row:focus-visible::before {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.upcoming-row-kind { display: flex; }
+.upcoming-row-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.upcoming-row-when {
+  color: var(--ink-2);
+  font-size: 13px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.upcoming-row-when[data-soon] { color: var(--ink); font-weight: 600; }
+.upcoming-list .upcoming-more {
+  padding: 10px 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+}
+
+/* === Direct Reports ========================================================== */
+/* 18px from the toolbar to the tiles or table, as on the other People views
+   (10-team-views.css); 14px in compact density. */
+#reportsSection:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* Toolbar: search field, Tiles and Table, PDC and Show selects, then the one
+   primary button. Its fields are 36px so everything in the row lines up. */
+.reports-toolbar {
+  --field-h: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  min-width: 0;
+}
+.reports-toolbar .searchbox {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 0;
+  max-width: 360px;
+}
+.reports-toolbar .searchbox::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
+  background: var(--ink-2);
+  pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") center / 15px 15px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") center / 15px 15px no-repeat;
+}
+.reports-toolbar .searchbox input { padding-left: 35px; }
+/* The browser's clear button is blue by default; draw the Moss x instead. */
+.reports-toolbar .searchbox input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 -4px 0 6px;
+  background: var(--ink-2);
+  cursor: pointer;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+}
+.reports-toolbar .reports-filter {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+.reports-toolbar .reports-filter > span { white-space: nowrap; }
+.reports-toolbar .reports-filter select { width: auto; min-width: 150px; max-width: 240px; }
+.reports-toolbar #addReportBtn { margin-left: auto; }
+
+/* --- Tiles ------------------------------------------------------------------------- */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+.reports-grid > .empty-note { grid-column: 1 / -1; }
+
+/* The tile (Overview.html): the main button is the card and opens the
+   workspace. The 1:1 room button sits on top of it in the head row. */
+.report-tile {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+.report-tile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.report-tile-main:hover { border-color: var(--button-line); }
+.report-tile > .tile-room-btn {
+  position: absolute;
+  top: 19px;
+  right: 15px;
+}
+.report-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding-right: 80px;
+}
+.report-tile-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The initials code is data, spaced a little as in the mockup. */
+.report-tile-name.is-code { letter-spacing: 0.03em; }
+.report-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.report-tile-meta-line { display: block; overflow-wrap: anywhere; }
+.report-tile-fullname {
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+}
+.report-tile-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  min-width: 0;
+}
+.report-tile-vitals {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+.report-tile-vital {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.report-tile-vital.is-pulse { align-items: flex-end; }
+.report-tile-caption {
+  color: var(--ink-2);
+  font-size: var(--text-tag);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* Meeting sparkline: 3px accent bars, 2px line stubs for weeks with none. */
+.tile-spark { display: block; overflow: visible; }
+.tile-spark-bar { fill: var(--accent); }
+.tile-spark-stub { fill: var(--line); }
+.report-tile-vital .pulse-dots { height: 9px; }
+/* The first active goal: its status tag, then a bar that takes the rest of
+   the row, with its percentage. */
+.report-tile-goal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.report-tile-goal .goal-progress { flex: 1 1 auto; width: auto; }
+.report-tile-goal .goal-progress.compact .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
+/* The tile and table goal bars are built from spans (a button holds only
+   phrasing content), so the fill span is made a block to take its size. */
+.report-tile-goal .goal-progress-fill,
+.reports-table .goal-progress-fill { display: block; }
+.report-tile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Add tile: a dashed slot in the grid with an accent label. */
+.report-tile-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 150px;
+  padding: 16px;
+  border: 1px dashed var(--button-line);
+  border-radius: var(--radius-card);
+  background: var(--page);
+  color: var(--accent);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.report-tile-add:hover { background: var(--sunken); color: var(--accent-strong); }
+
+/* --- Table (Controls 4) -------------------------------------------------------- */
+/* The table itself is the shared .team-table (04). Here: the Last 1:1 date
+   and the Next 1:1 field keep tabular figures, and the status selects sit
+   at their natural width. */
+#reportsGrid.reports-table { display: block; min-width: 0; }
+.reports-table .tt-last { font-variant-numeric: tabular-nums; }
+/* An overdue last 1:1: amber (04) with a leading triangle, so it never
+   relies on color alone. */
+.reports-table .tt-last.tt-overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.tt-overdue-glyph {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--amber-strong);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The triangle makes the Last 1:1 column 18px wider. 04 fits the table to a
+   1134px area (1440 wide) with 7px cell padding below 1185px; to keep that
+   fit, this table keeps 7px up to 1200px and uses 6px below 1143px. */
+@container team-table (max-width: 1200px) {
+  .reports-table .team-table th,
+  .reports-table .team-table td { padding: 0 7px; }
+}
+@container team-table (max-width: 1142px) {
+  .reports-table .team-table th,
+  .reports-table .team-table td { padding: 0 6px; }
+}
+/* Goal cell: the status tag over the compact bar, so the column stays as
+   narrow as the bar alone. */
+.reports-table .tt-goal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  vertical-align: middle;
+}
+.reports-table .pill-select-wrap { max-width: 100%; }
+
+/* --- Compact density ---------------------------------------------------------- */
+body.density-compact #reportsSection:not([hidden]) { gap: 14px; }
+body.density-compact .reports-grid,
+body.density-compact .overview-reports-grid { gap: 10px; }
+body.density-compact .report-tile-main { gap: 7px; padding: 11px 12px; }
+body.density-compact .report-tile > .tile-room-btn { top: 16px; right: 13px; }
+body.density-compact .report-tile-foot { gap: 7px; }
+body.density-compact .report-tile-vitals { padding-top: 8px; }
+body.density-compact .report-tile-add { min-height: 120px; }
+body.density-compact .reports-table .team-table-group td { height: 30px; }
+
+/* --- Narrower layouts ------------------------------------------------------------ */
+/* The overview row stacks when the content area is narrow, and the tiles go
+   to two columns, then one. */
+@container overview (max-width: 900px) {
+  .overview-reports-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container overview (max-width: 720px) {
+  .overview-top { grid-template-columns: minmax(0, 1fr); }
+}
+@container overview (max-width: 520px) {
+  .overview-reports-grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* A narrow Briefing puts the chips under the label. */
+@container briefing (max-width: 520px) {
+  .briefing-row.has-people {
+    grid-template-columns: 14px minmax(0, 1fr);
+    row-gap: 6px;
+  }
+  .briefing-row.has-people .briefing-people { grid-column: 2; }
+}
+@media (max-width: 640px) {
+  .health-score { padding: 18px 18px 20px; }
+  .briefing,
+  .upcoming { padding: 14px 16px 6px; }
+  .reports-toolbar .searchbox { flex-basis: 100%; max-width: none; }
+  .reports-toolbar .reports-filter { flex: 1 1 150px; }
+  .reports-toolbar .reports-filter > select { flex: 1 1 auto; width: 100%; min-width: 0; max-width: none; }
+  .reports-toolbar #addReportBtn { margin-left: 0; }
+  .reports-grid { grid-template-columns: minmax(0, 1fr); }
+}

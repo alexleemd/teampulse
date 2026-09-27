@@ -1,0 +1,695 @@
+/* Meetings view (heatmap and list), Follow-Ups, PDC Summary list, PDC board and 1:1 board, and their compact density.
+   Owner: W8 team views.
+
+   These views have no mockup. They are built from the controls sheets and
+   the rules: shared buttons, fields, tags, avatars, pulse glyphs, progress,
+   panels and empty states come from 03 and 04 unchanged; this file only lays
+   them out and adds view scoped variations. */
+
+/* --- View bodies ------------------------------------------------------------ */
+#meetingsBody,
+#followUpsBody,
+#pdcSummaryBody {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* --- Meetings: toolbar ---------------------------------------------------------
+   As on Direct Reports: search field, the Person and Type selects, then the
+   one primary button. The fields are 36px so the row lines up. */
+.meetings-view-toolbar {
+  --field-h: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  min-width: 0;
+}
+.meetings-view-search {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 0;
+  max-width: 360px;
+}
+.meetings-view-search::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
+  background: var(--ink-2);
+  pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") center / 15px 15px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") center / 15px 15px no-repeat;
+}
+.meetings-view-search input { padding-left: 35px; }
+/* The browser's clear button is blue by default; draw the Moss x instead. */
+.meetings-view-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 -4px 0 6px;
+  background: var(--ink-2);
+  cursor: pointer;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+}
+.meetings-view-filter {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+.meetings-view-filter > span { white-space: nowrap; }
+.meetings-view-filter select {
+  width: auto;
+  min-width: 150px;
+  max-width: 240px;
+}
+#meetingsLogBtn { margin-left: auto; }
+/* "Log meeting" with no person picked focuses the Person select, which then
+   shows the field focus (accent border and ring). The prompt class adds only
+   an accent border held for 150ms, once. No glow, nothing loops. */
+@keyframes mossFilterPrompt {
+  from, to { border-color: var(--accent); }
+}
+.meetings-view-filter select.meetings-filter-pulse { animation: mossFilterPrompt 150ms linear 1; }
+
+/* --- Meetings: heatmap ------------------------------------------------------------
+   One cell per day. Empty days are --sunken; the count steps 1, 2 and 3 or
+   more are --ramp-4 to --ramp-6, light to dark, the ramp steps that reach
+   3:1 as marks. The SVGs are drawn at 1:1, so their labels render at 12px.
+   The weekday column does not scroll; only the grid scrolls, inside the
+   panel's padding, when the card is narrower than the year. */
+.hm-total {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.hm-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+}
+.hm-chart {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+.hm-days {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+.heatmap-scroll {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+#meetingHeatmap {
+  display: block;
+  max-width: none;
+}
+.hm-label {
+  fill: var(--ink-2);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  font-weight: 400;
+}
+/* A month label cut in half by the scrolled edge waits until it is fully in
+   view (set by the scroll handler in 21). */
+.hm-month.hm-cut { visibility: hidden; }
+.hm-cell { fill: var(--sunken); }
+.hm-cell[data-level="1"] { fill: var(--ramp-4); }
+.hm-cell[data-level="2"] { fill: var(--ramp-5); }
+.hm-cell[data-level="3"] { fill: var(--ramp-6); }
+/* The legend uses the shared swatches (the empty one keeps its --field-line
+   border so it reaches 3:1), sized to the 12px cells. */
+.hm-legend {
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: 4px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.hm-legend > span:first-child { margin-right: 4px; }
+.hm-legend > span:last-child { margin-left: 4px; }
+.hm-legend .swatch {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+/* --- Meetings: list ------------------------------------------------------------------
+   One card. A month divider row (34px on --page, as the group rows in the
+   Controls 4 table) starts each month; meeting rows are divided by
+   --line-soft. The whole row is the button that opens the meeting. */
+.meetings-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.meetings-view > * { border-top: 1px solid var(--line-soft); }
+.meetings-view > :first-child {
+  border-top: 0;
+  border-top-left-radius: calc(var(--radius-card) - 1px);
+  border-top-right-radius: calc(var(--radius-card) - 1px);
+}
+.meetings-view > :last-child {
+  border-bottom-left-radius: calc(var(--radius-card) - 1px);
+  border-bottom-right-radius: calc(var(--radius-card) - 1px);
+}
+.meetings-month-divider {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  margin: 0;
+  padding: 0 16px;
+  background: var(--page);
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.meetings-view-item {
+  display: grid;
+  grid-template-columns: 36px 30px minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 14px;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.meetings-view-item:hover { background: var(--page); }
+.meetings-view-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.meetings-view-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 36px;
+  text-align: center;
+}
+.meetings-view-date-m {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.meetings-view-date-d {
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.meetings-view-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.meetings-view-main-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
+}
+.meetings-view-name {
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.meetings-view-main-sub {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.meetings-view-main-snip {
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meetings-view-chips {
+  grid-column: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.meetings-view-edit {
+  grid-column: 5;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  transition: color 120ms ease;
+}
+.meetings-view-item:hover .meetings-view-edit { color: var(--accent-strong); }
+
+/* --- Follow-Ups ----------------------------------------------------------------------
+   The summary count tag, then one panel per person: avatar and name in the
+   header with the count tag, checkbox rows with their source meta. */
+.followups-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.followups-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.followups-view .followup-panel .sharp-panel-header h3 { min-width: 0; }
+.followups-view .fu-person-link { font-size: var(--text-panel); }
+.followups-view .followup-list { padding: 4px 0; }
+.followups-view .followup-item { padding-top: 9px; padding-bottom: 9px; }
+.followups-view .followup-item:hover { background: var(--page); }
+.followups-help {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.5;
+}
+.followups-help code {
+  padding: 1px 5px;
+  border-radius: var(--radius-tag);
+  background: var(--sunken);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --- PDC Summary: toolbar ------------------------------------------------------------ */
+.pdc-view-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  min-width: 0;
+}
+.pdc-view-toolbar .pdc-round-chip { margin-left: auto; }
+
+/* --- PDC Summary: list ------------------------------------------------------------------ */
+.pdc-summary-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.pdc-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.pdc-summary-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  min-width: 0;
+}
+.pdc-summary-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.pdc-summary-card-title h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.pdc-summary-card-meta {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+  line-height: 1.35;
+}
+.pdc-summary-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  flex: none;
+  margin-left: auto;
+}
+.pdc-summary-card.editing .pdc-summary-card-actions { gap: 8px; }
+.pdc-summary-card-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.pdc-summary-card-dates {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.pdc-summary-card-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 28px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+.pdc-summary-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.pdc-summary-block-label {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* The paragraph's first line shares a baseline with the first goal title,
+   which sits centered in its 30px row at line height 1.4:
+   (30px - 1.4em) / 2 + (1.4em - 1.5em) / 2. */
+.pdc-summary-block p {
+  margin: 0;
+  padding-top: calc(15px - 0.75em);
+  color: var(--ink);
+  font-size: var(--text-small);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pdc-summary-block p.pdc-summary-block-empty {
+  color: var(--ink-2);
+  font-style: normal;
+}
+.pdc-summary-goal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+  min-width: 0;
+}
+.pdc-summary-goal-row + .pdc-summary-goal-row { border-top: 1px solid var(--line-soft); }
+.pdc-summary-goal-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pdc-summary-goal-row > .goal-progress { flex-shrink: 0; }
+/* Percentages share one width so the bars line up from row to row. */
+.pdc-summary-goal-row .goal-progress-pct { min-width: 30px; text-align: right; }
+.pdc-summary-edit textarea { min-height: 88px; font-size: var(--text-body); }
+
+/* --- PDC board and 1:1 board ---------------------------------------------------------
+   Columns sit on --page inside a 1px --line outline, with the label, the
+   count tag and the hint. No colored rails or stripes (decision 5): the
+   column says what it holds in words. Header, hint and cards line up across
+   the columns (subgrid rows). Cards are white with a 1px --line border and no
+   shadow. The boards scroll sideways when the pane is narrow. */
+.pdc-board {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  grid-template-rows: auto auto 1fr;
+  column-gap: 12px;
+  min-width: 0;
+  padding-bottom: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.oo-board { grid-auto-columns: minmax(232px, 1fr); }
+.pdc-board-col {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: 10px;
+  align-content: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--page);
+}
+.pdc-board-col-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: var(--tag-height);
+}
+.pdc-board-col-head h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.pdc-board-count { min-width: var(--tag-height); }
+.pdc-board-col-hint {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+/* The 1:1 board's status mark sits before the label: a filled --mixed dot
+   for Overdue (an overdue 1:1 is amber), a filled --good dot for On track,
+   and a neutral ring for Due soon and Planned. The label says the status, so
+   color is never the only cue. */
+.pdc-board-col-dot {
+  display: block;
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid var(--field-line);
+  border-radius: 50%;
+  background: transparent;
+}
+.pdc-board-col[data-mark="amber"] .pdc-board-col-dot { border-color: var(--mixed); background: var(--mixed); }
+.pdc-board-col[data-mark="good"] .pdc-board-col-dot { border-color: var(--good); background: var(--good); }
+/* An overdue last 1:1 date reads in --amber-strong, as in the table. */
+.oo-board .pdc-board-col[data-mark="amber"] .pdc-board-card-meta {
+  color: var(--amber-strong);
+  font-weight: 600;
+}
+
+/* Drop zone. While a card is dragged over it, it gets a --sunken fill and a
+   dashed accent outline. No glow. */
+.pdc-board-drop {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  min-height: 64px;
+  border-radius: var(--radius-menu);
+  outline: 1.5px dashed transparent;
+  outline-offset: 4px;
+  transition: background-color 120ms ease, outline-color 120ms ease;
+}
+.pdc-board-drop.drag-over {
+  background: var(--sunken);
+  outline-color: var(--accent);
+}
+
+.pdc-board-card {
+  --field-h: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  cursor: grab;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+.pdc-board-card:hover { border-color: var(--button-line); }
+.pdc-board-card:where([draggable="false"], .oo-board-card) { cursor: default; }
+/* The card being dragged stays in place as a dashed outline of itself. */
+.pdc-board-card.dragging {
+  border-style: dashed;
+  border-color: var(--field-line);
+  background: var(--page);
+  cursor: grabbing;
+}
+.pdc-board-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+/* The name is a link button that is cut with an ellipsis at the end only. */
+.pdc-board-card-top .pdc-board-card-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+.pdc-board-card-goal {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+/* The goal's status tag, then its progress bar filling the rest of the row,
+   as on the tiles and in the table, so the status never rests on color. */
+.pdc-board-card-goal-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.pdc-board-card-goal-row > .status-pill { flex: none; }
+.pdc-board-card .goal-progress { display: flex; flex: 1 1 auto; min-width: 0; }
+.pdc-board-card .goal-progress-track { flex: 1 1 auto; width: auto; min-width: 0; }
+.pdc-board-card-meta {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.pdc-board-card-meta > span { white-space: nowrap; }
+.pdc-board-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pdc-board-move-wrap { display: flex; width: 100%; }
+.pdc-board-move-wrap > select { flex: 1 1 auto; width: 100%; min-width: 0; }
+/* Plan PDC date prompt: a --page box inside the card with the date field and
+   its two actions (Plan is the one primary). */
+.pdc-board-date {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-menu);
+  background: var(--page);
+}
+.pdc-board-date input[type="date"] { padding: 0 10px; }
+.pdc-board-date-actions {
+  display: flex;
+  gap: 8px;
+}
+.pdc-board-date-actions > button { flex: 1 1 0; min-width: 0; padding: 0 10px; }
+
+/* 1:1 board card: the Next 1:1 field with its label above, then the two
+   small buttons (the board has no primary button). */
+.oo-plan { gap: 6px; }
+.oo-card-actions {
+  display: flex;
+  gap: 8px;
+}
+.oo-card-actions > button { flex: 1 1 0; min-width: 0; }
+
+/* --- Compact density ------------------------------------------------------------------ */
+body.density-compact #meetingsBody,
+body.density-compact #followUpsBody,
+body.density-compact #pdcSummaryBody { gap: 14px; }
+body.density-compact .meetings-view-item { min-height: 50px; padding-top: 7px; padding-bottom: 7px; }
+body.density-compact .meetings-month-divider { height: 30px; }
+body.density-compact .followups-view { gap: 10px; }
+body.density-compact .followups-view .followup-item { padding-top: 6px; padding-bottom: 6px; }
+body.density-compact .pdc-summary-view { gap: 10px; }
+body.density-compact .pdc-summary-card { gap: 10px; padding: 12px 14px; }
+body.density-compact .pdc-summary-card-body { padding-top: 10px; }
+body.density-compact .pdc-board { column-gap: 10px; }
+body.density-compact .pdc-board-col { row-gap: 8px; padding: 10px; }
+body.density-compact .pdc-board-drop { gap: 8px; }
+body.density-compact .pdc-board-card { gap: 6px; padding: 10px; }
+body.density-compact .pdc-board-date { gap: 6px; padding: 8px; }
+
+/* --- Narrow screens -------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .meetings-view-search { flex-basis: 100%; max-width: none; }
+  .meetings-view-filter { flex: 1 1 150px; }
+  .meetings-view-filter > select { flex: 1 1 auto; width: 100%; min-width: 0; max-width: none; }
+  #meetingsLogBtn { margin-left: 0; }
+
+  /* Rows: date, avatar, then the text; the follow-up tag and Edit go on a
+     second line under the text. */
+  .meetings-view-item {
+    grid-template-columns: 36px 30px minmax(0, 1fr) auto;
+    column-gap: 12px;
+    row-gap: 6px;
+    padding: 10px 14px;
+  }
+  .meetings-view-date { grid-row: 1 / span 2; align-self: start; }
+  .meetings-view-item > .mv-avatar { grid-row: 1 / span 2; align-self: start; }
+  .meetings-view-main { grid-column: 3 / -1; }
+  .meetings-view-chips { grid-column: 3; grid-row: 2; justify-content: flex-start; }
+  .meetings-view-edit { grid-column: 4; grid-row: 2; }
+  .meetings-month-divider { padding: 0 14px; }
+
+  .pdc-view-toolbar .pdc-round-chip { margin-left: 0; }
+  .pdc-summary-card { padding: 14px; }
+  .pdc-summary-card-actions { margin-left: 0; }
+}
+@media (max-width: 700px) {
+  .pdc-summary-card-body { grid-template-columns: minmax(0, 1fr); }
+  /* The goal title gets its own line above its tag and progress. */
+  .pdc-summary-goal-row { flex-wrap: wrap; row-gap: 4px; padding: 5px 0; }
+  .pdc-summary-goal-title { flex-basis: 100%; white-space: normal; overflow-wrap: anywhere; }
+}

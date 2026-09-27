@@ -1,0 +1,1109 @@
+/* Tags and status tones, badges, pills, avatars, pulse glyphs, progress bars, cards and panels, tables, empty states, and shared list pieces used in several views (talking points, follow-ups, markdown notes, sharp panels, drawer sections). Built from Controls 2, 3 and 4.
+   Owner: W2 shared controls.
+
+   Tones (Moss status table): neutral, outline, good, amber, red, solid-good,
+   solid-red. The old names still work: success = good, warning = amber,
+   danger = red, info = neutral, soft = outline. Tone classes only set the
+   --tag-* variables, so a tone class on anything that is not a tag does
+   nothing. */
+
+/* --- Tags ---------------------------------------------------------------- */
+.tag,
+.badge,
+.pill,
+.status-pill,
+.mv-chip,
+.tp-chip,
+.report-tile-chip,
+.note-task-status,
+.initials-tag,
+.pdc-round-chip,
+.pdc-board-count,
+.tl-kind-badge {
+  --tag-bg: var(--sunken);
+  --tag-fg: var(--ink-3);
+  --tag-bd: var(--sunken);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--tag-height);
+  min-width: 0;
+  max-width: 100%;
+  padding: 0 8px;
+  flex-shrink: 0;
+  border: 1px solid var(--tag-bd);
+  border-radius: var(--radius-tag);
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font-size: var(--text-tag);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
+
+/* Outline */
+:is(.tag, .badge, .pill).outline,
+:is(.tag, .badge, .pill).soft,
+.tp-chip,
+.note-task.open .note-task-status,
+.status-pill:is([data-pill-value="Not started"], [data-pill-value="Paused"]),
+.mv-chip[data-tone="outline"],
+.report-tile-chip[data-tone="outline"] {
+  --tag-bg: transparent;
+  --tag-fg: var(--ink-3);
+  --tag-bd: var(--outline);
+}
+/* Good */
+:is(.tag, .badge, .pill):is(.good, .success),
+.note-task.done .note-task-status,
+.status-pill:is([data-pill-value="Good"], [data-pill-value="On track"]),
+.mv-chip:is([data-tone="good"], [data-tone="success"]),
+.report-tile-chip:is([data-tone="good"], [data-tone="success"]) {
+  --tag-bg: var(--good-tint);
+  --tag-fg: var(--good-text);
+  --tag-bd: var(--good-tint);
+}
+/* Amber: attention. An overdue last 1:1 is amber. */
+:is(.tag, .badge, .pill):is(.amber, .warning),
+.status-pill[data-pill-value="Needs review"],
+.mv-chip:is(:not([data-tone]), [data-tone="warning"], [data-tone="amber"]),
+.report-tile-chip:is(:not([data-tone]), [data-tone="warning"], [data-tone="amber"]) {
+  --tag-bg: var(--amber-tint);
+  --tag-fg: var(--amber-text);
+  --tag-bd: var(--amber-tint);
+}
+/* Red: problems. */
+:is(.tag, .badge, .pill):is(.red, .danger),
+.status-pill:is([data-pill-value="Blocked"], [data-pill-value="Support needed"], [data-pill-value="At risk"]),
+.mv-chip:is([data-tone="danger"], [data-tone="red"]),
+.report-tile-chip:is([data-tone="danger"], [data-tone="red"]) {
+  --tag-bg: var(--red-tint);
+  --tag-fg: var(--red-text);
+  --tag-bd: var(--red-tint);
+}
+/* Solid good: finished. */
+:is(.tag, .badge, .pill).solid-good,
+.status-pill:is([data-pill-value="Completed"], [data-pill-value="Done"]),
+.mv-chip[data-tone="solid-good"],
+.report-tile-chip[data-tone="solid-good"] {
+  --tag-bg: var(--good);
+  --tag-fg: var(--surface);
+  --tag-bd: var(--good);
+}
+/* Solid red: urgent. */
+:is(.tag, .badge, .pill).solid-red,
+.status-pill[data-pill-value="Urgent"],
+.mv-chip[data-tone="solid-red"],
+.report-tile-chip[data-tone="solid-red"] {
+  --tag-bg: var(--rough);
+  --tag-fg: var(--surface);
+  --tag-bd: var(--rough);
+}
+/* Neutral (explicit), the old info tone and counts. */
+:is(.tag, .badge, .pill):is(.neutral, .info),
+.mv-chip:is([data-tone="info"], [data-tone="neutral"]),
+.report-tile-chip:is([data-tone="info"], [data-tone="neutral"]) {
+  --tag-bg: var(--sunken);
+  --tag-fg: var(--ink-3);
+  --tag-bd: var(--sunken);
+}
+.tp-chip { margin-left: 8px; }
+
+/* Inline status select that looks like a tag with a small chevron. The
+   chevron sits on a wrapping .pill-select-wrap (or .select-wrap) span.
+   The tag is drawn 26px high as in Controls 4, but the control is 28px: a
+   1px clear border around the painted box keeps the hit area at the 28px
+   minimum. The tag's own 1px border is an inset shadow. */
+select.pill-select {
+  --tag-bg: var(--sunken);
+  --tag-fg: var(--ink-3);
+  --tag-bd: var(--sunken);
+  appearance: none;
+  display: inline-block;
+  width: auto;
+  min-width: 0;
+  height: var(--small-height);
+  margin: 0;
+  padding: 0 23px 0 9px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--radius-tag) + 1px);
+  background: var(--tag-bg);
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px var(--tag-bd);
+  color: var(--tag-fg);
+  font-size: var(--text-tag);
+  font-weight: 600;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+}
+select.pill-select:focus { border-color: transparent; box-shadow: inset 0 0 0 1px var(--tag-bd); }
+select.pill-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select.pill-select option { color: var(--ink); background: var(--surface); font-weight: 400; }
+select.pill-select[data-pill-value="Not started"] { --tag-bg: transparent; --tag-bd: var(--outline); }
+select.pill-select:is([data-pill-value="Good"]) { --tag-bg: var(--good-tint); --tag-fg: var(--good-text); --tag-bd: var(--good-tint); }
+select.pill-select[data-pill-value="Needs review"] { --tag-bg: var(--amber-tint); --tag-fg: var(--amber-text); --tag-bd: var(--amber-tint); }
+select.pill-select:is([data-pill-value="Blocked"], [data-pill-value="Support needed"]) { --tag-bg: var(--red-tint); --tag-fg: var(--red-text); --tag-bd: var(--red-tint); }
+select.pill-select[data-pill-value="Completed"] { --tag-bg: var(--good); --tag-fg: var(--surface); --tag-bd: var(--good); }
+select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg: var(--surface); --tag-bd: var(--rough); }
+.pill-select-wrap {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  color: var(--ink-3);
+}
+.pill-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  margin-top: -6.5px;
+  background: currentColor;
+  pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 13px 13px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 13px 13px no-repeat;
+}
+.pill-select-wrap:has(> select[data-pill-value="Good"]) { color: var(--good-text); }
+.pill-select-wrap:has(> select[data-pill-value="Needs review"]) { color: var(--amber-text); }
+.pill-select-wrap:has(> select:is([data-pill-value="Blocked"], [data-pill-value="Support needed"])) { color: var(--red-text); }
+.pill-select-wrap:has(> select:is([data-pill-value="Completed"], [data-pill-value="Urgent"])) { color: var(--surface); }
+
+/* --- Avatars --------------------------------------------------------------- */
+/* Initials on sunken in ink. No per person colors. 30px radius 8, 36px radius 10. */
+.avatar,
+.avatar-sm,
+.tt-avatar,
+.mv-avatar,
+.gs-avatar,
+.fu-avatar,
+.pdc-board-card-avatar,
+.report-tile-avatar,
+.pdc-summary-card-avatar,
+.detail-page-header-avatar,
+.mr-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--sunken);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+.avatar-sm,
+.mv-avatar,
+.gs-avatar,
+.fu-avatar,
+.pdc-board-card-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: var(--text-tag);
+}
+.tt-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: var(--text-tag);
+}
+
+/* --- Pulse glyphs ---------------------------------------------------------- */
+/* Always three shapes: full circle Good, half circle Mixed, empty ring Rough.
+   10px on their own, 8px on a 12px pitch in a row (oldest to newest).
+   Each glyph is the mockup SVG used as a mask over a status color, so the
+   1.4px and 1.8px rings keep their exact weight (CSS borders would be rounded
+   down to whole pixels). The pulse picker in 03-moss-controls.css uses the
+   same --pulse-glyph-* shapes. */
+.pulse-dot,
+.pulse-option {
+  --pulse-glyph-good: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5'/%3E%3C/svg%3E");
+  --pulse-glyph-mixed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='4.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M5 0.7A4.3 4.3 0 0 0 5 9.3Z'/%3E%3C/svg%3E");
+  --pulse-glyph-rough: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='4.1' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
+  --pulse-glyph-none: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='4.25' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+.pulse-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  --pulse-glyph-good-8: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='4'/%3E%3C/svg%3E");
+  --pulse-glyph-mixed-8: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='3.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M4 0.7A3.3 3.3 0 0 0 4 7.3Z'/%3E%3C/svg%3E");
+  --pulse-glyph-rough-8: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='3.1' fill='none' stroke='black' stroke-width='1.8'/%3E%3C/svg%3E");
+  --pulse-glyph-none-8: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='3.25' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+.pulse-dot {
+  --pulse-glyph: var(--pulse-glyph-none);
+  display: inline-block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 0;
+  background: var(--field-line);
+  vertical-align: middle;
+  -webkit-mask: var(--pulse-glyph) center / 100% 100% no-repeat;
+  mask: var(--pulse-glyph) center / 100% 100% no-repeat;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.pulse-dot[data-pulse="green"] { --pulse-glyph: var(--pulse-glyph-good); background: var(--good); }
+.pulse-dot[data-pulse="amber"] { --pulse-glyph: var(--pulse-glyph-mixed); background: var(--mixed); }
+.pulse-dot[data-pulse="red"] { --pulse-glyph: var(--pulse-glyph-rough); background: var(--rough); }
+.pulse-dots .pulse-dot { --pulse-glyph: var(--pulse-glyph-none-8); width: 8px; height: 8px; }
+.pulse-dots .pulse-dot[data-pulse="green"] { --pulse-glyph: var(--pulse-glyph-good-8); }
+.pulse-dots .pulse-dot[data-pulse="amber"] { --pulse-glyph: var(--pulse-glyph-mixed-8); }
+.pulse-dots .pulse-dot[data-pulse="red"] { --pulse-glyph: var(--pulse-glyph-rough-8); }
+.pulse-dots-empty {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+}
+.meeting-pulse-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+}
+
+/* --- Goal progress --------------------------------------------------------- */
+/* 6px track in sunken, radius 3px. On track and Done good, At risk rough,
+   Paused disabled text. Percentage at the right in 12px ink-2. */
+.goal-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  vertical-align: middle;
+}
+.goal-progress-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--sunken);
+  overflow: hidden;
+}
+.goal-progress.compact .goal-progress-track { width: 72px; }
+.goal-progress-fill {
+  height: 100%;
+  max-width: 100%;
+  border-radius: 3px;
+  background: var(--good);
+}
+.goal-progress-fill[data-goal-status="At risk"] { background: var(--rough); }
+.goal-progress-fill[data-goal-status="Paused"] { background: var(--disabled-text); }
+.goal-progress-fill[data-goal-status="Done"] { background: var(--good); }
+.goal-progress-pct {
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Cards and panels ------------------------------------------------------ */
+/* Surface, 1px line, radius 14px, never a shadow. Panel titles sit inside
+   panels, with a short note under them in 12.5px ink-2. */
+.card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px 0;
+}
+.panel-header > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.panel-header h2,
+.panel-header h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-section);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.panel-header p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.content { padding: 16px 20px 20px; }
+.content.topless { padding-top: 14px; }
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.drawer-section > h3,
+.drawer-section-head h3,
+.panel-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.drawer-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+}
+.drawer-section-head > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.drawer-section-head > :not(:first-child) { flex-shrink: 0; }
+
+/* Panels follow Meeting Room.html: 16px inside, the title with no rule under
+   it, and rows divided by inset --line-soft lines. 14px at 900px and below,
+   and 14px top and bottom in compact density. */
+.sharp-panel {
+  --panel-pad-x: 16px;
+  --panel-pad-y: 16px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+.sharp-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: var(--panel-pad-y) var(--panel-pad-x) 12px;
+  border-bottom: 0;
+  background: var(--surface);
+}
+.sharp-panel-header h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.sharp-panel-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.sharp-panel-header p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.sharp-panel-body { padding: 0; }
+.sharp-panel-body.padded { padding: var(--panel-pad-y) var(--panel-pad-x); }
+.sharp-panel-header + .sharp-panel-body.padded { padding-top: 0; }
+
+/* Helper copy. Stable mode hides it (see 02-moss-base.css). */
+.section-note,
+.help-text,
+.hint,
+.panel-note {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.actions,
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.badges { gap: 6px; }
+
+/* Banner card: title 14.5px 600, text 13.5px ink-2, then its actions. */
+.callout {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+.callout strong { color: var(--ink); font-size: 14.5px; font-weight: 600; line-height: 1.3; }
+.callout p { margin: 0; color: var(--ink-2); font-size: var(--text-small); line-height: 1.45; }
+/* 3px between the title and the text, 12px before the actions. */
+.callout > :is(.actions, .setup-actions) { margin-top: 9px; }
+
+/* Quick filter bar (Controls 4). */
+.quick-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-toast);
+  background: var(--surface);
+}
+.quick-filter-bar > div:first-child { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.quick-filter-bar strong { color: var(--ink); font-size: var(--text-body); font-weight: 600; line-height: 1.35; }
+.quick-filter-bar p,
+.quick-filter-bar .hint { margin: 0; color: var(--ink-2); font-size: var(--text-label); line-height: 1.45; }
+
+/* Legends for charts and strips. */
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+/* A swatch is a 10px square, radius 3px. The plain swatch (and .empty, for
+   "No meeting") is a sunken square with a --field-line border so it reaches
+   3:1. Categories that are not status use steps of the one hue ramp
+   (decision 5): .ramp-4 to .ramp-6 as marks; .ramp-1 to .ramp-3 are fills
+   and keep the border. The cadence legend's older names map in order onto
+   the dark steps: .accent = ramp-6, .success = ramp-5, .info = ramp-4. */
+.swatch {
+  --swatch-fill: var(--sunken);
+  --swatch-line: var(--field-line);
+  display: inline-block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--swatch-line);
+  border-radius: 3px;
+  background: var(--swatch-fill);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.swatch.ramp-1 { --swatch-fill: var(--ramp-1); }
+.swatch.ramp-2 { --swatch-fill: var(--ramp-2); }
+.swatch.ramp-3 { --swatch-fill: var(--ramp-3); }
+.swatch:is(.ramp-4, .info) { --swatch-fill: var(--ramp-4); --swatch-line: var(--ramp-4); }
+.swatch:is(.ramp-5, .success) { --swatch-fill: var(--ramp-5); --swatch-line: var(--ramp-5); }
+.swatch:is(.ramp-6, .accent) { --swatch-fill: var(--ramp-6); --swatch-line: var(--ramp-6); }
+
+/* --- Tables (Controls 4) --------------------------------------------------- */
+/* White wrapper, radius 14px. Header row 38px with 12px 500 ink-2 labels.
+   Group rows 34px on page with a 7px status dot. Rows 52px, line-soft dividers. */
+.team-table-wrap,
+.table-wrap {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: auto;
+}
+.team-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--ink);
+  font-size: 13px;
+}
+.team-table th {
+  height: 38px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.team-table td {
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.team-table tbody tr:last-child td { border-bottom: 0; }
+.team-table-group td {
+  height: 34px;
+  background: var(--page);
+  border-bottom: 1px solid var(--line-soft);
+}
+.team-table-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.team-table-group-label::before {
+  content: "";
+  display: block;
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+.team-table-group[data-tone="danger"] .team-table-group-label::before { background: var(--rough); }
+.team-table-group[data-tone="success"] .team-table-group-label::before { background: var(--good); }
+.team-table-group-count {
+  color: var(--ink-2);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.tt-person {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.tt-person > span:last-child { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.tt-person-name {
+  white-space: nowrap;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.tt-person:hover .tt-person-name { text-decoration: underline; text-underline-offset: 3px; }
+.tt-sub {
+  display: block;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.35;
+}
+.tt-overdue { color: var(--amber-strong); font-weight: 600; }
+.team-table td { font-variant-numeric: tabular-nums; }
+/* Next 1:1 date field. Controls 4 draws it 110px wide, which cuts off the
+   last digit of the year (in the mockup too). Chrome puts a 24px gap before
+   the calendar button; closing that up lets the whole date show at 118px. */
+.tt-date input[type="date"] {
+  width: 118px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: var(--radius-small);
+  font-size: 13px;
+}
+.tt-date input[type="date"]::-webkit-calendar-picker-indicator { margin-inline-start: 2px; padding: 0; }
+.tt-date input[type="date"]::-webkit-datetime-edit { padding: 0; }
+.tt-count {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tt-count.zero { color: var(--ink-2); font-weight: 400; }
+.tt-actions { display: inline-flex; gap: 6px; }
+.tt-empty {
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+}
+.team-table .goal-progress .goal-progress-track { width: 46px; }
+/* Controls 4 draws the table 1214px wide on a canvas with no sidebar. With
+   10px cell padding and every cell on one line the app's table needs about
+   1180px, and at 1440 wide the table area is 1134px. So when the wrapper is
+   narrower than that, the cells use 7px of padding instead of wrapping the
+   person's level onto a third line or scrolling sideways. From about 1490px
+   wide the exact 10px applies. */
+.team-table-wrap { container: team-table / inline-size; }
+@container team-table (max-width: 1185px) {
+  .team-table th,
+  .team-table td { padding: 0 7px; }
+}
+
+/* --- Empty states (Controls 3) --------------------------------------------- */
+/* 13.5px ink-2 text in a page box with a dashed button-line border, radius 10px. */
+.empty-note,
+.empty-state,
+.tp-empty,
+.vacation-empty,
+.followup-empty,
+.attention-empty,
+.evidence-empty,
+.theme-empty,
+.tenure-empty,
+.trend-empty,
+.tl-empty,
+.upcoming-empty,
+.pdc-board-empty {
+  display: block;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed var(--button-line);
+  border-radius: var(--radius-menu);
+  background: var(--page);
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.45;
+  text-align: left;
+}
+.empty-state p { margin: 0; }
+/* The PDC board's empty column is a drop target: the same dashed box, text
+   centered. */
+.pdc-board-empty { text-align: center; }
+
+/* Hero empty state: first run and all clear. Same box, more room, a quiet icon. */
+.empty-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 32px 24px;
+  border: 1px dashed var(--button-line);
+  border-radius: var(--radius-menu);
+  background: var(--page);
+  color: var(--ink-2);
+  text-align: center;
+}
+.empty-hero-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: var(--sunken);
+  color: var(--ink-2);
+}
+.empty-hero-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.empty-hero h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-panel);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.empty-hero p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+.empty-hero > button,
+.empty-hero > .actions { margin-top: 8px; }
+
+/* Plain inline meta empties stay text only: 12.5px ink-2 (Controls 4). */
+.note-preview-empty,
+.gs-empty {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.gs-empty { padding: 12px 16px; }
+
+/* --- Talking points ---------------------------------------------------------- */
+/* Divided rows: checkbox, text, and a remove icon button. */
+.tp-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Meeting Room.html: 10px between the box and its text, 8px before the
+   remove button. */
+.tp-item {
+  --tp-pad-y: 7px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--tp-pad-y) 0;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+}
+.tp-item:first-child { border-top: 1px solid var(--line-soft); }
+.tp-item > input[type="checkbox"] { margin-top: 2px; }
+.tp-item:has(> .tp-delete) { align-items: flex-start; }
+.tp-item:has(> .tp-delete) > input[type="checkbox"] { margin-top: 6px; }
+.tp-item:has(> .tp-delete) > .tp-item-text { padding-top: 4px; }
+.tp-item:not(:has(> .tp-delete)) { --tp-pad-y: 8px; }
+.tp-item > .tp-delete { margin-left: -2px; }
+/* Only the checkbox sits in its label, so clicking the text does not tick
+   it (as in v0.52.4). The label is a 28px hit area centered on the 16px box;
+   the negative side margins keep the box where the row puts it. */
+.tp-item > .tp-check {
+  flex: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  gap: 0;
+  width: 28px;
+  height: 28px;
+  margin: 0 -6px;
+  padding: 0;
+}
+.tp-item:has(> .tp-check) > .tp-check > input[type="checkbox"] { margin: 0; }
+.tp-item:has(> .tp-check) > .tp-item-text,
+.tp-item:has(> .tp-check) > .tp-item-main { padding-top: 4px; }
+.tp-item:has(> label) { gap: 8px; }
+.tp-item:has(> label) > .tp-delete { margin-left: 0; }
+/* The same row when the checkbox and text are wrapped in a label. The label
+   takes over the row's vertical padding (negative margin, same padding) and
+   stretches to the row height, so the whole row toggles the box and the hit
+   area is at least 28px without changing how the row looks. */
+.tp-item > label {
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 10px;
+  min-width: 0;
+  margin: calc(-1 * var(--tp-pad-y)) 0;
+  padding: var(--tp-pad-y) 0;
+}
+/* A discussed point keeps its meta line under the label, so the label only
+   reaches up into the row padding. */
+.tp-item-main > label {
+  margin-top: calc(-1 * var(--tp-pad-y, 7px));
+  padding-top: var(--tp-pad-y, 7px);
+}
+.tp-item:has(> .tp-delete) > label > input[type="checkbox"] { margin-top: 6px; }
+.tp-item:has(> .tp-delete) > label > .tp-item-text { padding-top: 4px; }
+.tp-item-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.tp-item.done .tp-item-text { color: var(--ink-2); text-decoration: line-through; }
+.tp-item.done .tp-item-text .tp-meta { text-decoration: none; }
+.tp-meta {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+}
+.tp-meta .tl-jump { font-size: var(--text-caption); }
+.tp-add {
+  display: flex;
+  gap: 8px;
+  --field-h: 36px;
+}
+.tp-add input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  font-size: var(--text-small);
+}
+.tp-done-details { display: flex; flex-direction: column; gap: 8px; }
+.tp-done-details > summary { list-style: none; width: fit-content; }
+.tp-done-details > summary::-webkit-details-marker { display: none; }
+
+/* --- Follow-up rows ------------------------------------------------------------ */
+/* Inside a panel the list carries the panel's side and bottom padding, so
+   the row dividers are inset like the talking point rows. The selector is
+   one step stronger than a view's own list rule, so the inset holds on every
+   page that shows the panel. */
+.followup-list {
+  display: flex;
+  flex-direction: column;
+}
+.sharp-panel .sharp-panel-body > .followup-list { padding: 0 var(--panel-pad-x) var(--panel-pad-y); }
+.followup-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+  background: transparent;
+  cursor: pointer;
+}
+.followup-item:first-child { border-top: 1px solid var(--line-soft); }
+.followup-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.followup-copy strong {
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.followup-item.done .followup-copy strong,
+.followup-item:has(> input:checked) .followup-copy strong { color: var(--ink-2); text-decoration: line-through; }
+.followup-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+}
+.followup-meta .followup-jump { font-size: var(--text-caption); }
+
+/* --- Goal cards (Development tab) ------------------------------------------- */
+.goal-list {
+  display: flex;
+  flex-direction: column;
+}
+.goal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+}
+.goal-card:first-child { border-top: 1px solid var(--line-soft); }
+.goal-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+.goal-card-title {
+  flex: 1 1 220px;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.4;
+}
+/* The Edit button on a goal row is a small button. */
+.goal-card-head > button.secondary {
+  height: var(--small-height);
+  padding: 0 10px;
+  border-radius: var(--radius-small);
+  font-size: var(--text-label);
+}
+.goal-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  color: var(--ink-2);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+}
+.goal-card-detail {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.goal-updates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.goal-updates li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink-2);
+  font-size: var(--text-label);
+  line-height: 1.45;
+}
+.goal-updates li strong {
+  flex: none;
+  color: var(--ink);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Markdown write and preview ----------------------------------------------- */
+.md-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.md-shell > .md-tabs { margin-bottom: 2px; }
+.md-panel-write { display: block; min-width: 0; }
+.md-panel-write textarea { min-height: 160px; }
+.md-panel-preview {
+  min-width: 0;
+  min-height: 160px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-field);
+  background: var(--surface);
+}
+
+.note-markdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  color: var(--ink);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.note-markdown p,
+.note-markdown h1,
+.note-markdown h2,
+.note-markdown h3,
+.note-markdown h4,
+.note-markdown h5,
+.note-markdown h6,
+.note-markdown ul,
+.note-markdown ol,
+.note-markdown pre { margin: 0; }
+.note-markdown h1,
+.note-markdown h2 { font-size: var(--text-panel); font-weight: 600; line-height: 1.3; }
+.note-markdown h3,
+.note-markdown h4,
+.note-markdown h5,
+.note-markdown h6 { font-size: var(--text-body); font-weight: 600; line-height: 1.35; }
+.note-markdown ul,
+.note-markdown ol { padding-left: 18px; }
+.note-markdown li + li { margin-top: 2px; }
+.note-markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.note-markdown a:hover { color: var(--accent-strong); }
+.note-markdown strong { font-weight: 600; }
+.note-markdown code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--sunken);
+  font-family: inherit;
+  font-size: 0.93em;
+}
+.note-markdown pre {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-field);
+  background: var(--page);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+.note-markdown pre code { padding: 0; background: transparent; font-size: inherit; }
+.note-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.note-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.note-task-status { min-width: 44px; }
+.note-task-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+/* --- Tick feedback ------------------------------------------------------------- */
+/* One short fade when a row is ticked. It answers the click and never loops. */
+@keyframes mossTickRow {
+  from { background-color: var(--sunken); }
+  to { background-color: transparent; }
+}
+.tick-pop { animation: mossTickRow 150ms ease-out 1; }
+
+/* --- Density: compact ---------------------------------------------------------- */
+body.density-compact .team-table td { height: 44px; }
+body.density-compact .team-table th { height: 34px; }
+body.density-compact .drawer-section { padding: 14px 16px; }
+body.density-compact .tp-item { --tp-pad-y: 5px; }
+body.density-compact .followup-item { padding-top: 6px; padding-bottom: 6px; }
+body.density-compact .sharp-panel { --panel-pad-y: 14px; }
+
+/* --- Narrow screens -------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .panel-header,
+  .quick-filter-bar { flex-direction: column; align-items: stretch; }
+  .drawer-section { padding: 14px; }
+  .sharp-panel { --panel-pad-x: 14px; --panel-pad-y: 14px; }
+}

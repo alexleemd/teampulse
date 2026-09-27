@@ -205,7 +205,7 @@ function renderRecentThemesCard(reports) {
   const chipsHtml = combined.map((item, index) => {
     const size = chipSizeForRank(index);
     const activeClass = activeTheme === item.term ? ' active' : '';
-    return `<button type="button" class="theme-chip ${size}${activeClass}" data-theme-filter="${escapeHtml(item.term)}" title="Filter reports whose notes mention ${escapeHtml(item.term)}">${escapeHtml(item.term)}<span>${item.reportCount}</span></button>`;
+    return `<button type="button" class="theme-chip ${size}${activeClass}" data-theme-filter="${escapeHtml(item.term)}" aria-pressed="${activeClass ? 'true' : 'false'}" title="Filter reports whose notes mention ${escapeHtml(item.term)}">${escapeHtml(item.term)}<span>${item.reportCount}</span></button>`;
   }).join('');
 
   const body = combined.length

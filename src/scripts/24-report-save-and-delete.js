@@ -136,8 +136,6 @@ function collectWorkspaceCustomFields(existingFields = []) {
 
 function appendEvent(event) {
   app.doc.events.push(normalizeEventRecord(event));
-  // v0.52.0: every write sends a soft ripple through the ambient atmosphere.
-  window.TP_AMBIENT?.eventPulse(event?.type || '');
 }
 
 async function createReport(payload, options = {}) {

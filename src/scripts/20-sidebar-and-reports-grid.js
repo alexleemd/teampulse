@@ -1,94 +1,6 @@
-// Unified sidebar renderer — replaces the old 3-pane list-pane system.
-// Renders all nav items (Team Health sub-views, Direct Reports, Meetings, Settings)
-// in a single dark sidebar with full names.
-function renderSidebar() {
-  const mount = document.getElementById('sidebarNav');
-  if (!mount) return;
-  const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
-  if (!ready) { mount.innerHTML = ''; return; }
-  const mainView = MAIN_VIEWS.includes(app.ui.mainView) ? app.ui.mainView : 'teamHealth';
-  const thTab = currentTeamHealthTab();
-  const reports = getReports();
-  const reportCount = reports.length;
-  const attentionCount = reports.filter((r) => {
-    const m = getMetrics(r.id);
-    return m.oneOnOneOverdue || m.pdcOverdue || m.cvReviewOverdue;
-  }).length;
-  const openFollowUpsTotal = reports.reduce((sum, r) => sum + ((getMetrics(r.id).openFollowUps || []).length), 0);
-
-  const thIcon = (tab) => {
-    switch (tab) {
-      case 'overview':  return '<svg viewBox="0 0 24 24"><path d="M3 12h3l2-5 4 10 2-5h7"/></svg>';
-      case 'cadence':   return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
-      case 'attention': return '<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>';
-      case 'support':   return '<svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15v-4M12 15V8M16 15v-6"/></svg>';
-      case 'insights':  return '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>';
-      default:          return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>';
-    }
-  };
-
-  const teamHealthItems = TEAM_HEALTH_TABS.map((tab, tabIndex) => {
-    const isActive = mainView === 'teamHealth' && tab === thTab;
-    let badge = '';
-    if (tab === 'attention' && attentionCount > 0) {
-      badge = `<span class="sidebar-item-badge" data-tone="warning">${attentionCount}</span>`;
-    }
-    return `<button type="button" class="sidebar-item sub${isActive ? ' active' : ''}" data-nav-team-health="${escapeHtml(tab)}" aria-pressed="${isActive}" title="${escapeHtml(`${TEAM_HEALTH_TAB_LABELS[tab]} · press ${tabIndex + 1}`)}">
-      ${thIcon(tab)}
-      <span>${escapeHtml(TEAM_HEALTH_TAB_LABELS[tab])}</span>
-      ${badge}
-    </button>`;
-  }).join('');
-
-  const reportsBadge = reportCount > 0 ? `<span class="sidebar-item-badge">${reportCount}</span>` : '';
-  const followUpsBadge = openFollowUpsTotal > 0 ? `<span class="sidebar-item-badge" data-tone="warning">${openFollowUpsTotal}</span>` : '';
-  const isReports = mainView === 'reports';
-  const isMeetings = mainView === 'meetings' || mainView === 'meetingRoom';
-  const isFollowUps = mainView === 'followUps';
-  const isPdcSummary = mainView === 'pdcSummary';
-  const isSettings = mainView === 'settings';
-
-  mount.innerHTML = `
-    <div class="sidebar-group">
-      <div class="sidebar-group-label">Team Health</div>
-      ${teamHealthItems}
-    </div>
-    <div class="sidebar-group">
-      <div class="sidebar-group-label">People</div>
-      <button type="button" class="sidebar-item${isReports ? ' active' : ''}" data-nav-main="reports" aria-pressed="${isReports}" title="Direct Reports · press 3">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.3 3.3-5 6-5s5.2 1.7 6 5"/><circle cx="17" cy="9" r="2.6"/><path d="M15.2 14c2.4.1 4.5 1.6 5.8 4.5"/></svg>
-        <span>Direct Reports</span>
-        ${reportsBadge}
-      </button>
-      <button type="button" class="sidebar-item${isMeetings ? ' active' : ''}" data-nav-main="meetings" aria-pressed="${isMeetings}" title="Meetings · press 4">
-        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
-        <span>Meetings</span>
-      </button>
-      <button type="button" class="sidebar-item${isFollowUps ? ' active' : ''}" data-nav-main="followUps" aria-pressed="${isFollowUps}" title="Follow-Ups · press 5">
-        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>Follow-Ups</span>
-        ${followUpsBadge}
-      </button>
-      <button type="button" class="sidebar-item${isPdcSummary ? ' active' : ''}" data-nav-main="pdcSummary" aria-pressed="${isPdcSummary}" title="PDC Summary · press 6">
-        <svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
-        <span>PDC Summary</span>
-      </button>
-    </div>
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-group">
-      <button type="button" class="sidebar-item${isSettings ? ' active' : ''}" data-nav-main="settings" aria-pressed="${isSettings}" title="Settings · press 7">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 4.24 16.97l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.33.22.69.22 1.05 0 .86.7 1.55 1.55 1.55H21a2 2 0 1 1 0 4h-.05A1.7 1.7 0 0 0 19.4 15z"/></svg>
-        <span>Settings</span>
-      </button>
-    </div>
-  `;
-}
-
 function renderReportsGrid() {
   const mount = document.getElementById('reportsGrid');
   if (!mount) return;
-  const gridVisible = app.ui.mainView === 'reports' && !app.ui.selectedId && !app.ui.creatingReport;
-  mount.classList.toggle('anim-entry', viewJustEntered('reportsGrid', gridVisible));
   const total = getReports().length;
   // getFilteredReports applies search, PDC status, attention state, and the
   // Insights theme filter. The grid re-sorts alphabetically for scannability;
@@ -117,85 +29,132 @@ function renderReportsGrid() {
     });
   }
   mount.classList.toggle('reports-grid', viewMode !== 'table');
+  mount.classList.toggle('reports-table', viewMode === 'table');
   if (viewMode === 'table') {
     mount.innerHTML = renderReportsTableHtml(filtered, total);
     return;
   }
 
-  const tiles = filtered.map((report, tileIndex) => {
-    const metrics = getMetrics(report.id);
-    const fill = supportLevelFill(report.supportLevel);
-    const level = report.level || 'Level not set';
-    const mentor = report.mentors ? `Mentor: ${report.mentors}` : '';
-    const chips = [];
-    if (metrics.oneOnOneOverdue) chips.push(`<span class="report-tile-chip">1:1 overdue</span>`);
-    if (metrics.pdcOverdue) chips.push(`<span class="report-tile-chip">PDC overdue</span>`);
-    if (metrics.cvReviewOverdue) chips.push(`<span class="report-tile-chip">CV overdue</span>`);
-    const openFollowUps = (metrics.openFollowUps || []).length;
-    if (openFollowUps) chips.push(`<span class="report-tile-chip" data-tone="info">${openFollowUps} follow-up${openFollowUps === 1 ? '' : 's'}</span>`);
-    if (report.supportLevel === 'Urgent') chips.push(`<span class="report-tile-chip" data-tone="danger">Urgent</span>`);
-    else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-tile-chip" data-tone="danger">Support needed</span>`);
-    else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="info">Monitor</span>`);
-    else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
-    const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-    // Company initials are the tile title when present: short, uniform, and
-    // immune to the truncation that crushed long names next to the 1:1 room
-    // pill. The full name moves to its own full-width line underneath, where
-    // it has the whole tile to itself. People without initials keep the name
-    // as the title, exactly as before.
-    const tileTitle = report.initials || report.name || 'Unnamed';
-    return `<button type="button" class="report-tile" data-report-card="${escapeHtml(report.id)}" style="--i:${Math.min(tileIndex, 14)}">
-      <div class="report-tile-head">
-        <div class="report-tile-avatar" style="view-transition-name:vt-${escapeHtml(report.id)};${avatarGradient(report.id)}">${escapeHtml(initials)}</div>
-        <span class="report-tile-name" ${report.initials && report.name ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
-        <span class="tile-room-btn" data-open-room="${escapeHtml(report.id)}" role="button" tabindex="0" title="Open the 1:1 meeting room">1:1 room</span>
-        <span class="report-tile-support-dot" data-fill="${escapeHtml(fill)}" aria-hidden="true"></span>
-      </div>
-      <div class="report-tile-meta">
-        ${report.initials && report.name ? `<span class="report-tile-meta-line report-tile-fullname">${escapeHtml(report.name)}</span>` : ''}
-        <span class="report-tile-meta-line">${escapeHtml(level)}</span>
-        ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
-      </div>
-      ${renderTileSparkline(report)}
-      ${(metrics.pulseSeries || []).length || metrics.primaryGoal ? `<div class="report-tile-vitals">
-        ${renderPulseDots(metrics.pulseSeries, { emptyHtml: '' })}
-        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBar(metrics.primaryGoal, { compact: true })}</span>` : ''}
-      </div>` : ''}
-      ${chips.length ? `<div class="report-tile-chips">${chips.join('')}</div>` : ''}
-    </button>`;
-  }).join('');
+  const tiles = filtered.map((report) => renderReportTileHtml(report)).join('');
 
-  const addTile = `<button type="button" class="report-tile-add" data-report-add style="--i:${Math.min(filtered.length, 14)}">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+  const addTile = `<button type="button" class="report-tile-add" data-report-add>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
     <span>Add direct report</span>
   </button>`;
 
   if (filtered.length === 0) {
     const filtersActive = !!(app.ui.searchTerm || app.ui.planFilter || app.ui.attentionFilter || currentThemeFilter());
     mount.innerHTML = total > 0 && filtersActive
-      ? `<p class="help-text" style="grid-column:1/-1;padding:12px">No direct reports match the current filters.</p>`
+      ? `<p class="help-text empty-note">No direct reports match the current filters.</p>`
       : `${addTile}`;
     return;
   }
   mount.innerHTML = `${tiles}${addTile}`;
 }
 
+function reportInitialsFromName(name) {
+  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+}
+
+// One direct report tile, shared by the Direct Reports grid and the Overview
+// (Overview.html). The tile is a wrapper holding two sibling buttons, so no
+// button sits inside another: the main button covers the whole tile and opens
+// the workspace (click, Enter or Space), and the small 1:1 room button sits on
+// top of it in the head row and opens the room.
+// On Direct Reports the hooks are data-report-card and
+// .tile-room-btn[data-open-room] (handled in 29). On the Overview they are
+// data-glyph-open (handled by the #teamHealthBody delegation in 29) and
+// data-overview-room (handled in 33). The Overview stays in the DOM, hidden,
+// while Direct Reports is shown, so it must not repeat the Direct Reports hooks.
+function renderReportTileHtml(report, options = {}) {
+  const onOverview = options.context === 'overview';
+  const id = escapeHtml(report.id);
+  const metrics = getMetrics(report.id);
+  const level = report.level || 'Level not set';
+  const mentor = report.mentors ? `Mentor: ${report.mentors}` : '';
+  const chips = [];
+  if (metrics.oneOnOneOverdue) chips.push(`<span class="report-tile-chip">1:1 overdue</span>`);
+  if (metrics.pdcOverdue) chips.push(`<span class="report-tile-chip">PDC overdue</span>`);
+  if (metrics.cvReviewOverdue) chips.push(`<span class="report-tile-chip">CV overdue</span>`);
+  const openFollowUps = (metrics.openFollowUps || []).length;
+  if (openFollowUps) chips.push(`<span class="report-tile-chip" data-tone="neutral">${openFollowUps} follow-up${openFollowUps === 1 ? '' : 's'}</span>`);
+  if (report.supportLevel === 'Urgent') chips.push(`<span class="report-tile-chip" data-tone="solid-red">Urgent</span>`);
+  else if (report.supportLevel === 'Support needed') chips.push(`<span class="report-tile-chip" data-tone="red">Support needed</span>`);
+  else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="neutral">Monitor</span>`);
+  else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
+  const initials = reportInitialsFromName(report.name);
+  // Company initials are the tile title when present: short, uniform, and
+  // immune to the truncation that crushed long names next to the 1:1 room
+  // button. The full name moves to its own full-width line underneath, where
+  // it has the whole tile to itself. People without initials keep the name
+  // as the title, exactly as before.
+  const hasCode = !!(report.initials && report.name);
+  const tileTitle = report.initials || report.name || 'Unnamed';
+  const openHook = onOverview ? `data-glyph-open="${id}"` : `data-report-card="${id}"`;
+  const roomHook = onOverview ? `data-overview-room="${id}"` : `data-open-room="${id}"`;
+  const avatarMorph = onOverview ? '' : ` style="view-transition-name:vt-${id}"`;
+  const pulseHtml = renderPulseDots(metrics.pulseSeries, { emptyHtml: '' });
+  return `<div class="report-tile">
+    <button type="button" class="report-tile-main" ${openHook}>
+      <span class="report-tile-head">
+        <span class="report-tile-avatar" aria-hidden="true"${avatarMorph}>${escapeHtml(initials)}</span>
+        <span class="report-tile-name${report.initials ? ' is-code' : ''}" ${hasCode ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
+      </span>
+      <span class="report-tile-meta">
+        ${hasCode ? `<span class="report-tile-meta-line report-tile-fullname">${escapeHtml(report.name)}</span>` : ''}
+        <span class="report-tile-meta-line">${escapeHtml(level)}</span>
+        ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
+      </span>
+      <span class="report-tile-foot">
+        <span class="report-tile-vitals">
+          <span class="report-tile-vital"><span class="report-tile-caption">Meetings, 12 weeks</span>${renderTileSparkline(report)}</span>
+          ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
+        </span>
+        ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
+        ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
+      </span>
+    </button>
+    <button type="button" class="tile-room-btn" ${roomHook} title="Open the 1:1 meeting room">1:1 room</button>
+  </div>`;
+}
+
+// The shared goal bar (renderGoalProgressBar in 25) is built from <div>s,
+// which a <button> (the tile) or a <span> (the table's title wrapper) may not
+// contain. Same markup and classes, with each <div> as a <span>; the output
+// is all escaped, so the only tags in it are the helper's own. The fill span
+// is made a block in 06 (.report-tile-goal, .reports-table).
+function renderGoalProgressBarPhrasing(goal, options = {}) {
+  return renderGoalProgressBar(goal, options).replace(/<(\/?)div\b/g, '<$1span');
+}
+
+// The goal's status as a tag before the compact bar, as on the PDC board and
+// in the 1:1 room, so At risk, Paused and On track never rely on the bar
+// color alone. Used by the tile and the table.
+function renderGoalStatusAndBar(goal) {
+  return `${statusPillHtml('goal', goal.status || GOAL_STATUSES[0])}${renderGoalProgressBarPhrasing(goal, { compact: true })}`;
+}
+
+// An overdue last 1:1 is amber, and always carries this triangle and a
+// screen reader word, so it never relies on color alone.
+const REPORTS_OVERDUE_GLYPH = '<svg class="tt-overdue-glyph" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2 22.2 20.6H1.8Z"></path><path d="M12 9.6v4.8M12 17.4v.2"></path></svg>';
+
 // Monday-style table lens for Direct Reports: grouped by attention state,
-// solid status pills editable inline, next 1:1 editable in place. Same
-// filtered set as the tiles, so search and toolbar filters apply here too.
+// status selects editable inline, next 1:1 editable in place. Same filtered
+// set as the tiles, so search and toolbar filters apply here too.
 function renderReportsTableHtml(filtered, total) {
   if (!filtered.length) {
     const filtersActive = !!(app.ui.searchTerm || app.ui.planFilter || app.ui.attentionFilter || currentThemeFilter());
     return total > 0 && filtersActive
-      ? '<p class="help-text" style="padding:12px">No direct reports match the current filters.</p>'
-      : '<p class="help-text" style="padding:12px">No direct reports yet. Use + Add direct report in the toolbar.</p>';
+      ? '<p class="help-text empty-note">No direct reports match the current filters.</p>'
+      : '<p class="help-text empty-note">No direct reports yet. Use + Add direct report in the toolbar.</p>';
   }
   const needsAttention = filtered.filter((report) => (getMetrics(report.id).attentionDetails || []).length > 0);
   const onTrack = filtered.filter((report) => (getMetrics(report.id).attentionDetails || []).length === 0);
-  const pillSelect = (attr, reportId, options, current, kind) => `<select class="pill-select" ${attr}="${escapeHtml(reportId)}" data-pill-kind="${kind}" data-pill-value="${escapeHtml(current)}" aria-label="${kind === 'pdc' ? 'PDC status' : 'Support level'}">${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select>`;
+  // The select looks like a tag; the wrapping span draws its chevron.
+  const pillSelect = (attr, reportId, options, current, kind) => `<span class="pill-select-wrap"><select class="pill-select" ${attr}="${escapeHtml(reportId)}" data-pill-kind="${kind}" data-pill-value="${escapeHtml(current)}" aria-label="${kind === 'pdc' ? 'PDC status' : 'Support level'}">${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}</select></span>`;
   const row = (report) => {
     const metrics = getMetrics(report.id);
-    const initials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    const initials = reportInitialsFromName(report.name);
     const pdcValue = normalizePdcStatus(report.rawPdcStatus !== undefined ? report.rawPdcStatus : report.pdcStatus);
     const supportValue = normalizeSupportLevel(report.supportLevel);
     const openFu = (metrics.openFollowUps || []).length;
@@ -203,15 +162,15 @@ function renderReportsTableHtml(filtered, total) {
     const attentionTitle = (metrics.attentionDetails || []).map((item) => item.label).join(', ');
     return `<tr data-table-row="${escapeHtml(report.id)}">
       <td><button type="button" class="tt-person" data-table-person="${escapeHtml(report.id)}" ${attentionTitle ? `title="${escapeHtml(attentionTitle)}"` : ''}>
-        <span class="tt-avatar" style="${avatarGradient(report.id)}">${escapeHtml(initials)}</span>
+        <span class="tt-avatar" aria-hidden="true">${escapeHtml(initials)}</span>
         <span><span class="tt-person-name">${escapeHtml(report.name || 'Unnamed')}</span><span class="tt-sub">${escapeHtml(`${report.initials ? `${report.initials} · ` : ''}${report.level || 'Level not set'}`)}</span></span>
       </button></td>
       <td>${pillSelect('data-table-pdc', report.id, PDC_STATUSES, pdcValue, 'pdc')}</td>
       <td>${pillSelect('data-table-support', report.id, SUPPORT_LEVELS, supportValue, 'support')}</td>
-      <td><span class="${metrics.oneOnOneOverdue ? 'tt-overdue' : ''}">${escapeHtml(lastText)}</span></td>
+      <td><span class="tt-last${metrics.oneOnOneOverdue ? ' tt-overdue' : ''}">${metrics.oneOnOneOverdue ? REPORTS_OVERDUE_GLYPH : ''}<span>${escapeHtml(lastText)}</span>${metrics.oneOnOneOverdue ? '<span class="sr-only">overdue</span>' : ''}</span></td>
       <td class="tt-date"><input type="date" data-table-next="${escapeHtml(report.id)}" value="${escapeHtml(report.nextOneOnOneDate || '')}" aria-label="Next planned 1:1"></td>
       <td><span class="tt-count${openFu ? '' : ' zero'}">${openFu}</span></td>
-      <td>${metrics.primaryGoal ? `<span title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalProgressBar(metrics.primaryGoal, { compact: true })}</span>` : '<span class="tt-empty">No goal</span>'}</td>
+      <td>${metrics.primaryGoal ? `<span class="tt-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : '<span class="tt-empty">No goal</span>'}</td>
       <td>${renderPulseDots(metrics.pulseSeries, { emptyHtml: '<span class="tt-empty">No pulse</span>' })}</td>
       <td><span class="tt-actions">
         <button type="button" class="tt-action-btn" data-open-room="${escapeHtml(report.id)}" title="Open the 1:1 meeting room">1:1 room</button>
@@ -224,21 +183,13 @@ function renderReportsTableHtml(filtered, total) {
     : '';
   return `<div class="team-table-wrap"><table class="team-table">
     <thead><tr>
-      <th>Person</th><th>PDC status</th><th>Support</th><th>Last 1:1</th><th>Next 1:1</th><th>Follow-ups</th><th>Goal</th><th>Pulse</th><th></th>
+      <th scope="col">Person</th><th scope="col">PDC status</th><th scope="col">Support</th><th scope="col">Last 1:1</th><th scope="col">Next 1:1</th><th scope="col">Follow-ups</th><th scope="col">Goal</th><th scope="col">Pulse</th><th scope="col"></th>
     </tr></thead>
     <tbody>
       ${group('Needs attention', 'danger', needsAttention)}
       ${group('On track', 'success', onTrack)}
     </tbody>
   </table></div>`;
-}
-
-function supportLevelFill(level) {
-  if (level === 'Urgent') return 'red';
-  if (level === 'Support needed') return 'amber';
-  if (level === 'Monitor') return 'blue';
-  if (level === 'Good') return 'green';
-  return 'grey';
 }
 
 function getSortedReports() {
@@ -254,3 +205,27 @@ function getSortedReports() {
   });
 }
 
+// Tiny 12-week rhythm bars for a report tile (Overview.html): 3px bars on a
+// 7px pitch, 18px high. One meeting is 10px, the busiest week reaches 18px
+// (two meetings or more). Weeks with no meeting are 2px stubs. The colors
+// come from the classes (06-overview-and-reports.css).
+function renderTileSparkline(report) {
+  const buckets = buildWeeklyMeetingBuckets(report.meetings || [], 12);
+  const max = Math.max(2, ...buckets.map((b) => b.count));
+  const BAR = 3;
+  const PITCH = 7;
+  const H = 18;
+  const STUB = 2;
+  const width = (buckets.length - 1) * PITCH + BAR;
+  const bars = buckets.map((b, i) => {
+    const tip = `<title>${escapeHtml(`${b.count} meeting${b.count === 1 ? '' : 's'} · week of ${formatDate(b.key)}`)}</title>`;
+    if (b.count === 0) return `<rect class="tile-spark-stub" x="${i * PITCH}" y="${H - STUB}" width="${BAR}" height="${STUB}" rx="1">${tip}</rect>`;
+    const h = Math.round(STUB + ((H - STUB) * b.count) / max);
+    return `<rect class="tile-spark-bar" x="${i * PITCH}" y="${H - h}" width="${BAR}" height="${h}" rx="1.5">${tip}</rect>`;
+  }).join('');
+  // The label keeps its wording and adds the 12-week total, since the
+  // per-week <title>s are hidden inside role="img".
+  const total = buckets.reduce((sum, b) => sum + b.count, 0);
+  const label = `Meetings per week, last 12 weeks: ${total} meeting${total === 1 ? '' : 's'}`;
+  return `<svg class="tile-spark" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" role="img" aria-label="${escapeHtml(label)}">${bars}</svg>`;
+}

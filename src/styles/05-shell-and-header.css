@@ -1,0 +1,602 @@
+/* App shell grid, sidebar (brand, groups, items, counts), content pane, header (eyebrow, title, subtitle, Search, save status, Data menu), backup banner, settings view, shell breakpoints and mobile shell.
+   Owner: W3 shell. Built from Overview.html, Meeting Room.html, Controls 1
+   (header controls, save status, Data menu), Controls 3 (backup banner) and
+   Controls 4 (navigation states). Header and sidebar controls are scoped under
+   their container ids so the shared button styles never leak into them. */
+
+/* --- Shell grid ---------------------------------------------------------
+   The page never scrolls: the content pane is the scroller. Before a folder
+   is connected the sidebar is hidden (.shell-loading, set in render()), and
+   the shell drops to one column so the startup gate uses the full width. */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--page);
+}
+.app-shell.shell-loading { grid-template-columns: minmax(0, 1fr); }
+.app-shell.shell-loading > .sidebar { display: none; }
+
+/* --- Sidebar ------------------------------------------------------------ */
+.sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  padding: 24px 14px 20px;
+  background: var(--page);
+  border-right: 1px solid var(--line);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding: 2px 10px 26px;
+}
+.sidebar-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: var(--radius-button);
+  background: var(--accent);
+  color: var(--surface);
+}
+.sidebar-brand-mark svg { display: block; width: 16px; height: 16px; }
+.sidebar-brand-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.sidebar-brand-name {
+  font-size: 16.5px;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.sidebar-brand-version {
+  font-size: var(--text-tag);
+  line-height: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+#sidebarNav {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  gap: 22px;
+}
+.sidebar-group { display: flex; flex-direction: column; gap: 2px; }
+.sidebar-group-label {
+  padding: 0 10px 6px;
+  font-size: var(--text-caption);
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+/* Settings sits at the bottom behind a divider, as in the mockup. */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+/* Items: 36px, radius 8, 17px stroke icons in --ink-2. The border is always
+   there (transparent) so the current item's ring never shifts the layout;
+   the 9px padding plus the 1px border puts the icon where the mockup has it. */
+#sidebar .sidebar-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  height: var(--control-height);
+  min-height: var(--control-height);
+  margin: 0;
+  padding: 0 9px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-button);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: var(--text-nav);
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+#sidebar .sidebar-item:hover:not(:disabled) { background: var(--sunken); color: var(--ink); }
+#sidebar .sidebar-item.active,
+#sidebar .sidebar-item.active:hover {
+  background: var(--surface);
+  border-color: var(--line);
+  font-weight: 600;
+  color: var(--ink);
+}
+#sidebar .sidebar-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: none; }
+#sidebar .sidebar-item:disabled { color: var(--disabled-text); cursor: not-allowed; }
+#sidebar .sidebar-item-icon { display: block; width: 17px; height: 17px; flex: none; color: var(--ink-2); }
+#sidebar .sidebar-item.active .sidebar-item-icon { color: var(--accent); }
+#sidebar .sidebar-item-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Counts: plain --ink-2, warning counts --amber-strong 600. */
+#sidebar .sidebar-item-badge {
+  margin-left: auto;
+  padding-left: 6px;
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+#sidebar .sidebar-item-badge[data-tone="warning"] { color: var(--amber-strong); font-weight: 600; }
+
+/* --- Content pane ------------------------------------------------------- */
+.content-pane {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Tab scrolls a control into view flush with the pane edge; leave room for
+     the 2px focus outline and its 2px offset. */
+  scroll-padding-block: 8px;
+  background: var(--page);
+}
+.content-pane-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 1320px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 28px 36px 26px;
+}
+/* The 1:1 room stacks header, chips and panels 18px apart (Meeting Room.html). */
+.app-shell[data-main-view="meetingRoom"] .content-pane-inner { gap: 18px; }
+/* Hidden views and an empty banner mount must not take a gap. */
+.content-pane-inner > [hidden] { display: none !important; }
+#exportReminderMount:empty { display: none; }
+
+/* --- Header ------------------------------------------------------------- */
+.content-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+.content-header[hidden] { display: none; }
+.content-header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.content-header-eyebrow {
+  display: block;
+  min-height: 16px;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.content-header-title p[hidden] { display: none; }
+.content-header-title h1 {
+  margin: 0;
+  font-size: var(--text-title);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.content-header-subtitle {
+  margin: 2px 0 0;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+/* Helper copy in the header (the 1:1 room's "Prep, run, and wrap up" line).
+   It carries .section-note, so Stable mode hides it. */
+.content-header-note {
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.content-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: none;
+  min-width: 0;
+}
+
+/* Search: secondary look, 15px icon, the "/" key hint. */
+#contentHeader .gs-trigger {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--control-height);
+  min-height: var(--control-height);
+  margin: 0;
+  padding: 0 8px 0 12px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-button);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: var(--text-small);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+#contentHeader .gs-trigger:hover:not(:disabled) { background: var(--sunken); color: var(--ink); border-color: var(--button-line); }
+#contentHeader .gs-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: none; }
+#contentHeader .gs-trigger:disabled { background: var(--disabled-bg); border-color: var(--disabled-bg); color: var(--disabled-text); cursor: not-allowed; }
+#contentHeader .gs-trigger svg { display: block; width: 15px; height: 15px; color: var(--ink-2); }
+#contentHeader .gs-trigger:disabled svg { color: var(--disabled-text); }
+#contentHeader .gs-trigger:disabled .gs-kbd { color: var(--disabled-text); background: transparent; border-color: var(--disabled-text); }
+#contentHeader .gs-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--page);
+  font-family: inherit;
+  font-size: var(--text-tag);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+/* Save status: 28px, radius 7, 12.5px 600, 7px dot (Controls 1). The state
+   classes are set in updateFileUi(). Each state has its own text as well as
+   its own look, so the status never relies on color alone. */
+.save-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: var(--small-height);
+  padding: 0 10px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  font-size: var(--text-label);
+  line-height: 1;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.save-status::before {
+  content: "";
+  display: block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.save-status.is-saved { background: var(--good-tint); border-color: var(--good-tint); color: var(--good-text); }
+.save-status.is-saved::before { background: var(--good); }
+.save-status.is-saving { background: var(--sunken); border-color: var(--sunken); color: var(--ink-3); }
+.save-status.is-saving::before { background: var(--ink-2); }
+.save-status.is-pending { background: var(--amber-tint); border-color: var(--amber-tint); color: var(--amber-text); }
+.save-status.is-pending::before { background: var(--mixed); }
+.save-status.is-failed { background: var(--red-tint); border-color: var(--red-tint); color: var(--red-text); }
+.save-status.is-failed::before { background: var(--rough); }
+.save-status.is-disconnected { background: transparent; border-color: var(--outline); color: var(--ink-3); }
+.save-status.is-disconnected::before { background: transparent; border: 1.5px solid var(--field-line); }
+
+/* Data menu: secondary trigger with a chevron; popover 196px, radius 10,
+   padding 6, floating shadow; items 34px with a --sunken hover. */
+.toolbar-menu { position: relative; display: inline-block; flex-shrink: 0; }
+#dataMenu > .toolbar-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--control-height);
+  padding: 0 10px 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--button-line);
+  border-radius: var(--radius-button);
+  font-size: var(--text-small);
+  line-height: 1;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease;
+}
+#dataMenu > .toolbar-menu-trigger:hover,
+#dataMenu[open] > .toolbar-menu-trigger { background: var(--sunken); }
+#dataMenu > .toolbar-menu-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#dataMenu > .toolbar-menu-trigger svg { display: block; width: 15px; height: 15px; color: var(--ink-2); }
+#dataMenu .toolbar-menu-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 196px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-menu);
+  box-shadow: var(--shadow-float);
+}
+#dataMenu .toolbar-menu-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 34px;
+  min-height: 34px;
+  margin: 0;
+  padding: 0 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-small);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: var(--text-small);
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-align: left;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+#dataMenu .toolbar-menu-item:hover:not(:disabled) { background: var(--sunken); color: var(--ink); }
+#dataMenu .toolbar-menu-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: none; }
+#dataMenu .toolbar-menu-item:disabled { background: transparent; color: var(--disabled-text); cursor: not-allowed; }
+
+/* Mobile only: the legacy back button (small secondary look). */
+#contentHeader .mobile-back-btn { display: none; }
+
+/* --- Backup banner (Controls 3) -----------------------------------------
+   The mockup draws the banner 440px wide with the buttons under the text.
+   Across the full content width the buttons sit on the text's row, aligned
+   right (as the banner sat in v0.52.4); when the row gets too narrow they
+   wrap under the text, which is the mockup's stacked layout. */
+.export-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 22px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+.export-banner-copy { display: flex; flex-direction: column; gap: 3px; flex: 1 1 320px; min-width: 0; }
+.export-banner-title { font-size: 14.5px; line-height: 1.35; font-weight: 600; color: var(--ink); }
+.export-banner-text { margin: 0; font-size: var(--text-small); line-height: 1.45; color: var(--ink-2); }
+.export-banner-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: none; }
+
+/* --- Settings view: the card that opens the settings drawer -------------- */
+#settingsSection.settings-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+#settingsSection > .panel-header,
+#settingsSection > .content { margin: 0; padding: 0; }
+#settingsSection > .panel-header h2 {
+  margin: 0;
+  font-size: var(--text-section);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: var(--ink);
+}
+#settingsSection > .panel-header p {
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+/* The body is the card's row list: a --line-soft divider under the title,
+   then the row that opens the drawer, then the help line (Stable mode hides
+   it). The row is a plain row inside the card, not a card of its own: no box,
+   a --sunken hover fill that reaches 10px past the text on both sides. */
+#settingsSection > #settingsSectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line-soft);
+}
+#settingsSection .settings-open-card {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  width: calc(100% + 20px);
+  height: auto;
+  min-height: 56px;
+  margin: 0 -10px;
+  padding: 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-button);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: var(--text-small);
+  font-weight: 400;
+  text-align: left;
+  color: var(--ink);
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+#settingsSection .settings-open-card:hover { background: var(--sunken); color: var(--ink); }
+#settingsSection .settings-open-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: none; }
+.settings-open-card-text { display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0; }
+.settings-open-card-text strong { font-size: 14.5px; line-height: 1.35; font-weight: 600; color: var(--ink); }
+.settings-open-card-text span { font-size: var(--text-small); line-height: 1.45; color: var(--ink-2); }
+#settingsSection .settings-open-card-chevron { display: block; width: 16px; height: 16px; flex: none; color: var(--ink-2); }
+#settingsSectionBody .help-text {
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* --- Startup gate (only when the folder dialog cannot be used) ----------
+   Laid out like a dialog card: title, one line description, a primary and a
+   secondary button, then the help line. */
+#startupGate.startup-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 560px;
+  margin: 8vh auto 0;
+  padding: 22px 24px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+#startupGate > .panel-header,
+#startupGate > .content { margin: 0; padding: 0; }
+#startupGate .panel-header h2 {
+  margin: 0;
+  font-size: var(--text-dialog);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+#startupGate .panel-header p {
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+#startupGate .startup-gate-body { display: flex; flex-direction: column; gap: 14px; }
+#startupGate .setup-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+#startupGate .help-text { margin: 0; font-size: var(--text-label); line-height: 1.45; color: var(--ink-2); }
+
+/* --- Shell breakpoints --------------------------------------------------- */
+/* 900px and below: the sidebar becomes a top bar (brand row, then a row of
+   navigation items that scrolls sideways). The content pane scrolls below it. */
+@media (max-width: 900px) {
+  .app-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app-shell.shell-loading { grid-template-rows: minmax(0, 1fr); }
+  .sidebar {
+    position: static;
+    align-self: stretch;
+    height: auto;
+    gap: 8px;
+    padding: 12px 0 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    overflow: visible;
+  }
+  .sidebar-brand { padding: 0 16px; }
+  .sidebar-brand-text { flex-direction: row; align-items: baseline; gap: 8px; }
+  #sidebarNav {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 16px 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+  }
+  .sidebar-group { flex-direction: row; flex: none; gap: 2px; }
+  .sidebar-group-label { display: none; }
+  .sidebar-footer { margin: 0; padding: 0; border-top: 0; }
+  #sidebar .sidebar-item { width: auto; flex: none; padding: 0 11px; gap: 8px; }
+  #sidebar .sidebar-item-badge { padding-left: 2px; }
+
+  .content-pane-inner { gap: 18px; padding: 20px 16px 24px; }
+  .content-header { flex-direction: column; align-items: stretch; gap: 14px; }
+  .content-header-title { flex: none; }
+  .content-header-meta { justify-content: flex-start; gap: 8px; }
+  #contentHeader .mobile-back-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 6px;
+    height: var(--small-height);
+    min-height: var(--small-height);
+    margin: 0;
+    padding: 0 10px;
+    background: var(--surface);
+    border: 1px solid var(--button-line);
+    border-radius: var(--radius-small);
+    box-shadow: none;
+    font-family: inherit;
+    font-size: var(--text-label);
+    line-height: 1;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  #contentHeader .mobile-back-btn:hover { background: var(--sunken); }
+  #contentHeader .mobile-back-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #startupGate.startup-gate { margin-top: 4vh; padding: 20px; }
+}
+
+/* Phone width: no hardware key hint. The page title stays 34px and the nav
+   items keep their 17px icons (the nav row scrolls sideways). */
+@media (max-width: 640px) {
+  #contentHeader .gs-kbd { display: none; }
+  #contentHeader .gs-trigger { padding: 0 12px; }
+}

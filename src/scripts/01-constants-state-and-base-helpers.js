@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.52.4';
+const APP_VERSION = 'v0.53.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 2000;
@@ -56,14 +56,6 @@ const DEFAULT_THRESHOLDS = Object.freeze({
 });
 const DEFAULT_PROMOTION_CONVERSATION_MONTHS = 24;
 const DEFAULT_EVIDENCE_CATEGORIES = Object.freeze(['Leadership', 'Technical depth', 'Client relationship', 'Autonomy', 'Collaboration', 'Ownership', 'Growth']);
-const LEVEL_TIMELINE_COLORS = Object.freeze({
-  'Consultant (Developing)': '#9fc0ff',
-  'Consultant (Skilled)': '#6f97f5',
-  'Consultant (Proficient)': '#2957d6',
-  'Senior (Developing)': '#cdbaf6',
-  'Senior (Skilled)': '#9f82e6',
-  'Senior (Proficient)': '#6d46c8'
-});
 const SNOOZE_RULE_LABELS = Object.freeze({
   oneOnOneOverdue: '1:1 overdue',
   developmentOverdue: 'PDC overdue',
