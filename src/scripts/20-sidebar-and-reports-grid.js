@@ -4,9 +4,10 @@ function renderReportsGrid() {
   if (!mount) return;
   const total = getReports().length;
   // getFilteredReports applies search, PDC status, attention state, and the
-  // Insights theme filter. The grid re-sorts alphabetically for scannability;
-  // urgency is signaled by the chips on each tile instead of by ordering.
-  const filtered = [...getFilteredReports()].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  // Insights theme filter. Tiles and table are sorted alphabetically for
+  // scannability; urgency is signaled by the chips on each tile instead of by
+  // ordering. People with the same name keep the urgency order.
+  const filtered = getFilteredReports().sort((a, b) => (a.name || '').localeCompare(b.name || '') || compareReportsForTable(a, b));
 
   // Sync toolbar controls without clobbering focus.
   const searchEl = document.getElementById('reportsGridSearch');
