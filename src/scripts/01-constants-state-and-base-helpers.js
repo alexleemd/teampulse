@@ -1,4 +1,4 @@
-const APP_VERSION = 'v0.54.7';
+const APP_VERSION = 'v0.54.8';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -12,6 +12,10 @@ const BACKUP_JSON_NAME = 'team-pulse.backup.json';
 const DAILY_JSON_NAME = 'team-pulse.daily.json';
 const MONTHLY_JSON_NAME = 'team-pulse.monthly.json';
 const SCHEMA_DOC_NAME = 'SCHEMA.md';
+// team-pulse.backup.json is replaced with the previous main file at most once
+// per this many milliseconds, so it stays a useful step back and is not just
+// one autosave old.
+const BACKUP_ROTATE_MS = 30 * 60 * 1000;
 
 const PDC_STATUSES = ['Not started', 'In progress', 'Blocked', 'Completed', 'Needs review'];
 const SUPPORT_LEVELS = ['Good', 'Monitor', 'Support needed', 'Urgent'];
@@ -158,6 +162,8 @@ const app = {
   saveInFlight: false,
   saveQueued: false,
   saveTimer: null,
+  backupRotatedAt: 0,
+  lastSafetyCopyName: '',
   loadedSchemaVersion: CURRENT_SCHEMA_VERSION,
   lastMigrationApplied: '',
   exportReminderVisible: false,

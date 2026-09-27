@@ -215,7 +215,10 @@ async function importLegacyJsonFlow() {
     }
     const text = await readTextFromHandle(handle);
     const parsed = parsePortableJsonText(text);
-    const shouldReplace = !app.doc || !getReports().length || window.confirm('Importing this JSON will replace the Team Pulse data currently on screen, and you will be asked to choose the folder where the imported data should be saved. Continue?');
+    const replaceMessage = app.folderHandle
+      ? `Importing this JSON replaces the Team Pulse data in ${app.folderName || 'your Team Pulse folder'}. A dated copy of the current ${MAIN_JSON_NAME} is saved in the folder first. Continue?`
+      : 'Importing this JSON replaces the Team Pulse data on screen. Next, choose the folder to save it in. Team Pulse data already in that folder is kept as a dated copy. Continue?';
+    const shouldReplace = !app.doc || !getReports().length || window.confirm(replaceMessage);
     if (!shouldReplace) return false;
     if (app.folderHandle) {
       app.doc = ensureDocShape(parsed.doc);
@@ -224,7 +227,7 @@ async function importLegacyJsonFlow() {
       applyProjectedState();
       await persistDocToFolder({ reason: 'import' });
       render();
-      showToast(`Imported and saved ${handle.name} into ${app.folderName || 'your Team Pulse folder'}.`, 'success');
+      showToast(`Imported and saved ${handle.name} into ${app.folderName || 'your Team Pulse folder'}.${safetyCopyNote()}`, 'success');
       return true;
     }
     const connected = await chooseFolderAndConnect({ initialDoc: parsed.doc, showSuccessToast: false });
@@ -232,7 +235,7 @@ async function importLegacyJsonFlow() {
       app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
       app.lastMigrationApplied = parsed.lastMigrationApplied || '';
       render();
-      showToast(`Imported ${handle.name} and saved it into ${app.folderName || 'your Team Pulse folder'}.`, 'success');
+      showToast(`Imported ${handle.name} and saved it into ${app.folderName || 'your Team Pulse folder'}.${safetyCopyNote()}`, 'success');
       return true;
     }
     return false;

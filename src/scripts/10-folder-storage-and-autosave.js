@@ -141,29 +141,13 @@ async function loadDocFromConnectedFolder(options = {}) {
     return true;
   }
 
+  // Only reading the file belongs in this try. Once the file has parsed, a
+  // failure to save or draw must never offer to replace it with the backup.
+  let parsed = null;
+  let loadedDoc = null;
   try {
-    const parsed = parsePortableJsonText(text);
-    app.doc = ensureDocShape(parsed.doc);
-    app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
-    app.lastMigrationApplied = parsed.lastMigrationApplied || '';
-    app.connectedFolderReady = true;
-    app.ui.startupHasConnectedFolder = true;
-    persistUiState();
-    applyProjectedState();
-    cacheDocSnapshot();
-    if (parsed.lastMigrationApplied) {
-      await persistDocToFolder({ reason: 'migration' });
-    } else {
-      app.lastSaveAt = app.doc.savedAt;
-      await refreshFileStats();
-    }
-    render();
-    if (showSuccessToast) {
-      showToast(parsed.lastMigrationApplied
-        ? `Loaded and upgraded ${MAIN_JSON_NAME} to schema v${CURRENT_SCHEMA_VERSION}.`
-        : `Loaded ${MAIN_JSON_NAME} from ${app.folderHandle.name}.`, 'success');
-    }
-    return true;
+    parsed = parsePortableJsonText(text);
+    loadedDoc = ensureDocShape(parsed.doc);
   } catch (error) {
     console.error('Failed to parse main Team Pulse JSON', error);
     const recovered = await maybeRecoverFromBackup(error);
@@ -171,25 +155,87 @@ async function loadDocFromConnectedFolder(options = {}) {
     showToast(error?.message || 'That Team Pulse JSON could not be loaded.', 'error');
     return false;
   }
+
+  app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+  app.lastMigrationApplied = parsed.lastMigrationApplied || '';
+  await adoptLoadedDoc(loadedDoc, { saveReason: parsed.lastMigrationApplied ? 'migration' : '' });
+  if (showSuccessToast) {
+    showToast(parsed.lastMigrationApplied
+      ? `Loaded and upgraded ${MAIN_JSON_NAME} to schema v${CURRENT_SCHEMA_VERSION}.`
+      : `Loaded ${MAIN_JSON_NAME} from ${app.folderHandle.name}.`, 'success');
+  }
+  return true;
+}
+
+// Puts a document that was read from the folder on screen. Saving and drawing
+// each get their own error handling, so a bug in either one shows an error
+// but keeps the loaded data and the connection.
+async function adoptLoadedDoc(doc, options = {}) {
+  const { saveReason = '' } = options;
+  app.doc = doc;
+  app.connectedFolderReady = true;
+  app.ui.startupHasConnectedFolder = true;
+  persistUiState();
+  let drawError = null;
+  try {
+    applyProjectedState();
+    cacheDocSnapshot();
+  } catch (error) {
+    drawError = error;
+  }
+  if (saveReason) {
+    try {
+      await persistDocToFolder({ reason: saveReason });
+      app.lastSaveError = '';
+    } catch (error) {
+      console.error('Save after load failed', error);
+      app.lastSaveError = error?.message || 'Could not save Team Pulse.';
+      app.saveQueued = true;
+      showToast(app.lastSaveError, 'error');
+    }
+  } else {
+    app.lastSaveAt = app.doc.savedAt;
+    try {
+      await refreshFileStats();
+    } catch (error) {
+      console.error('Failed to read backup file dates', error);
+    }
+  }
+  if (!drawError) {
+    try {
+      render();
+    } catch (error) {
+      drawError = error;
+    }
+  }
+  updateFileUi();
+  if (drawError) {
+    console.error('Failed to show the loaded Team Pulse data', drawError);
+    showToast('Your data loaded, but this screen could not be shown. Try reloading the page.', 'error');
+  }
 }
 
 async function maybeRecoverFromBackup(parseError) {
+  let parsed = null;
+  let recoveredDoc = null;
   try {
     const backupText = await readFolderFileText(BACKUP_JSON_NAME);
     if (!backupText.trim()) return false;
-    const parsed = parsePortableJsonText(backupText);
-    const shouldRestore = window.confirm(`team-pulse.json could not be loaded. Restore ${BACKUP_JSON_NAME} instead?`);
-    if (!shouldRestore) return false;
-    app.doc = ensureDocShape(parsed.doc);
-    app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
-    app.lastMigrationApplied = parsed.lastMigrationApplied || 'backup-restore';
-    await persistDocToFolder({ reason: 'restore' });
-    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.`, 'success');
-    return true;
+    parsed = parsePortableJsonText(backupText);
+    recoveredDoc = ensureDocShape(parsed.doc);
   } catch (error) {
     console.error('Backup restore failed', parseError, error);
     return false;
   }
+  const shouldRestore = window.confirm(`team-pulse.json could not be loaded. Restore ${BACKUP_JSON_NAME} instead? A dated copy of the unreadable file is kept.`);
+  if (!shouldRestore) return false;
+  app.loadedSchemaVersion = parsed.migratedFromVersion || CURRENT_SCHEMA_VERSION;
+  app.lastMigrationApplied = parsed.lastMigrationApplied || 'backup-restore';
+  await adoptLoadedDoc(recoveredDoc, { saveReason: 'recover' });
+  if (!app.lastSaveError) {
+    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.${safetyCopyNote()}`, 'success');
+  }
+  return true;
 }
 
 async function restoreLatestBackup() {
@@ -204,14 +250,14 @@ async function restoreLatestBackup() {
       return false;
     }
     const parsed = parsePortableJsonText(backupText);
-    if (!window.confirm(`Restore ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}? This replaces the current main file.`)) {
+    if (!window.confirm(`Restore ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}? This replaces the current main file. A dated copy of it is saved first.`)) {
       return false;
     }
     app.doc = ensureDocShape(parsed.doc);
     applyProjectedState();
     await persistDocToFolder({ reason: 'restore' });
     render();
-    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.`, 'success');
+    showToast(`Restored ${BACKUP_JSON_NAME} into ${MAIN_JSON_NAME}.${safetyCopyNote()}`, 'success');
     return true;
   } catch (error) {
     console.error('Failed to restore backup', error);
@@ -287,6 +333,32 @@ function readSavedAtFromJsonText(text) {
   }
 }
 
+// Saves that replace team-pulse.json with different data first keep a dated
+// copy of the file they replace, named after what happened.
+const SAFETY_COPY_KIND_BY_REASON = { import: 'import', restore: 'restore', recover: 'restore' };
+
+function safetyCopyStamp(date = new Date()) {
+  const pad = (value) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}-${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+}
+
+// Writes text to team-pulse.before-<kind>-<date and time>.json and returns the
+// file name. Never overwrites an earlier copy.
+async function writeSafetyCopy(kind, text) {
+  if (!text || !text.trim()) return '';
+  const base = `team-pulse.before-${kind}-${safetyCopyStamp()}`;
+  let name = `${base}.json`;
+  for (let n = 2; await getFileHandleFromFolder(app.folderHandle, name, false); n += 1) {
+    name = `${base}-${n}.json`;
+  }
+  await writeFolderFileText(name, text);
+  return name;
+}
+
+function safetyCopyNote() {
+  return app.lastSafetyCopyName ? ` The previous data was saved as ${app.lastSafetyCopyName}.` : '';
+}
+
 async function persistDocToFolder(options = {}) {
   const { reason = 'autosave' } = options;
   if (!app.folderHandle) throw new Error('Choose a Team Pulse folder first.');
@@ -299,9 +371,19 @@ async function persistDocToFolder(options = {}) {
   const newText = JSON.stringify(doc, null, 2);
   const schemaText = generateSchemaMarkdown();
 
+  const safetyKind = SAFETY_COPY_KIND_BY_REASON[reason];
+  app.lastSafetyCopyName = safetyKind ? await writeSafetyCopy(safetyKind, previousMainText) : '';
+
   await writeFolderFileText(MAIN_JSON_NAME, newText);
-  if (previousMainText.trim()) {
+  // Import and restore always move the replaced file into the backup. Other
+  // saves do so at most once per BACKUP_ROTATE_MS, so the backup is a real
+  // step back. A recovery keeps the backup it just restored from.
+  const rotateBackup = previousMainText.trim() && reason !== 'recover'
+    && (reason === 'import' || reason === 'restore' || !app.backupRotatedAt || Date.now() - app.backupRotatedAt >= BACKUP_ROTATE_MS);
+  if (rotateBackup) {
     await writeFolderFileText(BACKUP_JSON_NAME, previousMainText);
+    app.backupRotatedAt = Date.now();
+    app.fileStats.backupSavedAt = previousSavedAt;
   }
 
   const today = todayStamp();
@@ -319,7 +401,6 @@ async function persistDocToFolder(options = {}) {
   app.lastSaveAt = doc.savedAt;
   app.lastSaveReason = reason;
   app.fileStats.mainSavedAt = doc.savedAt;
-  app.fileStats.backupSavedAt = previousSavedAt;
   app.fileStats.schemaWrittenAt = doc.savedAt;
   cacheDocSnapshot();
   await refreshFileStats();
