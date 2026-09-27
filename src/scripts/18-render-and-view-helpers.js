@@ -9,28 +9,16 @@ function viewJustEntered(viewKey, isVisibleNow) {
   return isVisibleNow && !wasVisible;
 }
 
-// Wraps a navigation-level DOM update in the View Transitions API so view
-// switches crossfade and same-named elements morph between states. Only
-// user-gesture navigation goes through here: frequent in-place re-renders
-// (search debounce, draft typing) call render functions directly so text
-// entry never flickers. Falls back to a plain synchronous update when the
-// API is unavailable or the user prefers reduced motion. Callers must not
-// rely on the DOM being updated synchronously after this returns.
+// Runs a navigation-level DOM update. Views switch instantly (no page fade),
+// which is how Team Pulse always behaved with Stable mode on.
 function navigateRender(update) {
-  const reduceMotion = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const stableMode = !!app.doc?.settings?.stableMode;
-  if (typeof document.startViewTransition === 'function' && !reduceMotion && !stableMode) {
-    document.startViewTransition(() => { update(); });
-  } else {
-    update();
-  }
+  update();
 }
 
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
   if (ready) maybeResetPdcRoundOnRollover();
-  document.body.classList.toggle('stable-mode', !!app.doc?.settings?.stableMode);
   document.body.classList.toggle('density-compact', app.doc?.settings?.density === 'compact');
 
   // Inline startup gate is only used as a fallback when the modal flow isn't shown
@@ -197,7 +185,7 @@ function renderContentHeader(mainView) {
   } else if (mainView === 'meetingRoom') {
     // The 1:1 room: the person's name is the title (it appears once on the
     // page), with level and mentor on the line below. The old subtitle
-    // sentence is helper copy, so Stable mode hides it like the other notes.
+    // sentence is helper copy, shown as a note under the header.
     const roomReport = getReportById(app.ui.meetingRoomReportId);
     title = roomReport ? (roomReport.name || 'Unnamed') : '1:1 meeting room';
     subtitle = roomReport ? `${roomReport.level || 'Level not set'}${roomReport.mentors ? ` · Mentor: ${roomReport.mentors}` : ''}` : '';
@@ -232,7 +220,7 @@ function renderSettingsView() {
     <button type="button" class="settings-open-card" data-settings-open="rules">
       <span class="settings-open-card-text">
         <strong>Overdue rules, data health &amp; privacy</strong>
-        <span>Thresholds, toggles, exports, backups, Stable mode, and the disconnect &amp; wipe control.</span>
+        <span>Thresholds, toggles, exports, backups, and the disconnect &amp; wipe control.</span>
       </span>
       <svg class="settings-open-card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
     </button>
