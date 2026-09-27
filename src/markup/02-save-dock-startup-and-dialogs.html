@@ -35,6 +35,24 @@
   </div>
 </div>
 
+<div id="saveConflictOverlay" class="overlay" aria-hidden="true">
+  <div class="modal startup-modal" role="alertdialog" aria-modal="true" aria-labelledby="saveConflictTitle" aria-describedby="saveConflictCopy">
+    <div class="modal-header">
+      <div>
+        <h2 id="saveConflictTitle">Team Pulse was saved from another tab or computer</h2>
+        <p id="saveConflictCopy">The file in your folder changed after this tab loaded it. Autosave is paused until you choose which version to keep.</p>
+      </div>
+    </div>
+    <div class="modal-body startup-modal-body">
+      <div class="setup-actions">
+        <button id="saveConflictReloadBtn" type="button">Reload file from disk</button>
+        <button id="saveConflictKeepBtn" type="button" class="secondary">Keep this tab's version</button>
+      </div>
+      <p class="help-text">The version you do not keep is saved in the folder as a dated copy.</p>
+    </div>
+  </div>
+</div>
+
 <div id="meetingModal" class="overlay" aria-hidden="true">
   <div class="modal meeting-modal" role="dialog" aria-modal="true" aria-labelledby="meetingModalTitle" aria-describedby="meetingModalSubtitle">
     <div class="modal-header">

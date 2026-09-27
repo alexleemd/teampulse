@@ -32,6 +32,7 @@ function restoreDialogOpener(key) {
 // Shift+Tab from the first goes to the last, and Tab from outside moves in.
 // The topmost open layer wins, in z-index order (02-moss-base.css).
 const FOCUS_TRAP_LAYERS = [
+  '#saveConflictOverlay.open .modal',
   '#globalSearch.open .gs-panel',
   '#meetingModal.open .modal',
   '.overlay.open .modal',
