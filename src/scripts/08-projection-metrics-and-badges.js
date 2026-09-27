@@ -45,7 +45,7 @@ function projectDoc(doc) {
         if (from === to) return;
         if (!Array.isArray(report.changeLog)) report.changeLog = [];
         report.changeLog.push({
-          date: normalizeDate(String(event.createdAt).slice(0, 10)) || todayStamp(),
+          date: localDateOf(event.createdAt) || todayStamp(),
           createdAt: event.createdAt,
           field: TRACKED_CHANGE_FIELDS[field],
           from,

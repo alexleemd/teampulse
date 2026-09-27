@@ -91,7 +91,8 @@ function dateDiffInDays(dateString) {
   if (Number.isNaN(date.getTime())) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return Math.floor((today - date) / 86400000);
+  // Round, not floor: a day across a daylight saving change is 23 or 25 hours.
+  return Math.round((today - date) / 86400000);
 }
 
 function daysSinceIso(value) {
