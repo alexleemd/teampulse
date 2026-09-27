@@ -245,7 +245,7 @@ function renderMeetingsView() {
       : '';
     lastMonthKey = monthKey;
     const snippet = firstMeaningfulLine(meeting.notes) || 'No notes captured.';
-    const mInitials = (report.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
+    const mInitials = personInitials(report.name);
     const fu = followUpsByMeeting.get(meeting.id);
     const fuChip = fu && fu.open
       ? `<span class="mv-chip" data-tone="neutral">${fu.open} open follow-up${fu.open === 1 ? '' : 's'}</span>`

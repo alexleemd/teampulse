@@ -11,10 +11,6 @@ let gsResults = [];
 let gsActiveIndex = 0;
 let gsDebounce = 0;
 
-function personInitials(name) {
-  return (name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase() || '?';
-}
-
 // Escapes around a case-insensitive hit and wraps the hit in <mark>.
 function searchSnippet(text, query, radius = 46) {
   const raw = normalizeText(text).replace(/\s+/g, ' ');

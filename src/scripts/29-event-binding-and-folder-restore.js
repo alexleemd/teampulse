@@ -735,16 +735,6 @@ function bindStaticEvents() {
     const disconnectBtn = event.target.closest('#disconnectFolderBtn');
     if (disconnectBtn) disconnectAndWipeLocal();
   });
-  // Search, a dialog, the Settings drawer, the startup prompt or the save
-  // conflict prompt is open.
-  // The keyboard shortcuts below do nothing then.
-  const anyOverlayUp = () => globalSearchEl.classList.contains('open')
-    || meetingModalEl.classList.contains('open')
-    || rulesDrawerOverlayEl.classList.contains('open')
-    || startupPromptOverlayEl.classList.contains('open')
-    || isSaveConflictPromptOpen()
-    || !!document.getElementById('goalModal')?.classList.contains('open')
-    || !!document.getElementById('feedbackModal')?.classList.contains('open');
   // Escape closes transient overlays (modals, settings drawer, the Data menu).
   // The workspace itself is left alone so unsaved edits can never be lost to
   // a stray keypress. A dialog with unsaved changes asks before it closes.
@@ -765,7 +755,7 @@ function bindStaticEvents() {
     if (/^[1-7]$/.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
       const activeNow = document.activeElement;
       const typingNow = !!activeNow && (/^(input|textarea|select)$/i.test(activeNow.tagName) || activeNow.isContentEditable);
-      if (!typingNow && !anyOverlayUp() && app.doc && app.connectedFolderReady) {
+      if (!typingNow && !anyOverlayOpen() && app.doc && app.connectedFolderReady) {
         event.preventDefault();
         keyboardNavigateToSlot(Number(event.key));
       }
@@ -780,7 +770,7 @@ function bindStaticEvents() {
     const active = document.activeElement;
     const typing = !!active && (/^(input|textarea|select)$/i.test(active.tagName) || active.isContentEditable);
     if (typing) return;
-    if (anyOverlayUp()) return;
+    if (anyOverlayOpen()) return;
     event.preventDefault();
     openGlobalSearch();
   });
