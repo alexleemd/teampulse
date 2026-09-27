@@ -74,8 +74,7 @@
   font-weight: 600;
   line-height: 1.2;
 }
-/* Panel notes are helper copy: 12.5px ink-2 under the title. Stable mode
-   hides them (02-moss-base.css). */
+/* Panel notes are helper copy: 12.5px ink-2 under the title. */
 .mr-panel-head .section-note {
   margin: 0;
   color: var(--ink-2);

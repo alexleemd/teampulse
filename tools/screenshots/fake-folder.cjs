@@ -5,7 +5,8 @@
 function teamPulseFakeInit(arg) {
   const opts = arg || {};
 
-  // 1. Deterministic Math.random (mulberry32). TP_AMBIENT seeds motes and orbs with it.
+  // 1. Deterministic Math.random (mulberry32), so anything random in the app
+  //    (such as temporary draft ids) is the same on every run.
   let s = (opts.seed ?? 12345) >>> 0;
   Math.random = function () {
     s = (s + 0x6D2B79F5) >>> 0;

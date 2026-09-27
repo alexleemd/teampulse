@@ -222,8 +222,7 @@
   font-weight: 400;
   color: var(--ink-2);
 }
-/* Helper copy in the header (the 1:1 room's "Prep, run, and wrap up" line).
-   It carries .section-note, so Stable mode hides it. */
+/* Helper copy in the header (the 1:1 room's "Prep, run, and wrap up" line). */
 .content-header-note {
   margin: 0;
   font-size: var(--text-label);
@@ -445,8 +444,8 @@
   color: var(--ink-2);
 }
 /* The body is the card's row list: a --line-soft divider under the title,
-   then the row that opens the drawer, then the help line (Stable mode hides
-   it). The row is a plain row inside the card, not a card of its own: no box,
+   then the row that opens the drawer, then the help line. The row is a
+   plain row inside the card, not a card of its own: no box,
    a --sunken hover fill that reaches 10px past the text on both sides. */
 #settingsSection > #settingsSectionBody {
   display: flex;

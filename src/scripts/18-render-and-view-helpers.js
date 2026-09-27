@@ -218,8 +218,8 @@ function renderSettingsView() {
   `;
 }
 
-// Unified sidebar renderer — replaces the old 3-pane list-pane system.
-// Renders all nav items (Team Health sub-views, Direct Reports, Meetings, Settings)
+// Sidebar renderer. Renders all nav items (Team Health views, the People
+// views and Settings)
 // in the Moss sidebar with full names. The current item carries
 // aria-current="page"; Settings is pinned to the bottom in .sidebar-footer.
 function renderSidebar() {

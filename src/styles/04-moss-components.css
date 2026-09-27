@@ -435,7 +435,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .sharp-panel-body.padded { padding: var(--panel-pad-y) var(--panel-pad-x); }
 .sharp-panel-header + .sharp-panel-body.padded { padding-top: 0; }
 
-/* Helper copy. Stable mode hides it (see 02-moss-base.css). */
+/* Helper copy: 12.5px ink-2. */
 .section-note,
 .help-text,
 .hint {
