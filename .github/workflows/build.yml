@@ -3,6 +3,7 @@ name: Build
 # Rebuilds index.html from the files in src/ and fails if the committed
 # index.html does not match. GitHub Pages serves the committed index.html
 # from main, so a green check means the live app is the current build.
+# Then runs the automated tests (tools/tests) in headless Chromium.
 
 on:
   pull_request:
@@ -22,9 +23,18 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
 
       - name: Check index.html is the current build
         run: node build.mjs --check
+
+      - name: Install test tools
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Run the tests
+        run: npm test
 
       - name: Keep the built file with this run
         uses: actions/upload-artifact@v7
