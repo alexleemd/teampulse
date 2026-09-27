@@ -15,6 +15,15 @@ function navigateRender(update) {
   update();
 }
 
+// True when a view's section is hidden. Each view renderer returns early then,
+// so render() only rebuilds the view that is on screen. Every way of showing a
+// view goes through render(), which un-hides the section before it calls the
+// renderers, so a view is always drawn fresh when it appears.
+function viewSectionHidden(sectionId) {
+  const sectionEl = document.getElementById(sectionId);
+  return !sectionEl || sectionEl.hasAttribute('hidden');
+}
+
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
@@ -112,7 +121,8 @@ function render() {
   // Render the unified sidebar nav.
   renderSidebar();
 
-  // Always render sections that compute data; the hidden attribute handles visibility.
+  // Each view renderer skips its work while its section is hidden (see
+  // viewSectionHidden), so only the view on screen is rebuilt here.
   renderQuickFilterBar();
   renderTeamHealth();
   renderReportsGrid();

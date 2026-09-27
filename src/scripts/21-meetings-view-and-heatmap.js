@@ -111,6 +111,7 @@ function renderMeetingHeatmapHtml(meetings) {
 }
 
 function renderMeetingsView() {
+  if (viewSectionHidden('meetingsSection')) return;
   const mount = document.getElementById('meetingsBody');
   if (!mount) return;
   const reports = getReports();

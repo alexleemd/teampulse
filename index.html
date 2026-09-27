@@ -7532,7 +7532,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.2';
+const APP_VERSION = 'v0.55.3';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -12593,6 +12593,15 @@ function navigateRender(update) {
   update();
 }
 
+// True when a view's section is hidden. Each view renderer returns early then,
+// so render() only rebuilds the view that is on screen. Every way of showing a
+// view goes through render(), which un-hides the section before it calls the
+// renderers, so a view is always drawn fresh when it appears.
+function viewSectionHidden(sectionId) {
+  const sectionEl = document.getElementById(sectionId);
+  return !sectionEl || sectionEl.hasAttribute('hidden');
+}
+
 function render() {
   const ready = !!app.folderHandle && app.connectedFolderReady && !!app.doc;
   if (ready) closeStartupPrompt();
@@ -12690,7 +12699,8 @@ function render() {
   // Render the unified sidebar nav.
   renderSidebar();
 
-  // Always render sections that compute data; the hidden attribute handles visibility.
+  // Each view renderer skips its work while its section is hidden (see
+  // viewSectionHidden), so only the view on screen is rebuilt here.
   renderQuickFilterBar();
   renderTeamHealth();
   renderReportsGrid();
@@ -13187,6 +13197,7 @@ function renderPrevMeetingPanelHtml(report, draft) {
     </details>`;
 }
 function renderReportsGrid() {
+  if (viewSectionHidden('reportsSection')) return;
   const mount = document.getElementById('reportsGrid');
   if (!mount) return;
   const total = getReports().length;
@@ -13529,6 +13540,7 @@ function renderMeetingHeatmapHtml(meetings) {
 }
 
 function renderMeetingsView() {
+  if (viewSectionHidden('meetingsSection')) return;
   const mount = document.getElementById('meetingsBody');
   if (!mount) return;
   const reports = getReports();
@@ -14021,6 +14033,7 @@ function runGsResult(index) {
 // Renders the global Follow-Ups view: every open [ ] line from meeting notes
 // across the team, grouped by person, toggleable in place.
 function renderFollowUpsView() {
+  if (viewSectionHidden('followUpsSection')) return;
   const mount = document.getElementById('followUpsBody');
   if (!mount) return;
   const reports = getReports();
@@ -14346,6 +14359,7 @@ function renderOneOnOneBoardHtml(reports) {
 // PDC status, last and next PDC dates, and the two focus fields — editable in
 // place so a whole PDC round can be captured from this one screen.
 function renderPdcSummaryView() {
+  if (viewSectionHidden('pdcSummarySection')) return;
   const mount = document.getElementById('pdcSummaryBody');
   if (!mount) return;
   const reports = getSortedReports();
@@ -17632,6 +17646,7 @@ function renderInsightsTabHtml(reports, entering = false) {
 
 
 function renderTeamHealth() {
+  if (viewSectionHidden('teamHealthSection')) return;
   const reports = getReports();
   teamHealthTabBarEl.classList.toggle('hidden', !reports.length);
   if (!reports.length) {

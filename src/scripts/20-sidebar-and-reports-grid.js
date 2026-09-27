@@ -1,4 +1,5 @@
 function renderReportsGrid() {
+  if (viewSectionHidden('reportsSection')) return;
   const mount = document.getElementById('reportsGrid');
   if (!mount) return;
   const total = getReports().length;
