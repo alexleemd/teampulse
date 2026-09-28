@@ -42,27 +42,27 @@
 
     :root {
       /* Surfaces */
-      --page: #FAF7F2;          /* page background and sidebar */
+      --page: #F6F7F7;          /* page background and sidebar */
       --surface: #FFFFFF;       /* cards, panels, fields, dialogs, menus, toasts */
-      --sunken: #F1ECE4;        /* neutral tags, avatars, tracks, hover fill */
+      --sunken: #ECEEF0;        /* neutral tags, avatars, tracks, hover fill */
 
       /* Lines */
-      --line: #E8E2D8;          /* card borders, section dividers */
-      --line-soft: #F1ECE4;     /* row dividers inside cards */
-      --button-line: #DAD3C7;   /* secondary button borders */
-      --field-line: #928A7E;    /* field and switch borders, 3:1 on white */
-      --outline: #CFC7BA;       /* outline tag border */
+      --line: #E1E4E7;          /* card borders, section dividers */
+      --line-soft: #ECEEF0;     /* row dividers inside cards */
+      --button-line: #D1D5DA;   /* secondary button borders */
+      --field-line: #7C838A;    /* field and switch borders, 3:1 on white */
+      --outline: #C2C7CD;       /* outline tag border */
 
       /* Text */
-      --ink: #1E1B17;           /* main text */
-      --ink-2: #6B645B;         /* secondary text, labels, captions */
-      --ink-3: #5C554D;         /* neutral tag text */
-      --placeholder: #766E63;   /* placeholder text */
+      --ink: #181C21;           /* main text */
+      --ink-2: #5B636B;         /* secondary text, labels, captions */
+      --ink-3: #4B525A;         /* neutral tag text */
+      --placeholder: #636A71;   /* placeholder text */
 
       /* Accent: only for things you can click, focus, and where you are */
-      --accent: #3D6B35;
-      --accent-strong: #2C5025; /* hover and pressed */
-      --focus-ring: rgba(61, 107, 53, 0.18);
+      --accent: #335578;
+      --accent-strong: #233F5B; /* hover and pressed */
+      --focus-ring: rgba(51, 85, 120, 0.18);
 
       /* Status: only for status, always with a label or shape */
       --good: #218462;
@@ -70,27 +70,27 @@
       --rough: #8F2733;
       --good-tint: #E4F0E9;
       --good-text: #1D5B43;
-      --amber-tint: #FBF0DC;
+      --amber-tint: #FDEED6;
       --amber-text: #7A5212;
       --amber-strong: #8A5B0B;  /* warning counts in navigation, overdue dates */
       --red-tint: #F8E3E4;
       --red-text: #8F2733;
 
       /* Disabled */
-      --disabled-bg: #F1ECE4;
-      --disabled-text: #A39B8F;
+      --disabled-bg: #ECEEF0;
+      --disabled-text: #82878D;
 
       /* Charts: one hue, light to dark, for heatmaps and levels */
-      --ramp-1: #EEF3EA;
-      --ramp-2: #D3E1CC;
-      --ramp-3: #A9C59D;
-      --ramp-4: #76A067;
-      --ramp-5: #4D7E43;
-      --ramp-6: #2C5025;
+      --ramp-1: #EEF3F9;
+      --ramp-2: #D4E0ED;
+      --ramp-3: #ABBFD5;
+      --ramp-4: #7691AD;
+      --ramp-5: #506C88;
+      --ramp-6: #2C445D;
 
       /* Floating layers only: dialogs, menus, toasts */
-      --scrim: rgba(30, 27, 23, 0.40);
-      --shadow-float: 0 12px 32px -8px rgba(30, 27, 23, 0.18), 0 2px 6px rgba(30, 27, 23, 0.06);
+      --scrim: rgba(24, 28, 33, 0.40);
+      --shadow-float: 0 12px 32px -8px rgba(24, 28, 33, 0.18), 0 2px 6px rgba(24, 28, 33, 0.06);
 
       /* Type */
       --font: 'Instrument Sans', 'Helvetica Neue', sans-serif;
@@ -7488,7 +7488,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.13';
+const APP_VERSION = 'v0.56.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
