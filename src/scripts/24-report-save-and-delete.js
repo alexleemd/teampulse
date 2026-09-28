@@ -65,7 +65,7 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     return existingReport && existingReport[key] !== undefined ? existingReport[key] : fallback;
   };
   // Muscle-memory guard: initials used to be typed into the name as a
-  // parenthesized suffix ("Maria Moreira (MAMO)"). If that pattern arrives in
+  // parenthesized suffix ("Avery Lindqvist (AVLI)"). If that pattern arrives in
   // the name while the initials field is empty, split it the same way the
   // v10->v11 migration does so no new parenthesized names enter the data.
   let profileName = pickProfileField('name', normalizeText);

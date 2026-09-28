@@ -2,7 +2,7 @@ function normalizeText(value) {
   return String(value ?? '').trim();
 }
 
-// Company-style person initials (e.g. MAMO, TOBA): letters and digits only,
+// Company-style person initials (e.g. AVLI, BROK): letters and digits only,
 // uppercased, capped at 8 characters. Empty stays empty.
 function normalizeInitials(value) {
   return normalizeText(value).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
@@ -15,7 +15,7 @@ function personInitials(name) {
 }
 
 // Splits a trailing parenthesized initials token off a name, the pattern used
-// before initials became a first-class field ("Maria Moreira (MAMO)"). Returns
+// before initials became a first-class field ("Avery Lindqvist (AVLI)"). Returns
 // { name, initials } with initials empty when the pattern does not match.
 function splitLegacyInitialsFromName(rawName) {
   const name = normalizeText(rawName);

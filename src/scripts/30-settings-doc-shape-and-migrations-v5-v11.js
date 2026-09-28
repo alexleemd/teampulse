@@ -261,7 +261,7 @@ function migrateV10ToV11(docV10) {
   const safeDoc = docV10 && typeof docV10 === 'object' ? deepCopy(docV10) : makeEmptyDoc();
   // v11 introduces people[].initials as a first-class field. Before it existed
   // the convention was to append company initials to the name in parentheses
-  // ("Maria Moreira (MAMO)"), so this migration extracts that pattern: the
+  // ("Avery Lindqvist (AVLI)"), so this migration extracts that pattern: the
   // token from each person's FINAL projected name becomes their initials, and
   // the parenthesized suffix is stripped from the name everywhere it appears
   // (base records, person_created snapshots, and person_updated name changes)
