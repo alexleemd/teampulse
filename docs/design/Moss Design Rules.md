@@ -9,7 +9,7 @@ date: 2026-09-28
 
 This is the look Team Pulse ships with. It replaced the old bright blue and purple look, including its gradients, glows and animations.
 
-Version 1.1 changed the colors only. The warm paper page and beige grays became an off white page and cool grays, and the moss green accent and chart ramp became a deep ink blue, so green now only means good status. Type, sizes, corners, layout and components are unchanged. The name Moss stays.
+Version 1.1 changed the colors only. The warm paper page and beige grays became an off white page and cool grays, and the moss green accent and chart ramp became a deep muted blue, so green now only means good status. The amber tag background is a little richer so it still reads as amber next to the cooler page. Type, sizes, corners, layout and components are unchanged. The name Moss stays.
 
 - **Mockups:** `docs/design/mockups/` holds six reference pages. They show exact values. Open them in a browser to see them.
 - **Tokens:** `docs/design/tokens.css` holds every color, size and corner as a CSS variable.
@@ -28,7 +28,7 @@ Version 1.1 changed the colors only. The warm paper page and beige grays became 
 ## Principles
 
 1. **Calm and flat.** Off white page, white cards, thin lines. No gradients, glows or blur.
-2. **One accent.** Ink blue means "you can click this" or "you are here". Charts use lighter and darker steps of the same blue. Green only means good status.
+2. **One accent.** The muted blue accent means "you can click this" or "you are here". Charts use lighter and darker steps of the same blue. Green only means good status.
 3. **Status colors only mean status.** Good, mixed and rough always come with a label or a shape, never color alone.
 4. **One typeface.** Instrument Sans in three weights, embedded in the file.
 5. **Nothing moves on its own.** No looping or ambient animation. Motion only answers the user and lasts 150 ms or less.
@@ -62,8 +62,8 @@ All text pairs meet 4.5:1 contrast. Field borders, switch borders and status mar
 | `--amber-strong` | `#8A5B0B` | Warning counts in navigation, overdue dates |
 | `--red-tint` / `--red-text` | `#F8E3E4` / `#8F2733` | Problem tags |
 | `--disabled-bg` / `--disabled-text` | `#ECEEF0` / `#82878D` | Disabled buttons |
-| `--scrim` | `rgba(24, 28, 33, 0.40)` |
-| `--ramp-1` to `--ramp-6` | `#EEF3F9` `#D4E0ED` `#ABBFD5` `#7691AD` `#506C88` `#2C445D` | Heatmaps and levels, light to dark | Behind dialogs |
+| `--scrim` | `rgba(24, 28, 33, 0.40)` | Behind dialogs |
+| `--ramp-1` to `--ramp-6` | `#EEF3F9` `#D4E0ED` `#ABBFD5` `#7691AD` `#506C88` `#2C445D` | Heatmaps and levels, light to dark |
 
 ## Type
 
@@ -232,7 +232,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 
 ## Charts
 
-- Thin marks, one axis, text in ink colors, grid lines in `--line-soft`, axis labels 12px `--ink-2`.
+- Thin marks, one axis, text in the `--ink` grays, grid lines in `--line-soft`, axis labels 12px `--ink-2`.
 - **Single measures** such as the health trend: a 2px line in `--accent`.
 - **Heatmaps and levels** use the one hue ramp `--ramp-1` to `--ramp-6`, light to dark. The six job levels map in order, Consultant (Developing) lightest to Senior (Proficient) darkest.
 - **Radar charts:** 2px `--accent` outline, `--accent` fill at 12% opacity, rings in `--line`.
@@ -243,7 +243,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 
 | Today | Moss |
 |---|---|
-| Blue accent `#2957d6` and purple highlights | `--accent`, a deep muted ink blue (moss green in version 1.0) |
+| Blue accent `#2957d6` and purple highlights | `--accent`, a deep muted blue (moss green in version 1.0) |
 | Saturated status fills (`--sat-*`) with white text | Tag tones from the status table |
 | `.badge` neutral and `.badge.info` | Neutral tag |
 | `.badge.success`, `.warning`, `.danger` | Good, amber and red tints |
@@ -269,7 +269,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 - Emoji anywhere in the interface.
 - Inter, Roboto, Arial or the system font as the main typeface.
 - Colored left border stripes on cards, rows or toasts.
-- Bright blue or purple as an accent. The only accent is the muted ink blue `--accent`.
+- Bright blue or purple as an accent. The only accent is the muted blue `--accent`.
 - Shadows on cards.
 - All caps labels.
 - More than one primary button in one area.
