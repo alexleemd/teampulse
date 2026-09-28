@@ -298,7 +298,7 @@ function renderDetailDrawer() {
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
-                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. MAMO" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>

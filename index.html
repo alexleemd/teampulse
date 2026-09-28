@@ -7488,7 +7488,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.55.11';
+const APP_VERSION = 'v0.55.12';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -7999,7 +7999,7 @@ function normalizeText(value) {
   return String(value ?? '').trim();
 }
 
-// Company-style person initials (e.g. MAMO, TOBA): letters and digits only,
+// Company-style person initials (e.g. AVLI, BROK): letters and digits only,
 // uppercased, capped at 8 characters. Empty stays empty.
 function normalizeInitials(value) {
   return normalizeText(value).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
@@ -8012,7 +8012,7 @@ function personInitials(name) {
 }
 
 // Splits a trailing parenthesized initials token off a name, the pattern used
-// before initials became a first-class field ("Maria Moreira (MAMO)"). Returns
+// before initials became a first-class field ("Avery Lindqvist (AVLI)"). Returns
 // { name, initials } with initials empty when the pattern does not match.
 function splitLegacyInitialsFromName(rawName) {
   const name = normalizeText(rawName);
@@ -12159,7 +12159,7 @@ function renderDetailDrawer() {
                 ${profileInEditMode ? `
                 <div class="form-grid">
                   <label><span>Name *</span><input name="name" value="${escapeHtml(editorReport.name)}" required></label>
-                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. MAMO" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
+                  <label><span>Initials</span><input name="initials" value="${escapeHtml(editorReport.initials || '')}" placeholder="e.g. AVLI" maxlength="8" autocapitalize="characters" style="text-transform:uppercase"></label>
                   <label><span>Level</span><select name="level">${renderLevelSelectOptions(editorReport.level)}</select></label>
                   <label><span>Mentor(s)</span><input name="mentors" value="${escapeHtml(editorReport.mentors || '')}" placeholder="Comma-separated if more than one"></label>
                   <label><span>Support level</span><select name="supportLevel">${SUPPORT_LEVELS.map((level) => `<option value="${escapeHtml(level)}" ${level === editorReport.supportLevel ? 'selected' : ''}>${escapeHtml(level)}</option>`).join('')}</select></label>
@@ -14338,7 +14338,7 @@ function buildReportPayloadFromForm(formData, existingReport = null) {
     return existingReport && existingReport[key] !== undefined ? existingReport[key] : fallback;
   };
   // Muscle-memory guard: initials used to be typed into the name as a
-  // parenthesized suffix ("Maria Moreira (MAMO)"). If that pattern arrives in
+  // parenthesized suffix ("Avery Lindqvist (AVLI)"). If that pattern arrives in
   // the name while the initials field is empty, split it the same way the
   // v10->v11 migration does so no new parenthesized names enter the data.
   let profileName = pickProfileField('name', normalizeText);
@@ -16629,7 +16629,7 @@ function migrateV10ToV11(docV10) {
   const safeDoc = docV10 && typeof docV10 === 'object' ? deepCopy(docV10) : makeEmptyDoc();
   // v11 introduces people[].initials as a first-class field. Before it existed
   // the convention was to append company initials to the name in parentheses
-  // ("Maria Moreira (MAMO)"), so this migration extracts that pattern: the
+  // ("Avery Lindqvist (AVLI)"), so this migration extracts that pattern: the
   // token from each person's FINAL projected name becomes their initials, and
   // the parenthesized suffix is stripped from the name everywhere it appears
   // (base records, person_created snapshots, and person_updated name changes)
@@ -16785,7 +16785,7 @@ function generateSchemaMarkdown() {
   lines.push('- **people[].agenda / people[].developmentGoalSummary**: Still present for import compatibility but drained by the migration. The app no longer writes to them.');
   lines.push('');
   lines.push('## Added in schema v11');
-  lines.push('- **people[].initials**: Company-style initials (e.g. MAMO), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Maria Moreira (MAMO)" becomes name "Maria Moreira" + initials "MAMO") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
+  lines.push('- **people[].initials**: Company-style initials (e.g. AVLI), letters and digits, uppercased, max 8 characters. Shown as a tag on tiles, the table, and the profile header, and included in search. The v10->v11 migration extracts a trailing parenthesized token from each person\'s name ("Avery Lindqvist (AVLI)" becomes name "Avery Lindqvist" + initials "AVLI") and strips the suffix from names inside historical events so replays cannot resurrect it. People who already have initials or whose names do not match the pattern are untouched.');
   lines.push('');
   lines.push('## Added in schema v12');
   lines.push('- **people[].capabilities[]**: Consultant Development Path ticks: { id, achievedAt (YYYY-MM-DD, editable in the checklist so achievements can be backdated) }. Each id refers to a capability in the app\'s built-in CDP framework, seeded verbatim from the Personal Development Plan template (six stages, 40 capabilities). Ticks are the line manager\'s calibration view, and the PDP document remains the consultant\'s own copy. Stages earlier than a person\'s current level count as complete implicitly, so ticks usually only exist for the current stage onward. Powers the Development Path section of the Development tab, the Insights team heatmap and web chart, and Capability entries on the timeline.');
