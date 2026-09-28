@@ -1,13 +1,15 @@
 ---
 title: Moss Design Rules
 author: EALX (Alexander Lee)
-version: 1.0
-date: 2026-09-26
+version: 1.1
+date: 2026-09-28
 ---
 
 # Moss Design Rules
 
-This is the look Team Pulse ships with. It replaces the current blue and purple look, including its gradients, glows and animations.
+This is the look Team Pulse ships with. It replaced the old bright blue and purple look, including its gradients, glows and animations.
+
+Version 1.1 changed the colors only. The warm paper page and beige grays became an off white page and cool grays, and the moss green accent and chart ramp became a deep muted blue, so green now only means good status. The amber tag background is a little richer so it still reads as amber next to the cooler page. Type, sizes, corners, layout and components are unchanged. The name Moss stays.
 
 - **Mockups:** `docs/design/mockups/` holds six reference pages. They show exact values. Open them in a browser to see them.
 - **Tokens:** `docs/design/tokens.css` holds every color, size and corner as a CSS variable.
@@ -25,8 +27,8 @@ This is the look Team Pulse ships with. It replaces the current blue and purple 
 
 ## Principles
 
-1. **Warm, calm and flat.** Paper toned page, white cards, thin lines. No gradients, glows or blur.
-2. **One accent.** Moss green means "you can click this" or "you are here". Nothing else uses it.
+1. **Calm and flat.** Off white page, white cards, thin lines. No gradients, glows or blur.
+2. **One accent.** The muted blue accent means "you can click this" or "you are here". Charts use lighter and darker steps of the same blue. Green only means good status.
 3. **Status colors only mean status.** Good, mixed and rough always come with a label or a shape, never color alone.
 4. **One typeface.** Instrument Sans in three weights, embedded in the file.
 5. **Nothing moves on its own.** No looping or ambient animation. Motion only answers the user and lasts 150 ms or less.
@@ -38,29 +40,30 @@ All text pairs meet 4.5:1 contrast. Field borders, switch borders and status mar
 
 | Token | Value | Use |
 |---|---|---|
-| `--page` | `#FAF7F2` | Page background and sidebar |
+| `--page` | `#F6F7F7` | Page background and sidebar |
 | `--surface` | `#FFFFFF` | Cards, panels, fields, dialogs, menus, toasts |
-| `--sunken` | `#F1ECE4` | Neutral tags, avatars, progress tracks, hover fill |
-| `--line` | `#E8E2D8` | Card borders and section dividers |
-| `--line-soft` | `#F1ECE4` | Row dividers inside cards |
-| `--button-line` | `#DAD3C7` | Secondary button borders |
-| `--field-line` | `#928A7E` | Field and switch borders |
-| `--outline` | `#CFC7BA` | Outline tag border |
-| `--ink` | `#1E1B17` | Main text |
-| `--ink-2` | `#6B645B` | Secondary text, labels, captions |
-| `--ink-3` | `#5C554D` | Neutral tag text |
-| `--placeholder` | `#766E63` | Placeholder text |
-| `--accent` | `#3D6B35` | Primary buttons, links, current nav icon, focus ring, checkbox and range color |
-| `--accent-strong` | `#2C5025` | Hover and pressed state of accent items |
+| `--sunken` | `#ECEEF0` | Neutral tags, avatars, progress tracks, hover fill |
+| `--line` | `#E1E4E7` | Card borders and section dividers |
+| `--line-soft` | `#ECEEF0` | Row dividers inside cards |
+| `--button-line` | `#D1D5DA` | Secondary button borders |
+| `--field-line` | `#7C838A` | Field and switch borders |
+| `--outline` | `#C2C7CD` | Outline tag border |
+| `--ink` | `#181C21` | Main text |
+| `--ink-2` | `#5B636B` | Secondary text, labels, captions |
+| `--ink-3` | `#4B525A` | Neutral tag text |
+| `--placeholder` | `#636A71` | Placeholder text |
+| `--accent` | `#335578` | Primary buttons, links, current nav icon, focus ring, checkbox and range color |
+| `--accent-strong` | `#233F5B` | Hover and pressed state of accent items |
 | `--good` | `#218462` | Good pulse, solid good tags, good progress |
 | `--mixed` | `#B7791F` | Mixed pulse, attention markers, the health meter in the attention band |
 | `--rough` | `#8F2733` | Rough pulse, danger buttons, solid red tags |
 | `--good-tint` / `--good-text` | `#E4F0E9` / `#1D5B43` | Good tags and the Autosaved status |
-| `--amber-tint` / `--amber-text` | `#FBF0DC` / `#7A5212` | Attention tags |
+| `--amber-tint` / `--amber-text` | `#FDEED6` / `#7A5212` | Attention tags |
 | `--amber-strong` | `#8A5B0B` | Warning counts in navigation, overdue dates |
 | `--red-tint` / `--red-text` | `#F8E3E4` / `#8F2733` | Problem tags |
-| `--disabled-bg` / `--disabled-text` | `#F1ECE4` / `#A39B8F` | Disabled buttons |
-| `--scrim` | `rgba(30, 27, 23, 0.40)` | Behind dialogs |
+| `--disabled-bg` / `--disabled-text` | `#ECEEF0` / `#82878D` | Disabled buttons |
+| `--scrim` | `rgba(24, 28, 33, 0.40)` | Behind dialogs |
+| `--ramp-1` to `--ramp-6` | `#EEF3F9` `#D4E0ED` `#ABBFD5` `#7691AD` `#506C88` `#2C445D` | Heatmaps and levels, light to dark |
 
 ## Type
 
@@ -89,7 +92,7 @@ Counts, scores and table dates use tabular figures (`font-variant-numeric: tabul
 - **Spacing:** use flex or grid `gap` (8, 10, 14, 18, 22px), not margins between siblings.
 - **Cards and panels:** `--surface`, 1px `--line`, radius 14px, padding 14 to 20px. Rows inside are divided by 1px `--line-soft`.
 - **Corners:** cards, panels, dialogs and the table wrapper 14px. Toasts 12px. Menus and empty state boxes 10px. Fields 9px. Buttons and nav items 8px. Small buttons 7px. Tags 6px. Avatars 8px (30px size) or 10px (36px size). Never 999px pills.
-- **Shadow:** floating layers only: `0 12px 32px -8px rgba(30, 27, 23, 0.18), 0 2px 6px rgba(30, 27, 23, 0.06)`.
+- **Shadow:** floating layers only: `0 12px 32px -8px rgba(24, 28, 33, 0.18), 0 2px 6px rgba(24, 28, 33, 0.06)`.
 
 ## Focus and motion
 
@@ -229,7 +232,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 
 ## Charts
 
-- Thin marks, one axis, text in ink colors, grid lines in `--line-soft`, axis labels 12px `--ink-2`.
+- Thin marks, one axis, text in the `--ink` grays, grid lines in `--line-soft`, axis labels 12px `--ink-2`.
 - **Single measures** such as the health trend: a 2px line in `--accent`.
 - **Heatmaps and levels** use the one hue ramp `--ramp-1` to `--ramp-6`, light to dark. The six job levels map in order, Consultant (Developing) lightest to Senior (Proficient) darkest.
 - **Radar charts:** 2px `--accent` outline, `--accent` fill at 12% opacity, rings in `--line`.
@@ -240,7 +243,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 
 | Today | Moss |
 |---|---|
-| Blue accent `#2957d6` and purple highlights | `--accent` moss green |
+| Blue accent `#2957d6` and purple highlights | `--accent`, a deep muted blue (moss green in version 1.0) |
 | Saturated status fills (`--sat-*`) with white text | Tag tones from the status table |
 | `.badge` neutral and `.badge.info` | Neutral tag |
 | `.badge.success`, `.warning`, `.danger` | Good, amber and red tints |
@@ -266,7 +269,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 - Emoji anywhere in the interface.
 - Inter, Roboto, Arial or the system font as the main typeface.
 - Colored left border stripes on cards, rows or toasts.
-- Blue or purple as an accent.
+- Bright blue or purple as an accent. The only accent is the muted blue `--accent`.
 - Shadows on cards.
 - All caps labels.
 - More than one primary button in one area.
