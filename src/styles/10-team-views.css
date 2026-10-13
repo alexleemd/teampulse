@@ -162,7 +162,8 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -350,7 +351,8 @@
   gap: 12px;
   min-width: 0;
   padding: 16px 18px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -564,7 +566,8 @@
   gap: 8px;
   min-width: 0;
   padding: 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
   cursor: grab;

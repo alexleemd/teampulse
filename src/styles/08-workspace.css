@@ -181,8 +181,10 @@ body.density-compact #detailDrawer {
 #detailDrawer .followup-panel .followup-item:first-child { border-top: 1px solid var(--line-soft); }
 
 /* Small danger: the small size with the danger look, for row actions that
-   remove something (a meeting, an evidence entry, a vacation window). */
+   remove something (a meeting, an evidence entry, a vacation window). White,
+   like the full size danger button, not the gray fill of other small buttons. */
 #detailDrawer button.danger.small {
+  background: var(--surface);
   border-color: var(--rough);
   color: var(--rough);
   font-weight: 600;
@@ -525,7 +527,7 @@ body.density-compact #detailDrawer {
   justify-content: space-between;
   gap: 14px;
   padding: 12px 8px;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   list-style: none;
   cursor: pointer;
   transition: background-color 120ms ease;

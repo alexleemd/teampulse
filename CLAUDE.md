@@ -11,7 +11,7 @@ A local first browser app for a line manager to track direct reports, 1:1 meetin
 ## Non-negotiables
 
 - The app ships as one self-contained HTML file that works offline, opened from disk or from GitHub Pages.
-- Nothing loads from the network at runtime. No CDNs, no web fonts from the network, no analytics or tracking. Fonts and icons are embedded in the file.
+- Nothing loads from the network at runtime. No CDNs, no web fonts from the network, no analytics or tracking. The main typeface is the device's own system font, which needs no download. The fallback font and the icons are embedded in the file.
 - All data stays on the user's machine: the connected folder (team-pulse.json, backups, exports, SCHEMA.md) through the File System Access API, and IndexedDB. JSON is the source of truth.
 - Never change the data format without a migration and Alex's approval.
 - The repository is public. Never commit real names, client names, company material or exported app data. Use fictional people in examples, tests and screenshots.
@@ -25,7 +25,7 @@ A local first browser app for a line manager to track direct reports, 1:1 meetin
 - Every change goes on a new branch with a pull request. Never commit to main.
 - One topic per pull request. The description says what changed, why, and exactly how Alex can check it: which screen to open, what to click, what he should see.
 - Any visual change includes before and after screenshots with fictional data.
-- Bump the app version in each pull request that changes the app, following the existing numbering (v0.52.4 today).
+- Bump the app version in each pull request that changes the app, following the existing numbering (v0.57.0 today).
 - Code review findings are grouped as A (safety and stability), B (cleanup) and C (nice to have). Alex approves a group before it is worked on.
 - If something needed is missing, such as access, a file or a decision, say exactly what and stop. Don't guess or work around it.
 
@@ -37,7 +37,7 @@ Edit the files in `src/`, never `index.html` directly. The `index.html` at the r
 
 - `src/index.html` is the page template: the head, the `<style>` and `<script>` tags, and one `<!-- @include path -->` line per source file, in order.
 - `src/styles/` holds the CSS, one file per purpose (tokens and font, base, controls, components, then one file per area), `src/markup/` the body HTML and `src/scripts/` the JavaScript. The number in each file name is its place in the page.
-- `src/fonts/` holds the Instrument Sans files (400, 500 and 600, latin) and their license, `OFL.txt`. `src/styles/01-moss-tokens-and-font.css` refers to them with `url()`, and the build embeds them in the page.
+- `src/fonts/` holds the Instrument Sans files (400, 500 and 600, latin) and their license, `OFL.txt`. Instrument Sans is the fallback for browsers that offer no system font. `src/styles/01-moss-tokens-and-font.css` refers to them with `url()`, and the build embeds them in the page.
 - Order matters. The styles rely on the cascade (later rules override earlier ones) and the scripts are one classic script split into parts, run top to bottom. Keep the include order in `src/index.html`. Code can move between files as long as the built result still works.
 - Every file in `src/styles`, `src/markup` and `src/scripts` must be included exactly once. The build stops with an error otherwise, and also on a malformed include line or Windows line endings.
 - `build.mjs` replaces each include line with the file's exact contents (`indent=4` adds the indentation the CSS has inside the page). In style files it embeds local `url()` files as data URLs. It stops if the finished page would load anything from the network. It has no dependencies and does not minify anything.
@@ -46,18 +46,18 @@ Edit the files in `src/`, never `index.html` directly. The `index.html` at the r
 
 - `node build.mjs` rebuilds `index.html`. Run it after every change in `src/` and commit both. `node build.mjs --out <file>` writes a preview somewhere else.
 - `node build.mjs --check` fails if `index.html` is not the current build. The Build workflow (`.github/workflows/build.yml`) runs this on every pull request and on every push to main, and keeps a copy of `index.html` with each passing run.
-- `npm install` and `npx playwright install chromium` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run.
+- `npm install` and `npx playwright install chromium` once, then `node tools/screenshots/shoot.cjs [outDir] [appFile]` takes screenshots of every screen with the fictional sample team in `tools/screenshots/sample-team.cjs`. Clock, locale, random numbers, motion and rendering are fixed, so the same file gives identical PNGs on every run. The screenshots show the system font of the machine that takes them, so on Linux they do not show San Francisco.
 - `npm test` runs the automated tests in `tools/tests` (save and reload round trip, migrations from every old schema version, time zones) against a fresh build. The Build workflow runs them on every pull request. Add a test when you fix a bug.
 - `TZ=Europe/Copenhagen node tools/screenshots/shoot.cjs ...` takes the screenshots in another time zone (the default is UTC).
 - `node tools/screenshots/compare.cjs <runA> <runB>` compares two screenshot runs pixel for pixel. Use it to prove a change has no visual effect, and use the PNGs for before and after pictures.
 
 ## Design
 
-- The design is called Moss. Read `docs/design/Moss Design Rules.md` before any visual change.
+- The design is called Moss. Since version 2.0 it follows Apple's design guidance. Read `docs/design/Moss Design Rules.md` before any visual change.
 - Match the reference mockups in `docs/design/mockups/`. Open them in a browser to see them.
 - Use the variables in `docs/design/tokens.css`. No new colors, fonts, shadows or effects without Alex's approval.
-- Never use gradients, glows, blur, looping animation, 999px pill corners, emoji, colored left borders, or Inter, Roboto, Arial or the system font as the main typeface.
-- The mockups were made on a private design canvas: https://claude.ai/artifact/46VtB19p2SSrHAYbSfG2qf. The files in `docs/design` are the copy to follow.
+- Never use gradients, glows, looping animation, emoji or colored left borders. Blur (frosted glass) only on the Data menu, toasts and global search. Capsule corners only on buttons, tags, pill selects, the save status and the segmented control. The main typeface is the system font, never Inter, Roboto or Arial by choice.
+- The mockups were made on a private design canvas: https://claude.ai/artifact/46VtB19p2SSrHAYbSfG2qf. The canvas still shows the look before version 2.0. The files in `docs/design` are the copy to follow.
 
 ## Writing in the interface
 
@@ -71,3 +71,4 @@ Edit the files in `src/`, never `index.html` directly. The `index.html` at the r
 - Visible keyboard focus on everything you can tab to.
 - Text contrast at least 4.5:1. Field borders and status marks at least 3:1.
 - Status is never shown by color alone.
+- The system settings change the app. Reduce Motion stops all movement, Reduce Transparency makes frosted glass solid and Increase Contrast shows card and button edges.

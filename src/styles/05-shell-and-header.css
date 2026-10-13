@@ -31,8 +31,8 @@
   height: 100dvh;
   min-height: 0;
   padding: 24px 14px 20px;
-  background: var(--page);
-  border-right: 1px solid var(--line);
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-edge);
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -52,7 +52,7 @@
   width: 28px;
   height: 28px;
   flex-shrink: 0;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   background: var(--accent);
   color: var(--surface);
 }
@@ -95,9 +95,10 @@
   border-top: 1px solid var(--line);
 }
 
-/* Items: 36px, radius 8, 17px stroke icons in --ink-2. The border is always
-   there (transparent) so the current item's ring never shifts the layout;
-   the 9px padding plus the 1px border puts the icon where the mockup has it. */
+/* Items: 36px, radius 10, 17px stroke icons in --ink-2. The current item is a
+   --nav-current fill. The border is always there (transparent) so nothing
+   shifts the layout, and the 9px padding plus the 1px border puts the icon
+   where the mockup has it. */
 #sidebar .sidebar-item {
   appearance: none;
   display: flex;
@@ -111,7 +112,7 @@
   padding: 0 9px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   box-shadow: none;
   font-family: inherit;
   font-size: var(--text-nav);
@@ -125,11 +126,11 @@
   cursor: pointer;
   transition: background-color 120ms ease;
 }
-#sidebar .sidebar-item:hover:not(:disabled) { background: var(--sunken); color: var(--ink); }
+#sidebar .sidebar-item:hover:not(:disabled) { background: var(--nav-hover); color: var(--ink); }
 #sidebar .sidebar-item.active,
 #sidebar .sidebar-item.active:hover {
-  background: var(--surface);
-  border-color: var(--line);
+  background: var(--nav-current);
+  border-color: transparent;
   font-weight: 600;
   color: var(--ink);
 }
@@ -210,8 +211,9 @@
   margin: 0;
   font-size: var(--text-title);
   line-height: 1.1;
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  font-synthesis-weight: none;
+  letter-spacing: -0.03em;
   color: var(--ink);
   overflow-wrap: anywhere;
 }
@@ -289,7 +291,7 @@
   color: var(--ink-2);
 }
 
-/* Save status: 28px, radius 7, 12.5px 600, 7px dot (Controls 1). The state
+/* Save status: 28px capsule, 12.5px 600, 7px dot (Controls 1). The state
    classes are set in updateFileUi(). Each state has its own text as well as
    its own look, so the status never relies on color alone. */
 .save-status {
@@ -327,8 +329,9 @@
 .save-status.is-disconnected { background: transparent; border-color: var(--outline); color: var(--ink-3); }
 .save-status.is-disconnected::before { background: transparent; border: 1.5px solid var(--field-line); }
 
-/* Data menu: secondary trigger with a chevron; popover 196px, radius 10,
-   padding 6, floating shadow; items 34px with a --sunken hover. */
+/* Data menu: a header capsule with a chevron. The popover is 196px, radius 12,
+   padding 6, frosted glass with the floating shadow. Items are 34px, radius 6,
+   with a --sunken hover. */
 .toolbar-menu { position: relative; display: inline-block; flex-shrink: 0; }
 #dataMenu > .toolbar-menu-trigger {
   display: inline-flex;
@@ -362,8 +365,10 @@
   gap: 2px;
   width: 196px;
   padding: 6px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--material);
+  -webkit-backdrop-filter: var(--material-blur);
+  backdrop-filter: var(--material-blur);
+  border: 1px solid var(--material-edge);
   border-radius: var(--radius-menu);
   box-shadow: var(--shadow-float);
 }
@@ -379,7 +384,7 @@
   padding: 0 10px;
   background: transparent;
   border: 0;
-  border-radius: var(--radius-small);
+  border-radius: calc(var(--radius-menu) - 6px);
   box-shadow: none;
   font-family: inherit;
   font-size: var(--text-small);
@@ -409,7 +414,8 @@
   gap: 12px 22px;
   padding: 16px 18px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
 }
 .export-banner-copy { display: flex; flex-direction: column; gap: 3px; flex: 1 1 320px; min-width: 0; }
@@ -424,7 +430,8 @@
   gap: 14px;
   padding: 18px 20px 20px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
 }
 #settingsSection > .panel-header,
@@ -467,7 +474,7 @@
   padding: 10px;
   background: transparent;
   border: 0;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   box-shadow: none;
   font-family: inherit;
   font-size: var(--text-small);
@@ -503,7 +510,8 @@
   margin: 8vh auto 0;
   padding: 22px 24px 24px;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
 }
 #startupGate > .panel-header,

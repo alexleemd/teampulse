@@ -7,16 +7,18 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data:; base-uri 'none'; form-action 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Team Pulse</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='8' fill='%23335578'/%3E%3Cpath d='M8 14h2l1.33-3.33 2.67 6.66 1.33-3.33H20' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='9' fill='%230066CC'/%3E%3Cpath d='M8 14h2l1.33-3.33 2.67 6.66 1.33-3.33H20' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <!-- No external resources: Team Pulse makes zero network requests. The Instrument
        Sans font is embedded in this file, so no visitor data (IP, user agent) ever
        leaves the machine. -->
   <style>
-    /* Moss tokens and the embedded font.
+    /* Moss tokens and the embedded fallback font.
        Owner: foundation. The values are copied from docs/design/tokens.css, which is
        the reference. Use these variables everywhere instead of raw colors.
-       Instrument Sans 400, 500 and 600 (latin), SIL Open Font License (src/fonts/OFL.txt).
-       The build embeds the woff2 files as data URLs, so nothing loads from the network. */
+       The main typeface is the system font: San Francisco on Apple devices.
+       Instrument Sans 400, 500 and 600 (latin), SIL Open Font License (src/fonts/OFL.txt),
+       is the fallback where the browser offers no system font. The build embeds the
+       woff2 files as data URLs, so nothing loads from the network. */
 
     @font-face {
       font-family: 'Instrument Sans';
@@ -42,59 +44,77 @@
 
     :root {
       /* Surfaces */
-      --page: #F6F7F7;          /* page background and sidebar */
-      --surface: #FFFFFF;       /* cards, panels, fields, dialogs, menus, toasts */
-      --sunken: #ECEEF0;        /* neutral tags, avatars, tracks, hover fill */
+      --page: #F5F5F7;          /* page background */
+      --sidebar: #EFEFF2;       /* sidebar background */
+      --surface: #FFFFFF;       /* cards, panels, fields, dialogs */
+      --sunken: #EDEDF0;        /* neutral tags, avatars, tracks, segmented track */
+      --fill: #E8E8ED;          /* secondary and small buttons */
+      --fill-hover: #DEDEE3;    /* hover and pressed fill of those buttons */
+      --nav-hover: #E6E6EA;     /* sidebar item under the pointer */
+      --nav-current: #E2E2E6;   /* current sidebar item */
 
       /* Lines */
-      --line: #E1E4E7;          /* card borders, section dividers */
-      --line-soft: #ECEEF0;     /* row dividers inside cards */
-      --button-line: #D1D5DA;   /* secondary button borders */
-      --field-line: #7C838A;    /* field and switch borders, 3:1 on white */
-      --outline: #C2C7CD;       /* outline tag border */
+      --line: #E3E3E8;          /* section dividers, table lines, drawer edge */
+      --line-soft: #EFEFF2;     /* row dividers inside cards */
+      --button-line: #D2D2D7;   /* header button borders, card edge under the pointer */
+      --field-line: #86868B;    /* field and switch borders, 3:1 on white, page and gray fills */
+      --outline: #C7C7CC;       /* outline tag border */
+      --sidebar-edge: rgba(0, 0, 0, 0.10); /* hairline between sidebar and page */
+      --card-edge: transparent; /* card border, shown only with Increase Contrast */
+      --fill-edge: transparent; /* gray button border, shown only with Increase Contrast */
 
       /* Text */
-      --ink: #181C21;           /* main text */
-      --ink-2: #5B636B;         /* secondary text, labels, captions */
-      --ink-3: #4B525A;         /* neutral tag text */
-      --placeholder: #636A71;   /* placeholder text */
+      --ink: #1D1D1F;           /* main text */
+      --ink-2: #636366;         /* secondary text, labels, captions */
+      --ink-3: #515154;         /* neutral tag text */
+      --placeholder: #6E6E73;   /* placeholder text */
 
       /* Accent: only for things you can click, focus, and where you are */
-      --accent: #335578;
-      --accent-strong: #233F5B; /* hover and pressed */
-      --focus-ring: rgba(51, 85, 120, 0.18);
+      --accent: #0066CC;
+      --accent-strong: #0051A3; /* hover and pressed */
+      --focus-ring: rgba(0, 102, 204, 0.22);
 
       /* Status: only for status, always with a label or shape */
-      --good: #218462;
-      --mixed: #B7791F;
-      --rough: #8F2733;
-      --good-tint: #E4F0E9;
-      --good-text: #1D5B43;
-      --amber-tint: #FDEED6;
-      --amber-text: #7A5212;
-      --amber-strong: #8A5B0B;  /* warning counts in navigation, overdue dates */
-      --red-tint: #F8E3E4;
-      --red-text: #8F2733;
+      --good: #1B8561;
+      --mixed: #C7750A;
+      --rough: #D60015;
+      --good-tint: #E2F3EA;
+      --good-text: #1A6644;
+      --amber-tint: #FFF0DB;
+      --amber-text: #8A4B00;
+      --amber-strong: #9A5200;  /* warning counts in navigation, overdue dates */
+      --red-tint: #FDE8EA;
+      --red-text: #B0000F;
 
       /* Disabled */
-      --disabled-bg: #ECEEF0;
-      --disabled-text: #82878D;
+      --disabled-bg: #EDEDF0;
+      --disabled-text: #8E8E93;
 
       /* Charts: one hue, light to dark, for heatmaps and levels */
-      --ramp-1: #EEF3F9;
-      --ramp-2: #D4E0ED;
-      --ramp-3: #ABBFD5;
-      --ramp-4: #7691AD;
-      --ramp-5: #506C88;
-      --ramp-6: #2C445D;
+      --ramp-1: #EAF2FC;
+      --ramp-2: #C8DCF5;
+      --ramp-3: #99C2EF;
+      --ramp-4: #5592DB;
+      --ramp-5: #1F6FC2;
+      --ramp-6: #0055AA;
 
-      /* Floating layers only: dialogs, menus, toasts */
-      --scrim: rgba(24, 28, 33, 0.40);
-      --shadow-float: 0 12px 32px -8px rgba(24, 28, 33, 0.18), 0 2px 6px rgba(24, 28, 33, 0.06);
+      /* Floating layers: dialogs, menus, toasts, search */
+      --scrim: rgba(0, 0, 0, 0.28);
+      --shadow-float: 0 24px 56px -12px rgba(0, 0, 0, 0.24), 0 0 0 0.5px rgba(0, 0, 0, 0.10);
+      --material: rgba(255, 255, 255, 0.88); /* frosted glass: menus, toasts, search */
+      --material-blur: blur(28px) saturate(180%);
+      --material-edge: rgba(0, 0, 0, 0.06);
 
-      /* Type */
-      --font: 'Instrument Sans', 'Helvetica Neue', sans-serif;
-      --text-title: 34px;       /* page title, weight 600, line-height 1.1, letter-spacing -0.025em */
+      /* Cards and the segmented control */
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 18px rgba(0, 0, 0, 0.045);
+      --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+
+      /* Motion: Apple's sheet curve, a close stand in for a critically damped spring */
+      --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+      /* Type: the system font (San Francisco on Apple devices), Instrument Sans as fallback */
+      --font: -apple-system, BlinkMacSystemFont, 'Instrument Sans', 'Helvetica Neue', sans-serif;
+      --text-title: 34px;       /* page title, weight 700, line-height 1.1, letter-spacing -0.03em */
       --text-score: 72px;       /* health score, weight 600, line-height 0.95, letter-spacing -0.045em */
       --text-dialog: 20px;      /* dialog title, weight 600 */
       --text-section: 16px;     /* section title, weight 600 */
@@ -107,13 +127,14 @@
       --text-tag: 11.5px;       /* tags, weight 600 */
 
       /* Corners */
-      --radius-card: 14px;      /* cards, panels, dialogs, table wrapper */
-      --radius-toast: 12px;
-      --radius-menu: 10px;      /* menus, empty state boxes */
-      --radius-field: 9px;      /* fields, segmented track */
-      --radius-button: 8px;     /* buttons, nav items */
-      --radius-small: 7px;      /* small buttons, save status */
-      --radius-tag: 6px;
+      --radius-card: 18px;      /* cards, panels, dialogs, table wrapper */
+      --radius-toast: 16px;
+      --radius-menu: 12px;      /* menus, empty state boxes */
+      --radius-field: 10px;     /* fields */
+      --radius-row: 10px;       /* list rows, sidebar items, heatmap cells, the logo */
+      --radius-button: 999px;   /* buttons and the segmented control: capsules */
+      --radius-small: 999px;    /* small buttons, save status */
+      --radius-tag: 999px;      /* tags */
 
       /* Sizes */
       --sidebar-width: 232px;
@@ -121,6 +142,23 @@
       --field-height: 38px;
       --small-height: 28px;
       --tag-height: 22px;
+    }
+
+    /* Reduce Transparency: the frosted glass turns solid white. */
+    @media (prefers-reduced-transparency: reduce) {
+      :root {
+        --material: var(--surface);
+        --material-blur: none;
+      }
+    }
+
+    /* Increase Contrast: cards, gray buttons and floating layers get a clear edge. */
+    @media (prefers-contrast: more) {
+      :root {
+        --card-edge: var(--field-line);
+        --fill-edge: var(--field-line);
+        --material-edge: var(--field-line);
+      }
     }
     /* Moss base: reset, type, focus, motion policy, and the behavior rules the app
        needs to work (showing and hiding panels, overlays, drawers, menus, print).
@@ -144,7 +182,9 @@
     }
     button, input, select, textarea { font: inherit; color: inherit; }
 
-    /* Only 400, 500 and 600 are embedded, so nothing may ask for heavier weights. */
+    /* The fallback font only has 400, 500 and 600. Only the page title asks for
+       700, which the system fonts have, and it turns off fake bold so the fallback
+       shows its own 600 instead. */
     h1, h2, h3, h4, h5, h6, strong, b, th { font-weight: 600; }
     h1, h2, h3, h4, h5, h6, p { margin: 0; }
     a { color: var(--accent); text-decoration: none; }
@@ -158,7 +198,10 @@
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* --- Motion policy ------------------------------------------------------
-       Motion only answers the user and lasts 150 ms or less. Nothing loops. */
+       Motion only answers the user. Feedback lasts 150 ms or less. Sheets,
+       drawers and dialogs move on Apple's sheet curve (--ease-spring) in up to
+       420 ms and leave the way they came. Nothing loops. Reduced motion turns
+       all of it off. */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         transition: none !important;
@@ -177,19 +220,20 @@
     /* --- Behavior: overlays, dialogs and drawers --------------------------- */
     body.overlay-open { overflow: hidden; }
     /* Closed layers also leave the tab order: visibility follows the open state,
-       on at once when opening, off after the 120ms fade when closing. */
+       on at once when opening, off once the closing motion has finished (200ms
+       for dialogs, 420ms for drawers). */
     .overlay, .drawer-overlay {
       position: fixed; inset: 0; background: var(--scrim);
       opacity: 0; pointer-events: none; visibility: hidden;
-      transition: opacity 120ms ease, visibility 0s linear 120ms;
+      transition: opacity 200ms ease, visibility 0s linear 200ms;
     }
-    .drawer-overlay { z-index: 40; }
+    .drawer-overlay { z-index: 40; transition: opacity 200ms ease, visibility 0s linear 420ms; }
     .overlay { z-index: 70; }
     #meetingModal { z-index: 90; }
     #saveConflictOverlay { z-index: 125; }
     .overlay.open, .drawer-overlay.open {
       opacity: 1; pointer-events: auto; visibility: visible;
-      transition: opacity 120ms ease, visibility 0s linear 0s;
+      transition: opacity 200ms ease, visibility 0s linear 0s;
     }
 
     .drawer, .rules-drawer {
@@ -198,11 +242,22 @@
       display: flex; flex-direction: column; overflow: hidden;
       background: var(--surface); border-left: 1px solid var(--line);
       box-shadow: var(--shadow-float);
-      transform: translateX(12px); transition: transform 120ms ease;
+      transform: translateX(100%); transition: transform 420ms var(--ease-spring);
     }
     .drawer { width: min(1180px, 72vw); }
     .drawer.rules-drawer, .rules-drawer { width: min(560px, 94vw); }
     .drawer-overlay.open .drawer, .drawer-overlay.open .rules-drawer { transform: translateX(0); }
+
+    /* Dialogs settle in on the same curve and leave the same way. */
+    .overlay .modal {
+      transform: scale(0.96);
+      opacity: 0;
+      transition: transform 360ms var(--ease-spring), opacity 200ms ease;
+    }
+    .overlay.open .modal { transform: none; opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .overlay .modal { transform: none; opacity: 1; }
+    }
 
     #detailDrawer { display: flex; flex-direction: column; min-height: 0; background: transparent; overflow: visible; flex: 1 1 auto; }
     #detailDrawer[hidden] { display: none !important; }
@@ -296,13 +351,13 @@
 
     button:where(.secondary, .small),
     .button:where(.secondary, .small) {
-      background: var(--surface);
-      border-color: var(--button-line);
+      background: var(--fill);
+      border-color: var(--fill-edge);
       color: var(--ink);
       font-weight: 500;
     }
     button:where(.secondary, .small):where(:hover, :active):not(:disabled),
-    .button:where(.secondary, .small):hover { background: var(--sunken); }
+    .button:where(.secondary, .small):hover { background: var(--fill-hover); }
 
     button:where(.danger, .danger-outline),
     .button:where(.danger, .danger-outline) {
@@ -314,7 +369,7 @@
     button:where(.danger, .danger-outline):where(:hover, :active):not(:disabled),
     .button:where(.danger, .danger-outline):hover { background: var(--red-tint); }
 
-    /* Small: 28px, radius 7px, 12.5px, secondary look. The table and tile room
+    /* Small: 28px capsule, 12.5px, secondary look. The table and tile room
        buttons are small buttons too (the tile one is a span with role="button"). */
     button:where(.small),
     .button.small,
@@ -327,9 +382,9 @@
       height: var(--small-height);
       padding: 0 10px;
       flex-shrink: 0;
-      border: 1px solid var(--button-line);
+      border: 1px solid var(--fill-edge);
       border-radius: var(--radius-small);
-      background: var(--surface);
+      background: var(--fill);
       color: var(--ink);
       font-size: var(--text-label);
       font-weight: 500;
@@ -341,7 +396,29 @@
       transition: background-color 120ms ease, border-color 120ms ease;
     }
     .tt-action-btn:hover,
-    .tile-room-btn:hover { background: var(--sunken); }
+    .tile-room-btn:hover { background: var(--fill-hover); }
+
+    /* Press: buttons dip slightly the moment they are pressed, before release.
+       Rows and cards highlight instead of moving. */
+    button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small):active:not(:disabled),
+    .button:active,
+    .tt-action-btn:active,
+    .tile-room-btn:active,
+    .pulse-option:active,
+    #contentHeader .gs-trigger:active,
+    #dataMenu > .toolbar-menu-trigger:active {
+      transform: scale(0.97);
+      transition: transform 80ms ease-out;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small):active:not(:disabled),
+      .button:active,
+      .tt-action-btn:active,
+      .tile-room-btn:active,
+      .pulse-option:active,
+      #contentHeader .gs-trigger:active,
+      #dataMenu > .toolbar-menu-trigger:active { transform: none; }
+    }
     .tt-action-btn { padding: 0 8px; }
 
     /* Disabled: flat disabled fill, never opacity. */
@@ -811,8 +888,8 @@
     .toggle-row > label:not(.switch) { flex: 0 0 auto; width: 180px; }
 
     /* --- Segmented control ------------------------------------------------------- */
-    /* Sunken track, radius 9px, padding 3px. The current option is white with a
-       1px line ring and 600 text. Used for Tiles/Table, the PDC views, the
+    /* Sunken capsule track, padding 3px. The current option is a white capsule
+       with a soft shadow and 600 text, like Apple's segmented control. Used for Tiles/Table, the PDC views, the
        Insights chart modes and the timeline filter. */
     .view-switch,
     .pdc-view-toggle,
@@ -827,7 +904,7 @@
       padding: 3px;
       flex: none;
       border: 0;
-      border-radius: var(--radius-field);
+      border-radius: var(--radius-button);
       background: var(--sunken);
     }
     .view-switch > button,
@@ -861,7 +938,7 @@
     .tenure-mode-toggle > button:where([aria-pressed="true"], [aria-selected="true"], .active),
     .tl-filter > button:where([aria-pressed="true"], .active) {
       background: var(--surface);
-      box-shadow: 0 0 0 1px var(--line);
+      box-shadow: var(--shadow-thumb);
       color: var(--ink);
       font-weight: 600;
     }
@@ -1220,7 +1297,7 @@
     .pill-select-wrap:has(> select:is([data-pill-value="Completed"], [data-pill-value="Urgent"])) { color: var(--surface); }
 
     /* --- Avatars --------------------------------------------------------------- */
-    /* Initials on sunken in ink. No per person colors. 30px radius 8, 36px radius 10. */
+    /* Initials on sunken in ink. No per person colors. Round, like Contacts. */
     .avatar,
     .tt-avatar,
     .mv-avatar,
@@ -1236,7 +1313,7 @@
       flex-shrink: 0;
       width: 36px;
       height: 36px;
-      border-radius: 10px;
+      border-radius: 50%;
       background: var(--sunken);
       color: var(--ink);
       font-size: 13px;
@@ -1253,13 +1330,13 @@
     .pdc-board-card-avatar {
       width: 30px;
       height: 30px;
-      border-radius: 8px;
+      border-radius: 50%;
       font-size: var(--text-tag);
     }
     .tt-avatar {
       width: 28px;
       height: 28px;
-      border-radius: 8px;
+      border-radius: 50%;
       font-size: var(--text-tag);
     }
 
@@ -1362,11 +1439,13 @@
     }
 
     /* --- Cards and panels ------------------------------------------------------ */
-    /* Surface, 1px line, radius 14px, never a shadow. Panel titles sit inside
-       panels, with a short note under them in 12.5px ink-2. */
+    /* Surface, radius 18px, no visible border, lifted off the gray page by the
+       soft card shadow. The border only shows with Increase Contrast. Panel
+       titles sit inside panels, with a short note under them in 12.5px ink-2. */
     .card {
       min-width: 0;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -1401,7 +1480,8 @@
       gap: 12px;
       min-width: 0;
       padding: 16px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -1437,7 +1517,8 @@
       --panel-pad-x: 16px;
       --panel-pad-y: 16px;
       min-width: 0;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
       overflow: hidden;
@@ -1506,7 +1587,8 @@
       flex-direction: column;
       gap: 3px;
       padding: 16px 18px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
       color: var(--ink);
@@ -1524,7 +1606,8 @@
       justify-content: space-between;
       gap: 16px;
       padding: 12px 14px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-toast);
       background: var(--surface);
     }
@@ -1570,11 +1653,12 @@
     .swatch:is(.ramp-6, .accent) { --swatch-fill: var(--ramp-6); --swatch-line: var(--ramp-6); }
 
     /* --- Tables (Controls 4) --------------------------------------------------- */
-    /* White wrapper, radius 14px. Header row 38px with 12px 500 ink-2 labels.
+    /* White wrapper with the card look, radius 18px. Header row 38px with 12px 500 ink-2 labels.
        Group rows 34px on page with a 7px status dot. Rows 52px, line-soft dividers. */
     .team-table-wrap {
       min-width: 0;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
       overflow: auto;
@@ -1674,7 +1758,7 @@
       width: 118px;
       height: 30px;
       padding: 0 8px;
-      border-radius: var(--radius-small);
+      border-radius: var(--radius-field);
       font-size: 13px;
     }
     .tt-date input[type="date"]::-webkit-calendar-picker-indicator { margin-inline-start: 2px; padding: 0; }
@@ -1706,7 +1790,7 @@
     }
 
     /* --- Empty states (Controls 3) --------------------------------------------- */
-    /* 13.5px ink-2 text in a page box with a dashed button-line border, radius 10px. */
+    /* 13.5px ink-2 text in a page box with a dashed button-line border, radius 12px. */
     .empty-note,
     .tp-empty,
     .vacation-empty,
@@ -2175,8 +2259,8 @@
       height: 100dvh;
       min-height: 0;
       padding: 24px 14px 20px;
-      background: var(--page);
-      border-right: 1px solid var(--line);
+      background: var(--sidebar);
+      border-right: 1px solid var(--sidebar-edge);
       overflow-x: hidden;
       overflow-y: auto;
       scrollbar-width: thin;
@@ -2196,7 +2280,7 @@
       width: 28px;
       height: 28px;
       flex-shrink: 0;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       background: var(--accent);
       color: var(--surface);
     }
@@ -2239,9 +2323,10 @@
       border-top: 1px solid var(--line);
     }
 
-    /* Items: 36px, radius 8, 17px stroke icons in --ink-2. The border is always
-       there (transparent) so the current item's ring never shifts the layout;
-       the 9px padding plus the 1px border puts the icon where the mockup has it. */
+    /* Items: 36px, radius 10, 17px stroke icons in --ink-2. The current item is a
+       --nav-current fill. The border is always there (transparent) so nothing
+       shifts the layout, and the 9px padding plus the 1px border puts the icon
+       where the mockup has it. */
     #sidebar .sidebar-item {
       appearance: none;
       display: flex;
@@ -2255,7 +2340,7 @@
       padding: 0 9px;
       background: transparent;
       border: 1px solid transparent;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       box-shadow: none;
       font-family: inherit;
       font-size: var(--text-nav);
@@ -2269,11 +2354,11 @@
       cursor: pointer;
       transition: background-color 120ms ease;
     }
-    #sidebar .sidebar-item:hover:not(:disabled) { background: var(--sunken); color: var(--ink); }
+    #sidebar .sidebar-item:hover:not(:disabled) { background: var(--nav-hover); color: var(--ink); }
     #sidebar .sidebar-item.active,
     #sidebar .sidebar-item.active:hover {
-      background: var(--surface);
-      border-color: var(--line);
+      background: var(--nav-current);
+      border-color: transparent;
       font-weight: 600;
       color: var(--ink);
     }
@@ -2354,8 +2439,9 @@
       margin: 0;
       font-size: var(--text-title);
       line-height: 1.1;
-      font-weight: 600;
-      letter-spacing: -0.025em;
+      font-weight: 700;
+      font-synthesis-weight: none;
+      letter-spacing: -0.03em;
       color: var(--ink);
       overflow-wrap: anywhere;
     }
@@ -2433,7 +2519,7 @@
       color: var(--ink-2);
     }
 
-    /* Save status: 28px, radius 7, 12.5px 600, 7px dot (Controls 1). The state
+    /* Save status: 28px capsule, 12.5px 600, 7px dot (Controls 1). The state
        classes are set in updateFileUi(). Each state has its own text as well as
        its own look, so the status never relies on color alone. */
     .save-status {
@@ -2471,8 +2557,9 @@
     .save-status.is-disconnected { background: transparent; border-color: var(--outline); color: var(--ink-3); }
     .save-status.is-disconnected::before { background: transparent; border: 1.5px solid var(--field-line); }
 
-    /* Data menu: secondary trigger with a chevron; popover 196px, radius 10,
-       padding 6, floating shadow; items 34px with a --sunken hover. */
+    /* Data menu: a header capsule with a chevron. The popover is 196px, radius 12,
+       padding 6, frosted glass with the floating shadow. Items are 34px, radius 6,
+       with a --sunken hover. */
     .toolbar-menu { position: relative; display: inline-block; flex-shrink: 0; }
     #dataMenu > .toolbar-menu-trigger {
       display: inline-flex;
@@ -2506,8 +2593,10 @@
       gap: 2px;
       width: 196px;
       padding: 6px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+      background: var(--material);
+      -webkit-backdrop-filter: var(--material-blur);
+      backdrop-filter: var(--material-blur);
+      border: 1px solid var(--material-edge);
       border-radius: var(--radius-menu);
       box-shadow: var(--shadow-float);
     }
@@ -2523,7 +2612,7 @@
       padding: 0 10px;
       background: transparent;
       border: 0;
-      border-radius: var(--radius-small);
+      border-radius: calc(var(--radius-menu) - 6px);
       box-shadow: none;
       font-family: inherit;
       font-size: var(--text-small);
@@ -2553,7 +2642,8 @@
       gap: 12px 22px;
       padding: 16px 18px;
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
     }
     .export-banner-copy { display: flex; flex-direction: column; gap: 3px; flex: 1 1 320px; min-width: 0; }
@@ -2568,7 +2658,8 @@
       gap: 14px;
       padding: 18px 20px 20px;
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
     }
     #settingsSection > .panel-header,
@@ -2611,7 +2702,7 @@
       padding: 10px;
       background: transparent;
       border: 0;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       box-shadow: none;
       font-family: inherit;
       font-size: var(--text-small);
@@ -2647,7 +2738,8 @@
       margin: 8vh auto 0;
       padding: 22px 24px 24px;
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
     }
     #startupGate > .panel-header,
@@ -2932,18 +3024,18 @@
       position: relative;
       isolation: isolate;
       grid-template-columns: 14px minmax(0, 1fr) auto;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       cursor: pointer;
     }
     button.briefing-row:not(.has-people) .briefing-text { grid-column: 2; }
-    /* Hover fill and focus ring share one 8px rounded area that reaches 8px
-       past the row on each side, so the ring clears the status mark. */
+    /* Hover fill and focus ring share one rounded area (radius 10px) that reaches
+       8px past the row on each side, so the ring clears the status mark. */
     button.briefing-row::before {
       content: "";
       position: absolute;
       inset: 2px -8px;
       z-index: -1;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       background: transparent;
       transition: background-color 120ms ease;
     }
@@ -3072,7 +3164,7 @@
       font-size: var(--text-small);
       line-height: 1.4;
       text-align: left;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       cursor: pointer;
     }
     /* Same shared hover and focus area as the Briefing rows: the ring clears
@@ -3082,7 +3174,7 @@
       position: absolute;
       inset: 2px -8px;
       z-index: -1;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       background: transparent;
       transition: background-color 120ms ease;
     }
@@ -3202,7 +3294,8 @@
       width: 100%;
       min-width: 0;
       padding: 14px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
       color: var(--ink);
@@ -3442,7 +3535,8 @@
       min-width: 0;
       margin: 0;
       padding: 16px 20px 18px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -3653,7 +3747,7 @@
       height: 34px;
       margin: 0 -8px;
       padding: 0 8px;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       color: var(--ink);
       text-align: left;
       transition: background-color 120ms ease;
@@ -3857,7 +3951,7 @@
       min-width: 0;
       height: 40px;
       padding: 0 8px;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       color: var(--ink);
       font-size: var(--text-small);
       font-weight: 500;
@@ -3876,7 +3970,7 @@
       --hm-ink: var(--ink);
       height: 40px;
       padding: 0 6px;
-      border-radius: var(--radius-tag);
+      border-radius: var(--radius-row);
       background: var(--hm-fill);
       color: var(--hm-ink);
       font-size: var(--text-label);
@@ -3902,7 +3996,7 @@
       position: absolute;
       inset: -3px;
       border: 2px solid var(--ink);
-      border-radius: calc(var(--radius-tag) + 3px);
+      border-radius: calc(var(--radius-row) + 3px);
       pointer-events: none;
     }
 
@@ -4161,7 +4255,7 @@
       min-width: 0;
       margin: 0 -10px;
       padding: 9px 10px;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
     }
     .cdp-item::before {
       content: "";
@@ -4454,8 +4548,10 @@
     #detailDrawer .followup-panel .followup-item:first-child { border-top: 1px solid var(--line-soft); }
 
     /* Small danger: the small size with the danger look, for row actions that
-       remove something (a meeting, an evidence entry, a vacation window). */
+       remove something (a meeting, an evidence entry, a vacation window). White,
+       like the full size danger button, not the gray fill of other small buttons. */
     #detailDrawer button.danger.small {
+      background: var(--surface);
       border-color: var(--rough);
       color: var(--rough);
       font-weight: 600;
@@ -4798,7 +4894,7 @@
       justify-content: space-between;
       gap: 14px;
       padding: 12px 8px;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       list-style: none;
       cursor: pointer;
       transition: background-color 120ms ease;
@@ -5215,16 +5311,18 @@
     }
 
     /* --- Panels ---------------------------------------------------------------- */
-    /* Surface, 1px line, radius 14, padding 16, never a shadow. The children are
-       spaced by the flex gap (12px), with 14px before the goal actions, the pulse
-       picker, the notes and the footer, as in the mockup. */
+    /* Card look: surface, radius 18, padding 16, no visible border, the card
+       shadow. The children are spaced by the flex gap (12px), with 14px before
+       the goal actions, the pulse picker, the notes and the footer, as in the
+       mockup. */
     .mr-panel {
       display: flex;
       flex-direction: column;
       gap: 12px;
       min-width: 0;
       padding: 16px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -5337,7 +5435,8 @@
     .mr-prev {
       display: block;
       min-width: 0;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -5647,7 +5746,8 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -5835,7 +5935,8 @@
       gap: 12px;
       min-width: 0;
       padding: 16px 18px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
     }
@@ -6049,7 +6150,8 @@
       gap: 8px;
       min-width: 0;
       padding: 12px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--card-edge);
+      box-shadow: var(--shadow-card);
       border-radius: var(--radius-card);
       background: var(--surface);
       cursor: grab;
@@ -6342,8 +6444,10 @@
       width: 100%;
       min-width: 0;
       padding: 12px 14px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+      background: var(--material);
+      -webkit-backdrop-filter: var(--material-blur);
+      backdrop-filter: var(--material-blur);
+      border: 1px solid var(--material-edge);
       border-radius: var(--radius-toast);
       box-shadow: var(--shadow-float);
       color: var(--ink);
@@ -6556,8 +6660,10 @@
       max-width: 640px;
       max-height: min(78vh, 660px);
       min-width: 0;
-      background: var(--surface);
-      border: 0;
+      background: var(--material);
+      -webkit-backdrop-filter: var(--material-blur);
+      backdrop-filter: var(--material-blur);
+      border: 1px solid var(--material-edge);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-float);
       overflow: hidden;
@@ -6652,7 +6758,7 @@
       padding: 3px 10px;
       background: transparent;
       border: 0;
-      border-radius: var(--radius-button);
+      border-radius: var(--radius-row);
       color: var(--ink);
       font-size: var(--text-small);
       line-height: 1.35;
@@ -7488,7 +7594,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.56.0';
+const APP_VERSION = 'v0.57.0';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;

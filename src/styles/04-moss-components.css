@@ -175,7 +175,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .pill-select-wrap:has(> select:is([data-pill-value="Completed"], [data-pill-value="Urgent"])) { color: var(--surface); }
 
 /* --- Avatars --------------------------------------------------------------- */
-/* Initials on sunken in ink. No per person colors. 30px radius 8, 36px radius 10. */
+/* Initials on sunken in ink. No per person colors. Round, like Contacts. */
 .avatar,
 .tt-avatar,
 .mv-avatar,
@@ -191,7 +191,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: 50%;
   background: var(--sunken);
   color: var(--ink);
   font-size: 13px;
@@ -208,13 +208,13 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .pdc-board-card-avatar {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: 50%;
   font-size: var(--text-tag);
 }
 .tt-avatar {
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 50%;
   font-size: var(--text-tag);
 }
 
@@ -317,11 +317,13 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 }
 
 /* --- Cards and panels ------------------------------------------------------ */
-/* Surface, 1px line, radius 14px, never a shadow. Panel titles sit inside
-   panels, with a short note under them in 12.5px ink-2. */
+/* Surface, radius 18px, no visible border, lifted off the gray page by the
+   soft card shadow. The border only shows with Increase Contrast. Panel
+   titles sit inside panels, with a short note under them in 12.5px ink-2. */
 .card {
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -356,7 +358,8 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   gap: 12px;
   min-width: 0;
   padding: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -392,7 +395,8 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   --panel-pad-x: 16px;
   --panel-pad-y: 16px;
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
   overflow: hidden;
@@ -461,7 +465,8 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   flex-direction: column;
   gap: 3px;
   padding: 16px 18px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
   color: var(--ink);
@@ -479,7 +484,8 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   justify-content: space-between;
   gap: 16px;
   padding: 12px 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-toast);
   background: var(--surface);
 }
@@ -525,11 +531,12 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 .swatch:is(.ramp-6, .accent) { --swatch-fill: var(--ramp-6); --swatch-line: var(--ramp-6); }
 
 /* --- Tables (Controls 4) --------------------------------------------------- */
-/* White wrapper, radius 14px. Header row 38px with 12px 500 ink-2 labels.
+/* White wrapper with the card look, radius 18px. Header row 38px with 12px 500 ink-2 labels.
    Group rows 34px on page with a 7px status dot. Rows 52px, line-soft dividers. */
 .team-table-wrap {
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
   overflow: auto;
@@ -629,7 +636,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
   width: 118px;
   height: 30px;
   padding: 0 8px;
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-field);
   font-size: 13px;
 }
 .tt-date input[type="date"]::-webkit-calendar-picker-indicator { margin-inline-start: 2px; padding: 0; }
@@ -661,7 +668,7 @@ select.pill-select[data-pill-value="Urgent"] { --tag-bg: var(--rough); --tag-fg:
 }
 
 /* --- Empty states (Controls 3) --------------------------------------------- */
-/* 13.5px ink-2 text in a page box with a dashed button-line border, radius 10px. */
+/* 13.5px ink-2 text in a page box with a dashed button-line border, radius 12px. */
 .empty-note,
 .tp-empty,
 .vacation-empty,
