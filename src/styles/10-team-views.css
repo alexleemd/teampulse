@@ -310,8 +310,19 @@
 .followups-view .followup-panel .sharp-panel-header h3 { min-width: 0; }
 .followups-view .fu-person-link { font-size: var(--text-panel); }
 .followups-view .followup-list { padding: 4px 0; }
-.followups-view .followup-item { padding-top: 9px; padding-bottom: 9px; }
-.followups-view .followup-item:hover { background: var(--page); }
+.followups-view .followup-item { position: relative; isolation: isolate; padding-top: 9px; padding-bottom: 9px; }
+/* Hover: a rounded fill (radius 10px) that reaches 8px past the row on each
+   side, like the Briefing rows, so the divider lines stay straight. */
+.followups-view .followup-item::before {
+  content: "";
+  position: absolute;
+  inset: 2px -8px;
+  z-index: -1;
+  border-radius: var(--radius-row);
+  background: transparent;
+  transition: background-color 120ms ease;
+}
+.followups-view .followup-item:hover::before { background: var(--page); }
 .followups-help {
   margin: 0;
   color: var(--ink-2);
@@ -471,8 +482,8 @@
    Columns sit on --page inside a 1px --line outline, with the label, the
    count tag and the hint. No colored rails or stripes (decision 5): the
    column says what it holds in words. Header, hint and cards line up across
-   the columns (subgrid rows). Cards are white with a 1px --line border and no
-   shadow. The boards scroll sideways when the pane is narrow. */
+   the columns (subgrid rows). Cards are white, with no visible border, on the
+   card shadow. The boards scroll sideways when the pane is narrow. */
 .pdc-board {
   display: grid;
   grid-auto-flow: column;
@@ -573,7 +584,9 @@
   cursor: grab;
   transition: border-color 120ms ease, background-color 120ms ease;
 }
-.pdc-board-card:hover { border-color: var(--button-line); }
+/* Only cards you can act on show the hover edge. The 1:1 board cards are
+   read only. */
+.pdc-board-card:not(.oo-board-card):hover { border-color: var(--button-line); }
 .pdc-board-card:where([draggable="false"], .oo-board-card) { cursor: default; }
 /* The card being dragged stays in place as a dashed outline of itself. */
 .pdc-board-card.dragging {

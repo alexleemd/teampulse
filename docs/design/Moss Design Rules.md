@@ -102,8 +102,8 @@ Large text gets tighter letter spacing and small text keeps it at 0, as in Apple
 - **Sidebar:** 232px wide on `--sidebar`, 1px `--sidebar-edge` right border, padding 24px 14px 20px.
 - **Main area:** padding 28px 36px 26px. Sections 18 to 22px apart.
 - **Spacing:** use flex or grid `gap` (8, 10, 14, 18, 22px), not margins between siblings.
-- **Cards and panels:** `--surface`, radius 18px, padding 14 to 20px, no visible border (1px `--card-edge`) and the card shadow. Rows inside are divided by 1px `--line-soft`.
-- **Corners:** cards, panels, dialogs and the table wrapper 18px. Toasts and the quick filter bar 16px. Menus and empty state boxes 12px. Fields 10px. List rows, sidebar items, heatmap cells and the logo 10px. Menu items 6px. Buttons, small buttons, the save status, tags, pill selects and the segmented control are capsules (999px). Avatars are round.
+- **Cards and panels:** `--surface`, radius 18px, padding 12 to 22px (less in compact density), no visible border (1px `--card-edge`) and the card shadow. Rows inside are divided by 1px `--line-soft`.
+- **Corners:** cards, panels, dialogs and the table wrapper 18px. Toasts and the quick filter bar 16px. Menus and empty state boxes 12px. Fields 10px. Rows that highlight under the pointer, sidebar items, the Development path heatmap cells and the logo 10px. The meetings heatmap keeps its small 12px cells with 3px corners. Menu items 6px. Buttons, small buttons, the save status, tags, pill selects and the segmented control are capsules (999px). Avatars are round.
 - **Card shadow (`--shadow-card`):** `0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 18px rgba(0, 0, 0, 0.045)`.
 - **Floating shadow (`--shadow-float`):** dialogs, drawers, menus, toasts and search only: `0 24px 56px -12px rgba(0, 0, 0, 0.24), 0 0 0 0.5px rgba(0, 0, 0, 0.10)`.
 
@@ -111,17 +111,18 @@ Large text gets tighter letter spacing and small text keeps it at 0, as in Apple
 
 The Data menu, toasts and global search are frosted glass: `--material` (white at 88%), `--material-blur` (`blur(28px) saturate(180%)`), a 1px `--material-edge` hairline and the floating shadow. White at 88% keeps the text on them readable over whatever sits behind. With Reduce Transparency they turn solid white.
 
-Cards, dialogs, drawers and the sidebar stay solid. Never put frosted glass on top of frosted glass.
+Cards, dialogs, drawers and the sidebar stay solid. Never put frosted glass on top of frosted glass. A toast that lands over the open Data menu or Search turns solid white for that reason.
 
 ## Focus and motion
 
 - Every interactive element shows `outline: 2px solid var(--accent); outline-offset: 2px` on `:focus-visible`.
 - Fields show `border-color: var(--accent)` plus `box-shadow: 0 0 0 3px var(--focus-ring)` when focused.
-- Hover, color and open transitions last 150 ms or less.
+- Hover and color changes last 150 ms or less, and so do small disclosures such as the Last time chevron.
 - Buttons dip to 97% the moment they are pressed (80 ms), before the click lands. Rows and cards highlight instead of moving.
-- Drawers slide in from the right edge on Apple's sheet curve (`--ease-spring`, `cubic-bezier(0.32, 0.72, 0, 1)`) in 420 ms and slide back out to the right.
-- Dialogs grow from 96% and fade in on the same curve in 360 ms. They leave the same way.
+- Drawers slide in from the right edge on Apple's sheet curve (`--ease-spring`, `cubic-bezier(0.32, 0.72, 0, 1)`) in 420 ms while the scrim fades in. They slide back out to the right.
+- Dialogs grow from 96% on the same curve in 360 ms and fade in over 200 ms. They leave the same way.
 - The scrim fades in 200 ms.
+- Global search opens and closes at once, with no fade or grow.
 - Nothing loops. Reduce Motion turns every transition and animation off, so layers simply appear and disappear.
 
 ## Components
@@ -221,7 +222,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 ### Cards, panels and the Last time recap
 
 - Section titles sit above cards. Panel titles sit inside panels, with a short note under them in 12.5px `--ink-2`.
-- Cards have no visible border. They lift off the page on the card shadow. Clickable cards (direct report tiles, PDC board cards) show a 1px `--button-line` edge under the pointer.
+- Cards have no visible border. They lift off the page on the card shadow. Cards you can act on (direct report tiles, PDC board cards) show a 1px `--button-line` edge under the pointer. The read only 1:1 board cards do not.
 - The Add direct report tile is an empty slot, not a card: a dashed 1px `--button-line` outline on `--page`, no shadow.
 - The Last time recap is a `details` element styled as a panel. The summary row holds the title, the pulse glyph, the meta line and a chevron.
 
@@ -262,7 +263,7 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 - Thin marks, one axis, text in the `--ink` grays, grid lines in `--line-soft`, axis labels 12px `--ink-2`.
 - **Single measures** such as the health trend: a 2px line in `--accent`.
 - **Heatmaps and levels** use the one hue ramp `--ramp-1` to `--ramp-6`, light to dark. The six job levels map in order, Consultant (Developing) lightest to Senior (Proficient) darkest. Steps 4 to 6 reach 3:1 as marks. Text on steps 1 to 4 is `--ink`, on steps 5 and 6 white.
-- **Heatmap cells** are rounded rectangles (radius 10px), not capsules, so they read as a chart and not as tags.
+- **Development path heatmap cells** are rounded rectangles (radius 10px), not capsules, so they read as a chart and not as tags.
 - **Radar charts:** 2px `--accent` outline, `--accent` fill at 12% opacity, rings in `--line`.
 - Status in charts uses good, mixed and rough with a label or shape, never color alone.
 - A chart with two or more series gets a legend.
@@ -284,8 +285,8 @@ Other badges use the same tones. An overdue last 1:1 is amber. Counts, next plan
 | Solid white menus, toasts and search | Frosted glass menus, toasts and search |
 | Switch on in the accent color | Switch on in green, as on Apple platforms |
 | Drawers nudge in 12px in 120 ms | Drawers slide in from the edge on the sheet curve in 420 ms |
-| Dialogs fade in | Dialogs grow from 96% and fade in on the sheet curve |
-| Corners 14, 12, 10, 9, 8, 7 and 6px | Corners 18, 16, 12 and 10px, capsules and circles |
+| Dialogs fade in | Dialogs grow from 96% on the sheet curve and fade in |
+| Corners 14, 12, 10, 9, 8, 7 and 6px | Corners 18, 16, 12, 10 and 6px, capsules and circles |
 
 ## Never use
 

@@ -242,7 +242,8 @@
   min-width: 0;
 }
 
-/* Search: secondary look, 15px icon, the "/" key hint. */
+/* Search: a white header capsule with a 1px --button-line border, 15px icon,
+   the "/" key hint. */
 #contentHeader .gs-trigger {
   appearance: none;
   display: inline-flex;

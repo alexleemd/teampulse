@@ -800,8 +800,8 @@
     .feedback-shared-field { flex-direction: row; align-items: flex-start; gap: 10px; }
 
     /* --- Switch ------------------------------------------------------------------ */
-    /* 36 by 20 on a real checkbox. On: accent fill, white knob. Off: white track,
-       1.5px field-line border, field-line knob. */
+    /* 36 by 20 on a real checkbox. On: green (--good) fill, white knob, as on
+       Apple platforms. Off: white track, 1.5px field-line border, field-line knob. */
     .switch {
       position: relative;
       display: inline-flex;
@@ -839,8 +839,8 @@
       transition: left 120ms ease, top 120ms ease, width 120ms ease, height 120ms ease, background-color 120ms ease;
     }
     .switch input:checked + .slider {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--good);
+      border-color: var(--good);
     }
     .switch input:checked + .slider::before {
       left: 17px;
@@ -2470,7 +2470,8 @@
       min-width: 0;
     }
 
-    /* Search: secondary look, 15px icon, the "/" key hint. */
+    /* Search: a white header capsule with a 1px --button-line border, 15px icon,
+       the "/" key hint. */
     #contentHeader .gs-trigger {
       appearance: none;
       display: inline-flex;
@@ -4433,9 +4434,10 @@
       margin: 0;
       color: var(--ink);
       font-size: var(--text-title);
-      font-weight: 600;
+      font-weight: 700;
+      font-synthesis-weight: none;
       line-height: 1.1;
-      letter-spacing: -0.025em;
+      letter-spacing: -0.03em;
       overflow-wrap: anywhere;
     }
     .detail-subhead {
@@ -5894,8 +5896,19 @@
     .followups-view .followup-panel .sharp-panel-header h3 { min-width: 0; }
     .followups-view .fu-person-link { font-size: var(--text-panel); }
     .followups-view .followup-list { padding: 4px 0; }
-    .followups-view .followup-item { padding-top: 9px; padding-bottom: 9px; }
-    .followups-view .followup-item:hover { background: var(--page); }
+    .followups-view .followup-item { position: relative; isolation: isolate; padding-top: 9px; padding-bottom: 9px; }
+    /* Hover: a rounded fill (radius 10px) that reaches 8px past the row on each
+       side, like the Briefing rows, so the divider lines stay straight. */
+    .followups-view .followup-item::before {
+      content: "";
+      position: absolute;
+      inset: 2px -8px;
+      z-index: -1;
+      border-radius: var(--radius-row);
+      background: transparent;
+      transition: background-color 120ms ease;
+    }
+    .followups-view .followup-item:hover::before { background: var(--page); }
     .followups-help {
       margin: 0;
       color: var(--ink-2);
@@ -6055,8 +6068,8 @@
        Columns sit on --page inside a 1px --line outline, with the label, the
        count tag and the hint. No colored rails or stripes (decision 5): the
        column says what it holds in words. Header, hint and cards line up across
-       the columns (subgrid rows). Cards are white with a 1px --line border and no
-       shadow. The boards scroll sideways when the pane is narrow. */
+       the columns (subgrid rows). Cards are white, with no visible border, on the
+       card shadow. The boards scroll sideways when the pane is narrow. */
     .pdc-board {
       display: grid;
       grid-auto-flow: column;
@@ -6157,7 +6170,9 @@
       cursor: grab;
       transition: border-color 120ms ease, background-color 120ms ease;
     }
-    .pdc-board-card:hover { border-color: var(--button-line); }
+    /* Only cards you can act on show the hover edge. The 1:1 board cards are
+       read only. */
+    .pdc-board-card:not(.oo-board-card):hover { border-color: var(--button-line); }
     .pdc-board-card:where([draggable="false"], .oo-board-card) { cursor: default; }
     /* The card being dragged stays in place as a dashed outline of itself. */
     .pdc-board-card.dragging {
@@ -6296,7 +6311,7 @@
        slide) lives in 02-moss-base.css. */
 
     /* --- Dialogs (meeting, goal, feedback, startup prompt) -------------------
-       Scrim behind, white, radius 14, floating shadow, 560px wide, padding
+       Scrim behind, white, radius 18, floating shadow, 560px wide, padding
        22 24 24. Header: 20px 600 title, 13.5px ink-2 description, small Close.
        The overlay scrolls when a dialog is taller than the window, and the
        dialog is centered with auto margins so its top is never cut off. */
@@ -6418,9 +6433,9 @@
     .startup-modal .help-text { margin: 0; }
 
     /* --- Toasts -------------------------------------------------------------------
-       Top right, white, 1px line, radius 12, floating shadow, 360px wide. A
-       leading 18px status icon, the message in 13.5px, an optional link button
-       such as Undo. No colored side borders. The icon color follows the kind:
+       Top right, frosted glass, 1px material edge, radius 16, floating shadow,
+       360px wide. A leading 18px status icon, the message in 13.5px, an optional
+       link button such as Undo. No colored side borders. The icon color follows the kind:
        good for success, mixed for warning, rough for error, ink-2 for info.
        --toast-top is set by placeToastStack (09) when a header row with
        buttons sits in the top right spot, so the stack starts under it. */
@@ -6460,6 +6475,13 @@
        drawer buttons under it. Only a toast with an action (such as Undo) takes
        clicks. */
     .toast:has(.toast-action) { pointer-events: auto; }
+    /* Never frosted glass on frosted glass: a toast that lands over the open
+       Data menu or Search is solid white. */
+    body:has(#dataMenu[open], .gs-overlay.open) .toast {
+      background: var(--surface);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
     @keyframes mossToastIn {
       from { opacity: 0; }
       to { opacity: 1; }

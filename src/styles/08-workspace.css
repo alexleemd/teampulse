@@ -66,9 +66,10 @@
   margin: 0;
   color: var(--ink);
   font-size: var(--text-title);
-  font-weight: 600;
+  font-weight: 700;
+  font-synthesis-weight: none;
   line-height: 1.1;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   overflow-wrap: anywhere;
 }
 .detail-subhead {

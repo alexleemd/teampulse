@@ -510,8 +510,8 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 .feedback-shared-field { flex-direction: row; align-items: flex-start; gap: 10px; }
 
 /* --- Switch ------------------------------------------------------------------ */
-/* 36 by 20 on a real checkbox. On: accent fill, white knob. Off: white track,
-   1.5px field-line border, field-line knob. */
+/* 36 by 20 on a real checkbox. On: green (--good) fill, white knob, as on
+   Apple platforms. Off: white track, 1.5px field-line border, field-line knob. */
 .switch {
   position: relative;
   display: inline-flex;
@@ -549,8 +549,8 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   transition: left 120ms ease, top 120ms ease, width 120ms ease, height 120ms ease, background-color 120ms ease;
 }
 .switch input:checked + .slider {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--good);
+  border-color: var(--good);
 }
 .switch input:checked + .slider::before {
   left: 17px;
