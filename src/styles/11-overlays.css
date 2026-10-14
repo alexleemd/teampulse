@@ -9,7 +9,7 @@
    slide) lives in 02-moss-base.css. */
 
 /* --- Dialogs (meeting, goal, feedback, startup prompt) -------------------
-   Scrim behind, white, radius 14, floating shadow, 560px wide, padding
+   Scrim behind, white, radius 18, floating shadow, 560px wide, padding
    22 24 24. Header: 20px 600 title, 13.5px ink-2 description, small Close.
    The overlay scrolls when a dialog is taller than the window, and the
    dialog is centered with auto margins so its top is never cut off. */
@@ -131,9 +131,9 @@
 .startup-modal .help-text { margin: 0; }
 
 /* --- Toasts -------------------------------------------------------------------
-   Top right, white, 1px line, radius 12, floating shadow, 360px wide. A
-   leading 18px status icon, the message in 13.5px, an optional link button
-   such as Undo. No colored side borders. The icon color follows the kind:
+   Top right, frosted glass, 1px material edge, radius 16, floating shadow,
+   360px wide. A leading 18px status icon, the message in 13.5px, an optional
+   link button such as Undo. No colored side borders. The icon color follows the kind:
    good for success, mixed for warning, rough for error, ink-2 for info.
    --toast-top is set by placeToastStack (09) when a header row with
    buttons sits in the top right spot, so the stack starts under it. */
@@ -157,8 +157,10 @@
   width: 100%;
   min-width: 0;
   padding: 12px 14px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--material);
+  -webkit-backdrop-filter: var(--material-blur);
+  backdrop-filter: var(--material-blur);
+  border: 1px solid var(--material-edge);
   border-radius: var(--radius-toast);
   box-shadow: var(--shadow-float);
   color: var(--ink);
@@ -171,6 +173,13 @@
    drawer buttons under it. Only a toast with an action (such as Undo) takes
    clicks. */
 .toast:has(.toast-action) { pointer-events: auto; }
+/* Never frosted glass on frosted glass: a toast that lands over the open
+   Data menu or Search is solid white. */
+body:has(#dataMenu[open], .gs-overlay.open) .toast {
+  background: var(--surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
 @keyframes mossToastIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -371,8 +380,10 @@
   max-width: 640px;
   max-height: min(78vh, 660px);
   min-width: 0;
-  background: var(--surface);
-  border: 0;
+  background: var(--material);
+  -webkit-backdrop-filter: var(--material-blur);
+  backdrop-filter: var(--material-blur);
+  border: 1px solid var(--material-edge);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-float);
   overflow: hidden;
@@ -467,7 +478,7 @@
   padding: 3px 10px;
   background: transparent;
   border: 0;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   color: var(--ink);
   font-size: var(--text-small);
   line-height: 1.35;

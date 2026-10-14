@@ -48,16 +48,18 @@
 }
 
 /* --- Panels ---------------------------------------------------------------- */
-/* Surface, 1px line, radius 14, padding 16, never a shadow. The children are
-   spaced by the flex gap (12px), with 14px before the goal actions, the pulse
-   picker, the notes and the footer, as in the mockup. */
+/* Card look: surface, radius 18, padding 16, no visible border, the card
+   shadow. The children are spaced by the flex gap (12px), with 14px before
+   the goal actions, the pulse picker, the notes and the footer, as in the
+   mockup. */
 .mr-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-width: 0;
   padding: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -170,7 +172,8 @@
 .mr-prev {
   display: block;
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }

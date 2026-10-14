@@ -1,78 +1,102 @@
 /*
   Team Pulse · Moss design tokens
   Owner: EALX (Alexander Lee)
-  Version 1.1 · 2026-09-28
+  Version 2.0 · 2026-10-14
 
-  1.1 replaces the warm paper page and beige grays with an off white page and
-  cool grays, and the moss green accent and chart ramp with a deep muted blue.
-  Green now only means good status. The good, mixed and rough colors are
-  unchanged. The amber tag background is a little richer so it still reads as
-  amber next to the cooler page.
+  2.0 rebuilds Moss on Apple's design guidance. The main typeface is the system
+  font (San Francisco on Apple devices) and the colors are Apple's grays and
+  blue. Cards have no border and sit on a soft shadow, and buttons and tags are
+  capsules. Menus, toasts and search are frosted glass, and drawers and dialogs
+  move on Apple's sheet curve. The green, orange and red are close to Apple's
+  but tuned so they pass the colorblind check and carry white text on the solid
+  tags. New tokens: --sidebar, --fill, --fill-hover, --nav-hover, --nav-current,
+  --sidebar-edge, --card-edge, --fill-edge, --material, --material-blur,
+  --material-edge, --shadow-card, --shadow-thumb, --ease-spring and --radius-row.
 
   Reference values for the Moss design. The mockups in docs/design/mockups use
-  these exact values. The app's own stylesheet should define these variables once
-  and use them everywhere instead of raw hex values.
+  these exact values. The app's own stylesheet defines these variables once
+  (src/styles/01-moss-tokens-and-font.css) and uses them everywhere instead of
+  raw hex values.
 
-  Fonts: Instrument Sans 400, 500 and 600 (latin), SIL Open Font License.
-  Embed them in the built file as base64 woff2 through @font-face. The app must
-  never load fonts or anything else from the network at runtime.
+  Fonts: the system font first. Instrument Sans 400, 500 and 600 (latin), SIL
+  Open Font License, is the fallback. Embed it in the built file as base64 woff2
+  through @font-face. The app must never load fonts or anything else from the
+  network at runtime.
 */
 
 :root {
   /* Surfaces */
-  --page: #F6F7F7;          /* page background and sidebar */
-  --surface: #FFFFFF;       /* cards, panels, fields, dialogs, menus, toasts */
-  --sunken: #ECEEF0;        /* neutral tags, avatars, tracks, hover fill */
+  --page: #F5F5F7;          /* page background */
+  --sidebar: #EFEFF2;       /* sidebar background */
+  --surface: #FFFFFF;       /* cards, panels, fields, dialogs */
+  --sunken: #EDEDF0;        /* neutral tags, avatars, tracks, segmented track */
+  --fill: #E8E8ED;          /* secondary and small buttons */
+  --fill-hover: #DEDEE3;    /* hover and pressed fill of those buttons */
+  --nav-hover: #E6E6EA;     /* sidebar item under the pointer */
+  --nav-current: #E2E2E6;   /* current sidebar item */
 
   /* Lines */
-  --line: #E1E4E7;          /* card borders, section dividers */
-  --line-soft: #ECEEF0;     /* row dividers inside cards */
-  --button-line: #D1D5DA;   /* secondary button borders */
-  --field-line: #7C838A;    /* field and switch borders, 3:1 on white */
-  --outline: #C2C7CD;       /* outline tag border */
+  --line: #E3E3E8;          /* section dividers, table lines, drawer edge */
+  --line-soft: #EFEFF2;     /* row dividers inside cards */
+  --button-line: #D2D2D7;   /* header button borders, card edge under the pointer */
+  --field-line: #86868B;    /* field and switch borders, 3:1 on white, page and gray fills */
+  --outline: #C7C7CC;       /* outline tag border */
+  --sidebar-edge: rgba(0, 0, 0, 0.10); /* hairline between sidebar and page */
+  --card-edge: transparent; /* card border, shown only with Increase Contrast */
+  --fill-edge: transparent; /* gray button border, shown only with Increase Contrast */
 
   /* Text */
-  --ink: #181C21;           /* main text */
-  --ink-2: #5B636B;         /* secondary text, labels, captions */
-  --ink-3: #4B525A;         /* neutral tag text */
-  --placeholder: #636A71;   /* placeholder text */
+  --ink: #1D1D1F;           /* main text */
+  --ink-2: #636366;         /* secondary text, labels, captions */
+  --ink-3: #515154;         /* neutral tag text */
+  --placeholder: #6E6E73;   /* placeholder text */
 
   /* Accent: only for things you can click, focus, and where you are */
-  --accent: #335578;
-  --accent-strong: #233F5B; /* hover and pressed */
-  --focus-ring: rgba(51, 85, 120, 0.18);
+  --accent: #0066CC;
+  --accent-strong: #0051A3; /* hover and pressed */
+  --focus-ring: rgba(0, 102, 204, 0.22);
 
   /* Status: only for status, always with a label or shape */
-  --good: #218462;
-  --mixed: #B7791F;
-  --rough: #8F2733;
-  --good-tint: #E4F0E9;
-  --good-text: #1D5B43;
-  --amber-tint: #FDEED6;
-  --amber-text: #7A5212;
-  --amber-strong: #8A5B0B;  /* warning counts in navigation, overdue dates */
-  --red-tint: #F8E3E4;
-  --red-text: #8F2733;
+  --good: #1B8561;
+  --mixed: #C7750A;
+  --rough: #D60015;
+  --good-tint: #E2F3EA;
+  --good-text: #1A6644;
+  --amber-tint: #FFF0DB;
+  --amber-text: #8A4B00;
+  --amber-strong: #9A5200;  /* warning counts in navigation, overdue dates */
+  --red-tint: #FDE8EA;
+  --red-text: #B0000F;
 
   /* Disabled */
-  --disabled-bg: #ECEEF0;
-  --disabled-text: #82878D;
+  --disabled-bg: #EDEDF0;
+  --disabled-text: #8E8E93;
 
   /* Charts: one hue, light to dark, for heatmaps and levels */
-  --ramp-1: #EEF3F9;
-  --ramp-2: #D4E0ED;
-  --ramp-3: #ABBFD5;
-  --ramp-4: #7691AD;
-  --ramp-5: #506C88;
-  --ramp-6: #2C445D;
+  --ramp-1: #EAF2FC;
+  --ramp-2: #C8DCF5;
+  --ramp-3: #99C2EF;
+  --ramp-4: #5592DB;
+  --ramp-5: #1F6FC2;
+  --ramp-6: #0055AA;
 
-  /* Floating layers only: dialogs, menus, toasts */
-  --scrim: rgba(24, 28, 33, 0.40);
-  --shadow-float: 0 12px 32px -8px rgba(24, 28, 33, 0.18), 0 2px 6px rgba(24, 28, 33, 0.06);
+  /* Floating layers: dialogs, menus, toasts, search */
+  --scrim: rgba(0, 0, 0, 0.28);
+  --shadow-float: 0 24px 56px -12px rgba(0, 0, 0, 0.24), 0 0 0 0.5px rgba(0, 0, 0, 0.10);
+  --material: rgba(255, 255, 255, 0.88); /* frosted glass: menus, toasts, search */
+  --material-blur: blur(28px) saturate(180%);
+  --material-edge: rgba(0, 0, 0, 0.06);
 
-  /* Type */
-  --font: 'Instrument Sans', 'Helvetica Neue', sans-serif;
-  --text-title: 34px;       /* page title, weight 600, line-height 1.1, letter-spacing -0.025em */
+  /* Cards and the segmented control */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 18px rgba(0, 0, 0, 0.045);
+  --shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+
+  /* Motion: Apple's sheet curve, a close stand in for a critically damped spring */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Type: the system font (San Francisco on Apple devices), Instrument Sans as fallback */
+  --font: -apple-system, BlinkMacSystemFont, 'Instrument Sans', 'Helvetica Neue', sans-serif;
+  --text-title: 34px;       /* page title, weight 700, line-height 1.1, letter-spacing -0.03em */
   --text-score: 72px;       /* health score, weight 600, line-height 0.95, letter-spacing -0.045em */
   --text-dialog: 20px;      /* dialog title, weight 600 */
   --text-section: 16px;     /* section title, weight 600 */
@@ -85,13 +109,14 @@
   --text-tag: 11.5px;       /* tags, weight 600 */
 
   /* Corners */
-  --radius-card: 14px;      /* cards, panels, dialogs, table wrapper */
-  --radius-toast: 12px;
-  --radius-menu: 10px;      /* menus, empty state boxes */
-  --radius-field: 9px;      /* fields, segmented track */
-  --radius-button: 8px;     /* buttons, nav items */
-  --radius-small: 7px;      /* small buttons, save status */
-  --radius-tag: 6px;
+  --radius-card: 18px;      /* cards, panels, dialogs, table wrapper */
+  --radius-toast: 16px;
+  --radius-menu: 12px;      /* menus, empty state boxes */
+  --radius-field: 10px;     /* fields */
+  --radius-row: 10px;       /* list rows, sidebar items, heatmap cells, the logo */
+  --radius-button: 999px;   /* buttons and the segmented control: capsules */
+  --radius-small: 999px;    /* small buttons, save status */
+  --radius-tag: 999px;      /* tags */
 
   /* Sizes */
   --sidebar-width: 232px;
@@ -99,4 +124,21 @@
   --field-height: 38px;
   --small-height: 28px;
   --tag-height: 22px;
+}
+
+/* Reduce Transparency: the frosted glass turns solid white. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --material: var(--surface);
+    --material-blur: none;
+  }
+}
+
+/* Increase Contrast: cards, gray buttons and floating layers get a clear edge. */
+@media (prefers-contrast: more) {
+  :root {
+    --card-edge: var(--field-line);
+    --fill-edge: var(--field-line);
+    --material-edge: var(--field-line);
+  }
 }

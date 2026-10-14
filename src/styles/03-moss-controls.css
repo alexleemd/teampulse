@@ -61,13 +61,13 @@ button:where(:not([class]), [class=""], .primary):where(:hover, :active):not(:di
 
 button:where(.secondary, .small),
 .button:where(.secondary, .small) {
-  background: var(--surface);
-  border-color: var(--button-line);
+  background: var(--fill);
+  border-color: var(--fill-edge);
   color: var(--ink);
   font-weight: 500;
 }
 button:where(.secondary, .small):where(:hover, :active):not(:disabled),
-.button:where(.secondary, .small):hover { background: var(--sunken); }
+.button:where(.secondary, .small):hover { background: var(--fill-hover); }
 
 button:where(.danger, .danger-outline),
 .button:where(.danger, .danger-outline) {
@@ -79,7 +79,7 @@ button:where(.danger, .danger-outline),
 button:where(.danger, .danger-outline):where(:hover, :active):not(:disabled),
 .button:where(.danger, .danger-outline):hover { background: var(--red-tint); }
 
-/* Small: 28px, radius 7px, 12.5px, secondary look. The table and tile room
+/* Small: 28px capsule, 12.5px, secondary look. The table and tile room
    buttons are small buttons too (the tile one is a span with role="button"). */
 button:where(.small),
 .button.small,
@@ -92,9 +92,9 @@ button:where(.small),
   height: var(--small-height);
   padding: 0 10px;
   flex-shrink: 0;
-  border: 1px solid var(--button-line);
+  border: 1px solid var(--fill-edge);
   border-radius: var(--radius-small);
-  background: var(--surface);
+  background: var(--fill);
   color: var(--ink);
   font-size: var(--text-label);
   font-weight: 500;
@@ -106,7 +106,29 @@ button:where(.small),
   transition: background-color 120ms ease, border-color 120ms ease;
 }
 .tt-action-btn:hover,
-.tile-room-btn:hover { background: var(--sunken); }
+.tile-room-btn:hover { background: var(--fill-hover); }
+
+/* Press: buttons dip slightly the moment they are pressed, before release.
+   Rows and cards highlight instead of moving. */
+button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small):active:not(:disabled),
+.button:active,
+.tt-action-btn:active,
+.tile-room-btn:active,
+.pulse-option:active,
+#contentHeader .gs-trigger:active,
+#dataMenu > .toolbar-menu-trigger:active {
+  transform: scale(0.97);
+  transition: transform 80ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  button:where(:not([class]), [class=""], .primary, .secondary, .danger, .danger-outline, .small):active:not(:disabled),
+  .button:active,
+  .tt-action-btn:active,
+  .tile-room-btn:active,
+  .pulse-option:active,
+  #contentHeader .gs-trigger:active,
+  #dataMenu > .toolbar-menu-trigger:active { transform: none; }
+}
 .tt-action-btn { padding: 0 8px; }
 
 /* Disabled: flat disabled fill, never opacity. */
@@ -488,8 +510,8 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 .feedback-shared-field { flex-direction: row; align-items: flex-start; gap: 10px; }
 
 /* --- Switch ------------------------------------------------------------------ */
-/* 36 by 20 on a real checkbox. On: accent fill, white knob. Off: white track,
-   1.5px field-line border, field-line knob. */
+/* 36 by 20 on a real checkbox. On: green (--good) fill, white knob, as on
+   Apple platforms. Off: white track, 1.5px field-line border, field-line knob. */
 .switch {
   position: relative;
   display: inline-flex;
@@ -527,8 +549,8 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   transition: left 120ms ease, top 120ms ease, width 120ms ease, height 120ms ease, background-color 120ms ease;
 }
 .switch input:checked + .slider {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--good);
+  border-color: var(--good);
 }
 .switch input:checked + .slider::before {
   left: 17px;
@@ -576,8 +598,8 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 .toggle-row > label:not(.switch) { flex: 0 0 auto; width: 180px; }
 
 /* --- Segmented control ------------------------------------------------------- */
-/* Sunken track, radius 9px, padding 3px. The current option is white with a
-   1px line ring and 600 text. Used for Tiles/Table, the PDC views, the
+/* Sunken capsule track, padding 3px. The current option is a white capsule
+   with a soft shadow and 600 text, like Apple's segmented control. Used for Tiles/Table, the PDC views, the
    Insights chart modes and the timeline filter. */
 .view-switch,
 .pdc-view-toggle,
@@ -592,7 +614,7 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
   padding: 3px;
   flex: none;
   border: 0;
-  border-radius: var(--radius-field);
+  border-radius: var(--radius-button);
   background: var(--sunken);
 }
 .view-switch > button,
@@ -626,7 +648,7 @@ label:where(:has(> input[type="checkbox"]), :has(> input[type="radio"])) > span 
 .tenure-mode-toggle > button:where([aria-pressed="true"], [aria-selected="true"], .active),
 .tl-filter > button:where([aria-pressed="true"], .active) {
   background: var(--surface);
-  box-shadow: 0 0 0 1px var(--line);
+  box-shadow: var(--shadow-thumb);
   color: var(--ink);
   font-weight: 600;
 }

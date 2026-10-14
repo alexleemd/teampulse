@@ -26,7 +26,8 @@
   min-width: 0;
   margin: 0;
   padding: 16px 20px 18px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
 }
@@ -237,7 +238,7 @@
   height: 34px;
   margin: 0 -8px;
   padding: 0 8px;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   color: var(--ink);
   text-align: left;
   transition: background-color 120ms ease;
@@ -441,7 +442,7 @@
   min-width: 0;
   height: 40px;
   padding: 0 8px;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   color: var(--ink);
   font-size: var(--text-small);
   font-weight: 500;
@@ -460,7 +461,7 @@
   --hm-ink: var(--ink);
   height: 40px;
   padding: 0 6px;
-  border-radius: var(--radius-tag);
+  border-radius: var(--radius-row);
   background: var(--hm-fill);
   color: var(--hm-ink);
   font-size: var(--text-label);
@@ -486,7 +487,7 @@
   position: absolute;
   inset: -3px;
   border: 2px solid var(--ink);
-  border-radius: calc(var(--radius-tag) + 3px);
+  border-radius: calc(var(--radius-row) + 3px);
   pointer-events: none;
 }
 
@@ -745,7 +746,7 @@
   min-width: 0;
   margin: 0 -10px;
   padding: 9px 10px;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
 }
 .cdp-item::before {
   content: "";

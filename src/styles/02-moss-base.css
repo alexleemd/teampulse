@@ -20,7 +20,9 @@ body {
 }
 button, input, select, textarea { font: inherit; color: inherit; }
 
-/* Only 400, 500 and 600 are embedded, so nothing may ask for heavier weights. */
+/* The fallback font only has 400, 500 and 600. Only the page title asks for
+   700, which the system fonts have, and it turns off fake bold so the fallback
+   shows its own 600 instead. */
 h1, h2, h3, h4, h5, h6, strong, b, th { font-weight: 600; }
 h1, h2, h3, h4, h5, h6, p { margin: 0; }
 a { color: var(--accent); text-decoration: none; }
@@ -34,7 +36,10 @@ svg { flex-shrink: 0; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* --- Motion policy ------------------------------------------------------
-   Motion only answers the user and lasts 150 ms or less. Nothing loops. */
+   Motion only answers the user. Feedback lasts 150 ms or less. Sheets,
+   drawers and dialogs move on Apple's sheet curve (--ease-spring) in up to
+   420 ms and leave the way they came. Nothing loops. Reduced motion turns
+   all of it off. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
@@ -53,19 +58,20 @@ svg { flex-shrink: 0; }
 /* --- Behavior: overlays, dialogs and drawers --------------------------- */
 body.overlay-open { overflow: hidden; }
 /* Closed layers also leave the tab order: visibility follows the open state,
-   on at once when opening, off after the 120ms fade when closing. */
+   on at once when opening, off once the closing motion has finished (200ms
+   for dialogs, 420ms for drawers). */
 .overlay, .drawer-overlay {
   position: fixed; inset: 0; background: var(--scrim);
   opacity: 0; pointer-events: none; visibility: hidden;
-  transition: opacity 120ms ease, visibility 0s linear 120ms;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
 }
-.drawer-overlay { z-index: 40; }
+.drawer-overlay { z-index: 40; transition: opacity 200ms ease, visibility 0s linear 420ms; }
 .overlay { z-index: 70; }
 #meetingModal { z-index: 90; }
 #saveConflictOverlay { z-index: 125; }
 .overlay.open, .drawer-overlay.open {
   opacity: 1; pointer-events: auto; visibility: visible;
-  transition: opacity 120ms ease, visibility 0s linear 0s;
+  transition: opacity 200ms ease, visibility 0s linear 0s;
 }
 
 .drawer, .rules-drawer {
@@ -74,11 +80,22 @@ body.overlay-open { overflow: hidden; }
   display: flex; flex-direction: column; overflow: hidden;
   background: var(--surface); border-left: 1px solid var(--line);
   box-shadow: var(--shadow-float);
-  transform: translateX(12px); transition: transform 120ms ease;
+  transform: translateX(100%); transition: transform 420ms var(--ease-spring);
 }
 .drawer { width: min(1180px, 72vw); }
 .drawer.rules-drawer, .rules-drawer { width: min(560px, 94vw); }
 .drawer-overlay.open .drawer, .drawer-overlay.open .rules-drawer { transform: translateX(0); }
+
+/* Dialogs settle in on the same curve and leave the same way. */
+.overlay .modal {
+  transform: scale(0.96);
+  opacity: 0;
+  transition: transform 360ms var(--ease-spring), opacity 200ms ease;
+}
+.overlay.open .modal { transform: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .overlay .modal { transform: none; opacity: 1; }
+}
 
 #detailDrawer { display: flex; flex-direction: column; min-height: 0; background: transparent; overflow: visible; flex: 1 1 auto; }
 #detailDrawer[hidden] { display: none !important; }

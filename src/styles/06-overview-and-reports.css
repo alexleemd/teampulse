@@ -213,18 +213,18 @@ button.briefing-row {
   position: relative;
   isolation: isolate;
   grid-template-columns: 14px minmax(0, 1fr) auto;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   cursor: pointer;
 }
 button.briefing-row:not(.has-people) .briefing-text { grid-column: 2; }
-/* Hover fill and focus ring share one 8px rounded area that reaches 8px
-   past the row on each side, so the ring clears the status mark. */
+/* Hover fill and focus ring share one rounded area (radius 10px) that reaches
+   8px past the row on each side, so the ring clears the status mark. */
 button.briefing-row::before {
   content: "";
   position: absolute;
   inset: 2px -8px;
   z-index: -1;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   background: transparent;
   transition: background-color 120ms ease;
 }
@@ -353,7 +353,7 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
   font-size: var(--text-small);
   line-height: 1.4;
   text-align: left;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   cursor: pointer;
 }
 /* Same shared hover and focus area as the Briefing rows: the ring clears
@@ -363,7 +363,7 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
   position: absolute;
   inset: 2px -8px;
   z-index: -1;
-  border-radius: var(--radius-button);
+  border-radius: var(--radius-row);
   background: transparent;
   transition: background-color 120ms ease;
 }
@@ -483,7 +483,8 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
   width: 100%;
   min-width: 0;
   padding: 14px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
   background: var(--surface);
   color: var(--ink);
