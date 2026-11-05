@@ -3456,6 +3456,28 @@
       .reports-table .team-table th,
       .reports-table .team-table td { padding: 0 6px; }
     }
+    /* Narrower than the table's one line width (1222px of table area with 10px
+       padding, 1168px with 7px): the person's code and level wrap under the name
+       instead of widening the Person column. The table then fits from about
+       1400px of window width. */
+    @container team-table (max-width: 1221px) {
+      .reports-table .tt-person > span:last-child { max-width: 150px; }
+      .reports-table .tt-sub { white-space: normal; }
+    }
+    /* Narrower still: the Person column and the row buttons stay in place while
+       the columns between them scroll sideways, so 1:1 room and Log meeting are
+       always in reach. The hairlines show where the scrolling columns pass under. */
+    @container team-table (max-width: 1091px) {
+      .reports-table .team-table tr:not(.team-table-group) > :first-child,
+      .reports-table .team-table tr:not(.team-table-group) > :last-child {
+        position: sticky;
+        z-index: 1;
+        background: var(--surface);
+      }
+      .reports-table .team-table tr:not(.team-table-group) > :first-child { left: 0; box-shadow: inset -1px 0 0 var(--line); }
+      .reports-table .team-table tr:not(.team-table-group) > :last-child { right: 0; box-shadow: inset 1px 0 0 var(--line); }
+      .reports-table .team-table-group-label { position: sticky; left: 6px; }
+    }
     /* Goal cell: the status tag over the compact bar, so the column stays as
        narrow as the bar alone. */
     .reports-table .tt-goal {
@@ -7616,7 +7638,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.57.1';
+const APP_VERSION = 'v0.57.2';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
