@@ -2819,8 +2819,9 @@
        this file only lays them out and adds view scoped variations. */
 
     /* === Team Health overview ================================================ */
-    /* Health score and Briefing side by side (272px and the rest, 18px apart),
-       then Direct Reports, then Upcoming. Sections 22px apart. */
+    /* The health score with Upcoming under it (272px), the Briefing beside them,
+       then Direct Reports. Sections 22px apart. Each card is as tall as its
+       content, so no card carries empty space. */
     .team-health-content { min-width: 0; }
     .overview-tab {
       display: flex;
@@ -2832,10 +2833,17 @@
     .overview-top {
       display: grid;
       grid-template-columns: 272px minmax(0, 1fr);
-      align-items: stretch;
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        "score briefing"
+        "upcoming briefing";
+      align-items: start;
       gap: 18px;
       min-width: 0;
     }
+    .overview-top > .health-score { grid-area: score; }
+    .overview-top > .briefing { grid-area: briefing; }
+    .overview-top > .upcoming { grid-area: upcoming; }
     .overview-card { min-width: 0; }
 
     /* Card head: section title and a note (the date, the count). */
@@ -3136,6 +3144,7 @@
       display: flex;
       flex-direction: column;
       padding: 16px 20px 8px;
+      container: upcoming / inline-size;
     }
     .upcoming > .overview-section-head {
       padding-bottom: 10px;
@@ -3207,6 +3216,14 @@
       background: transparent;
       color: var(--ink-2);
       font-size: var(--text-label);
+    }
+    /* In the narrow left column: the when line goes under the name, and the
+       count drops under the title when the two do not fit side by side. */
+    @container upcoming (max-width: 420px) {
+      .upcoming > .overview-section-head { flex-wrap: wrap; row-gap: 2px; }
+      .upcoming-row { grid-template-columns: 44px minmax(0, 1fr); row-gap: 1px; }
+      .upcoming-row-kind { grid-row: 1 / span 2; }
+      .upcoming-row-when { grid-column: 2; }
     }
 
     /* === Direct Reports ========================================================== */
@@ -3506,7 +3523,11 @@
       .overview-reports-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @container overview (max-width: 720px) {
-      .overview-top { grid-template-columns: minmax(0, 1fr); }
+      .overview-top {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: none;
+        grid-template-areas: "score" "briefing" "upcoming";
+      }
     }
     @container overview (max-width: 520px) {
       .overview-reports-grid { grid-template-columns: minmax(0, 1fr); }
@@ -7637,7 +7658,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.57.3';
+const APP_VERSION = 'v0.57.4';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -13209,6 +13230,8 @@ function renderReportsGrid() {
 // data-glyph-open (handled by the #teamHealthBody delegation in 29) and
 // data-overview-room (handled in 33). The Overview stays in the DOM, hidden,
 // while Direct Reports is shown, so it must not repeat the Direct Reports hooks.
+// On the Overview the tile leaves out its problem tags (1:1 overdue, support
+// level, follow-ups and so on), because the Briefing above lists every one.
 function renderReportTileHtml(report, options = {}) {
   const onOverview = options.context === 'overview';
   const id = escapeHtml(report.id);
@@ -13253,7 +13276,7 @@ function renderReportTileHtml(report, options = {}) {
           ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
         </span>
         ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
-        ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
+        ${chips.length && !onOverview ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
       </span>
     </button>
     <button type="button" class="tile-room-btn" ${roomHook} title="Open the 1:1 meeting room">1:1 room</button>
@@ -17210,7 +17233,7 @@ function currentTeamHealthTab() {
 //
 //   1. Health score - single composite number (0-100), an 8px meter whose
 //                     fill follows the health band, the band label and the
-//                     on-track summary. Left card of the first row.
+//                     on-track summary. Top of the left column.
 //   2. Briefing     - named, per-person digest of everything that needs a
 //                     manager's eyes today (overdue touchpoints, elevated
 //                     support levels, vacations, follow-ups, PDC round).
@@ -17218,10 +17241,14 @@ function currentTeamHealthTab() {
 //                     profile. This absorbed the former Cadence, Attention,
 //                     and Support Levels tabs in v0.45: counts by rule and
 //                     aggregate bars told you less than names do.
-//                     Right card of the first row.
-//   3. Direct Reports - the first tiles (attention first) with the team
-//                     count and "View all →", the same tile as Direct Reports.
-//   4. Upcoming     - forward-looking list of next touchpoints, as a panel.
+//                     Right column, beside the score and Upcoming.
+//   3. Upcoming     - forward-looking list of next touchpoints, as a panel.
+//                     Under the score in the left column (v0.57.4). On a
+//                     narrow screen it follows the Briefing.
+//   4. Direct Reports - the first tiles (attention first) with the team
+//                     count and "View all →", the same tile as Direct Reports
+//                     without its problem tags, which the Briefing already
+//                     lists.
 //
 // Design notes:
 //   - Composite score weights each cadence equally, plus a support-level penalty.
@@ -17540,9 +17567,9 @@ function renderOverviewTabHtml(reports) {
       <div class="overview-top">
         ${renderHealthScoreSection(scoreInfo)}
         ${renderBriefingSection(reportStates)}
+        ${renderUpcomingSection(reportStates)}
       </div>
       ${renderOverviewReportsSection(reports)}
-      ${renderUpcomingSection(reportStates)}
     </div>
   `;
 }
