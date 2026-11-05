@@ -506,15 +506,19 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
   min-width: 0;
   padding-right: 80px;
 }
+/* The full name: up to two lines next to the 1:1 room button, then an
+   ellipsis, so a long name is never cut to a few letters. */
 .report-tile-name {
+  display: -webkit-box;
   min-width: 0;
   overflow: hidden;
   color: var(--ink);
   font-size: var(--text-panel);
   font-weight: 600;
   line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 /* The initials code is data, spaced a little as in the mockup. */
 .report-tile-name.is-code { letter-spacing: 0.03em; }
@@ -528,11 +532,6 @@ button.briefing-row:hover .briefing-go { color: var(--accent-strong); }
   line-height: 1.4;
 }
 .report-tile-meta-line { display: block; overflow-wrap: anywhere; }
-.report-tile-fullname {
-  color: var(--ink);
-  font-size: var(--text-body);
-  font-weight: 600;
-}
 .report-tile-foot {
   display: flex;
   flex-direction: column;

@@ -194,10 +194,10 @@ function renderTeamTenureCard(reports) {
     // shapes never touch.
     const startIsPromotion = promotionRatio !== null && Math.abs(promotionRatio - (startRatio === null ? 0 : startRatio)) < 0.0001;
     const durationText = durationTextFor(row);
-    // Prefer the short company initials in the name column and truncate long
-    // fallback names instead of letting them push the track. The full name
-    // stays in the tooltip.
-    const rawGutterLabel = row.initials || row.name || '';
+    // The name, as everywhere else in the app, truncated when long instead of
+    // pushing the track. The company initials are the fallback for a person
+    // with no name. The full name stays in the tooltip.
+    const rawGutterLabel = row.name || row.initials || '';
     const gutterLabel = rawGutterLabel.length > 19 ? `${rawGutterLabel.slice(0, 18)}…` : rawGutterLabel;
     // The bar's ramp step is the only visual cue for the level, so the level
     // goes in the tooltip and the name as well.
