@@ -81,13 +81,14 @@ function renderReportTileHtml(report, options = {}) {
   else if (report.supportLevel === 'Monitor') chips.push(`<span class="report-tile-chip" data-tone="neutral">Monitor</span>`);
   else if (report.supportLevel === 'Good' && chips.length === 0) chips.push(`<span class="report-tile-chip" data-tone="good">On track</span>`);
   const initials = personInitials(report.name);
-  // Company initials are the tile title when present: short, uniform, and
-  // immune to the truncation that crushed long names next to the 1:1 room
-  // button. The full name moves to its own full-width line underneath, where
-  // it has the whole tile to itself. People without initials keep the name
-  // as the title, exactly as before.
+  // The full name is the tile title, as everywhere else in the app. A long
+  // name wraps onto a second line next to the 1:1 room button instead of
+  // being cut off (06). The company initials sit with the level on the line
+  // below, as in the table. A person with initials but no name keeps the
+  // initials as the title.
   const hasCode = !!(report.initials && report.name);
-  const tileTitle = report.initials || report.name || 'Unnamed';
+  const tileTitle = report.name || report.initials || 'Unnamed';
+  const levelLine = hasCode ? `${report.initials} · ${level}` : level;
   const openHook = onOverview ? `data-glyph-open="${id}"` : `data-report-card="${id}"`;
   const roomHook = onOverview ? `data-overview-room="${id}"` : `data-open-room="${id}"`;
   const pulseHtml = renderPulseDots(metrics.pulseSeries, { emptyHtml: '' });
@@ -95,11 +96,10 @@ function renderReportTileHtml(report, options = {}) {
     <button type="button" class="report-tile-main" ${openHook}>
       <span class="report-tile-head">
         <span class="report-tile-avatar" aria-hidden="true">${escapeHtml(initials)}</span>
-        <span class="report-tile-name${report.initials ? ' is-code' : ''}" ${hasCode ? `title="${escapeHtml(report.name)}"` : ''}>${escapeHtml(tileTitle)}</span>
+        <span class="report-tile-name${!report.name && report.initials ? ' is-code' : ''}">${escapeHtml(tileTitle)}</span>
       </span>
       <span class="report-tile-meta">
-        ${hasCode ? `<span class="report-tile-meta-line report-tile-fullname">${escapeHtml(report.name)}</span>` : ''}
-        <span class="report-tile-meta-line">${escapeHtml(level)}</span>
+        <span class="report-tile-meta-line">${escapeHtml(levelLine)}</span>
         ${mentor ? `<span class="report-tile-meta-line">${escapeHtml(mentor)}</span>` : ''}
       </span>
       <span class="report-tile-foot">
