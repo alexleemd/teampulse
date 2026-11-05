@@ -185,7 +185,7 @@ async function updateReport(reportId, payload, options = {}) {
 async function deleteReport(reportId) {
   const report = getReportById(reportId);
   if (!report) return;
-  if (!window.confirm(`Delete ${report.name} from Team Pulse?`)) return;
+  if (!window.confirm(`Archive ${report.name}? They disappear from every view and their history is kept. You can undo this right after.`)) return;
   clearLastDestructiveAction();
   const eventId = nextId('event');
   appendEvent({ id: eventId, type: 'person_archived', personId: reportId, createdAt: nowIso() });
@@ -196,7 +196,7 @@ async function deleteReport(reportId) {
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
+  showToast(`${report.name} was archived.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 
 // GDPR right-to-erasure: removes the person record and every event that
