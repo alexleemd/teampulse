@@ -7616,7 +7616,7 @@
   <div id="printSheet" aria-hidden="true"></div>
 
   <script>
-const APP_VERSION = 'v0.57.0';
+const APP_VERSION = 'v0.57.1';
 const CURRENT_SCHEMA_VERSION = 12;
 const AUTOSAVE_DEBOUNCE_MS = 160;
 const TOAST_TIMEOUT_MS = 3000;
@@ -12184,7 +12184,7 @@ function renderDetailDrawer() {
             ${isCreating ? '' : `<button type="button" class="secondary" data-open-room="${escapeHtml(report.id)}">1:1 room</button>`}
             ${isCreating ? '' : '<button type="button" class="secondary" id="printOnePagerBtn">One-pager</button>'}
             <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
-            ${isCreating ? '' : '<button type="button" class="danger" id="deleteSelectedBtn">Delete</button>'}
+            ${isCreating ? '' : '<button type="button" class="danger" id="deleteSelectedBtn">Archive</button>'}
           </div>
         </div>
       </div>
@@ -12324,7 +12324,7 @@ function renderDetailDrawer() {
                 <div class="drawer-section-head">
                   <div>
                     <h3>Danger Zone</h3>
-                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
+                    <p class="section-note">Archive (header button) hides this person from every view, with undo, and keeps their history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
                   </div>
                   <button type="button" class="danger" id="purgeReportBtn">Erase permanently</button>
                 </div>
@@ -14586,7 +14586,7 @@ async function updateReport(reportId, payload, options = {}) {
 async function deleteReport(reportId) {
   const report = getReportById(reportId);
   if (!report) return;
-  if (!window.confirm(`Delete ${report.name} from Team Pulse?`)) return;
+  if (!window.confirm(`Archive ${report.name}? They disappear from every view and their history is kept. You can undo this right after.`)) return;
   clearLastDestructiveAction();
   const eventId = nextId('event');
   appendEvent({ id: eventId, type: 'person_archived', personId: reportId, createdAt: nowIso() });
@@ -14597,7 +14597,7 @@ async function deleteReport(reportId) {
   applyProjectedState();
   render();
   scheduleAutosave();
-  showToast(`${report.name} was removed.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
+  showToast(`${report.name} was archived.`, 'success', { actionLabel: 'Undo', duration: 8000, onAction: () => undoDestructiveAction(undoAction) });
 }
 
 // GDPR right-to-erasure: removes the person record and every event that
@@ -16932,7 +16932,7 @@ function generateSchemaMarkdown() {
   lines.push('- All data lives in this folder. The browser profile keeps only the folder connection (IndexedDB) and view preferences (localStorage), never a copy of the data. Settings > Privacy & Data can disconnect the folder and clear what the browser keeps.');
   lines.push('- **team-pulse.before-import-*.json / team-pulse.before-restore-*.json**: Dated copies of team-pulse.json, written just before an import or a backup restore replaces it. They are never rotated. Delete them when you no longer need them.');
   lines.push('- **team-pulse.before-reload-*.json / team-pulse.before-overwrite-*.json**: Written when another tab or computer saved team-pulse.json in between. before-reload holds the version the tab had when it reloaded the file, before-overwrite the file version the tab replaced with its own.');
-  lines.push('- **Delete** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
+  lines.push('- **Archive** on a person appends a person_archived event: the person disappears from every view but their history stays in the event log (undo-friendly).');
   lines.push('- **Erase permanently** (Profile tab danger zone) removes the person record and every event referencing them from the document. This is the right-to-erasure path. It cannot be undone and takes effect in the JSON on the next save. Rolling backups in this folder may still hold prior copies until they rotate. Delete them manually if a full purge is required.');
   lines.push('');
   return lines.join('\n');

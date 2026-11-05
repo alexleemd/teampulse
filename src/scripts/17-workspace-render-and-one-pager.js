@@ -195,7 +195,7 @@ function renderDetailDrawer() {
             ${isCreating ? '' : `<button type="button" class="secondary" data-open-room="${escapeHtml(report.id)}">1:1 room</button>`}
             ${isCreating ? '' : '<button type="button" class="secondary" id="printOnePagerBtn">One-pager</button>'}
             <button type="button" id="saveDetailChangesHeaderBtn">${isCreating ? 'Save direct report' : 'Save changes'}</button>
-            ${isCreating ? '' : '<button type="button" class="danger" id="deleteSelectedBtn">Delete</button>'}
+            ${isCreating ? '' : '<button type="button" class="danger" id="deleteSelectedBtn">Archive</button>'}
           </div>
         </div>
       </div>
@@ -335,7 +335,7 @@ function renderDetailDrawer() {
                 <div class="drawer-section-head">
                   <div>
                     <h3>Danger Zone</h3>
-                    <p class="section-note">Delete (header button) archives with undo and keeps history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
+                    <p class="section-note">Archive (header button) hides this person from every view, with undo, and keeps their history in the event log. Erase permanently removes this person and every event about them from the document. This is the GDPR right-to-erasure path. It cannot be undone.</p>
                   </div>
                   <button type="button" class="danger" id="purgeReportBtn">Erase permanently</button>
                 </div>
