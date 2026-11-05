@@ -89,11 +89,31 @@ function buildNotesMarkdown() {
   return lines.join('\n');
 }
 
+// A backup export is due 90 days after the last one. A file that was never
+// exported counts from its oldest recorded change instead, so a new file does
+// not open with a reminder that a backup is 90 days overdue, and a file with
+// nothing in it has nothing to back up. An unreadable date errs toward
+// showing the reminder.
 function quarterlyExportDue() {
   const last = normalizeText(app.doc?.settings?.lastExportDate);
-  if (!last) return true;
-  const days = daysSinceIso(last);
+  const since = last || oldestChangeIso();
+  if (!since) return (app.doc?.people || []).length > 0;
+  const days = daysSinceIso(since);
   return days === null ? true : days >= 90;
+}
+
+// The earliest createdAt in the event log, or '' when there is none.
+function oldestChangeIso() {
+  let oldest = '';
+  let oldestTime = Infinity;
+  (app.doc?.events || []).forEach((event) => {
+    const time = Date.parse(event?.createdAt || '');
+    if (!Number.isNaN(time) && time < oldestTime) {
+      oldestTime = time;
+      oldest = event.createdAt;
+    }
+  });
+  return oldest;
 }
 
 async function exportPlainFiles(options = {}) {
