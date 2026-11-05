@@ -64,6 +64,8 @@ function renderReportsGrid() {
 // data-glyph-open (handled by the #teamHealthBody delegation in 29) and
 // data-overview-room (handled in 33). The Overview stays in the DOM, hidden,
 // while Direct Reports is shown, so it must not repeat the Direct Reports hooks.
+// On the Overview the tile leaves out its problem tags (1:1 overdue, support
+// level, follow-ups and so on), because the Briefing above lists every one.
 function renderReportTileHtml(report, options = {}) {
   const onOverview = options.context === 'overview';
   const id = escapeHtml(report.id);
@@ -108,7 +110,7 @@ function renderReportTileHtml(report, options = {}) {
           ${pulseHtml ? `<span class="report-tile-vital is-pulse"><span class="report-tile-caption">Pulse</span>${pulseHtml}</span>` : ''}
         </span>
         ${metrics.primaryGoal ? `<span class="report-tile-goal" title="${escapeHtml(metrics.primaryGoal.title)}">${renderGoalStatusAndBar(metrics.primaryGoal)}</span>` : ''}
-        ${chips.length ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
+        ${chips.length && !onOverview ? `<span class="report-tile-chips">${chips.join('')}</span>` : ''}
       </span>
     </button>
     <button type="button" class="tile-room-btn" ${roomHook} title="Open the 1:1 meeting room">1:1 room</button>

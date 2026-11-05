@@ -7,7 +7,7 @@
 //
 //   1. Health score - single composite number (0-100), an 8px meter whose
 //                     fill follows the health band, the band label and the
-//                     on-track summary. Left card of the first row.
+//                     on-track summary. Top of the left column.
 //   2. Briefing     - named, per-person digest of everything that needs a
 //                     manager's eyes today (overdue touchpoints, elevated
 //                     support levels, vacations, follow-ups, PDC round).
@@ -15,10 +15,14 @@
 //                     profile. This absorbed the former Cadence, Attention,
 //                     and Support Levels tabs in v0.45: counts by rule and
 //                     aggregate bars told you less than names do.
-//                     Right card of the first row.
-//   3. Direct Reports - the first tiles (attention first) with the team
-//                     count and "View all →", the same tile as Direct Reports.
-//   4. Upcoming     - forward-looking list of next touchpoints, as a panel.
+//                     Right column, beside the score and Upcoming.
+//   3. Upcoming     - forward-looking list of next touchpoints, as a panel.
+//                     Under the score in the left column (v0.57.4). On a
+//                     narrow screen it follows the Briefing.
+//   4. Direct Reports - the first tiles (attention first) with the team
+//                     count and "View all →", the same tile as Direct Reports
+//                     without its problem tags, which the Briefing already
+//                     lists.
 //
 // Design notes:
 //   - Composite score weights each cadence equally, plus a support-level penalty.
@@ -337,9 +341,9 @@ function renderOverviewTabHtml(reports) {
       <div class="overview-top">
         ${renderHealthScoreSection(scoreInfo)}
         ${renderBriefingSection(reportStates)}
+        ${renderUpcomingSection(reportStates)}
       </div>
       ${renderOverviewReportsSection(reports)}
-      ${renderUpcomingSection(reportStates)}
     </div>
   `;
 }
